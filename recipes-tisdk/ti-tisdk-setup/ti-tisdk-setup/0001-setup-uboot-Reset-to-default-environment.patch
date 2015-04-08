@@ -1,0 +1,118 @@
+From 3c22379b0089281a8256e4835c83293a81dbb6d8 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Wed, 8 Apr 2015 11:31:12 -0400
+Subject: [PATCH] setup-uboot: Reset to default environment.
+
+* Prevent any previous settings from corrupting the setup.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-uboot-env-am18x.sh       |    1 +
+ setup-uboot-env-am335x.sh      |    1 +
+ setup-uboot-env-am3517.sh      |    1 +
+ setup-uboot-env-am37x.sh       |    1 +
+ setup-uboot-env-am43x.sh       |    1 +
+ setup-uboot-env-am57xx-evm.sh  |    1 +
+ setup-uboot-env-beagleboard.sh |    1 +
+ setup-uboot-env-omap5.sh       |    1 +
+ 8 files changed, 8 insertions(+)
+
+diff --git a/setup-uboot-env-am18x.sh b/setup-uboot-env-am18x.sh
+index 5ee813e..a357b78 100644
+--- a/setup-uboot-env-am18x.sh
++++ b/setup-uboot-env-am18x.sh
+@@ -226,6 +226,7 @@ if [ "$minicom" = "y" ]; then
+     echo "verbose on" >> $minicomfilepath
+     echo >> $minicomfilepath
+     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
++    do_expect "\"$prompt\"" "send \"env default -f -a\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
+     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
+diff --git a/setup-uboot-env-am335x.sh b/setup-uboot-env-am335x.sh
+index b3be574..be8d4de 100644
+--- a/setup-uboot-env-am335x.sh
++++ b/setup-uboot-env-am335x.sh
+@@ -172,6 +172,7 @@ echo "timeout 300" > $cwd/setupBoard.minicom
+ echo "verbose on" >> $cwd/setupBoard.minicom
+ 
+ do_expect "\"stop autoboot:\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"U-Boot#\"" "send \"env default -f -a\"" $cwd/setupBoard.minicom
+ if [ "$kernel" -eq "1" ]; then
+ 	if [ "$fs" -eq "1" ]; then
+ 		#TFTP and NFS Boot
+diff --git a/setup-uboot-env-am3517.sh b/setup-uboot-env-am3517.sh
+index f9ef134..ddb1a15 100644
+--- a/setup-uboot-env-am3517.sh
++++ b/setup-uboot-env-am3517.sh
+@@ -189,6 +189,7 @@ if [ "$minicom" = "y" ]; then
+     echo "verbose on" >> $minicomfilepath
+     echo >> $minicomfilepath
+     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
++    do_expect "\"$prompt\"" "send \"env default -f -a\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv bootdelay 3\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
+     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
+diff --git a/setup-uboot-env-am37x.sh b/setup-uboot-env-am37x.sh
+index 0476483..de4db1a 100644
+--- a/setup-uboot-env-am37x.sh
++++ b/setup-uboot-env-am37x.sh
+@@ -189,6 +189,7 @@ if [ "$minicom" = "y" ]; then
+     echo "verbose on" >> $minicomfilepath
+     echo >> $minicomfilepath
+     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
++    do_expect "\"$prompt\"" "send \"env default -f -a\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv bootdelay 3\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
+     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
+diff --git a/setup-uboot-env-am43x.sh b/setup-uboot-env-am43x.sh
+index 282ffc1..170a87d 100644
+--- a/setup-uboot-env-am43x.sh
++++ b/setup-uboot-env-am43x.sh
+@@ -126,6 +126,7 @@ fi
+ echo "timeout 300" > $cwd/setupBoard.minicom
+ echo "verbose on" >> $cwd/setupBoard.minicom
+ do_expect "\"stop autoboot:\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"U-Boot#\"" "send \"env default -f -a\"" $cwd/setupBoard.minicom
+ if [ "$kernel" -eq "1" ]; then
+ 	if [ "$fs" -eq "1" ]; then
+ 		#TFTP and NFS Boot
+diff --git a/setup-uboot-env-am57xx-evm.sh b/setup-uboot-env-am57xx-evm.sh
+index 4707fa8..9828f91 100644
+--- a/setup-uboot-env-am57xx-evm.sh
++++ b/setup-uboot-env-am57xx-evm.sh
+@@ -122,6 +122,7 @@ fi
+ echo "timeout 300" > $cwd/setupBoard.minicom
+ echo "verbose on" >> $cwd/setupBoard.minicom
+ do_expect "\"stop autoboot:\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"U-Boot#\"" "send \"env default -f -a\"" $cwd/setupBoard.minicom
+ if [ "$kernel" -eq "1" ]; then
+ 	if [ "$fs" -eq "1" ]; then
+ 		#TFTP and NFS Boot
+diff --git a/setup-uboot-env-beagleboard.sh b/setup-uboot-env-beagleboard.sh
+index 97a34db..6c74b7e 100644
+--- a/setup-uboot-env-beagleboard.sh
++++ b/setup-uboot-env-beagleboard.sh
+@@ -189,6 +189,7 @@ if [ "$minicom" = "y" ]; then
+     echo "verbose on" >> $minicomfilepath
+     echo >> $minicomfilepath
+     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
++    do_expect "\"$prompt\"" "send \"env default -f -a\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv bootdelay 3\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
+     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
+diff --git a/setup-uboot-env-omap5.sh b/setup-uboot-env-omap5.sh
+index 4b97575..7944c83 100644
+--- a/setup-uboot-env-omap5.sh
++++ b/setup-uboot-env-omap5.sh
+@@ -138,6 +138,7 @@ if [ "$minicom" = "y" ]; then
+     echo "verbose on" >> $minicomfilepath
+     echo >> $minicomfilepath
+     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
++    do_expect "\"$prompt\"" "send \"env default -f -a\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv bootdelay 3\"" $minicomfilepath
+     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
+ #    do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
+-- 
+1.7.9.5
+
