@@ -1,0 +1,13 @@
+diff --git a/main.cpp b/main.cpp
+index fe27aab..51f9550 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -36,7 +36,7 @@
+  *
+ */
+ 
+-#include <QtGui>
++#include <QtWidgets>
+ #include <QWebView>
+ #include <QGraphicsWebView>
+ #include <iostream> 
