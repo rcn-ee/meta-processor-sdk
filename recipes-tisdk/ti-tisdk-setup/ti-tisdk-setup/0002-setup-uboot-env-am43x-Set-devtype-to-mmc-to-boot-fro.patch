@@ -1,0 +1,36 @@
+From 9294eac74f562b63244d0483f68af82074e4a1f3 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Mon, 13 Apr 2015 10:19:44 -0400
+Subject: [PATCH 2/2] setup-uboot-env-am43x: Set devtype to mmc to boot from
+ SD card.
+
+* This variable is required for the am43xx version of the 'loadimage' routine.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-uboot-env-am43x.sh |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/setup-uboot-env-am43x.sh b/setup-uboot-env-am43x.sh
+index 2e0067e..931b1d2 100644
+--- a/setup-uboot-env-am43x.sh
++++ b/setup-uboot-env-am43x.sh
+@@ -157,6 +157,7 @@ else
+ 		do_expect "\"U-Boot#\"" "send setenv rootpath '$rootpath'" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"setenv bootfile zImage\"" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
++		do_expect "\"U-Boot#\"" "send \"setenv devtype mmc\"" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run loadimage; run findfdt; run loadfdt; run netargs; bootz \${loadaddr} - \${fdtaddr}'" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
+@@ -164,6 +165,7 @@ else
+ 		#SD and SD boot.
+ 		do_expect "\"U-Boot#\"" "send \"setenv ip_method none\"" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"setenv bootfile zImage\"" $cwd/setupBoard.minicom
++		do_expect "\"U-Boot#\"" "send \"setenv devtype mmc\"" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send setenv bootcmd 'mmc rescan; run loadimage; run findfdt; run loadfdt; run mmcargs; bootz \${loadaddr} - \${fdtaddr}'" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
+ 		do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
+-- 
+1.7.9.5
+
