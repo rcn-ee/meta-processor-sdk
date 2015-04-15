@@ -1,0 +1,124 @@
+diff --git a/src/Makefile.am b/src/Makefile.am
+index e047bd5..0b53df3 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -2,17 +2,17 @@ plugin_LTLIBRARIES = libgstvpe.la
+ 
+ # headers we need but don't want installed
+ noinst_HEADERS = \
++	gstvpebins.h \
+ 	gstvpe.h
+ 
+-#	gstvpebins.h 
+ # sources used to compile this plug-in
+ libgstvpe_la_SOURCES = \
+ 	gstvpe.c \
+ 	gstvpebuffer.c \
+ 	gstvpebufferpool.c \
++	gstvpebins.c \
+ 	$(noinst_HEADERS)
+ 
+-#	gstvpebins.c 
+ # compiler and linker flags used to compile this plugin, set in configure.ac
+ libgstvpe_la_CFLAGS = \
+ 	$(GST_CFLAGS) \
+diff --git a/src/gstvpe.c b/src/gstvpe.c
+index bd8e809..7b34030 100644
+--- a/src/gstvpe.c
++++ b/src/gstvpe.c
+@@ -1017,22 +1017,22 @@ gst_vpe_init (GstVpe * self, gpointer klass)
+ }
+ 
+ GST_DEBUG_CATEGORY (gst_vpe_debug);
+-/* #include "gstvpebins.h" */
++#include "gstvpebins.h"
+ static gboolean
+ plugin_init (GstPlugin * plugin)
+ {
+   GST_DEBUG_CATEGORY_INIT (gst_vpe_debug, "vpe", 0, "vpe");
+-  return (gst_element_register (plugin, "vpe", GST_RANK_NONE, GST_TYPE_VPE));
+-  /* && gst_element_register (plugin, "ducatih264decvpe",
+-     GST_RANK_PRIMARY + 1, gst_vpe_ducatih264dec_get_type ())
+-     && gst_element_register (plugin, "ducatimpeg2decvpe",
+-     GST_RANK_PRIMARY + 1, gst_vpe_ducatimpeg2dec_get_type ())
+-     && gst_element_register (plugin, "ducatimpeg4decvpe",
+-     GST_RANK_PRIMARY + 1, gst_vpe_ducatimpeg4dec_get_type ())
+-     && gst_element_register (plugin, "ducatijpegdecvpe",
+-     GST_RANK_PRIMARY + 2, gst_vpe_ducatijpegdec_get_type ())
+-     && gst_element_register (plugin, "ducativc1decvpe",
+-     GST_RANK_PRIMARY + 1, gst_vpe_ducativc1dec_get_type ())); */
++  return (gst_element_register (plugin, "vpe", GST_RANK_NONE, GST_TYPE_VPE))
++      && gst_element_register (plugin, "ducatih264decvpe",
++      GST_RANK_PRIMARY + 1, gst_vpe_ducatih264dec_get_type ())
++      && gst_element_register (plugin, "ducatimpeg2decvpe",
++      GST_RANK_PRIMARY + 1, gst_vpe_ducatimpeg2dec_get_type ())
++      && gst_element_register (plugin, "ducatimpeg4decvpe",
++      GST_RANK_PRIMARY + 1, gst_vpe_ducatimpeg4dec_get_type ())
++      && gst_element_register (plugin, "ducatijpegdecvpe",
++      GST_RANK_PRIMARY + 2, gst_vpe_ducatijpegdec_get_type ())
++      && gst_element_register (plugin, "ducativc1decvpe",
++      GST_RANK_PRIMARY + 1, gst_vpe_ducativc1dec_get_type ());
+ }
+ 
+ /* PACKAGE: this is usually set by autotools depending on some _INIT macro
+diff --git a/src/gstvpebins.c b/src/gstvpebins.c
+index f753699..4fdaf20 100644
+--- a/src/gstvpebins.c
++++ b/src/gstvpebins.c
+@@ -108,21 +108,15 @@ typedef struct {               \
+   GstBinClass parent_class;    \
+ } type ## Class;               \
+   \
+-static void gst_vpe_ ## decoder_name ## _base_init    (gpointer      g_class); \
+ static void gst_vpe_ ## decoder_name ## _class_init   (gpointer      g_class); \
+ static void gst_vpe_ ## decoder_name ## _init         (type          *self,    \
+        type ## Class *klass);\
+ static GstBinClass *decoder_name ## _parent_class = NULL;        \
+ static void                                                      \
+ gst_vpe_ ## decoder_name ## _class_init (gpointer g_class)       \
+-{                                                                \
+-  decoder_name ## _parent_class =                                \
+-  (GstBinClass *)g_type_class_peek_parent (g_class);             \
+-}                                                                \
+-static void gst_vpe_ ## decoder_name ## _base_init (gpointer gclass)         \
+-{                                   \
+-  GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);               \
+-  gst_element_class_set_static_metadata (element_class,                       \
++{                                                                            \
++  GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);              \
++  gst_element_class_set_static_metadata (element_class,                      \
+       #decoder_name "vpe",                                                   \
+       "Codec/Decoder/Video",                                                 \
+       #decoder_name " + vpe bin", "Harinarayan Bhatta <harinarayan@ti.com>");\
+@@ -130,7 +124,10 @@ static void gst_vpe_ ## decoder_name ## _base_init (gpointer gclass)         \
+       gst_static_pad_template_get (&decoder_name ## _sink_factory));         \
+   gst_element_class_add_pad_template (element_class,                         \
+       gst_static_pad_template_get (&src_factory));                           \
+-}                                                                            \
++  decoder_name ## _parent_class =                                \
++  (GstBinClass *)g_type_class_peek_parent (g_class);             \
++}                                                                \
++                                                                             \
+ static void gst_vpe_##decoder_name##_init (type *self, type ## Class *Klass) \
+ {                                                                            \
+   GstElement *dec, *vpe;                                                     \
+@@ -178,18 +175,12 @@ gst_vpe_ ## decoder_name ## _get_type (void)                   \
+   static volatile gsize gonce_data = 0;                        \
+   if (g_once_init_enter (&gonce_data)) {                       \
+   GType _type;                                                 \
+-  _type = g_type_register_static_simple (GST_TYPE_BIN,                \
++  _type = g_type_register_static_simple (GST_TYPE_BIN,         \
+   g_intern_static_string (#type),                              \
+   sizeof (type ## Class),                                      \
+-  gst_vpe_ ## decoder_name ## _base_init,                      \
+-  NULL,         /* base_finalize */                            \
+   (GClassInitFunc) gst_vpe_ ## decoder_name ## _class_init,    \
+-  NULL,         /* class_finalize */                           \
+-  NULL,               /* class_data */                         \
+   sizeof (type),                                               \
+-  0,                  /* n_preallocs */                        \
+   (GInstanceInitFunc) gst_vpe_ ## decoder_name ## _init,       \
+-  NULL,                                                        \
+   (GTypeFlags) 0);                                             \
+   g_once_init_leave (&gonce_data, (gsize) _type);              \
+   }                                                            \
