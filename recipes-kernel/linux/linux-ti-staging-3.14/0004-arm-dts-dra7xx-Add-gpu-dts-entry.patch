@@ -1,0 +1,61 @@
+From 3567a6be8d42b6a9f063b06b823ffccf48be106b Mon Sep 17 00:00:00 2001
+From: Gowtham Tammana <g-tammana@ti.com>
+Date: Fri, 9 Jan 2015 16:26:22 -0600
+Subject: [PATCH] arm:dts:dra7xx: Add gpu dts entry.
+
+Adding GPU entry in device tree listing.
+
+Change-Id: I01bac9517438cc1b88219b7872a7afa7fe7d0a53
+Signed-off-by: Gowtham Tammana <g-tammana@ti.com>
+---
+ arch/arm/boot/dts/dra7-evm.dts |    6 ++++++
+ arch/arm/boot/dts/dra7.dtsi    |   16 ++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/dra7-evm.dts b/arch/arm/boot/dts/dra7-evm.dts
+index ba5f47d..094a1c6 100644
+--- a/arch/arm/boot/dts/dra7-evm.dts
++++ b/arch/arm/boot/dts/dra7-evm.dts
+@@ -176,6 +176,12 @@
+ 		};
+ 	};
+ 
++    ocp {
++        gpu: gpu@0x56000000 {
++            gpu0-voltdm = <&voltdm_gpu>;
++        };
++    };
++
+ 	primary_sound: primary_sound {
+ 		compatible = "ti,dra7xx-evm-audio";
+ 		ti,model = "DRA7xx-EVM";
+diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
+index f066adf..608ae94 100644
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -818,6 +818,22 @@
+ 			status = "disabled";
+ 		};
+ 
++		gpu: gpu@0x56000000 {
++			compatible = "ti,omap4-gpu";
++			reg = <0x56000000 0xffff>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			ti,hwmods = "gpu";
++			operating-points = <
++				/* kHz    uV */
++				425600  1090000
++				532000  1280000
++				>;
++			clocks = <&dpll_core_h14x2_ck>, <&dpll_per_h14x2_ck>,
++					<&dpll_gpu_m2_ck>, <&gpu_core_gclk_mux>,
++					<&gpu_hyd_gclk_mux>;
++			clock-names = "core", "per", "gpu", "gpu_core", "gpu_hyd";
++		};
++
+ 		i2c1: i2c@48070000 {
+ 			compatible = "ti,omap4-i2c";
+ 			reg = <0x48070000 0x100>;
+-- 
+1.7.9.5
+

@@ -1,0 +1,23 @@
+From 1f76ad3675fe20e5e08295097411b410b8346e09 Mon Sep 17 00:00:00 2001
+From: Hongmei Gou <h-gou@ti.com>
+Date: Wed, 25 Mar 2015 11:49:01 -0400
+Subject: [PATCH] Enable TI coprocessor driver for dra7 family
+
+---
+ ti_config_fragments/dra7_only.cfg |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ti_config_fragments/dra7_only.cfg b/ti_config_fragments/dra7_only.cfg
+index 1e2d0cf..9a93bc0 100644
+--- a/ti_config_fragments/dra7_only.cfg
++++ b/ti_config_fragments/dra7_only.cfg
+@@ -22,3 +22,6 @@ CONFIG_SOC_DRA7XX=y
+ 
+ # Enable LPAE (Large Physical Address Extensions)
+ CONFIG_ARM_LPAE=y
++
++# Enable TI coprocessor driver
++CONFIG_TI_COPROC=y
+-- 
+1.7.9.5
+

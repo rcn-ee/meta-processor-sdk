@@ -1,0 +1,30 @@
+From 634ebe97ab4c69cb284f138b5eea6dbc5a9731fc Mon Sep 17 00:00:00 2001
+From: Jake Stiffler <j-stiffler@ti.com>
+Date: Fri, 6 Feb 2015 08:03:26 -0500
+Subject: [PATCH 14/14] arm/dts: am57x: Add gpu supply, revisit this after
+ this moves to the common file
+
+---
+ arch/arm/boot/dts/am57xx-beagle-x15.dts |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am57xx-beagle-x15.dts b/arch/arm/boot/dts/am57xx-beagle-x15.dts
+index 462b593..cda2a1e 100644
+--- a/arch/arm/boot/dts/am57xx-beagle-x15.dts
++++ b/arch/arm/boot/dts/am57xx-beagle-x15.dts
+@@ -70,6 +70,12 @@
+ 
+ 	};
+ 
++        ocp {
++                gpu: gpu@0x56000000 {
++                        gpu0-voltdm = <&voltdm_gpu>;
++                 };
++        };
++
+ 	vdd_3v3: fixedregulator-vdd_3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_3v3";
+-- 
+1.7.9.5
+
