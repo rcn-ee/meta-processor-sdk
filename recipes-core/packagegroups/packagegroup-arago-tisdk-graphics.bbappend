@@ -5,6 +5,6 @@ GRAPHICS_DEMO_omap-a15 = "\
     kmscube \
 "
 
-GRAPHICS_RDEPENDS_append_omap-a15 = " omapdrm-pvr"
+GRAPHICS_RDEPENDS_append_omap-a15 = " omapdrm-pvr img-pvr-sdk"
 
 RDEPENDS_${PN} += "${GRAPHICS_DEMO}"
