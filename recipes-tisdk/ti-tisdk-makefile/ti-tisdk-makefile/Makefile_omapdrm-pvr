@@ -21,7 +21,6 @@ omapdrm-pvr_install:
 	@echo ================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "omapdrm-pvr*" -type d`; \
-	install -d $(DESTDIR)/lib/modules/`cat $(LINUXKERNEL_INSTALL_DIR)/include/config/kernel.release`/extra; \
-	install -m 644 ./eurasia_km/eurasiacon/binary2_omap5430_linux_release/target/kbuild/omapdrm_pvr.ko \
-		$(DESTDIR)/lib/modules/`cat $(LINUXKERNEL_INSTALL_DIR)/include/config/kernel.release`/extra
+	cd ./eurasia_km/eurasiacon/binary2_omap5430_linux_release/target/kbuild; \
+	make -C $(LINUXKERNEL_INSTALL_DIR) SUBDIRS=`pwd` INSTALL_MOD_PATH=$(DESTDIR) PREFIX=$(SDK_PATH_TARGET) modules_install
 
