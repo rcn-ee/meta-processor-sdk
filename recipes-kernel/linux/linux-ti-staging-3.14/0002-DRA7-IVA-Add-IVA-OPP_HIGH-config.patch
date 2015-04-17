@@ -2,7 +2,7 @@ diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
 index 7641965..9dc7e3c 100644
 --- a/drivers/clk/Kconfig
 +++ b/drivers/clk/Kconfig
-@@ -99,6 +99,8 @@  config COMMON_CLK_XGENE
+@@ -99,6 +99,8 @@ config COMMON_CLK_XGENE
  	depends on ARM64
  	---help---
  	  Sypport for the APM X-Gene SoC reference, PLL, and device clocks.
@@ -11,7 +11,7 @@ index 7641965..9dc7e3c 100644
  
  config COMMON_CLK_KEYSTONE
  	tristate "Clock drivers for Keystone based SOCs"
-@@ -109,6 +111,13 @@  config COMMON_CLK_KEYSTONE
+@@ -109,6 +111,13 @@ config COMMON_CLK_KEYSTONE
  
  source "drivers/clk/qcom/Kconfig"
  
@@ -26,26 +26,21 @@ index 7641965..9dc7e3c 100644
  
  source "drivers/clk/mvebu/Kconfig"
 diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index c6193c4..35af2fd 100644
+index d249662..eff8f6d 100644
 --- a/drivers/clk/ti/clk-7xx.c
 +++ b/drivers/clk/ti/clk-7xx.c
-@@ -22,10 +22,16 @@ 
+@@ -22,8 +22,14 @@
  #define DRA7_DPLL_DSP_GFCLK_NOMFREQ			600000000
  #define DRA7_DPLL_EVE_GCLK_NOMFREQ			400000000
  #define DRA7_ATL2_DEFFREQ				5644800
--#define DRA7_DPLL_IVA_DEFFREQ				776666666
--#define DRA7_DPLL_IVA_GFCLK_NOMFREQ			388333333
- 
- #define DRA7_ATL_DEFFREQ				5644800
-+#define DRA7_ATL2_DEFFREQ				5644800
++
 +#ifdef CONFIG_IVA_OPP_HIGH
 +#define DRA7_DPLL_IVA_DEFFREQ				1064000000
 +#define DRA7_DPLL_IVA_GFCLK_NOMFREQ			532000000
 +#else
-+#define DRA7_DPLL_IVA_DEFFREQ				776666666
-+#define DRA7_DPLL_IVA_GFCLK_NOMFREQ			388333333
+ #define DRA7_DPLL_IVA_DEFFREQ				776666666
+ #define DRA7_DPLL_IVA_GFCLK_NOMFREQ			388333333
 +#endif
  
- static struct ti_dt_clk dra7xx_clks[] = {
- 	DT_CLK(NULL, "atl_clkin0_ck", "atl_clkin0_ck"),
-
+ #define DRA7_ATL_DEFFREQ				5644800
+ #define DRA7_DPLL_USB_DEFFREQ				960000000
