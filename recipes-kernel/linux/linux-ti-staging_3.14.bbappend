@@ -1,4 +1,4 @@
-PR_append = "-tisdk2"
+PR_append = "-tisdk3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.14:"
 
@@ -13,6 +13,8 @@ SRC_URI += "file://cmem.dtsi \
             file://0008-drivers-power-Introduce-TI-coprocessor-driver.patch \
             file://0009-ARM-DRA7-dts-Add-coprocessor-nodes-for-iva-recreated.patch \
             file://0010-Enable-TI-coprocessor-driver-for-dra7-family.patch \
+            file://0001-media-ti-vpe-vpe-Add-cropping-ioctl-support.patch \
+            file://0002-v4l2-core-videobuf2-core.c-fix.patch \
 "
 
 CMEM_BASE = ""

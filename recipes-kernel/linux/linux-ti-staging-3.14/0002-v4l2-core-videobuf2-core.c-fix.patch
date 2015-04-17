@@ -1,0 +1,36 @@
+From 73150b6b7bdb609e2edd0f2994d2abe24df08518 Mon Sep 17 00:00:00 2001
+From: Hongmei Gou <h-gou@ti.com>
+Date: Thu, 16 Apr 2015 17:20:46 -0400
+Subject: [PATCH] v4l2-core videobuf2-core.c fix
+
+verify_planes would fail if the user space fills up the data_offset field
+and bytesused is left as zero. Correct this.
+When comparing data_offset > bytesused, bypass the check if the
+bytesused field is set to zero.
+---
+ drivers/media/v4l2-core/videobuf2-core.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index 1a59e26..9c08ba9 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -394,12 +394,9 @@ static int __verify_length(struct vb2_buffer *vb, const struct v4l2_buffer *b)
+ 			       ? b->m.planes[plane].length
+ 			       : vb->v4l2_planes[plane].length;
+ 
+-			if (b->m.planes[plane].bytesused > length)
+-				return -EINVAL;
+-
+-			if (b->m.planes[plane].data_offset > 0 &&
+-			    b->m.planes[plane].data_offset >=
+-			    b->m.planes[plane].bytesused)
++                       if (b->m.planes[plane].bytesused > 0 &&
++                           b->m.planes[plane].data_offset +
++                           b->m.planes[plane].bytesused > length)
+ 				return -EINVAL;
+ 		}
+ 	} else {
+-- 
+1.7.9.5
+
