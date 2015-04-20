@@ -1,0 +1,68 @@
+diff --git a/execute_command.sh b/execute_command.sh
+index 018c632..060231c 100755
+--- a/execute_command.sh
++++ b/execute_command.sh
+@@ -59,7 +59,12 @@ do
+ 	outputfilename=$item 
+   fi
+ 
+-  if [ $i -gt 1 ]
++  if [ $i -eq 2 ]
++  then
++    category=$item
++  fi
++
++  if [ $i -gt 2 ]
+   then
+     touch "lock/"$item
+ 
+@@ -68,10 +73,23 @@ do
+ 
+ done
+ 
++if [ $category == 3d -o $category == multimedia ]
++then
++  /etc/init.d/matrix-gui-2.0 stop
++  /etc/init.d/weston stop
++  sleep 1
++fi
++
+ echo "Filename:"$filename
+ echo "Output:"$outputfilename
+ eval $filename > "tmp/"$outputfilename 2>&1
+ 
++if [ $category == 3d -o $category == multimedia ]
++then
++  /etc/init.d/weston start
++  /etc/init.d/matrix-gui-2.0 start
++fi
++
+ #Using a more unique string to detect if the script is completed
+ echo "_?!!MATRIX_SCRIPT_COMPLETED!!?_" >> "tmp/"$outputfilename
+ 
+diff --git a/generate.php b/generate.php
+index 10cfed4..7c08282 100644
+--- a/generate.php
++++ b/generate.php
+@@ -105,6 +105,8 @@ for($x = 0;$x<count($contents)&&strlen($contents[$x])>0;$x++)
+ 		$top["Description_Link"] = get_contents("X-MATRIX-Description",$dotdesktop);
+ 
+ 		$top["Lock"] = get_contents("X-MATRIX-LOCK",$dotdesktop);
++
++		$top["Category"] = get_contents("Categories",$dotdesktop);
+ 	} 
+ 
+ 	if($category == -1)
+diff --git a/run_script.php b/run_script.php
+index 9dd7a10..ce80372 100644
+--- a/run_script.php
++++ b/run_script.php
+@@ -91,7 +91,7 @@ if($currently_locked==false)
+ 	$random_string = strval(rand());
+ 	$random_string .= strval(rand());
+ 
+-	$script_command = "./execute_command.sh \"".addslashes($script_link). "\" ".$random_string.".txt ".$lock_list;
++	$script_command = "./execute_command.sh \"".addslashes($script_link). "\" ".$random_string.".txt \"".$found_app["Category"]."\" ".$lock_list;
+ 
+ 	$last_line = system($script_command." > /dev/null 2>/dev/null & ", $retval);
+ }
