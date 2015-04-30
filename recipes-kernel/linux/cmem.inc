@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_append = ":${THISDIR}/linux"
+FILESEXTRAPATHS_append := ":${THISDIR}/linux"
 
 SRC_URI += "file://cmem.dtsi"
 
