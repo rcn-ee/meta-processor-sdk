@@ -1,0 +1,12 @@
+diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+index 0d9ad60..e4b5168 100644
+--- a/drivers/media/platform/ti-vpe/vpe.c
++++ b/drivers/media/platform/ti-vpe/vpe.c
+@@ -2531,6 +2531,7 @@  static const struct of_device_id vpe_of_match[] = {
+ 	},
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, vpe_of_match);
+ #else
+ #define vpe_of_match NULL
+ #endif
