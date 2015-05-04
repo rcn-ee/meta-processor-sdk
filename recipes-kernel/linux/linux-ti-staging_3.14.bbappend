@@ -1,4 +1,4 @@
-PR_append = "-tisdk8"
+PR_append = "-tisdk9"
 
 include recipes-kernel/linux/cmem.inc
 
@@ -16,9 +16,6 @@ SRC_URI += "file://0001-DRA7-IVA-Set-iva-initial-freq.patch \
             file://0010-Enable-TI-coprocessor-driver-for-dra7-family.patch \
             file://0001-media-ti-vpe-vpe-Add-cropping-ioctl-support.patch \
             file://0002-v4l2-core-videobuf2-core.c-fix.patch \
-            file://0001-media-ti-vpe-vip-Added-MODULE_DEVICE_TABLE-hint.patch \
-            file://0002-media-ti-vpe-vpe-Added-MODULE_DEVICE_TABLE-hint.patch \
-            file://0003-media-ti-vpe-vip-Fix-a-race-condition.patch \
             file://0001-Added-DT-bindings-for-DebugSS.patch \
 "
 
