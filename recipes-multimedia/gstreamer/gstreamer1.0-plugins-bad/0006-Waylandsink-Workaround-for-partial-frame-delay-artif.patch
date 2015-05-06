@@ -1,0 +1,37 @@
+diff --git a/gstwaylandsink.c b/gstwaylandsink.c
+index bb7d838..0ef1ef8 100644
+--- a/gstwaylandsink.c
++++ b/gstwaylandsink.c
+@@ -311,6 +311,9 @@ gst_wayland_sink_finalize (GObject * object)
+     sink->wlbufferpriv = NULL;
+   }
+ 
++  gst_buffer_replace (&sink->last_buf, NULL);
++  gst_buffer_replace (&sink->display_buf, NULL);
++
+   g_mutex_clear (&sink->wayland_lock);
+ 
+   G_OBJECT_CLASS (parent_class)->finalize (object);
+@@ -862,6 +865,9 @@ gst_wayland_sink_render (GstBaseSink * bsink, GstBuffer * buffer)
+   wl_surface_commit (window->surface);
+   wl_display_dispatch (display->display);
+ 
++  gst_buffer_replace (&sink->last_buf, sink->display_buf);
++  gst_buffer_replace (&sink->display_buf, to_render);
++
+   if (buffer != to_render)
+     gst_buffer_unref (to_render);
+   return GST_FLOW_OK;
+diff --git a/gstwaylandsink.h b/gstwaylandsink.h
+index b3fbbac..b3cef2a 100644
+--- a/gstwaylandsink.h
++++ b/gstwaylandsink.h
+@@ -121,6 +121,8 @@ struct _GstWaylandSink
+ 
+   gint video_width;
+   gint video_height;
++  /* current displayed buffer and last displayed buffer: */
++  GstBuffer *display_buf, *last_buf;
+   uint32_t format;
+ };
+ 
