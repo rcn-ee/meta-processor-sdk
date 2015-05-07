@@ -4,4 +4,6 @@ UTILS_append_dra7xx = " \
     libulm-dev \
     libulm-staticdev \
     gdbserver-c6x-dev \
+    opencl-dev \
+    opencl-staticdev \
 "
