@@ -6,12 +6,14 @@ SRC_URI += " \
             file://Makefile_omapdrm-pvr \
             file://Makefile_debugss-module-drv \
             file://Makefile_gdbserverproxy-module-drv \
+            file://Makefile_opencl-examples \
 "
 
 MAKEFILES_append_omap-a15 = " \
     omapdrm-pvr \
     debugss-module-drv \
     gdbserverproxy-module-drv \
+    opencl-examples \
 "
 
 DEFCONFIG_omap-a15 = "tisdk_${MACHINE}_defconfig"
