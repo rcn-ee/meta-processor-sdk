@@ -20,3 +20,7 @@ EXTRA_OEMAKE = "'PLATFORM=${PLATFORM}'"
 S = "${WORKDIR}/git/debugss_module/debugss-mod"
 
 inherit module
+
+CREATE_SRCIPK = "1"
+SRCIPK_INSTALL_DIR = "board-support/extra-drivers/${PN}-${PV}"
+SRCIPK_PACKAGE_ARCH = "${MACHINE_ARCH}"
