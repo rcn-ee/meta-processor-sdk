@@ -1,0 +1,34 @@
+From 7a81dbcdc069e41767517b16aad592024ae07577 Mon Sep 17 00:00:00 2001
+From: Pooja Prajod <a0132412@ti.com>
+Date: Thu, 7 May 2015 14:49:01 +0530
+Subject: [PATCH] Fix memleak due to unfreed hash-table
+
+The code for freeing the hash-table was present only in finalize.
+This is resource part of the sink instance and therefore should be freed
+in stop function as well.
+
+Signed-off-by: Pooja Prajod <a0132412@ti.com>
+---
+ ext/wayland/gstwaylandsink.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
+index e450296..f3cab5e 100644
+--- a/ext/wayland/gstwaylandsink.c
++++ b/ext/wayland/gstwaylandsink.c
+@@ -964,6 +964,12 @@ gst_wayland_sink_stop (GstBaseSink * bsink)
+   GST_DEBUG_OBJECT (sink, "stop");
+   gst_buffer_replace (&sink->last_buf, NULL);
+   gst_buffer_replace (&sink->display_buf, NULL);
++
++  if (sink->wlbufferpriv) {
++    g_hash_table_destroy (sink->wlbufferpriv);
++    sink->wlbufferpriv = NULL;
++  }
++
+   if (sink->display)
+     destroy_display (sink->display);
+   return TRUE;
+-- 
+1.7.12.4
+
