@@ -1,6 +1,4 @@
-PR_append = "-tisdk10"
-
-include recipes-kernel/linux/cmem.inc
+PR_append = "-tisdk11"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.14:"
 
