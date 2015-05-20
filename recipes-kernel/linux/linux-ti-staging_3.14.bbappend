@@ -1,4 +1,4 @@
-PR_append = "-tisdk9"
+PR_append = "-tisdk10"
 
 include recipes-kernel/linux/cmem.inc
 
@@ -17,6 +17,7 @@ SRC_URI += "file://0001-DRA7-IVA-Set-iva-initial-freq.patch \
             file://0001-media-ti-vpe-vpe-Add-cropping-ioctl-support.patch \
             file://0002-v4l2-core-videobuf2-core.c-fix.patch \
             file://0001-Added-DT-bindings-for-DebugSS.patch \
+            file://0001-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
 "
 
 CMEM_BASE_omap-a15 = "a0000000"
