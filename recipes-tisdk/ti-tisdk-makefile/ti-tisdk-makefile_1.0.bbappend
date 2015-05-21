@@ -1,4 +1,4 @@
-PR_append = "-tisdk7"
+PR_append = "-tisdk8"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -16,7 +16,7 @@ MAKEFILES_append_omap-a15 = " \
     opencl-examples \
 "
 
-DEFCONFIG_omap-a15 = "tisdk_${MACHINE}_defconfig"
+DEFCONFIG = "tisdk_${MACHINE}_defconfig"
 
 KERNEL_DEVICETREE_append_dra7xx = " am57xx-evm.dtb"
 
