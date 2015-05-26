@@ -1,0 +1,310 @@
+From aeccd6845c0729bbcfb85b414134234f6608003b Mon Sep 17 00:00:00 2001
+From: Harinarayan Bhatta <harinarayan@ti.com>
+Date: Thu, 21 May 2015 18:34:52 +0530
+Subject: [PATCH] Changes to dynamically allocate vpe buffers
+
+1. Do not fix the number of input buffers until stream-on.
+   This allows input buffer pool to grow based on decoder
+   requests.
+2. Delay stream-on until a non-passthrough frame is chained.
+   This saves output buffers being allocated in passthrough
+   case.
+
+Signed-off-by: Harinarayan Bhatta <harinarayan@ti.com>
+---
+ src/gstvpe.c           | 66 +++++++++++++++++++++++++++++++-------------------
+ src/gstvpe.h           | 10 ++++++--
+ src/gstvpebufferpool.c | 32 ++++++++++++++++++++++--
+ 3 files changed, 79 insertions(+), 29 deletions(-)
+
+diff --git a/src/gstvpe.c b/src/gstvpe.c
+index 0cffb3e..e3f0958 100644
+--- a/src/gstvpe.c
++++ b/src/gstvpe.c
+@@ -95,7 +95,7 @@ enum
+ 
+ 
+ #define MAX_NUM_OUTBUFS   16
+-#define MAX_NUM_INBUFS    24
++#define MAX_NUM_INBUFS    64
+ #define DEFAULT_NUM_OUTBUFS   6
+ #define DEFAULT_NUM_INBUFS    24
+ 
+@@ -254,7 +254,7 @@ gst_vpe_init_output_buffers (GstVpe * self)
+   }
+   self->output_pool =
+       gst_vpe_buffer_pool_new (TRUE, self->num_output_buffers,
+-      V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE, self->output_caps);
++      V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE, self->output_caps, NULL, NULL);
+   if (!self->output_pool) {
+     return FALSE;
+   }
+@@ -316,8 +316,19 @@ gst_vpe_output_set_fmt (GstVpe * self)
+   return TRUE;
+ }
+ 
++static GstBuffer *
++gst_vpe_alloc_inputbuffer (void *ctx, int index)
++{
++  GstVpe *self = (GstVpe *) ctx;
++
++  return gst_vpe_buffer_new (self->dev,
++      self->input_fourcc,
++      self->input_width, self->input_height, index,
++      V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
++}
++
+ static gboolean
+-gst_vpe_init_input_buffers (GstVpe * self, gint num_input_buffers)
++gst_vpe_init_input_buffers (GstVpe * self, gint min_num_input_buffers)
+ {
+   int i;
+   GstBuffer *buf;
+@@ -327,13 +338,14 @@ gst_vpe_init_input_buffers (GstVpe * self, gint num_input_buffers)
+     return FALSE;
+   }
+   self->input_pool =
+-      gst_vpe_buffer_pool_new (FALSE, num_input_buffers,
+-      V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE, self->input_caps);
++      gst_vpe_buffer_pool_new (FALSE, MAX_NUM_INBUFS,
++      V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE, self->input_caps,
++      gst_vpe_alloc_inputbuffer, self);
+   if (!self->input_pool) {
+     return FALSE;
+   }
+ 
+-  for (i = 0; i < num_input_buffers; i++) {
++  for (i = 0; i < min_num_input_buffers; i++) {
+     buf = gst_vpe_buffer_new (self->dev,
+         self->input_fourcc,
+         self->input_width, self->input_height, i,
+@@ -345,6 +357,7 @@ gst_vpe_init_input_buffers (GstVpe * self, gint num_input_buffers)
+     if (!gst_vpe_buffer_pool_put (self->input_pool, buf))
+       return FALSE;
+   }
++
+   return TRUE;
+ }
+ 
+@@ -468,7 +481,7 @@ gst_vpe_create (GstVpe * self)
+ static gboolean
+ gst_vpe_init_input_bufs (GstVpe * self, GstCaps * input_caps)
+ {
+-  gint num_input_buffers;
++  gint min_num_input_buffers;
+ 
+   if (!gst_vpe_create (self)) {
+     return FALSE;
+@@ -479,28 +492,28 @@ gst_vpe_init_input_bufs (GstVpe * self, GstCaps * input_caps)
+     return FALSE;
+   }
+   if (self->num_input_buffers) {
+-    num_input_buffers = self->num_input_buffers;
++    min_num_input_buffers = self->num_input_buffers;
+   } else {
+     if (self->segment.format == GST_FORMAT_TIME &&
+         self->segment.rate < (gdouble) 0.0) {
+       /* Reverse playback needs as many buffers as possible,
+          so go for maximum */
+-      num_input_buffers = 32;
++      min_num_input_buffers = 32;
+     } else {
+       /* Determine automatically. use a thumb rule size limit of less than 16MB
+        * or number of buffers to 22 */
+-      num_input_buffers = ((16 * 1024 * 1024 * 2) /
++      min_num_input_buffers = ((16 * 1024 * 1024 * 2) /
+           (self->input_height * self->input_width * 3));
+-      if (num_input_buffers > 16)
+-        num_input_buffers = 16;
+-      num_input_buffers += 6;
++      if (min_num_input_buffers > 16)
++        min_num_input_buffers = 16;
++      min_num_input_buffers += 6;
+     }
+     GST_WARNING_OBJECT (self, "Using automatically determined number "
+-        "of input buffers: %d", num_input_buffers);
++        "of input buffers: %d", min_num_input_buffers);
+   }
+   GST_DEBUG_OBJECT (self, "parse/set caps done");
+   if (self->input_pool == NULL) {
+-    if (!gst_vpe_init_input_buffers (self, num_input_buffers)) {
++    if (!gst_vpe_init_input_buffers (self, min_num_input_buffers)) {
+       GST_ERROR_OBJECT (self, "gst_vpe_init_input_buffers failed");
+       return FALSE;
+     }
+@@ -530,6 +543,13 @@ gst_vpe_set_streaming (GstVpe * self, gboolean streaming)
+       if (self->input_pool)
+         gst_vpe_buffer_pool_set_streaming (self->input_pool,
+             self->video_fd, streaming, self->interlaced);
++
++      if (!self->output_pool) {
++        if (!gst_vpe_init_output_buffers (self)) {
++          GST_ERROR_OBJECT (self, "gst_vpe_init_output_buffers failed");
++        }
++        GST_DEBUG_OBJECT (self, "gst_vpe_init_output_buffers done");
++      }
+       if (self->output_pool)
+         gst_vpe_buffer_pool_set_streaming (self->output_pool,
+             self->video_fd, streaming, FALSE);
+@@ -567,17 +587,8 @@ gst_vpe_start (GstVpe * self, GstCaps * input_caps)
+       GST_ERROR_OBJECT (self, "gst_vpe_set_output_caps failed");
+       return FALSE;
+     }
+-
+-    if (!gst_vpe_init_output_buffers (self)) {
+-      GST_ERROR_OBJECT (self, "gst_vpe_init_output_buffers failed");
+-      return FALSE;
+-    }
+-    GST_DEBUG_OBJECT (self, "gst_vpe_init_output_buffers done");
+   }
+-
+-  gst_vpe_set_streaming (self, TRUE);
+   self->state = GST_VPE_ST_ACTIVE;
+-
+   return TRUE;
+ }
+ 
+@@ -738,7 +749,8 @@ gst_vpe_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
+       GST_TIME_ARGS (GST_BUFFER_PTS (buf)), buf);
+ 
+   GST_OBJECT_LOCK (self);
+-  if (G_UNLIKELY (self->state != GST_VPE_ST_ACTIVE)) {
++  if (G_UNLIKELY (self->state != GST_VPE_ST_ACTIVE &&
++          self->state != GST_VPE_ST_STREAMING)) {
+     if (self->state == GST_VPE_ST_DEINIT) {
+       GST_OBJECT_UNLOCK (self);
+       GST_WARNING_OBJECT (self,
+@@ -773,6 +785,10 @@ gst_vpe_chain (GstPad * pad, GstObject * parent, GstBuffer * buf)
+     return gst_pad_push (self->srcpad, buf);
+   }
+   if (vpe_buf) {
++    if (G_UNLIKELY (self->state != GST_VPE_ST_STREAMING)) {
++      gst_vpe_set_streaming (self, TRUE);
++      self->state = GST_VPE_ST_STREAMING;
++    }
+     /* Push the buffer into the V4L2 driver */
+     if (!gst_vpe_buffer_pool_queue (self->input_pool, buf)) {
+       GST_OBJECT_UNLOCK (self);
+diff --git a/src/gstvpe.h b/src/gstvpe.h
+index f79281d..7c7e4b5 100644
+--- a/src/gstvpe.h
++++ b/src/gstvpe.h
+@@ -64,6 +64,7 @@ GType gst_vpe_buffer_pool_get_type (void);
+ 
+ typedef struct _GstVpeBufferPool GstVpeBufferPool;
+ typedef struct _GstVpeBufferPoolClass GstVpeBufferPoolClass;
++typedef GstBuffer *(*GstVpeBufferAllocFunction) (void *ctx, int index);
+ 
+ struct _GstVpeBufferPool
+ {
+@@ -77,6 +78,8 @@ struct _GstVpeBufferPool
+   guint32 v4l2_type;
+   guint buffer_count;
+   guint32 last_field_pushed;    /* Was the last field sent to the dirver top of bottom */
++  GstVpeBufferAllocFunction buffer_alloc_function;
++  void *buffer_alloc_function_ctx;
+   struct GstVpeBufferPoolBufTracking
+   {
+     GstBuffer *buf;             /* Buffers that are part of this pool */
+@@ -111,7 +114,9 @@ GstMetaVpeBuffer *gst_buffer_add_vpe_buffer_meta (GstBuffer * buf,
+ GstMetaVpeBuffer *gst_buffer_get_vpe_buffer_meta (GstBuffer * buf);
+ 
+ GstVpeBufferPool *gst_vpe_buffer_pool_new (gboolean output_port,
+-    guint buffer_count, guint32 v4l2_type, GstCaps * caps);
++    guint buffer_count, guint32 v4l2_type, GstCaps * caps,
++    GstVpeBufferAllocFunction buffer_alloc_function,
++    void *buffer_alloc_function_ctx);
+ 
+ gboolean gst_vpe_buffer_pool_put (GstVpeBufferPool * pool, GstBuffer * buf);
+ 
+@@ -146,7 +151,8 @@ struct _GstVpe
+   gboolean passthrough;
+   GstSegment segment;
+   enum
+-  { GST_VPE_ST_INIT, GST_VPE_ST_ACTIVE, GST_VPE_ST_DEINIT } state;
++  { GST_VPE_ST_INIT, GST_VPE_ST_ACTIVE, GST_VPE_ST_STREAMING,
++        GST_VPE_ST_DEINIT } state;
+ 
+   gint video_fd;
+   struct omap_device *dev;
+diff --git a/src/gstvpebufferpool.c b/src/gstvpebufferpool.c
+index a1e94fb..194efb3 100644
+--- a/src/gstvpebufferpool.c
++++ b/src/gstvpebufferpool.c
+@@ -38,6 +38,7 @@
+ 
+ enum
+ {
++  BUF_UNALLOCATED,
+   BUF_FREE,
+   BUF_ALLOCATED,
+   BUF_WITH_DRIVER,
+@@ -86,7 +87,9 @@ gst_vpe_buffer_pool_finalize (GObject * obj)
+ 
+ GstVpeBufferPool *
+ gst_vpe_buffer_pool_new (gboolean output_port, guint buffer_count,
+-    guint32 v4l2_type, GstCaps * caps)
++    guint32 v4l2_type, GstCaps * caps,
++    GstVpeBufferAllocFunction buffer_alloc_function,
++    void *buffer_alloc_function_ctx)
+ {
+   GstVpeBufferPool *pool;
+   GstStructure *conf;
+@@ -107,6 +110,8 @@ gst_vpe_buffer_pool_new (gboolean output_port, guint buffer_count,
+   pool->buf_tracking =
+       (struct GstVpeBufferPoolBufTracking *) g_malloc0 (buffer_count *
+       sizeof (struct GstVpeBufferPoolBufTracking));
++  pool->buffer_alloc_function = buffer_alloc_function;
++  pool->buffer_alloc_function_ctx = buffer_alloc_function_ctx;
+ 
+   /* get the present config of the buffer pool */
+   conf = gst_buffer_pool_get_config (GST_BUFFER_POOL (pool));
+@@ -455,7 +460,7 @@ gst_vpe_buffer_pool_queue (GstVpeBufferPool * pool, GstBuffer * buff)
+ GstBuffer *
+ gst_vpe_buffer_pool_get (GstVpeBufferPool * pool)
+ {
+-  int r, i;
++  int r = -1, i;
+   GstBuffer *ret = NULL;
+ 
+   VPE_DEBUG ("Entered gst_vpe_buffer_pool_get");
+@@ -469,6 +474,18 @@ gst_vpe_buffer_pool_get (GstVpeBufferPool * pool)
+         pool->buf_tracking[i].q_cnt = 0;
+         break;
+       }
++      if (r == -1 && pool->buf_tracking[i].state == BUF_UNALLOCATED)
++        r = i;
++    }
++  }
++  if (NULL == ret && pool->buffer_alloc_function && r != -1) {
++    VPE_DEBUG ("Trying to allocate a buffer\n");
++    ret = pool->buffer_alloc_function (pool->buffer_alloc_function_ctx, r);
++    if (ret) {
++      pool->buf_tracking[r].buf = ret;
++      pool->buf_tracking[r].state = BUF_ALLOCATED;
++      pool->buf_tracking[r].q_cnt = 0;
++      VPE_DEBUG ("New buffer allocated, index: %d\n", r);
+     }
+   }
+   GST_VPE_BUFFER_POOL_UNLOCK (pool);
+@@ -549,6 +566,17 @@ gst_vpe_buffer_pool_set_streaming (GstVpeBufferPool * pool, int video_fd,
+ 
+   GST_VPE_BUFFER_POOL_LOCK (pool);
+   if (streaming && !pool->streaming) {
++    /* Fix the number of buffers allocated until now as final
++       and disable further allocation */
++    if (pool->buffer_alloc_function) {
++      for (i = 0; i < pool->buffer_count; i++) {
++        if (pool->buf_tracking[i].state == BUF_UNALLOCATED)
++          break;
++      }
++      pool->buffer_count = i;
++      pool->buffer_alloc_function = NULL;
++      VPE_DEBUG ("Fix number of buffers allocated to %d", i);
++    }
+     pool->video_fd = dup (video_fd);
+     pool->interlaced = interlaced;
+     /* If field alternate mode is used, each buffer is assigned 4 indexes
+-- 
+1.9.1
+
