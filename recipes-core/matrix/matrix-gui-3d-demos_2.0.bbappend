@@ -2,7 +2,9 @@ PR_append = "-tisdk0"
 
 SRCREV = "c217bb3db1ca50b173c3ee9a9b17e4ebcb0b2875"
 
-PACKAGES_append = " \
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+PACKAGES_append_omap-a15 = " \
     matrix-3d-demo-kmscube \
     matrix-3d-demo-kmscubevideo \
 "
