@@ -5,12 +5,12 @@ LIC_FILES_CHKSUM = "file://COPYING.txt;md5=5857833e20836213677fac33f9aded21"
 require recipes-ti/includes/ti-paths.inc
 require recipes-ti/includes/ti-staging.inc
 
-DEPENDS = "ti-xdctools ti-cgt6x-native"
+DEPENDS = "ti-xdctools ti-cgt6x-native ti-sysbios"
 
 COMPATIBLE_MACHINE = "dra7xx|keystone"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PR = "r0"
+PR = "r1"
 
 S = "${WORKDIR}/ti/csl"
 
@@ -24,7 +24,7 @@ SRC_URI = "git://git.ti.com/keystone-rtos/common-csl-ip.git;protocol=git;branch=
 
 export C6X_GEN_INSTALL_PATH="${STAGING_DIR_NATIVE}/usr"
 export XDCCGROOT="${STAGING_DIR_NATIVE}/usr/share/ti/cgt-c6x"
-export XDCPATH="${XDCCGROOT}/include;${XDC_INSTALL_DIR}/packages"
+export XDCPATH="${XDCCGROOT}/include;${XDC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages"
 
 do_configure() {
     sed -i "s/\ \"\.\\\\\\\\\"\ +//" src/Module.xs
