@@ -1,5 +1,5 @@
 diff --git a/execute_command.sh b/execute_command.sh
-index 018c632..394ea74 100755
+index 018c632..f21cd1d 100755
 --- a/execute_command.sh
 +++ b/execute_command.sh
 @@ -59,7 +59,17 @@ do
@@ -21,24 +21,32 @@ index 018c632..394ea74 100755
    then
      touch "lock/"$item
  
-@@ -68,10 +78,23 @@ do
+@@ -68,10 +78,31 @@ do
  
  done
  
-+if [ $program_type == gui ] && [ $category == 3d -o $category == multimedia ]
++if [ $program_type == gui ]
 +then
 +  /etc/init.d/matrix-gui-2.0 stop
-+  /etc/init.d/weston stop
-+  sleep 1
++
++  if [ $category == 3d -o $category == multimedia ]
++  then
++    /etc/init.d/weston stop
++    sleep 1
++  fi
 +fi
 +
  echo "Filename:"$filename
  echo "Output:"$outputfilename
  eval $filename > "tmp/"$outputfilename 2>&1
  
-+if [ $program_type == gui ] && [ $category == 3d -o $category == multimedia ]
++if [ $program_type == gui ]
 +then
-+  /etc/init.d/weston start
++  if [ $category == 3d -o $category == multimedia ]
++  then
++    /etc/init.d/weston start
++  fi
++
 +  /etc/init.d/matrix-gui-2.0 start
 +fi
 +
