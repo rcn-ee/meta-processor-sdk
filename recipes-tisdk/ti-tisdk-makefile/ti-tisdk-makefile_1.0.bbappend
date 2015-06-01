@@ -1,4 +1,4 @@
-PR_append = "-tisdk9"
+PR_append = "-tisdk10"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -15,8 +15,6 @@ MAKEFILES_append_omap-a15 = " \
 "
 
 DEFCONFIG = "tisdk_${MACHINE}_defconfig"
-
-KERNEL_DEVICETREE_append_dra7xx = " am57xx-evm.dtb"
 
 PLATFORM_GDBSERVERPROXY = ""
 PLATFORM_GDBSERVERPROXY_dra7xx = "DRA7xx_PLATFORM"
