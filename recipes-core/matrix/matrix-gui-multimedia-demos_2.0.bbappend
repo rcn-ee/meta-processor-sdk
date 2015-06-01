@@ -1,6 +1,6 @@
-PR_append = "-tisdk1"
+PR_append = "-tisdk2"
 
-SRCREV = "59bb594da6b86ef24e5729a1f5ea70948f4255d2"
+SRCREV = "e89940ad8e69c223fadefe72f7d6c1d603f34d38"
 
 PACKAGES_append = " \
     matrix-multimedia-demo-ivahdh264dec \
