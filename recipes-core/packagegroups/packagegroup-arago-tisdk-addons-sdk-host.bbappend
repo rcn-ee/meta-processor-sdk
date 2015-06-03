@@ -1,6 +1,5 @@
-PR_append = "-tisdk2"
+PR_append = "-tisdk3"
 
 UTILS_append_dra7xx = " \
-    gdbserverproxy-module-drv-src \
     opencl-examples-src \
 "

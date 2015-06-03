@@ -1,7 +1,6 @@
-PR_append = "-tisdk3"
+PR_append = "-tisdk4"
 
 UTILS_append_dra7xx = " \
-    gdbc6x \
     opencl-examples \
 "
 
