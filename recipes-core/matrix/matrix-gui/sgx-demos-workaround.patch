@@ -1,5 +1,5 @@
 diff --git a/execute_command.sh b/execute_command.sh
-index 018c632..f21cd1d 100755
+index 018c632..86d7106 100755
 --- a/execute_command.sh
 +++ b/execute_command.sh
 @@ -59,7 +59,17 @@ do
@@ -21,7 +21,7 @@ index 018c632..f21cd1d 100755
    then
      touch "lock/"$item
  
-@@ -68,10 +78,31 @@ do
+@@ -68,10 +78,32 @@ do
  
  done
  
@@ -45,6 +45,7 @@ index 018c632..f21cd1d 100755
 +  if [ $category == 3d -o $category == multimedia ]
 +  then
 +    /etc/init.d/weston start
++    sleep 1
 +  fi
 +
 +  /etc/init.d/matrix-gui-2.0 start
