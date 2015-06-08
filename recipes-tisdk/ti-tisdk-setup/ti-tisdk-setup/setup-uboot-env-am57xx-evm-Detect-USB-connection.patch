@@ -1,0 +1,115 @@
+diff --git a/setup-minicom.sh b/setup-minicom.sh
+index 893e307..aa18dd4 100644
+--- a/setup-minicom.sh
++++ b/setup-minicom.sh
+@@ -47,6 +47,7 @@ For boards that contain a USB-to-Serial converter on the board such as:
+ 	* BeagleBone
+ 	* Beaglebone Black
+ 	* AM335x EVM-SK
++        * AM57xx EVM
+ 
+ the port used for minicom will be automatically detected. By default Ubuntu
+ will not recognize this device. Setup will add a udev rule to
+diff --git a/setup-uboot-env-am57xx-evm.sh b/setup-uboot-env-am57xx-evm.sh
+index a3f4126..fb37413 100644
+--- a/setup-uboot-env-am57xx-evm.sh
++++ b/setup-uboot-env-am57xx-evm.sh
+@@ -119,6 +119,16 @@ if [ "$kernel" -eq "1" ]; then
+     fi
+ fi
+ 
++board="unknown"
++check_for_board() {
++    lsusb -vv -d 0403:6001 > /dev/null 2>&1
++
++    if [ "$?" = "0" ]
++    then
++        board="x15"
++    fi
++}
++
+ echo "timeout 300" > $cwd/setupBoard.minicom
+ echo "verbose on" >> $cwd/setupBoard.minicom
+ do_expect "\"stop autoboot:\"" "send \" \"" $cwd/setupBoard.minicom
+@@ -182,11 +196,76 @@ if [ "$minicom" = "y" ]; then
+     echo -n "Successfully wrote "
+     readlink -m $cwd/setupBoard.minicom
+ 
+-    echo "Would you like to run the setup script now (y/n)? This requires you to connect"
+-    echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
+-    echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
+-    echo "you will have 300 seconds to connect the board and power cycle it"
+-    echo "before the setup times out"
++    while [ yes ]
++    do
++        check_for_board
++
++        if [ "$board" = "x15" ]
++        then
++            break
++        else
++            echo ""
++            echo "Board could not be detected. Please connect the board to the PC."
++            read -p "Press any key to try checking again." temp
++        fi
++    done
++
++    if [ "$board" != "unknown" ]
++    then
++        ftdiInstalled=`lsmod | grep ftdi_sio`
++        if [ -z "$ftdiInstalled" ]
++        then
++            sudo modprobe -q ftdi_sio
++        fi
++
++        while [ yes ]
++        do
++            echo ""
++            echo -n "Detecting connection to board... "
++            loopCount=0
++            port=`dmesg | grep FTDI | grep "tty" | tail -1 | grep "attached" |  awk '{ print $NF }'`
++            while [ -z "$port" ] && [ "$loopCount" -ne "10" ]
++            do
++                #count to 10 and timeout if no connection is found
++                loopCount=$((loopCount+1))
++
++                sleep 1
++                port=`dmesg  | grep FTDI | grep "tty" | tail -1 | grep "attached" |  awk '{ print $NF }'`
++            done
++
++            #check to see if we actually found a port
++            if [ -n "$port" ]; then
++                echo "/dev/$port"
++                break;
++            fi
++
++            #if we didn't find a port and reached the timeout limit then ask to reconnect
++            if [ -z "$port" ] && [ "$loopCount" = "10" ]; then
++                echo ""
++                echo "Unable to detect which port the board is connected to."
++                echo "Please reconnect your board."
++                echo "Press 'y' to attempt to detect your board again or press 'n' to continue..."
++                read -p "(y/n)" retryBoardDetection
++            fi
++
++            #if they choose not to retry, ask user to reboot manually and exit
++            if [ "$retryBoardDetection" = "n" ]; then
++                echo ""
++                echo "Please reboot your board manually and connect using minicom."
++                exit;
++            fi
++        done
++
++        sed -i -e "s|^pu port.*$|pu port             /dev/$port|g" ${HOME}/.minirc.dfl
++    fi
++
++    echo
++    echo "--------------------------------------------------------------------------------"
++    echo "Would you like to run the setup script now (y/n)?"
++    echo
++    echo "Please connect the ethernet cable as described in the Quick Start Guide."
++    echo "Once answering 'y' on the prompt below, you will have 300 seconds to connect"
++    echo "the board and power cycle it before the setup times out"
+     echo
+     echo "After successfully executing this script, your EVM will be set up. You will be "
+     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
