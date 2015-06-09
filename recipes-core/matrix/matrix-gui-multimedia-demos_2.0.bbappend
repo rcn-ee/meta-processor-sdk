@@ -1,3 +1,3 @@
-PR_append = "-tisdk4"
+PR_append = "-tisdk5"
 
-SRCREV = "6eb227e9a185691f38492740d0b3b16bb4aafb99"
+SRCREV = "4381e7980ee835d1a3f44ec3c8e2bbffe6c1c344"
