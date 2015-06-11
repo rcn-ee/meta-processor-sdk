@@ -1,11 +1,10 @@
-PR_append = "-tisdk3"
+PR_append = "-tisdk4"
+
+SRCREV = "876d28b2de5fa02d0f5fa836cba7be9a14b819eb"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = " \
-    file://0001-Pick-vpe-for-decoding-interlaced-streams.patch \
-    file://0002-Memory-leak-fix-gstvpebufferpool-not-freed.patch \
-    file://0003-Changes-to-dynamically-allocate-vpe-buffers.patch \
     file://ti-video.conf \
 "
 
