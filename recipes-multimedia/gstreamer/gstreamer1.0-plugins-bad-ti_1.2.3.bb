@@ -2,7 +2,7 @@ require recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_${PV}.bb
 
 DESCRIPTION = "GStreamer bad plugins that fix DRM and wayland support for TI devices"
 
-#PN = "gstreamer1.0-plugins-bad"
+PR = "r1"
 
 # Set PROVIDES and RPROVIDES values so that the base recipe names can still
 # be used and PREFERRED_PROVIDER can be used to pick between them.
@@ -30,7 +30,9 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 SRCREV = "22f32534ce54035c33c8e788b46dc257621b472c"
 
-SRC_URI = "git://git.ti.com/glsdk/gstreamer1-0-plugins-bad.git;protocol=git"
+SRC_URI = "git://git.ti.com/glsdk/gstreamer1-0-plugins-bad.git;protocol=git \
+           file://0006-GstDRMBufferPool-support-fix.patch \
+"
 
 S = "${WORKDIR}/git"
 
