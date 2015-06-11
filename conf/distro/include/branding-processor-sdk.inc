@@ -4,6 +4,10 @@ ARAGO_TISDK_IMAGE = "processor-sdk-linux-image"
 DISTRO_FEATURES_remove_ti33x = "wayland"
 DISTRO_FEATURES_remove_ti43x = "wayland"
 
+PREFERRED_PROVIDER_gstreamer1.0-plugins-bad = "gstreamer1.0-plugins-bad-ti"
+PREFERRED_PROVIDER_gstreamer1.0-plugins-bad-dev = "gstreamer1.0-plugins-bad-ti-dev"
+PREFERRED_PROVIDER_gstreamer1.0-plugins-bad-meta = "gstreamer1.0-plugins-bad-ti-meta"
+
 # Set preferred providers and srcrevs
 # Auto rev important packages to pick up latest
 #SRCREV_pn-u-boot-ti-staging_omap-a15 = "${AUTOREV}"
