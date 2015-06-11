@@ -1,11 +1,3 @@
-PR_append = "-tisdk1"
+PR_append = "-tisdk2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-
-SRC_URI_append = " \
-    file://0001-Reduce-mem-copying-and-code-clean-up.patch \
-    file://0002-Solve-memory-leak-incase-of-external-bufferpool.patch \
-    file://0003-gstducati-Correct-h264-ducati-plugin-caps.patch \
-    file://0004-gst-ducati-Enable-ducati-to-accept-streams-without-p.patch \
-    file://0005-gst-ducati-Change-codec-level-param-depending-on-str.patch \
-"
+SRCREV = "9c0c7e47421096d6a7ecdca98b7ca1ed33097ea4"
