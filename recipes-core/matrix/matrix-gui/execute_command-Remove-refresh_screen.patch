@@ -1,0 +1,13 @@
+diff --git a/execute_command.sh b/execute_command.sh
+index 018c632..2be1278 100755
+--- a/execute_command.sh
++++ b/execute_command.sh
+@@ -75,8 +75,6 @@ eval $filename > "tmp/"$outputfilename 2>&1
+ #Using a more unique string to detect if the script is completed
+ echo "_?!!MATRIX_SCRIPT_COMPLETED!!?_" >> "tmp/"$outputfilename
+ 
+-refresh_screen &
+-
+ i=0
+ 
+ for item in "$@"
