@@ -1,0 +1,63 @@
+#! /bin/sh
+
+matrixgui="/usr/bin/matrix_browser"
+GUI_OPTS="http://localhost:80/ __MATRIX_FLAGS__"
+PIDFILE="/var/run/matrix-gui-2.0.pid"
+HDMI_OPTS=""
+
+# Important System Environment Variables
+SCRIPTS=/etc/profile.d/*.sh
+
+for f in $SCRIPTS
+do
+    source $f
+done
+
+test -x "$matrixgui" || exit 0
+
+if modetest | grep "HDMI"
+then
+  # HDMI enabled
+  if ! modetest | grep "HDMI" | grep "disconnected" > /dev/null
+  then
+  # HDMI connected, use windowed option
+    HDMI_OPTS="--windowed"
+  fi
+fi
+
+case "$1" in
+  start)
+    __SWITCH_FOREGROUND_VT__
+
+    #Clear out the the tmp and lock directory
+    cd __MATRIX_WEB_DIR__
+    rm -rf tmp/*
+    rm -rf lock/*
+    cd -
+
+	if [ -e $PIDFILE ]; then
+      PIDDIR=/proc/$(cat $PIDFILE)
+      if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${matrixgui}" ]; then
+        echo "$DESC already started; not starting."
+      else
+        echo "Removing stale PID file $PIDFILE."
+        rm -f $PIDFILE
+      fi
+    fi
+
+    echo -n "Starting Matrix GUI application"
+    start-stop-daemon --start --quiet --background -m --pidfile $PIDFILE --exec $matrixgui -- $GUI_OPTS $HDMI_OPTS
+    echo "."
+    ;;
+
+  stop)
+    echo -n "Stopping Matrix GUI application"
+    start-stop-daemon --stop --quiet --pidfile $PIDFILE
+    echo "."
+    ;;
+  *)
+    echo "Usage: /etc/init.d/matrix-gui-2.0 {start|stop}"
+    exit 1
+esac
+
+exit 0
