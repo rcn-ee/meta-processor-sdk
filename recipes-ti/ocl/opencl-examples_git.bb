@@ -12,6 +12,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 DEPENDS = "opencl ti-cgt6x-native clocl-native"
 
 RDEPENDS_${PN} += " opencl-runtime"
+RDEPENDS_${PN}-dev += " libgomp-dev"
 
 S = "${WORKDIR}/git/opencl_example_src"
 B = "${S}"
