@@ -16,7 +16,7 @@ RDEPENDS_${PN} += " opencl-runtime"
 S = "${WORKDIR}/git/opencl_example_src"
 B = "${S}"
 
-OCL_EXAMPLE_LIST = "buffer ccode dsplib_fft null offline offline_embed platforms simple vecadd matmpy ooo_callback ooo ooo_map edmamgr"
+OCL_EXAMPLE_LIST = "buffer ccode dsplib_fft float_compute null offline offline_embed platforms simple vecadd matmpy ooo_callback edmamgr"
 
 python do_unpack_append() {
     import shutil
