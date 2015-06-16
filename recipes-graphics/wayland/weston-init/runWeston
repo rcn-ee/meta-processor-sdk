@@ -36,4 +36,4 @@ cat << EOF
 
 EOF
 
-weston >> /var/log/weston.log 2>&1
+weston --idle-time=0 >> /var/log/weston.log 2>&1
