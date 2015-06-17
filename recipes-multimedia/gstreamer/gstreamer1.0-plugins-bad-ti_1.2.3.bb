@@ -2,7 +2,7 @@ require recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_${PV}.bb
 
 DESCRIPTION = "GStreamer bad plugins that fix DRM and wayland support for TI devices"
 
-PR = "r1"
+PR = "r2"
 
 # Set PROVIDES and RPROVIDES values so that the base recipe names can still
 # be used and PREFERRED_PROVIDER can be used to pick between them.
@@ -17,7 +17,7 @@ RCONFLICTS_${PN} += "gstreamer1.0-plugins-bad"
 RCONFLICTS_${PN}-dev += "gstreamer1.0-plugins-bad-dev"
 RCONFLICTS_${PN}-meta += "gstreamer1.0-plugins-bad-meta"
 
-PACKAGE_CONFIG = "faad"
+PACKAGECONFIG = "faad"
 
 PACKAGECONFIG_append_omap-a15 = " ${@base_contains('DISTRO_FEATURES','wayland','wayland','',d)}"
 
