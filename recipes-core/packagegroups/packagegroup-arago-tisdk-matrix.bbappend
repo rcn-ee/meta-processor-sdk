@@ -1,4 +1,4 @@
-PR_append = "-tisdk4"
+PR_append = "-tisdk5"
 
 MATRIX_SGX_DEMOS_omap-a15 = " \
     matrix-3d-demo-chameleon \
@@ -21,6 +21,6 @@ MATRIX_APPS_append_omap-a15 = " \
 "
 
 MATRIX_APPS_append_dra7xx = "        \
-    matrix-opencl-demo-dsplibfft        \
-    matrix-opencl-demo-vecadd           \
+    matrix-opencl-demo-floatcompute  \
+    matrix-opencl-demo-vecadd        \
 "
