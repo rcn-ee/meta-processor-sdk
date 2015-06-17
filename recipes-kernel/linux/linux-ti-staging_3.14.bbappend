@@ -1,4 +1,4 @@
-PR_append = "-tisdk11"
+PR_append = "-tisdk12"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.14:"
 
@@ -16,6 +16,9 @@ SRC_URI += "file://0001-DRA7-IVA-Set-iva-initial-freq.patch \
             file://0002-v4l2-core-videobuf2-core.c-fix.patch \
             file://0001-Added-DT-bindings-for-DebugSS.patch \
             file://0001-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
+            file://0001-Revert-input-ti_am335x_tsc-Ignore-previous-pen-down-event.patch \
+            file://0002-Input-ti_am335x_tsc-remove-udelay-in-interrupt-handler.patch \
+            file://0003-Input-ti_am335x_tsc-replace-delta-filtering-with-median-filtering.patch \
 "
 
 CMEM_BASE_omap-a15 = "a0000000"
