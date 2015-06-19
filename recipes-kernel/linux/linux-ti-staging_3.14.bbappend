@@ -1,4 +1,4 @@
-PR_append = "-tisdk12"
+PR_append = "-tisdk13"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-3.14:"
 
@@ -19,6 +19,7 @@ SRC_URI += "file://0001-DRA7-IVA-Set-iva-initial-freq.patch \
             file://0001-Revert-input-ti_am335x_tsc-Ignore-previous-pen-down-event.patch \
             file://0002-Input-ti_am335x_tsc-remove-udelay-in-interrupt-handler.patch \
             file://0003-Input-ti_am335x_tsc-replace-delta-filtering-with-median-filtering.patch \
+            file://0011-UAPI-Increasing-the-max-FRAME-number-to-128.patch \
 "
 
 CMEM_BASE_omap-a15 = "a0000000"
