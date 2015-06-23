@@ -1,0 +1,13 @@
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index 018487a..a393e8e 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -274,7 +274,7 @@ PARTITION_TEST=`cat /proc/partitions | grep -v $ROOTDRIVE | grep '\<sd.\>\|\<mmc
+ # Check for available mounts
+ check_for_sdcards
+ 
+-echo -e "\nAvailible Drives to write images to: \n"
++echo -e "\nAvailable Drives to write images to: \n"
+ echo "#  major   minor    size   name "
+ cat /proc/partitions | grep -v $ROOTDRIVE | grep '\<sd.\>\|\<mmcblk.\>' | grep -n ''
+ echo " "
