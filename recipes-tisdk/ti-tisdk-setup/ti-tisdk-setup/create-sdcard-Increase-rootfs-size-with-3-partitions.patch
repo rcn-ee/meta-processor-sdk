@@ -1,0 +1,15 @@
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index 018487a..e25da1d 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -517,8 +517,8 @@ CYLINDERS=`echo $SIZE/255/63/512 | bc`
+ 
+ sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
+ ,9,0x0C,*
+-10,90,,-
+-100,,,-
++10,300,,-
++310,,,-
+ EOF
+ 
+ cat << EOM
