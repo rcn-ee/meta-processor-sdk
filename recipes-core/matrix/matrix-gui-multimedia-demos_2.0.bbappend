@@ -1,6 +1,6 @@
-PR_append = "-tisdk10"
+PR_append = "-tisdk11"
 
-SRCREV = "fc80e9d2f5e576cb99ad94883094567f3dd5ee78"
+SRCREV = "2cf7e20f595f0cb3067832903604d44851f69e5c"
 
 PACKAGES += "matrix-multimedia-demo-h265dec"
 
