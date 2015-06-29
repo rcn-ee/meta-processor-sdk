@@ -4,7 +4,7 @@ LICENSE = "CC-BY-NC-ND-3.0 & CC-BY-3.0"
 SECTION = "multimedia"
 LIC_FILES_CHKSUM = "file://Multimedia_Data_Files_Manifest.doc;md5=da0727f80b90422138535dfffc36cd1a"
 PR = "r0"
-PR_append = "-tisdk0"
+PR_append = "-tisdk1"
 
 COMPATIBLE_MACHINE = "(omap3|ti33x|ti43x|omap-a15)"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -16,6 +16,7 @@ VIDEO_FILES_append_beagleboard = "video_vga"
 VIDEO_FILES_append_am3517-evm  = "video_wqvga"
 VIDEO_FILES_append_ti33x       = "video_wvga \
                                   video_wqvga"
+VIDEO_FILES_append_ti43x       = "video_wqvga"
 VIDEO_FILES_append_dra7xx      = "video_wvga \
                                   video_1080p \
                                   video_720p \
