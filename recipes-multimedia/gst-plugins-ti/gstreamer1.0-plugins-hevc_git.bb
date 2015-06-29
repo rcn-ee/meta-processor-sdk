@@ -7,7 +7,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 COMPATIBLE_MACHINE = "dra7xx"
 
 SRC_URI = "git://git.ti.com/processor-sdk/gst-plugin-hevc.git;protocol=git"
-SRCREV = "7acdb6c23d6e9fbc96d563f5a156cc1a85d9e354"
+SRCREV = "2f17d5c50f7376c0489ae1a2f571f1e749f5f72e"
 
 S = "${WORKDIR}/git"
 
@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad hevc
 
 inherit autotools pkgconfig gettext
 
-PR = "r2"
+PR = "r3"
 
 do_configure() {
         cd ${S}
