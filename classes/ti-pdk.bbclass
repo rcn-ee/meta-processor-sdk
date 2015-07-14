@@ -1,7 +1,7 @@
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 
-DEPENDS = "ti-xdctools ti-cgt6x-native ti-ccsv6 ti-cg-xml ti-sysbios common-csl-ip-rtos"
+DEPENDS = "ti-xdctools ti-cgt6x-native ti-ccsv6-native ti-cg-xml-native ti-sysbios common-csl-ip-rtos"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
