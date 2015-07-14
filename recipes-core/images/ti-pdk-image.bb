@@ -29,6 +29,7 @@ do_rootfs[nostamp] = "1"
 do_rootfs[lockfiles] += "${IMAGE_ROOTFS}.lock"
 do_rootfs[cleandirs] += "${S}"
 
+
 # Create the SDK image.  We will re-use the rootfs_ipk_do_rootfs functionality
 # to install a given list of packages using opkg.
 fakeroot python do_rootfs () {
@@ -89,4 +90,4 @@ TI_PDK_VERSION = "8_00_00_00"
 
 IMAGE_FSTYPES = "tar.gz"
 
-IMAGE_INSTALL = "packagegroup-arago-tisdk-pdk-dev"
+IMAGE_INSTALL = "packagegroup-arago-tisdk-pdk"

@@ -48,5 +48,4 @@ do_install () {
     find -name "*.tar" -exec tar xf {} -C ${D}${PDK_INSTALL_DIR_RECIPE}/packages \;
 }
 
-ALLOW_EMPTY_${PN} = "1"
-FILES_${PN}-dev += "${PDK_INSTALL_DIR_RECIPE}/packages"
+FILES_${PN} += "${PDK_INSTALL_DIR_RECIPE}/packages"
