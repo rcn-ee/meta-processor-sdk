@@ -3,6 +3,8 @@ HOMEPAGE = "http://software-dl.ti.com/ccs/non-esd/releases/other/applications_pa
 SECTION = "devel"
 LICENSE = "BSD"
 
+inherit native
+
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
