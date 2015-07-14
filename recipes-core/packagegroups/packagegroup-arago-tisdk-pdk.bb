@@ -37,6 +37,7 @@ PDK_BOARD_SUPPORT = "\
 
 RDEPENDS_${PN} = "\
     ti-pdk-setup \
+    ti-pdk-eclipse \
     ${PDK_CSL} \
     ${PDK_LLDS} \
     ${PDK_TRANSPORTS} \
