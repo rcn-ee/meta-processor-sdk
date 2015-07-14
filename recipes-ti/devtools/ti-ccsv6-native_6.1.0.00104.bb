@@ -4,6 +4,8 @@ LICENSE = "(TI-TSPA & Thai-Open-Source-Software-Center) & BSD-3-Clause & BSL-1.0
 
 LIC_FILES_CHKSUM = "file://${WORKDIR}/ccsv6/doc/EULA/EULA.doc;md5=24fb8a52ac52d3938b5888362edb295a"
 
+inherit native
+
 require recipes-ti/includes/ti-unpack.inc
 require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-paths-append.inc
@@ -19,6 +21,8 @@ TI_BIN_UNPK_CMDS = ""
 SRC_URI[ccsv6.md5sum] = "72970262e34399e69403837a4021538e"
 SRC_URI[ccsv6.sha256sum] = "89da2ed70a48da5ecef9b9fbbb3612fb6f013e779412def3cddc81bf3c24eaf4"
 
+DEPENDS = "ti-cgt6x-native"
+
 do_install() {
     install -d ${D}${CCSv6_INSTALL_DIR_RECIPE}
     cp -r ${WORKDIR}/ccsv6/. ${D}${CCSv6_INSTALL_DIR_RECIPE}
@@ -30,6 +34,8 @@ do_install() {
     install -d ${D}${M4_TOOLCHAIN_INSTALL_DIR_RECIPE}
     cp -r ${WORKDIR}/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/. \
           ${D}${M4_TOOLCHAIN_INSTALL_DIR_RECIPE}
+
+    ln -sv ../../../cgt-c6x ${D}${CCSv6_INSTALL_DIR_RECIPE}/ccsv6/tools/compiler/
 }
 
 FILES_${PN} += "\
