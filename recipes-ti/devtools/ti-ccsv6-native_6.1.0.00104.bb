@@ -35,7 +35,7 @@ do_install() {
     cp -r ${WORKDIR}/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/. \
           ${D}${M4_TOOLCHAIN_INSTALL_DIR_RECIPE}
 
-    ln -sv ../../../cgt-c6x ${D}${CCSv6_INSTALL_DIR_RECIPE}/ccsv6/tools/compiler/
+    ln -sfv ../../../cgt-c6x ${D}${CCSv6_INSTALL_DIR_RECIPE}/tools/compiler/
 }
 
 FILES_${PN} += "\
