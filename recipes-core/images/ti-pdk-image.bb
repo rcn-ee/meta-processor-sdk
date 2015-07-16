@@ -27,12 +27,12 @@ RDEPENDS_${PN} += "${@' '.join(oe.packagegroup.active_packages('${IMAGE_FEATURES
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-do_rootfs[nostamp] = "1"
+#do_rootfs[nostamp] = "1"
 do_rootfs[lockfiles] += "${IMAGE_ROOTFS}.lock"
 do_rootfs[cleandirs] += "${S}"
 
 
-TI_PDK_PROJECT_DIR ?= "${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE}/packages/examplesProjects"
+TI_PDK_PROJECT_DIR ?= "${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE}/packages/exampleProjects"
 
 TI_PDK_PLATFORMS = ""
 TI_PDK_PLATFORMS_append_omap-a15 = "AM571x AM572x"
@@ -115,6 +115,9 @@ create_ccs_project() {
         -rtsc.target "${project_target}" \
         -ccs.rts "libc.a" \
         -ccs.args "${project_text}"
+
+    cp ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE}/packages/macros.ini \
+       ${TI_PDK_PROJECT_DIR}/${project_name}
 
     cd $cwd
 }
