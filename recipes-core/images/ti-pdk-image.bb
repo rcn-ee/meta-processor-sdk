@@ -1,36 +1,13 @@
-inherit rootfs_ipk
-inherit image_types
+inherit tisdk-image
+
+TARGET_IMAGES = " "
+TISDK_TOOLCHAIN = " "
+
+USE_DEVFS = "1"
 
 require recipes-ti/includes/ti-paths-append.inc
 
 DEPENDS += "ti-ccsv6-native"
-
-# This defines the list of features that we want to include in the SDK
-# image.  The list of packages this will be installed for each features
-# is controlled with the PACKAGE_GROUP_<feature> settings below.
-IMAGE_FEATURES ?= ""
-IMAGE_FEATURES[type] = "list"
-
-# Always add the sdk_base feature
-IMAGE_FEATURES_prepend = "sdk_base package-management"
-
-USE_DEVFS = "1"
-
-# Define our always included sdk package group as the IMAGE_INSTALL settings
-# like you would expect.
-PACKAGE_GROUP_sdk_base = "${IMAGE_INSTALL}"
-
-# Create the list of packages to be installed
-PACKAGE_INSTALL = "${@' '.join(oe.packagegroup.required_packages('${IMAGE_FEATURES}'.split(), d))}"
-
-RDEPENDS_${PN} += "${@' '.join(oe.packagegroup.active_packages('${IMAGE_FEATURES}'.split(), d))}"
-
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
-do_rootfs[nostamp] = "1"
-do_rootfs[lockfiles] += "${IMAGE_ROOTFS}.lock"
-do_rootfs[cleandirs] += "${S}"
-
 
 TI_PDK_PROJECT_DIR ?= "${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE}/packages/exampleProjects"
 
@@ -123,8 +100,13 @@ create_ccs_project() {
 }
 
 
-# Create the SDK image.  We will re-use the rootfs_ipk_do_rootfs functionality
-# to install a given list of packages using opkg.
+generate_sw_manifest() {
+    sw_manifest_header
+    sw_manifest_host
+    sw_manifest_footer
+}
+
+
 python do_rootfs () {
     from oe.rootfs import create_rootfs
     from oe.image import create_image
@@ -140,10 +122,6 @@ python do_rootfs () {
     create_image(d)
 }
 
-ROOTFS_PREPROCESS_COMMAND += "tisdk_image_setup; "
-ROOTFS_POSTPROCESS_COMMAND += "tisdk_image_build; "
-IMAGE_PREPROCESS_COMMAND += "tisdk_image_cleanup; "
-
 tisdk_image_setup () {
     set -x
     rm -rf ${IMAGE_ROOTFS}
@@ -153,6 +131,7 @@ tisdk_image_setup () {
     mkdir -p ${IMAGE_ROOTFS}/etc
     mkdir -p ${IMAGE_ROOTFS}/var/lib/opkg
     mkdir -p ${IMAGE_ROOTFS}/lib
+    mkdir -p ${IMAGE_ROOTFS}/docs
 }
 
 tisdk_image_build() {
@@ -173,24 +152,17 @@ tisdk_image_build() {
 
     cd $cwd
 
+    generate_sw_manifest
+
     mv ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE} ${IMAGE_ROOTFS}/${TI_PDK_NAME}_${TI_PDK_VERSION}
+    mv ${IMAGE_ROOTFS}/docs ${IMAGE_ROOTFS}/${TI_PDK_NAME}_${TI_PDK_VERSION}
 }
 
-tisdk_image_cleanup () {
+tisdk_image_cleanup_append () {
     # Move the var/etc directories which contains the opkg data used for the
     # manifest (and maybe one day for online updates) to a hidden directory.
-    rm -rf ${IMAGE_ROOTFS}/var
-    rm -rf ${IMAGE_ROOTFS}/etc
-    rm -rf ${IMAGE_ROOTFS}/lib
     rm -rf ${IMAGE_ROOTFS}/usr
 }
-
-license_create_manifest() {
-    :
-}
-
-EXPORT_FUNCTIONS do_rootfs
-addtask rootfs before do_build after do_install
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690"
