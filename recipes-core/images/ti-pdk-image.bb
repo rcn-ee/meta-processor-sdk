@@ -27,7 +27,7 @@ RDEPENDS_${PN} += "${@' '.join(oe.packagegroup.active_packages('${IMAGE_FEATURES
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-#do_rootfs[nostamp] = "1"
+do_rootfs[nostamp] = "1"
 do_rootfs[lockfiles] += "${IMAGE_ROOTFS}.lock"
 do_rootfs[cleandirs] += "${S}"
 
@@ -173,7 +173,7 @@ tisdk_image_build() {
 
     cd $cwd
 
-    mv ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE} ${IMAGE_ROOTFS}/pdk_${MACHINE}_${TI_PDK_VERSION}
+    mv ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE} ${IMAGE_ROOTFS}/${TI_PDK_NAME}_${TI_PDK_VERSION}
 }
 
 tisdk_image_cleanup () {
@@ -197,7 +197,10 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d
 
 export IMAGE_BASENAME = "ti-pdk-image"
 
-TI_PDK_VERSION = "8_00_00_00"
+TI_PDK_NAME ?= "pdk_${MACHINE}"
+TI_PDK_NAME_omap-a15 = "pdk_am57xx"
+
+TI_PDK_VERSION = "2015_07_00"
 
 IMAGE_FSTYPES = "tar.gz"
 
