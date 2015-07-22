@@ -5,8 +5,14 @@ inherit ti-rtos-image
 
 export IMAGE_BASENAME = "ti-rtos-image-linux"
 
+EXTRA_TOOLS = "\
+    nativesdk-ti-cg-xml-installer-linux \
+"
+
 EXTRA_TOOLS_append_omap-a15 = "\
     nativesdk-ti-cgt6x-installer-linux \
-    nativesdk-ti-cg-xml-installer-linux \
+"
+
+IMAGE_INSTALL += "\
     ti-xdctools-src \
 "
