@@ -1,6 +1,6 @@
 DESCRIPTION = "Task to install low-level drivers and platform libraries for the PDK"
 LICENSE = "MIT"
-PR = "r0"
+PR = "r1"
 
 inherit packagegroup
 
@@ -34,6 +34,9 @@ PDK_BOARD_SUPPORT = "\
     board-rtos \
 "
 
+PDK_STARTERWARE = ""
+PDK_STARTERWARE_append_ti33x = "starterware"
+PDK_STARTERWARE_append_ti43x = "starterware"
 
 RDEPENDS_${PN} = "\
     ti-pdk-setup \
@@ -43,4 +46,5 @@ RDEPENDS_${PN} = "\
     ${PDK_TRANSPORTS} \
     ${PDK_FILESYSTEMS} \
     ${PDK_BOARD_SUPPORT} \
+    ${PDK_STARTERWARE} \
 "
