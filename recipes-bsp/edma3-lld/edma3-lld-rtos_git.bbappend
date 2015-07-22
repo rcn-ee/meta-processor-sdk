@@ -1,5 +1,7 @@
 PR_append = ".ti-int0"
 
+COMPATIBLE_MACHINE_append = "|ti33x|ti43x|omap-a15"
+
 do_compile_append() {
     sourceipk_do_create_srcipk
 }
