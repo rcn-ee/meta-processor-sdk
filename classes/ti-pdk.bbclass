@@ -1,7 +1,9 @@
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 
-DEPENDS = "ti-xdctools ti-cgt6x-native ti-ccsv6-native ti-sysbios common-csl-ip-rtos"
+inherit perlnative
+
+DEPENDS = "ti-xdctools ti-cgt6x-native ti-cg-xml-native ti-ccsv6-native ti-sysbios common-csl-ip-rtos libxml-simple-perl-native"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
@@ -20,6 +22,7 @@ export TOOLCHAIN_PATH_A15 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export TOOLCHAIN_PATH_M4 = "${M4_TOOLCHAIN_INSTALL_DIR}"
 export CROSS_TOOL_PRFX = "arm-none-eabi-"
 export XDCPATH = "${XDC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages;${PDK_INSTALL_DIR}/packages"
+export SECTTI="perl ${CG_XML_INSTALL_DIR}/ofd/sectti.pl"
 
 do_configure() {
     BUILD_DIR=${B}/`get_build_dir_bash`
@@ -34,15 +37,15 @@ do_configure() {
     find -name "*.xs" -exec sed -i "/\.chm/d" {} \;
     find -name "*.xs" -exec sed -i "s/pasm\_dos/pasm\_linux/" {} \;
 
-    # Disable secti
+    # Workaround to enable sectti in parallel builds.
     sed -i build/buildlib.xs \
-        -e 's|[//]*\(Pkg\.makeEpilogue.*\.libraries:.*benchmarking.*$\)|//\1|g' \
-        -e 's|[//]*\(Pkg\.otherFiles.*_size.txt.*$\)|//\1|g'
+        -e 's|sectti|$(SECTTI)|g'
 }
 
 do_compile() {
-    ${XDC_INSTALL_DIR}/xdc .make -PR .
-    ${XDC_INSTALL_DIR}/xdc clean -PR .
+    ${XDC_INSTALL_DIR}/xdc .make ${PARALLEL_XDC} -PR .
+    ${XDC_INSTALL_DIR}/xdc clean ${PARALLEL_XDC} -PR .
+    ${XDC_INSTALL_DIR}/xdc all ${PARALLEL_XDC} -PR .
     ${XDC_INSTALL_DIR}/xdc release -PR .
 }
 
