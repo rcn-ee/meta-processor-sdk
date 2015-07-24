@@ -5,6 +5,8 @@ TISDK_TOOLCHAIN = " "
 
 USE_DEVFS = "1"
 
+RDEPENDS_${PN} += "${EXTRA_TOOLS}"
+
 # Add a dependency for the do_rootfs function that will force us to build
 # the EXTRA_IMAGES first so that they will be available for packaging.
 do_rootfs[depends] += "${@string_set('%s:do_rootfs' % pn for pn in (d.getVar("EXTRA_IMAGES", True) or "").split())}"
