@@ -1,64 +1,40 @@
-inherit rootfs_ipk
-inherit image_types
+inherit tisdk-image
 
-require recipes-ti/includes/ti-paths-append.inc
-
-# This defines the list of features that we want to include in the SDK
-# image.  The list of packages this will be installed for each features
-# is controlled with the PACKAGE_GROUP_<feature> settings below.
-IMAGE_FEATURES ?= ""
-IMAGE_FEATURES[type] = "list"
-
-# Always add the sdk_base feature
-IMAGE_FEATURES_prepend = "sdk_base package-management"
+TARGET_IMAGES = " "
+TISDK_TOOLCHAIN = " "
 
 USE_DEVFS = "1"
 
-# Define our always included sdk package group as the IMAGE_INSTALL settings
-# like you would expect.
-PACKAGE_GROUP_sdk_base = "${IMAGE_INSTALL}"
-
-# Create the list of packages to be installed
-PACKAGE_INSTALL = "${@' '.join(oe.packagegroup.required_packages('${IMAGE_FEATURES}'.split(), d))}"
-
-RDEPENDS_${PN} += "${@' '.join(oe.packagegroup.active_packages('${IMAGE_FEATURES}'.split(), d))}"
-RDEPENDS_${PN} += "${EXTRA_TOOLS}"
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
-# helper function for generating a set of strings based on a list.  Taken
-# from the image.bbclass.
-def string_set(iterable):
-    return ' '.join(set(iterable))
-
 # Add a dependency for the do_rootfs function that will force us to build
-# the TARGET_IMAGES first so that they will be available for packaging.
+# the EXTRA_IMAGES first so that they will be available for packaging.
 do_rootfs[depends] += "${@string_set('%s:do_rootfs' % pn for pn in (d.getVar("EXTRA_IMAGES", True) or "").split())}"
 
-do_rootfs[nostamp] = "1"
-do_rootfs[lockfiles] += "${IMAGE_ROOTFS}.lock"
-do_rootfs[cleandirs] += "${S}"
+sw_manifest_tools() {
+    sw_manifest_table_header "Development Tools" "This table describes software which provides tools for the development host."
 
+    opkg_dir=${IMAGE_ROOTFS}/.tools.control
 
-# Create the SDK image.  We will re-use the rootfs_ipk_do_rootfs functionality
-# to install a given list of packages using opkg.
-fakeroot python do_rootfs () {
-    from oe.rootfs import create_rootfs
-    from oe.image import create_image
-    from oe.manifest import create_manifest
+    generate_sw_manifest_table $opkg_dir
 
-    # generate the initial manifest
-    create_manifest(d)
-
-    # generate rootfs
-    create_rootfs(d)
-
-    # generate final images
-    create_image(d)
+    sw_manifest_table_footer
 }
 
-ROOTFS_PREPROCESS_COMMAND += "tisdk_image_setup; "
-ROOTFS_POSTPROCESS_COMMAND += "tisdk_image_build; "
-IMAGE_PREPROCESS_COMMAND += "tisdk_image_cleanup; "
+sw_manifest_rtos() {
+    sw_manifest_table_header "Target Device Content" "This table describes software which provides sources and libraries for the target device."
+
+    opkg_dir=${IMAGE_ROOTFS}/var/lib/opkg/info
+
+    generate_sw_manifest_table $opkg_dir
+
+    sw_manifest_table_footer
+}
+
+generate_sw_manifest() {
+    sw_manifest_header
+    sw_manifest_tools
+    sw_manifest_rtos
+    sw_manifest_footer
+}
 
 tisdk_image_setup () {
     set -x
@@ -77,16 +53,25 @@ tisdk_image_build() {
         tar -xf ${DEPLOY_DIR_IMAGE}/${image}-${MACHINE}.tar.gz -C ${IMAGE_ROOTFS}
     done
 
+    # Combine opkg info directories.
+    cp -r ${IMAGE_ROOTFS}/.var/. ${IMAGE_ROOTFS}/var/
+    rm -rf ${IMAGE_ROOTFS}/.var
+
+    mkdir -p ${IMAGE_ROOTFS}/.tools.control
     for tool in ${EXTRA_TOOLS}
     do
-        mkdir -p ${IMAGE_ROOTFS}/.tmp_${tool}
+        mkdir -p ${IMAGE_ROOTFS}/.tmp_${tool}/CONTROL
         cd ${IMAGE_ROOTFS}/.tmp_${tool}
         tool_ipk=`find ${DEPLOY_DIR} -name ${tool}_*`
         ar x ${tool_ipk}
         tar -C ${IMAGE_ROOTFS} -xf data.tar.gz
+        tar -xf control.tar.gz
+        cp control ${IMAGE_ROOTFS}/.tools.control/${tool}.control
         cd - > /dev/null
         rm -rf ${IMAGE_ROOTFS}/.tmp_${tool}
     done
+
+    generate_sw_manifest
 
     if [ -d ${IMAGE_ROOTFS}/component-sources ]
     then
@@ -95,20 +80,10 @@ tisdk_image_build() {
     fi
 }
 
-tisdk_image_cleanup () {
-    # Move the var/etc directories which contains the opkg data used for the
-    # manifest (and maybe one day for online updates) to a hidden directory.
-    mv ${IMAGE_ROOTFS}/var ${IMAGE_ROOTFS}/.var
-    mv ${IMAGE_ROOTFS}/etc ${IMAGE_ROOTFS}/.etc
-    mv ${IMAGE_ROOTFS}/lib ${IMAGE_ROOTFS}/.lib
-}
+TISDK_VERION ?= "${SDK_VERSION}"
 
-license_create_manifest() {
-    :
-}
-
-EXPORT_FUNCTIONS do_rootfs
-addtask rootfs before do_build after do_install
+SW_MANIFEST_FILE = "${IMAGE_ROOTFS}/${IMAGE_BASENAME}-${TISDK_VERSION}_software_manifest.htm"
+SW_MANIFEST_TEXT = "${IMAGE_ROOTFS}/${IMAGE_BASENAME}-${TISDK_VERSION}_software_manifest.txt"
 
 IMAGE_FSTYPES = "tar.gz"
 
