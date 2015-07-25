@@ -4,6 +4,6 @@ LIC_FILES_CHKSUM = "file://icss_emacDrv.h;beginline=1;endline=40;md5=ecc25fda148
 BRANCH ="master"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/icss-emac-lld.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "037f8d7f11a461caf7263b025db282804cbf6094"
+SRCREV = "4034a49aa39733feddfb3a9a20cd8b8fadf345f8"
 PV = "01.00.00.00"
-PR = "r0"
+PR = "r1"
