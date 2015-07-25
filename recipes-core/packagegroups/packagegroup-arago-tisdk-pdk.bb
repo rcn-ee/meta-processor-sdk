@@ -1,6 +1,6 @@
 DESCRIPTION = "Task to install low-level drivers and platform libraries for the PDK"
 LICENSE = "MIT"
-PR = "r1"
+PR = "r2"
 
 inherit packagegroup
 
@@ -19,7 +19,7 @@ PDK_LLDS = "\
     uart-lld-rtos \
 "
 
-PDK_LLDS_append_omap-a15 = "pcie-lld-rtos"
+PDK_LLDS_append_omap-a15 = " pcie-lld-rtos"
 
 PDK_TRANSPORTS = ""
 PDK_TRANSPORTS_append_omap-a15 = "\
@@ -35,8 +35,11 @@ PDK_BOARD_SUPPORT = "\
 "
 
 PDK_STARTERWARE = ""
-PDK_STARTERWARE_append_ti33x = "starterware"
-PDK_STARTERWARE_append_ti43x = "starterware"
+PDK_STARTERWARE_append_ti33x = " starterware"
+PDK_STARTERWARE_append_ti43x = " starterware"
+
+PDK_BOOTLOADER = ""
+PDK_BOOTLOADER_append_omap-a15 = " sbl-boot-rtos"
 
 RDEPENDS_${PN} = "\
     ti-pdk-setup \
@@ -47,4 +50,5 @@ RDEPENDS_${PN} = "\
     ${PDK_FILESYSTEMS} \
     ${PDK_BOARD_SUPPORT} \
     ${PDK_STARTERWARE} \
+    ${PDK_BOOTLOADER} \
 "
