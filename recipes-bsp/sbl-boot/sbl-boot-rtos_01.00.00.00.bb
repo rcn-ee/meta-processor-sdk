@@ -12,14 +12,16 @@ COMPATIBLE_MACHINE = "am57xx-evm"
 BRANCH = "master"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/sbl.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "327a41f500edb76ad1687f612498e31051d9dc8d"
-PR = "r0"
+SRCREV = "969d7a2d6bd0b0c610e11801280a4e9d2a4037bb"
+PR = "r1"
 
 S = "${WORKDIR}/git"
 
 export TOOLCHAIN_PATH_A15 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export CROSS_TOOL_PRFX = "arm-none-eabi-"
 export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}/packages"
+LDFLAGS = ""
+CFLAGS = ""
 
 SBL_SRC_OPTS = "SBL_SRC_DIR=${S} SBL_INC_DIR=${S}/board/src SBL_LIB_INC_DIR=${S}/src/rprc SBL_MMCSD_DIR=${S}/src/mmcsd SBL_QSPI_DIR=${S}/src/qspi"
 
@@ -30,6 +32,8 @@ do_compile() {
 }
 
 do_install() {
-  install -d ${PDK_INSTALL_DIR_RECIPE}/package/ti/boot/sbl
-  cp -r ${S}/. ${PDK_INSTALL_DIR_RECIPE}/package/ti/boot/sbl
+  install -d ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/boot/sbl
+  cp -r ${S}/. ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/boot/sbl
 }
+
+FILES_${PN} = "${PDK_INSTALL_DIR_RECIPE}/packages"
