@@ -1,0 +1,79 @@
+diff --git a/config.bld b/config.bld
+index cf2eda8..7349af7 100644
+--- a/config.bld
++++ b/config.bld
+@@ -10,7 +10,6 @@
+  *
+  * Copyright (C) 2012-2015, Texas Instruments, Inc.
+  *****************************************************************************/
+-
+ /* Get the Tools Base directory from the Environment Variable. */
+ var c66ToolsBaseDir = java.lang.System.getenv("C6X_GEN_INSTALL_PATH");
+ var m4ToolsBaseDir = java.lang.System.getenv("TOOLCHAIN_PATH_M4");
+@@ -116,3 +115,18 @@ var devicesCCOpt = [ "", " -DSOC_K2K",    " -DSOC_K2H",
+                          " -DSOC_K2G",
+                          " -DSOC_AM572x", " -DSOC_AM571x" ];
+ 
++var build_devices;
++for ( i=0; i < arguments.length; i++)
++{
++  print ("ARG[" + i + "] = " + arguments[i]);
++}
++if ( arguments.length <= 1 || arguments[1] == "all" )
++{
++    build_devices = devices;
++}
++else
++{
++    print("Building for subset of devices");
++    build_devices = arguments;
++    build_devices[0] = "";
++}
+diff --git a/src/Module.xs b/src/Module.xs
+index 2c418eb..a428acb 100644
+--- a/src/Module.xs
++++ b/src/Module.xs
+@@ -90,19 +90,37 @@ function modBuild()
+             /* for each(var device in devices) */
+             for each(var k = 1; k < devices.length; k++)
+             {
+-                /* Build the libraries for all the targets specified. */
+-                for (var targets=0; targets < Build.targets.length; targets++)
++                var build_device = 0;
++                for ( j = 1; j < build_devices.length; j++ )
++                {
++                    if ( build_devices[j] == devices[k] )
++                        build_device = 1;
++                }
++                if (build_device == 1)
+                 {
+-                    caps.buildLibrary (devices[k], Build.targets[targets], devicesCCOpt[k]);
++                    /* Build the libraries for all the targets specified. */
++                    for (var targets=0; targets < Build.targets.length; targets++)
++                    {
++                        caps.buildLibrary (devices[k], Build.targets[targets], devicesCCOpt[k]);
++                    }
+                 }
+             }
+         }
+         else
+         {
+-            /* Build the CSL device library for all the targets specified. */
+-            for (var targets=0; targets < Build.targets.length; targets++)
++            var build_device = 0;
++            for ( j = 1; j < build_devices.length; j++ )
++            {
++                if ( build_devices[j] == devices[i] )
++                    build_device = 1;
++            }
++            if (build_device == 1)
+             {
+-                caps.buildLibrary (devices[i], Build.targets[targets], devicesCCOpt[i]);
++                /* Build the CSL device library for all the targets specified. */
++                for (var targets=0; targets < Build.targets.length; targets++)
++                {
++                    caps.buildLibrary (devices[i], Build.targets[targets], devicesCCOpt[i]);
++                }
+             }
+         }
+     }
