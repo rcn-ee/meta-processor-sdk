@@ -43,10 +43,10 @@ do_configure() {
 }
 
 do_compile() {
-    ${XDC_INSTALL_DIR}/xdc .make ${PARALLEL_XDC} -PR .
     ${XDC_INSTALL_DIR}/xdc clean ${PARALLEL_XDC} -PR .
-    ${XDC_INSTALL_DIR}/xdc all ${PARALLEL_XDC} -PR .
-    ${XDC_INSTALL_DIR}/xdc release -PR .
+    ${XDC_INSTALL_DIR}/xdc .make ${PARALLEL_XDC} -PR .
+    ${XDC_INSTALL_DIR}/xdc all ${PARALLEL_XDC} XDCARGS="${XDCARGS}" -PR .
+    ${XDC_INSTALL_DIR}/xdc release XDCARGS="${XDCARGS}" -PR .
 }
 
 do_install () {
