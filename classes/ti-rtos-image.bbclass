@@ -73,6 +73,12 @@ tisdk_image_build() {
         rm -rf ${IMAGE_ROOTFS}/.tmp_${tool}
     done
 
+    if [ -d ${IMAGE_ROOTFS}/processor-sdk ]
+    then
+        mv ${IMAGE_ROOTFS}/processor-sdk ${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}
+    fi
+    mkdir -p ${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}/docs
+
     generate_sw_manifest
 
     if [ -d ${IMAGE_ROOTFS}/component-sources ]
@@ -82,10 +88,10 @@ tisdk_image_build() {
     fi
 }
 
-TISDK_VERION ?= "${SDK_VERSION}"
+TISDK_VERSION ?= "${SDK_VERSION}"
 
-SW_MANIFEST_FILE = "${IMAGE_ROOTFS}/${IMAGE_BASENAME}-${TISDK_VERSION}_software_manifest.htm"
-SW_MANIFEST_TEXT = "${IMAGE_ROOTFS}/${IMAGE_BASENAME}-${TISDK_VERSION}_software_manifest.txt"
+SW_MANIFEST_FILE = "${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}/docs/software_manifest.htm"
+SW_MANIFEST_TEXT = "${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}/docs/software_manifest.txt"
 
 IMAGE_FSTYPES = "tar.gz"
 
