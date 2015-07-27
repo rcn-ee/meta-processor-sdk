@@ -5,7 +5,7 @@ DEPENDS_remove = "${PN}"
 
 COMPATIBLE_MACHINE_append = "|ti33x|ti43x"
 
-PR = "r0.ti-int4"
+PR = "r0.ti-int5"
 
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/common-csl-ip.git;protocol=git;branch=${BRANCH};destsuffix=${S}"
 BRANCH = "releases/PROCESSOR-SDK.01.00.00"

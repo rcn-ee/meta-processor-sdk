@@ -1,5 +1,5 @@
 diff --git a/build/buildlib.xs b/build/buildlib.xs
-index e5e8ffb..5413530 100644
+index e5e8ffb..1f7cc6f 100644
 --- a/build/buildlib.xs
 +++ b/build/buildlib.xs
 @@ -559,24 +559,28 @@ function buildLibrary (libOptions, libName, evmName, target, libFiles)
@@ -9,7 +9,7 @@ index e5e8ffb..5413530 100644
 -    Pkg.makeEpilogue += ".libraries: benchmarking_" + evmName + "_" + libName + "_" + target.suffix + "\n";
 -    Pkg.makeEpilogue += "benchmarking_" + evmName + "_" + libName + "_" + target.suffix + ":";
 +/* Putting a temp file in the object directory because javascript doesnt have a tempfile and we dont want collisions in multiple jobs*/ 
-+ var tempFile = "$(LIBDIR)/" + evmName + "/" + targetDir + "/obj/tmp_" + target.suffix + ".xml";
++ var tempFile = "$(LIBDIR)/" + evmName + "/" + targetDir + "/obj/tmp_" + libName + ".a" + target.suffix + ".xml";
 +    // + evmName + "_" + libName + "_" + target.suffix + "\n";
 +Pkg.makeEpilogue += ".libraries: " + lldFullLibraryPath + ".a" + target.suffix + "_size.txt\n";
 +    // + evmName + "_" + libName + "_" + target.suffix + ":";
