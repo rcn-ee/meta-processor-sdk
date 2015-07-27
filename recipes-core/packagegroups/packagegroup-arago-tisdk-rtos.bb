@@ -21,5 +21,6 @@ RDEPENDS_${PN} = "\
     ti-xdais-src \
     ti-framework-components-src \
     ti-ndk-src \
+    ctoolslib-src \
     ${DSP_LIBS} \
 "
