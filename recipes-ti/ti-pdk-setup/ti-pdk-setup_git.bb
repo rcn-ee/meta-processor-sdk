@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://pdksetupenv.sh;beginline=1;endline=20;md5=19359852b14
 
 require recipes-ti/includes/ti-paths-append.inc
 
-PR = "r2"
+PR = "r3"
 
 BRANCH = "releases/procsdk_01_xx"
 SRCREV = "f59633b9261b79025707db456cb083076c6911fe"
@@ -79,7 +79,6 @@ do_install() {
 
   install -m 0755 armv7setupenv.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdksetupenv.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
-  install -m 0755 makefile ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdksetupenv.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdkbuilder.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdkbuilder.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
