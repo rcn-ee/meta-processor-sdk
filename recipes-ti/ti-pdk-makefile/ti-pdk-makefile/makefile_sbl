@@ -6,7 +6,7 @@ SBL_BOOTMODES = __SBL_BOOTMODES__
 sbl: $(SBL_DEPS)
 	for board in $(SBL_BOARDS); do \
 		for bootmode in $(SBL_BOOTMODES); do \
-			$(MAKE) -C ./ti/boot -f makefile_armv7 \
+			$(MAKE) -C ./ti/boot/sbl -f makefile_armv7 \
 				BOARD=$$board DEVICE=AM572x \
 				BOOTMODE=$$bootmode; \
 		done \
@@ -15,7 +15,7 @@ sbl: $(SBL_DEPS)
 sbl_clean:
 	for board in $(SBL_BOARDS); do \
 		for bootmode in $(SBL_BOOTMODES); do \
-			$(MAKE) -C ./ti/boot -f makefile_armv7 \
+			$(MAKE) -C ./ti/boot/sbl -f makefile_armv7 \
 				BOARD=$$board BOOTMODE=$$bootmode \
 				clean; \
 		done \
