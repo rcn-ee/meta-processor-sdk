@@ -1,0 +1,6 @@
+
+nimu-icss:
+	$(MAKE) -C ./ti/transport/ndk/nimu_icss all
+
+nimu-icss_clean:
+	$(MAKE) -C ./ti/transport/ndk/nimu_icss clean

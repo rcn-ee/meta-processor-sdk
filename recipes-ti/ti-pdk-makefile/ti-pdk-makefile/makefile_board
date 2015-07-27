@@ -1,0 +1,20 @@
+
+board: board_lib board_diag
+
+diag: board_diag
+
+board_lib:
+	$(MAKE) -C ./ti/board all
+
+BOARD_DIAG_DEPS = __BOARD_DIAG_DEPS__
+ALL_BOARDS = __BOARD_ALL_BOARDS__
+board_diag: board_lib $(BOARD_DIAG_DEPS)
+	$(MAKE) -C ./ti/board/diag ALL_BOARDS="$(ALL_BOARDS)"
+
+board_clean: board_diag_clean board_lib_clean
+
+board_lib_clean:
+	$(MAKE) -C ./ti/board clean
+
+board_diag_clean:
+	$(MAKE) -C ./ti/board/diag TARGET=armv7 clean

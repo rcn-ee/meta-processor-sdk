@@ -1,0 +1,6 @@
+
+pruss:
+	$(MAKE) -C ./ti/drv/pruss all
+
+pruss_clean:
+	$(MAKE) -C ./ti/drv/pruss clean

@@ -1,0 +1,6 @@
+
+i2c:
+	${MAKE} -C ./ti/drv/i2c all
+
+i2c_clean:
+	${MAKE} -C ./ti/drv/i2c clean

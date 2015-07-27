@@ -1,0 +1,6 @@
+
+fatfs:
+	$(MAKE) -C ./ti/fs/fatfs all
+
+fatfs_clean:
+	$(MAKE) -C ./ti/fs/fatfs clean

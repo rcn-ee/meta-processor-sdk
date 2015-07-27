@@ -1,0 +1,6 @@
+
+icss-emac:
+	$(MAKE) -C ./ti/drv/icss_emac all
+
+icss-emac_clean:
+	$(MAKE) -C ./ti/drv/icss_emac clean

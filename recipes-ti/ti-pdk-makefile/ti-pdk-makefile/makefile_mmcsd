@@ -1,0 +1,6 @@
+
+mmcsd:
+	$(MAKE) -C ./ti/drv/mmcsd all
+
+mmcsd_clean:
+	$(MAKE) -C ./ti/drv/mmcsd clean

@@ -1,0 +1,6 @@
+
+pcie:
+	$(MAKE) -C ./ti/drv/pcie all
+
+pcie_clean:
+	$(MAKE) -C ./ti/drv/pcie clean

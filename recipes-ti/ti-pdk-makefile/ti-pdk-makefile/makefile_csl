@@ -1,0 +1,6 @@
+
+csl: 
+	$(MAKE) -C ./ti/csl all
+
+csl_clean:
+	$(MAKE) -C ./ti/csl clean

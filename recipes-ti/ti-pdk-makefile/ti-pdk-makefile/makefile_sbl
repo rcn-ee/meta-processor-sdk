@@ -1,0 +1,22 @@
+
+SBL_DEPS = __SBL_DEPS__
+SBL_BOARDS = __SBL_BOARDS__
+SBL_BOOTMODES = __SBL_BOOTMODES__
+
+sbl: $(SBL_DEPS)
+	for board in $(SBL_BOARDS); do \
+		for bootmode in $(SBL_BOOTMODES); do \
+			$(MAKE) -C ./ti/boot -f makefile_armv7 \
+				BOARD=$$board DEVICE=AM572x \
+				BOOTMODE=$$bootmode; \
+		done \
+	done
+
+sbl_clean:
+	for board in $(SBL_BOARDS); do \
+		for bootmode in $(SBL_BOOTMODES); do \
+			$(MAKE) -C ./ti/boot -f makefile_armv7 \
+				BOARD=$$board BOOTMODE=$$bootmode \
+				clean; \
+		done \
+	done	

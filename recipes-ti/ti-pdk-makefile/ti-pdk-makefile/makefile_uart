@@ -1,0 +1,6 @@
+
+uart:
+	$(MAKE) -C ./ti/drv/uart all
+
+uart_clean:
+	$(MAKE) -C ./ti/drv/uart clean
