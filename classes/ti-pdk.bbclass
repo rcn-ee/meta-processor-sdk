@@ -21,6 +21,12 @@ export C6X_GEN_INSTALL_PATH = "${STAGING_DIR_NATIVE}/usr/share/ti/cgt-c6x"
 export TOOLCHAIN_PATH_A15 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export TOOLCHAIN_PATH_M4 = "${M4_TOOLCHAIN_INSTALL_DIR}"
 export CROSS_TOOL_PRFX = "arm-none-eabi-"
+
+export ROOTDIR = "${B}"
+export BIOS_INSTALL_PATH = "${SYSBIOS_INSTALL_DIR}"
+export XDC_INSTALL_PATH = "${XDC_INSTALL_DIR}"
+export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}"
+
 export XDCPATH = "${XDC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages;${PDK_INSTALL_DIR}/packages"
 export SECTTI="perl ${CG_XML_INSTALL_DIR}/ofd/sectti.pl"
 
@@ -45,7 +51,7 @@ do_configure() {
 do_compile() {
     ${XDC_INSTALL_DIR}/xdc clean ${PARALLEL_XDC} -PR .
     ${XDC_INSTALL_DIR}/xdc .make ${PARALLEL_XDC} -PR .
-    ${XDC_INSTALL_DIR}/xdc all ${PARALLEL_XDC} XDCARGS="${XDCARGS}" -PR .
+    ${XDC_INSTALL_DIR}/xdc all ${PARALLEL_XDC} XDCARGS="${XDCARGS}" ROOTDIR="${ROOTDIR}" -PR .
     ${XDC_INSTALL_DIR}/xdc release XDCARGS="${XDCARGS}" -PR .
 }
 
