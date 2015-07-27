@@ -7,9 +7,10 @@ STARTERWARE_BOOTMODES = __STARTERWARE_BOOTMODES__
 STARTERWARE_APPS = __STARTERWARE_APPS__
 
 starterware_boot:
+	cd ./ti/starterware; \
 	for bootmode in $(STARTERWARE_BOOTMODES); do \
 		for profile in $(STARTERWARE_PROFILES); do \
-			make -C ./ti/starterware bootloader \
+			make bootloader \
 				BUILD_CFG=boot \
 				BOOTMODE=$$bootmode \
 				PLATFORM=$(STARTERWARE_PLATFORM) \
@@ -19,17 +20,19 @@ starterware_boot:
 	done
 
 starterware_libs:
+	cd ./ti/starterware; \
 	for profile in $(STARTERWARE_PROFILES); do \
-		make -C ./ti/starterware \
+		make \
 			PROFILE=$$profile \
 			PLATFORM=$(STARTERWARE_PLATFORM) \
 			KW_BUILD=no; \
 	done
 
 starterware_apps:
+	cd ./ti/starterware; \
 	for app in $(STARTERWARE_APPS); do \
 		for profile in $(STARTERWARE_PROFILES); do \
-			make -C ./ti/starterware $$app \
+			make $$app \
 				PROFILE=$$profile \
 				PLATFORM=$(STARTERWARE_PLATFORM) \
 				KW_BUILD=no; \
@@ -37,4 +40,5 @@ starterware_apps:
 	done
 
 starterware_clean:
-	make -C ./ti/starterware clean KW_BUILD=no
+	cd ./ti/starterware; \
+	make clean KW_BUILD=no

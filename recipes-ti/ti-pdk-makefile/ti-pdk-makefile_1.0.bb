@@ -30,7 +30,7 @@ SRC_URI = "\
     file://makefile_uart \
 "
 
-PR = "r1"
+PR = "r2"
 
 MAKEFILES = ""
 
