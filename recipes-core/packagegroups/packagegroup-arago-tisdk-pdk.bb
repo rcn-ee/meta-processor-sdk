@@ -1,6 +1,6 @@
 DESCRIPTION = "Task to install low-level drivers and platform libraries for the PDK"
 LICENSE = "MIT"
-PR = "r2"
+PR = "r3"
 
 inherit packagegroup
 
@@ -43,6 +43,7 @@ PDK_BOOTLOADER_append_omap-a15 = " sbl-boot-rtos"
 
 RDEPENDS_${PN} = "\
     ti-pdk-setup \
+    ti-pdk-makefile \
     ti-pdk-eclipse \
     ${PDK_CSL} \
     ${PDK_LLDS} \
