@@ -73,13 +73,31 @@ tisdk_image_build() {
         rm -rf ${IMAGE_ROOTFS}/.tmp_${tool}
     done
 
-    if [ -d ${IMAGE_ROOTFS}/processor-sdk ]
+    # Add the EXTRA_TISDK_FILES contents if they exist
+    # Make sure EXTRA_TISDK_FILES is not empty so we don't accidentaly
+    # copy the root directory.
+    # Use -L to copy the actual contents of symlinks instead of just
+    # the links themselves
+    if [ "${EXTRA_TISDK_FILES}" != "" ]
     then
-        mv ${IMAGE_ROOTFS}/processor-sdk ${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}
+        if [ -d "${EXTRA_TISDK_FILES}" ]
+        then
+            cp -rLf ${EXTRA_TISDK_FILES}/* ${IMAGE_ROOTFS}/
+        fi
     fi
-    mkdir -p ${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}/docs
+
+    PROC_SDK_VER=`echo ${TISDK_VERSION} | sed -e 's|\.|_|g' -e 's|^0||'`
+
+    if [ -d ${IMAGE_ROOTFS}/processor_sdk_rtos ]
+    then
+        mv ${IMAGE_ROOTFS}/processor_sdk_rtos ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER
+    fi
+    mkdir -p ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER/docs
 
     generate_sw_manifest
+
+    mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER/docs
+    mv ${SW_MANIFEST_TEXT} ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER/docs
 
     if [ -d ${IMAGE_ROOTFS}/component-sources ]
     then
@@ -90,8 +108,8 @@ tisdk_image_build() {
 
 TISDK_VERSION ?= "${SDK_VERSION}"
 
-SW_MANIFEST_FILE = "${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}/docs/software_manifest.htm"
-SW_MANIFEST_TEXT = "${IMAGE_ROOTFS}/processor-sdk_${TISDK_VERSION//./_}/docs/software_manifest.txt"
+SW_MANIFEST_FILE = "${IMAGE_ROOTFS}/software_manifest.htm"
+SW_MANIFEST_TEXT = "${IMAGE_ROOTFS}/software_manifest.txt"
 
 IMAGE_FSTYPES = "tar.gz"
 
