@@ -27,7 +27,7 @@ export TOOLCHAIN_PATH_A9 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export FPULIB_PATH = "${A15_TOOLCHAIN_INSTALL_DIR}/lib/gcc/arm-none-eabi/4.8.4/fpu/"
 
 do_compile() {
-    ./release_${PARTNO}.sh
+    ./build/release_${PARTNO}.sh
 }
 
 do_install() {
