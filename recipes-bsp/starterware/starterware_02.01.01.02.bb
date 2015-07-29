@@ -14,7 +14,7 @@ BRANCH = "int_StarterWare_${PV}"
 SRC_URI = "git://gitorious.design.ti.com/starterware/starterware-src.git;protocol=git;branch=${BRANCH}"
 
 SRCREV = "4ca5fd42ed1d4c6f965e9e1f04132a371087635c"
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/git"
 
@@ -27,7 +27,8 @@ export TOOLCHAIN_PATH_A9 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export FPULIB_PATH = "${A15_TOOLCHAIN_INSTALL_DIR}/lib/gcc/arm-none-eabi/4.8.4/fpu/"
 
 do_compile() {
-    ./build/release_${PARTNO}.sh
+    cd build
+    ./release_${PARTNO}.sh
 }
 
 do_install() {
