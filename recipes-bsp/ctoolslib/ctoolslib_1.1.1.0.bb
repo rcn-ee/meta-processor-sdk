@@ -9,7 +9,7 @@ require recipes-ti/includes/ti-paths-append.inc
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 PV = "1_1_1_0"
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/1188/7333/GettingStarted.htm;name=gettingstarted;subdir=${PN}-${PV}"
 
@@ -32,12 +32,27 @@ SRC_URI_DSPTRACE = "https://gforge.ti.com/gf/download/frsrelease/1216/7334/DSPTr
 SRC_URI[dsptrace.md5sum] = "ef7442be751a4aeddce91a193087233d"
 SRC_URI[dsptrace.sha256sum] = "acadb59956512764e75680fabc7c7ede8573c3e53584486aa9a379061d2695ee"
 
+SRC_URI_ETMLIB = "https://gforge.ti.com/gf/download/frsrelease/1226/7433/ETMLib_0.6.zip;name=etmlib;subdir=${PN}-${PV}/packages/ti"
+SRC_URI[etmlib.md5sum] = "daca851d5498d9a153fee3cce5694371"
+SRC_URI[etmlib.sha256sum] = "16326b95284bd8e46a274036b95897816bfbd697b48deadf22633f7735c954a0"
+
+SRC_URI_PMICMILIB = "https://gforge.ti.com/gf/download/frsrelease/1223/7430/PMICMILib_1.3.zip;name=pmicmilib;subdir=${PN}-${PV}/packages/ti"
+SRC_URI[pmicmilib.md5sum] = "52048bb1074cd41806743e25390d6948"
+SRC_URI[pmicmilib.sha256sum] = "86e0658304d5591e3ba9c77356e9002da6f939481013dece1253d265306e05b1"
+
+SRC_URI_SCILIB = "https://gforge.ti.com/gf/download/frsrelease/1236/7461/SCILib_1.5.zip;name=scilib;subdir=${PN}-${PV}/packages/ti"
+SRC_URI[scilib.md5sum] = "131d970c348c30fbd144af338c04303a"
+SRC_URI[scilib.sha256sum] = "6e68331f6b1a6aa55afc49ee0854160258ae8c58911b18ece0fa30a028f0abb0"
+
 
 SRC_URI_append_ti33x = "\
     ${SRC_URI_AETLIB} \
     ${SRC_URI_STMLIB} \
     ${SRC_URI_ETBLIB} \
     ${SRC_URI_DSPTRACE} \
+    ${SRC_URI_ETMLIB} \
+    ${SRC_URI_PMICMILIB} \
+    ${SRC_URI_SCILIB} \
 "
 
 SRC_URI_append_ti43x = "\
@@ -45,6 +60,9 @@ SRC_URI_append_ti43x = "\
     ${SRC_URI_STMLIB} \
     ${SRC_URI_ETBLIB} \
     ${SRC_URI_DSPTRACE} \
+    ${SRC_URI_ETMLIB} \
+    ${SRC_URI_PMICMILIB} \
+    ${SRC_URI_SCILIB} \
 "
 
 SRC_URI_append_omap-a15 = "\
@@ -52,6 +70,9 @@ SRC_URI_append_omap-a15 = "\
     ${SRC_URI_STMLIB} \
     ${SRC_URI_ETBLIB} \
     ${SRC_URI_DSPTRACE} \
+    ${SRC_URI_ETMLIB} \
+    ${SRC_URI_PMICMILIB} \
+    ${SRC_URI_SCILIB} \
 "
 
 ECLIPSE_PLUGIN_DIR     = "${CTOOLSLIB_INSTALL_DIR_RECIPE}/eclipse"
