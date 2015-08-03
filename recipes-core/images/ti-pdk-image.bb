@@ -169,10 +169,10 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d
 
 export IMAGE_BASENAME = "ti-pdk-image"
 
-TI_PDK_NAME ?= "pdk_${MACHINE}"
+TI_PDK_NAME ?= "pdk_${@'${MACHINE}'.replace('-evm','')}"
 TI_PDK_NAME_omap-a15 = "pdk_am57xx"
 
-TI_PDK_VERSION = "2015_07_00"
+TI_PDK_VERSION = "1_0_0"
 
 IMAGE_FSTYPES = "tar.gz"
 

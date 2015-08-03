@@ -10,7 +10,7 @@ EOF
 }
 
 
-ECLIPSE_PLUGIN_FEATURE_DIR  = "features/${ECLIPSE_PLUGIN_RTSC}_${ECLIPSE_PLUGIN_VERSION}"
+ECLIPSE_PLUGIN_FEATURE_DIR  = "features/${ECLIPSE_PLUGIN_RTSC}.product_${ECLIPSE_PLUGIN_VERSION}"
 ECLIPSE_PLUGIN_FEATURE_FILE = "${ECLIPSE_PLUGIN_FEATURE_DIR}/feature.xml"
 create_eclipse_plugin_feature() {
     mkdir -p "${D}${ECLIPSE_PLUGIN_DIR}/${ECLIPSE_PLUGIN_FEATURE_DIR}"
@@ -18,13 +18,13 @@ create_eclipse_plugin_feature() {
     cat > "${D}${ECLIPSE_PLUGIN_DIR}/${ECLIPSE_PLUGIN_FEATURE_FILE}" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="${ECLIPSE_PLUGIN_RTSC}_${ECLIPSE_PLUGIN_VERSION}"
+      id="${ECLIPSE_PLUGIN_RTSC}.product_${ECLIPSE_PLUGIN_VERSION}"
       label="${ECLIPSE_PLUGIN_NAME}"
       version="${ECLIPSE_PLUGIN_VERSION}"
       provider-name="${ECLIPSE_PLUGIN_PROVIDER}">
 
    <description url="${ECLIPSE_PLUGIN_DESC_URL}">
-      ${ECLIPSE_PLUGIN_NAME}
+      Platform Development Kit
    </description>
 
    <copyright>
@@ -36,7 +36,7 @@ create_eclipse_plugin_feature() {
    </license>
 
    <plugin
-        id="${ECLIPSE_PLUGIN_RTSC}.rtscRegistry_${ECLIPSE_PLUGIN_VERSION}"
+        id="${ECLIPSE_PLUGIN_RTSC}.product_${ECLIPSE_PLUGIN_VERSION}"
         version="${ECLIPSE_PLUGIN_VERSION}"
         unpack="false" />
 
@@ -44,7 +44,7 @@ create_eclipse_plugin_feature() {
 EOF
 }
 
-ECLIPSE_PLUGIN_PLUGIN_DIR  = "plugins/${ECLIPSE_PLUGIN_RTSC}.rtscRegistry_${ECLIPSE_PLUGIN_VERSION}"
+ECLIPSE_PLUGIN_PLUGIN_DIR  = "plugins/${ECLIPSE_PLUGIN_RTSC}.product_${ECLIPSE_PLUGIN_VERSION}"
 ECLIPSE_PLUGIN_PLUGIN_FILE = "${ECLIPSE_PLUGIN_PLUGIN_DIR}/plugin.xml"
 create_eclipse_plugin_plugin() {
     mkdir -pv "${D}${ECLIPSE_PLUGIN_DIR}/${ECLIPSE_PLUGIN_PLUGIN_DIR}"
@@ -54,7 +54,7 @@ create_eclipse_plugin_plugin() {
 <?eclipse version="3.2"?>
 <plugin
     name="${ECLIPSE_PLUGIN_NAME} ${ECLIPSE_PLUGIN_VERSION}"
-    id="${ECLIPSE_PLUGIN_RTSC}.rtscRegistry_${ECLIPSE_PLUGIN_VERSION}"
+    id="${ECLIPSE_PLUGIN_RTSC}.product_${ECLIPSE_PLUGIN_VERSION}"
     version="${ECLIPSE_PLUGIN_VERSION}"
     provider-name="${ECLIPSE_PLUGIN_PROVIDER}">
 EOF
@@ -91,7 +91,7 @@ EOF
         <productType
             id="${ECLIPSE_PLUGIN_RTSC}"
             name="${ECLIPSE_PLUGIN_NAME}"
-            folderPrefix="${ECLIPSE_PLUGIN_NAME}"
+            folderPrefix="pdk_${ECLIPSE_PLUGIN_MACHINE}"
             rootMacroName="TI_PDK_INSTALL_DIR"/>
     </extension>
 
@@ -143,7 +143,7 @@ create_eclipse_plugin_manifest() {
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ${ECLIPSE_PLUGIN_NAME} ${ECLIPSE_PLUGIN_VERSION}
-Bundle-SymbolicName: ${ECLIPSE_PLUGIN_RTSC}.rtscRegistry_${ECLIPSE_PLUGIN_VERSION};singleton:=true
+Bundle-SymbolicName: ${ECLIPSE_PLUGIN_RTSC}.product_${ECLIPSE_PLUGIN_VERSION};singleton:=true
 Bundle-Version: ${ECLIPSE_PLUGIN_VERSION}
 Bundle-Activator: org.eclipse.rtsc.xdctools.ui.CCSActivator
 Bundle-Vendor: ${ECLIPSE_PLUGIN_PROVIDER}
