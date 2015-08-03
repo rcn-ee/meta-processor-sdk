@@ -24,7 +24,7 @@ create_eclipse_plugin_feature() {
       provider-name="${ECLIPSE_PLUGIN_PROVIDER}">
 
    <description url="${ECLIPSE_PLUGIN_DESC_URL}">
-      Platform Development Kit
+      ${ECLIPSE_PLUGIN_DESC}
    </description>
 
    <copyright>
@@ -91,8 +91,8 @@ EOF
         <productType
             id="${ECLIPSE_PLUGIN_RTSC}"
             name="${ECLIPSE_PLUGIN_NAME}"
-            folderPrefix="pdk_${ECLIPSE_PLUGIN_MACHINE}"
-            rootMacroName="TI_PDK_INSTALL_DIR"/>
+            folderPrefix="${ECLIPSE_FOLDER_PREFIX}"
+            rootMacroName="${ECLIPSE_ROOT_MACRO}"/>
     </extension>
 
     <extension point="org.eclipse.rtsc.xdctools.managedbuild.core.rtscProducts">
