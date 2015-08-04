@@ -14,7 +14,6 @@ SRCREV_dra7xx = "2e6dc751ddc604dc3df2d4f2e46a7f8f77f07131"
 
 SRC_URI_append = "\
     file://enable_build_of_specific_device.patch \
-    file://enable_build_parallelism.patch \
 "
 
 XDCARGS = ""
