@@ -8,10 +8,15 @@ COMPATIBLE_MACHINE = "ti33x|ti43x|omap-a15"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DSP_LIBS = ""
-DSP_LIBS_omap-a15_append = "\
+DSP_LIBS_append_omap-a15 = "\
     mathlib-c66x-src \
     dsplib-c66x-src \
     imglib-c66x-src \
+"
+
+CTOOLS_LIB = ""
+CTOOLS_LIB_append_omap-a15 = "\
+    ctoolslib-src \
 "
 
 RDEPENDS_${PN} = "\
@@ -21,6 +26,6 @@ RDEPENDS_${PN} = "\
     ti-xdais-src \
     ti-framework-components-src \
     ti-ndk-src \
-    ctoolslib-src \
+    ${CTOOLS_LIB} \
     ${DSP_LIBS} \
 "

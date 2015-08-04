@@ -6,6 +6,7 @@ inherit eclipse-plugin
 
 require recipes-ti/includes/ti-paths-append.inc
 
+COMPATIBLE_MACHINE = "omap-a15"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 PV = "1_1_1_0"
