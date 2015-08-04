@@ -2,6 +2,7 @@ inherit ti-pdk
 require board.inc
 
 DEPENDS_append = "\
+    starterware \
     gpio-lld-rtos \
     i2c-lld-rtos \
     icss-emac-lld-rtos \

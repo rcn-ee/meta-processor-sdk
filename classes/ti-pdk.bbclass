@@ -27,7 +27,7 @@ export CROSS_TOOL_PRFX = "arm-none-eabi-"
 export ROOTDIR = "${B}"
 export BIOS_INSTALL_PATH = "${SYSBIOS_INSTALL_DIR}"
 export XDC_INSTALL_PATH = "${XDC_INSTALL_DIR}"
-export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}"
+export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}/packages"
 
 export XDCPATH = "${XDC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages;${PDK_INSTALL_DIR}/packages"
 export SECTTI="perl ${CG_XML_INSTALL_DIR}/ofd/sectti.pl"
