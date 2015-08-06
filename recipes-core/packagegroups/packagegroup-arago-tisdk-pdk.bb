@@ -34,6 +34,10 @@ PDK_BOARD_SUPPORT = "\
     board-rtos \
 "
 
+PDK_OSAL_LIB = "\
+    osal-rtos \
+"
+
 PDK_STARTERWARE = ""
 PDK_STARTERWARE_append_ti33x = " starterware"
 PDK_STARTERWARE_append_ti43x = " starterware"
@@ -50,6 +54,7 @@ RDEPENDS_${PN} = "\
     ${PDK_TRANSPORTS} \
     ${PDK_FILESYSTEMS} \
     ${PDK_BOARD_SUPPORT} \
+    ${PDK_OSAL_LIB} \
     ${PDK_STARTERWARE} \
     ${PDK_BOOTLOADER} \
 "
