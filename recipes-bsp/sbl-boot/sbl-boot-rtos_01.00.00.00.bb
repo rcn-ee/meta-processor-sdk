@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://src/qspi/sbl_qspi.h;beginline=1;endline=31;md5=269b65
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 
-DEPENDS = "ti-ccsv6-native uart-lld-rtos spi-lld-rtos mmcsd-lld-rtos fatfs-rtos board-rtos"
+DEPENDS = "ti-ccsv6-native uart-lld-rtos spi-lld-rtos mmcsd-lld-rtos i2c-lld-rtos fatfs-rtos board-rtos"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 COMPATIBLE_MACHINE = "am57xx-evm"
@@ -27,8 +27,10 @@ SBL_SRC_OPTS = "SBL_SRC_DIR=${S} SBL_INC_DIR=${S}/board/src SBL_LIB_INC_DIR=${S}
 
 do_compile() {
   make -f makefile_armv7 clean BOARD=idkAM572x ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=idkAM572x DEVICE=AM572x BOOTMODE=qspi ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=idkAM572x DEVICE=AM572x BOOTMODE=mmcsd ${SBL_SRC_OPTS}
+  make -f makefile_armv7 all BOARD=idkAM571x SOC=AM571x BOOTMODE=qspi ${SBL_SRC_OPTS}
+  make -f makefile_armv7 all BOARD=idkAM571x SOC=AM571x BOOTMODE=mmcsd ${SBL_SRC_OPTS}
+  make -f makefile_armv7 all BOARD=idkAM572x SOC=AM572x BOOTMODE=qspi ${SBL_SRC_OPTS}
+  make -f makefile_armv7 all BOARD=idkAM572x SOC=AM572x BOOTMODE=mmcsd ${SBL_SRC_OPTS}
 }
 
 do_install() {
