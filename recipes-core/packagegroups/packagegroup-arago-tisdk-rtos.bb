@@ -19,6 +19,11 @@ CTOOLS_LIB_append_omap-a15 = "\
     ctoolslib-src \
 "
 
+UIA = ""
+UIA_append_omap-a15 = "\
+    uia-src \
+"
+
 RDEPENDS_${PN} = "\
     ti-sysbios-src \
     edma3-lld-rtos-src \
@@ -28,4 +33,5 @@ RDEPENDS_${PN} = "\
     ti-ndk-src \
     ${CTOOLS_LIB} \
     ${DSP_LIBS} \
+    ${UIA} \
 "
