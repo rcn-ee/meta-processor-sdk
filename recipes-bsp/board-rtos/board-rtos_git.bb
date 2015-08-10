@@ -24,3 +24,5 @@ XDCARGS_ti43x = "evmAM437x idkAM437x"
 XDCARGS_omap-a15 = "evmAM571x evmAM572x idkAM571x idkAM572x"
 
 XDCPATH_append = ";${PDK_INSTALL_DIR}/packages/ti/csl"
+
+PARALLEL_XDC = "--jobs=${BB_NUMBER_THREADS}"
