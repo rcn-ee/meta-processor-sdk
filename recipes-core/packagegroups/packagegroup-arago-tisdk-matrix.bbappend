@@ -1,4 +1,4 @@
-PR_append = "-tisdk8"
+PR_append = "-tisdk9"
 
 MATRIX_SGX_DEMOS_omap-a15 = " \
     matrix-3d-demo-chameleon \
@@ -18,9 +18,6 @@ MATRIX_APPS_append_omap-a15 = " \
     ${@base_contains('MACHINE_FEATURES','mmip','matrix-multimedia-demo-vip-vpe-ivahdmpeg4encdec','',d)} \
     matrix-multimedia-demo-h265dec \
     matrix-3d-demo-kmscube \
-    matrix-gui-generic-pm           \
-    matrix-gui-clocks               \
-    matrix-gui-pm-demos-governor    \
 "
 
 MATRIX_APPS_append_dra7xx = "        \
