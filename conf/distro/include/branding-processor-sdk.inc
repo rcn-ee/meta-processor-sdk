@@ -7,10 +7,6 @@ DISTRO_FEATURES_remove_ti43x = "wayland"
 # Override weston packageconfig
 PACKAGECONFIG_pn-weston = "fbdev kms egl launch libinput"
 
-PREFERRED_PROVIDER_gstreamer1.0-plugins-bad = "gstreamer1.0-plugins-bad-ti"
-PREFERRED_PROVIDER_gstreamer1.0-plugins-bad-dev = "gstreamer1.0-plugins-bad-ti-dev"
-PREFERRED_PROVIDER_gstreamer1.0-plugins-bad-meta = "gstreamer1.0-plugins-bad-ti-meta"
-
 # Set preferred providers and srcrevs
 # Auto rev important packages to pick up latest
 PREFERRED_PROVIDER_virtual/kernel_am335x-evm = "linux-processor-sdk"
