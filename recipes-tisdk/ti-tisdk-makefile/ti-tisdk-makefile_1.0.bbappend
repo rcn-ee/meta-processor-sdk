@@ -1,4 +1,4 @@
-PR_append = "-tisdk11"
+PR_append = "-tisdk12"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -11,5 +11,3 @@ MAKEFILES_append_omap-a15 = " \
     omapdrm-pvr \
     opencl-examples \
 "
-
-DEFCONFIG = "tisdk_${MACHINE}_defconfig"
