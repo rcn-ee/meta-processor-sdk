@@ -1,0 +1,6 @@
+
+usb:
+	$(MAKE) -C ./ti/drv/usb all
+
+usb_clean:
+	$(MAKE) -C ./ti/drv/usb clean

@@ -1,0 +1,6 @@
+
+osal:
+	$(MAKE) -C ./ti/osal all
+
+osal_clean:
+	$(MAKE) -C ./ti/osal clean

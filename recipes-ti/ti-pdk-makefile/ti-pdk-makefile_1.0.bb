@@ -28,6 +28,8 @@ SRC_URI = "\
     file://makefile_starterware \
     file://makefile_spi \
     file://makefile_uart \
+    file://makefile_usb \
+    file://makefile_osal \
 "
 
 PR = "r2"
@@ -36,6 +38,7 @@ MAKEFILES = ""
 
 MAKEFILES_append_ti33x = "\
     csl \
+    osal \
     starterware \
     board \
     gpio \
@@ -50,6 +53,7 @@ MAKEFILES_append_ti33x = "\
 
 MAKEFILES_append_ti43x = "\
     csl \
+    osal \
     starterware \
     board \
     gpio \
@@ -59,11 +63,13 @@ MAKEFILES_append_ti43x = "\
     pruss \
     spi \
     uart \
+    usb \
     fatfs \
 "
 
 MAKEFILES_append_omap-a15 = "\
     csl \
+    osal \
     board \
     gpio \
     i2c \

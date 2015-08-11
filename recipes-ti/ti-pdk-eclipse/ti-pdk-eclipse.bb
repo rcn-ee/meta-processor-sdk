@@ -29,14 +29,40 @@ ECLIPSE_PLUGIN_CDOC = "\
     ti-csl.xml \
 "
 
-ECLIPSE_PLUGIN_CDOC_append_am57xx-evm = "\
-    ti-drv-uart.xml \
+ECLIPSE_PLUGIN_CDOC_append_am335x-evm = "\
     ti-drv-gpio.xml \
     ti-drv-i2c.xml \
-    ti-drv-spi.xml \
-    ti-drv-pruss.xml \
     ti-drv-icss_emac.xml \
-    ti-drv-pcie.xml \
     ti-drv-mmcsd.xml \
-    ti-drv-fatfs.xml \
+    ti-drv-pruss.xml \
+    ti-drv-spi.xml \
+    ti-drv-uart.xml \
+    ti-fs-fatfs.xml \
+    ti-osal.xml \
+"
+
+ECLIPSE_PLUGIN_CDOC_append_am437x-evm = "\
+    ti-drv-gpio.xml \
+    ti-drv-i2c.xml \
+    ti-drv-icss_emac.xml \
+    ti-drv-mmcsd.xml \
+    ti-drv-pruss.xml \
+    ti-drv-spi.xml \
+    ti-drv-uart.xml \
+    ti-drv-usb.xml \
+    ti-fs-fatfs.xml \
+    ti-osal.xml \
+"
+
+ECLIPSE_PLUGIN_CDOC_append_am57xx-evm = "\
+    ti-drv-gpio.xml \
+    ti-drv-i2c.xml \
+    ti-drv-icss_emac.xml \
+    ti-drv-mmcsd.xml \
+    ti-drv-pcie.xml \
+    ti-drv-pruss.xml \
+    ti-drv-spi.xml \
+    ti-drv-uart.xml \
+    ti-fs-fatfs.xml \
+    ti-osal.xml \
 "

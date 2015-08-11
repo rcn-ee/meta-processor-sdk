@@ -24,6 +24,8 @@ SRC_URI_append = "\
     file://API_Documentation_icss-emac.html \
     file://API_Documentation_mmcsd.html \
     file://API_Documentation_fatfs.html \
+    file://API_Documentation_usb.html \
+    file://API_Documentation_osal.html \
 "
 
 API_DOC = "csl"
@@ -36,6 +38,7 @@ API_DOC_append_ti33x = "\
     icss-emac \
     mmcsd \
     fatfs \
+    osal \
 "
 
 API_DOC_append_ti43x = "\
@@ -47,6 +50,8 @@ API_DOC_append_ti43x = "\
     icss-emac \
     mmcsd \
     fatfs \
+    usb \
+    osal \
 "
 
 API_DOC_append_omap-a15 = "\
@@ -59,6 +64,7 @@ API_DOC_append_omap-a15 = "\
     icss-emac \
     mmcsd \
     fatfs \
+    osal \
 "
 
 do_compile() {
