@@ -1,4 +1,8 @@
-PR_append = "-tisdk4"
+PR_append = "-tisdk5"
+
+UTILS_append = " \
+    timer-tests \
+"
 
 UTILS_append_dra7xx = " \
     opencl-examples \
