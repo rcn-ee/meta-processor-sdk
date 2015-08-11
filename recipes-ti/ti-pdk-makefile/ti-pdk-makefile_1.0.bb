@@ -30,6 +30,7 @@ SRC_URI = "\
     file://makefile_uart \
     file://makefile_usb \
     file://makefile_osal \
+    file://makefile_nimu \
 "
 
 PR = "r2"
@@ -76,6 +77,7 @@ MAKEFILES_append_omap-a15 = "\
     icss-emac \
     mmcsd \
     nimu-icss \
+    nimu \
     pcie \
     pruss \
     sbl \

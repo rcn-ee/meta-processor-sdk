@@ -1,14 +1,14 @@
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://nimu_icssEth.h;beginline=1;endline=35;md5=2df5a2a627821fb0ea094284455f9b1b"
+LIC_FILES_CHKSUM = "file://nimu_eth.h;beginline=1;endline=35;md5=52ba99291b03b91058e37115b66edb10"
 
 require transport.inc
 inherit ti-pdk
 
 COMPATIBLE_MACHINE = "omap-a15"
 
-S = "${WORKDIR}/git/ndk/nimu_icss"
+S = "${WORKDIR}/git/ndk/nimu"
 
-DEPENDS += "ti-ndk pruss-lld-rtos icss-emac-lld-rtos"
+DEPENDS += "ti-ndk"
 
 export NDK_INSTALL_PATH = "${NDK_INSTALL_DIR}"
 XDCPATH_append = ";${NDK_INSTALL_DIR}/packages"

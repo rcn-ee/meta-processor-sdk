@@ -26,6 +26,7 @@ PDK_LLDS_append_omap-a15 = " pcie-lld-rtos"
 PDK_TRANSPORTS = ""
 PDK_TRANSPORTS_append_omap-a15 = "\
     nimu-icss-rtos \
+    nimu-rtos \
 "
 
 PDK_FILESYSTEMS = "\

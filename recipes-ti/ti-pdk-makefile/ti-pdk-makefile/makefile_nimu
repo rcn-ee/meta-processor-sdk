@@ -1,0 +1,6 @@
+
+nimu:
+	$(MAKE) -C ./ti/transport/ndk/nimu all
+
+nimu_clean:
+	$(MAKE) -C ./ti/transport/ndk/nimu clean
