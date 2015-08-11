@@ -1,4 +1,4 @@
-PR_append = "-tisdk10"
+PR_append = "-tisdk11"
 
 MATRIX_SGX_DEMOS_omap-a15 = " \
     matrix-3d-demo-chameleon \
@@ -9,7 +9,6 @@ MATRIX_SGX_DEMOS_omap-a15 = " \
 
 MATRIX_APPS_append_omap-a15 = " \
     ${@base_contains('MACHINE_FEATURES','sgx','${MATRIX_SGX_DEMOS}','',d)} \
-    matrix-multimedia-demo-h265dec \
     matrix-3d-demo-kmscube \
 "
 
