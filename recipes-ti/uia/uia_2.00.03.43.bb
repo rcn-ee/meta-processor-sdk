@@ -35,4 +35,3 @@ INSANE_SKIP_${PN}-dev = "ldflags staticdev"
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "uia_${PV}"
-SRCIPK_SRC_DIR = "${D}${UIA_INSTALL_DIR_RECIPE}"
