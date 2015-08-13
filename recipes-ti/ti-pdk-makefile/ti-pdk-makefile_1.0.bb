@@ -38,7 +38,6 @@ PR = "r2"
 MAKEFILES = ""
 
 MAKEFILES_append_ti33x = "\
-    csl \
     osal \
     starterware \
     board \
@@ -53,7 +52,6 @@ MAKEFILES_append_ti33x = "\
 "
 
 MAKEFILES_append_ti43x = "\
-    csl \
     osal \
     starterware \
     board \
