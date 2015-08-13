@@ -8,6 +8,8 @@ PV = "2.12.01.22"
 PR = "r2"
 PR_append = ".ti-int0"
 
+DEPENDS_append = " ti-ccsv6-native"
+
 COMPATIBLE_MACHINE_append = "|ti33x|ti43x|omap-a15"
 
 PLATFORMLIST_ti33x = " \
