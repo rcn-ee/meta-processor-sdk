@@ -1,7 +1,7 @@
 require recipes-ti/includes/ti-paths-append.inc
 
 SRC_URI = "git://gitorious.design.ti.com/+edma3-lld-developers/edma3/edma3_lld_development.git;protocol=git;branch=${BRANCH}"
-SRCREV = "4eb7cc5fcb7589a95248399e337d26fd5c4382eb"
+SRCREV = "8171836a264aa0a48d5465489376ca36449e1ae9"
 
 PV = "2.12.01.22"
 
