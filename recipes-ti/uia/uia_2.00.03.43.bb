@@ -1,7 +1,7 @@
 DESCRIPTION = "Unified Instrumentation Architecture (UIA) defines APIs and transports that allow embedded software to log instrumentation data for use within CCS"
 HOMEPAGE = "http://processors.wiki.ti.com/index.php/Multicore_System_Analyzer"
 SECTION = "devel"
-LICENSE = "BSD"
+LICENSE = "BSD, EPL1.0"
 
 LIC_FILES_CHKSUM = "file://${S}/uia.bld;beginline=1;endline=31;md5=a13af1ef589b9c729238391e6e32d6c7"
 

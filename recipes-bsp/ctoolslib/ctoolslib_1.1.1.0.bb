@@ -1,5 +1,5 @@
 DESCRIPTION = "TI CTools Libraries"
-LICENSE = "BSD"
+LICENSE = "BSD, MIT"
 LIC_FILES_CHKSUM = "file://GettingStarted.htm;md5=d2eea20de71d2e8df509fbffe19c6540"
 
 inherit eclipse-plugin
