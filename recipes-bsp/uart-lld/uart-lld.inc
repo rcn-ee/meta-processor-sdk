@@ -1,4 +1,4 @@
-LICENSE = "BSD-3-Clause"
+LICENSE = "TI BSD"
 LIC_FILES_CHKSUM = "file://UART.h;beginline=1;endline=31;md5=269b656e0e4c45364b72240ef4657080"
 
 BRANCH ="master"

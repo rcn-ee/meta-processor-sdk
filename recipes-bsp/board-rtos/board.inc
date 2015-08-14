@@ -1,4 +1,4 @@
-LICENSE = "BSD-3-Clause"
+LICENSE = "TI BSD"
 LIC_FILES_CHKSUM = "file://board.h;beginline=1;endline=32;md5=08ab3edf671bd542222e3af311347974"
 
 BRANCH ="master"
