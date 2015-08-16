@@ -86,6 +86,8 @@ do_install() {
   install -m 0755 armv7setupenv.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdksetupenv.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdksetupenv.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
+  install -m 0755 pdkbuilder.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
+  install -m 0755 pdkbuilder.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdkProjectCreate.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdkProjectCreate.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 macros.ini ${D}${PDK_INSTALL_DIR_RECIPE}/packages
