@@ -66,3 +66,5 @@ do_compile() {
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "edma3_lld_02_12_01_22"
+
+INSANE_SKIP_${PN}-dev += "ldflags"
