@@ -1,4 +1,4 @@
-LICENSE = "TI BSD"
+LICENSE = "TI-BSD"
 LIC_FILES_CHKSUM = "file://I2C.h;beginline=1;endline=32;md5=6619832755598d1cc2b01f2e6a1801d6"
 
 BRANCH ="master"

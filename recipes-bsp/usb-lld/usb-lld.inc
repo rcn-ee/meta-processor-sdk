@@ -1,4 +1,4 @@
-LICENSE = "TI BSD"
+LICENSE = "TI-BSD"
 LIC_FILES_CHKSUM = "file://USBver.h;beginline=16;endline=46;md5=a0124caa585037d610f8e4e10fb0fc94"
 
 BRANCH ="master"

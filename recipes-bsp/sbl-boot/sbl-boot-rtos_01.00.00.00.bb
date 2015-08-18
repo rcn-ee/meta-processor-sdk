@@ -1,4 +1,4 @@
-LICENSE = "TI BSD"
+LICENSE = "TI-BSD"
 LIC_FILES_CHKSUM = "file://src/qspi/sbl_qspi.h;beginline=1;endline=31;md5=269b656e0e4c45364b72240ef4657080"
 
 require recipes-ti/includes/ti-paths-append.inc

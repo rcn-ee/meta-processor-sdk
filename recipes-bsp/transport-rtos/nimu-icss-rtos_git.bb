@@ -1,4 +1,4 @@
-LICENSE = "TI BSD"
+LICENSE = "TI-BSD"
 LIC_FILES_CHKSUM = "file://nimu_icssEth.h;beginline=1;endline=35;md5=2df5a2a627821fb0ea094284455f9b1b"
 
 require transport.inc

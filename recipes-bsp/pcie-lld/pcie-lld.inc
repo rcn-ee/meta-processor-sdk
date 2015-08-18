@@ -1,4 +1,4 @@
-LICENSE = "TI BSD"
+LICENSE = "TI-BSD"
 LIC_FILES_CHKSUM = "file://pcie.h;beginline=1;endline=34;md5=9e0ba5b8c94d3082f947fd6a0088ccdc"
 
 BRANCH ="releases/PROCESSOR-SDK.01.00.00"
