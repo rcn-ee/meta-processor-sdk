@@ -39,6 +39,7 @@ ECLIPSE_PLUGIN_CDOC_append_am335x-evm = "\
     ti-drv-uart.xml \
     ti-fs-fatfs.xml \
     ti-osal.xml \
+    ti-utils.xml \
 "
 
 ECLIPSE_PLUGIN_CDOC_append_am437x-evm = "\
@@ -52,6 +53,7 @@ ECLIPSE_PLUGIN_CDOC_append_am437x-evm = "\
     ti-drv-usb.xml \
     ti-fs-fatfs.xml \
     ti-osal.xml \
+    ti-utils.xml \
 "
 
 ECLIPSE_PLUGIN_CDOC_append_am57xx-evm = "\
@@ -65,4 +67,5 @@ ECLIPSE_PLUGIN_CDOC_append_am57xx-evm = "\
     ti-drv-uart.xml \
     ti-fs-fatfs.xml \
     ti-osal.xml \
+    ti-utils.xml \
 "

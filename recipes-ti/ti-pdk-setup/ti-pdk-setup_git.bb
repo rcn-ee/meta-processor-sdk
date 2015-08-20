@@ -26,6 +26,7 @@ SRC_URI_append = "\
     file://API_Documentation_fatfs.html \
     file://API_Documentation_usb.html \
     file://API_Documentation_osal.html \
+    file://API_Documentation_utils.html \
 "
 
 API_DOC = "csl"
@@ -39,6 +40,7 @@ API_DOC_append_ti33x = "\
     mmcsd \
     fatfs \
     osal \
+    utils \
 "
 
 API_DOC_append_ti43x = "\
@@ -52,6 +54,7 @@ API_DOC_append_ti43x = "\
     fatfs \
     usb \
     osal \
+    utils \
 "
 
 API_DOC_append_omap-a15 = "\
@@ -65,6 +68,7 @@ API_DOC_append_omap-a15 = "\
     mmcsd \
     fatfs \
     osal \
+    utils \
 "
 
 do_compile() {
