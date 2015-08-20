@@ -4,8 +4,6 @@ LIC_FILES_CHKSUM = "file://nimu_icssEth.h;beginline=1;endline=35;md5=2df5a2a6278
 require transport.inc
 inherit ti-pdk
 
-COMPATIBLE_MACHINE = "omap-a15"
-
 S = "${WORKDIR}/git/ndk/nimu_icss"
 
 DEPENDS += "ti-ndk pruss-lld-rtos icss-emac-lld-rtos"
