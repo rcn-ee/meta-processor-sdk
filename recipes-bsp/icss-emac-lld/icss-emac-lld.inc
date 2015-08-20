@@ -1,4 +1,4 @@
-LICENSE = "TI-BSD"
+LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://icss_emacDrv.h;beginline=1;endline=40;md5=ecc25fda1482843656b33e38f44f6726"
 
 BRANCH ="master"

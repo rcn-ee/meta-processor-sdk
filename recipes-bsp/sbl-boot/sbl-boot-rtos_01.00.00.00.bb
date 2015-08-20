@@ -1,4 +1,4 @@
-LICENSE = "TI-BSD"
+LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://src/qspi/sbl_qspi.h;beginline=1;endline=31;md5=269b656e0e4c45364b72240ef4657080"
 
 require recipes-ti/includes/ti-paths-append.inc
@@ -42,3 +42,5 @@ do_install() {
 }
 
 FILES_${PN} = "${PDK_INSTALL_DIR_RECIPE}/packages"
+
+INSANE_SKIP_${PN} = "arch"

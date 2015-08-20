@@ -1,5 +1,5 @@
 DESCRIPTION = "TI Starterware"
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://Makefile;beginline=1;endline=35;md5=286cbb5dce3e348294b6b025cff969b3"
 
 require recipes-ti/includes/ti-paths-append.inc
