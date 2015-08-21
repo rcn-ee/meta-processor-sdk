@@ -50,11 +50,11 @@ SRCIPK_INSTALL_DIR_pn-linux-processor-sdk = "board-support/linux-${PV}${KERNEL_L
 SRCIPK_PRESERVE_GIT_pn-linux-processor-sdk = "true"
 SRCIPK_SHALLOW_CLONE_pn-linux-processor-sdk = "true"
 
-SRCIPK_CUSTOM_GIT_BRANCH_pn-linux-processor-sdk = "processor-sdk-1.0"
+SRCIPK_CUSTOM_GIT_BRANCH_pn-linux-processor-sdk = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-linux-processor-sdk = "${SRCIPK_SHALLOW_GIT_COMMIT_MESSAGE}"
 
 SRCIPK_SHALLOW_CLONE_pn-linux-processor-sdk = "true"
 SRCIPK_SHALLOW_DEPTH_pn-linux-processor-sdk = "400"
 
-SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-1.0"
+SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-u-boot-ti-staging = "${SRCIPK_GIT_COMMIT_MESSAGE}"
