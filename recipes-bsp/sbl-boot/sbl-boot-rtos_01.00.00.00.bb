@@ -23,7 +23,7 @@ export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}/packages"
 LDFLAGS = ""
 CFLAGS = ""
 
-SBL_SRC_OPTS = "SBL_SRC_DIR=${S} SBL_INC_DIR=${S}/board/src SBL_LIB_INC_DIR=${S}/src/rprc SBL_MMCSD_DIR=${S}/src/mmcsd SBL_QSPI_DIR=${S}/src/qspi"
+SBL_SRC_OPTS = "SBL_SRC_DIR=${S}"
 
 do_compile() {
   make -f makefile_armv7 clean BOARD=idkAM571x ${SBL_SRC_OPTS}
