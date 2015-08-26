@@ -1,6 +1,6 @@
 
 gpio:
-	make -C ./ti/drv/gpio all
+	$(MAKE) -C ./ti/drv/gpio all
 
 gpio_clean:
-	make -C ./ti/drv/gpio clean
+	$(MAKE) -C ./ti/drv/gpio clean
