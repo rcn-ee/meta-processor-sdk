@@ -10,10 +10,10 @@ COMPATIBLE_MACHINE = "ti33x|ti43x"
 
 DEPENDS = "ti-ccsv6-native"
 
-BRANCH = "int_StarterWare_${PV}"
+BRANCH = "master"
 SRC_URI = "git://gitorious.design.ti.com/starterware/starterware-src.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "4ca5fd42ed1d4c6f965e9e1f04132a371087635c"
+SRCREV = "2b12ac9c7697d704020ecc8701cc28c2b74006c6"
 PR = "r2"
 
 S = "${WORKDIR}/git"
