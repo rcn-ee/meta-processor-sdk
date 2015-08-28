@@ -1,6 +1,0 @@
-
-utils:
-	$(MAKE) -C ./ti/utils all
-
-utils_clean:
-	$(MAKE) -C ./ti/utils clean

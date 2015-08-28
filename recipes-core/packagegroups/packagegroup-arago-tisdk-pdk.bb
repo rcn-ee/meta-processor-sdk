@@ -41,8 +41,8 @@ PDK_OSAL_LIB = "\
     osal-rtos \
 "
 
-PDK_UTILS_LIB = "\
-    utils-rtos \
+PDK_UTILS = "\
+    profiling-rtos \
 "
 
 PDK_STARTERWARE = ""
@@ -62,7 +62,7 @@ RDEPENDS_${PN} = "\
     ${PDK_FILESYSTEMS} \
     ${PDK_BOARD_SUPPORT} \
     ${PDK_OSAL_LIB} \
-    ${PDK_UTILS_LIB} \
+    ${PDK_UTILS} \
     ${PDK_STARTERWARE} \
     ${PDK_BOOTLOADER} \
 "

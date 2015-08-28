@@ -1,0 +1,6 @@
+
+profiling:
+	$(MAKE) -C ./ti/utils/profiling all
+
+profiling_clean:
+	$(MAKE) -C ./ti/utils/profiling clean

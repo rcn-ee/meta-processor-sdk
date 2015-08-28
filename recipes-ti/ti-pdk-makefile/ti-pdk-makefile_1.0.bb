@@ -31,7 +31,7 @@ SRC_URI = "\
     file://makefile_usb \
     file://makefile_osal \
     file://makefile_nimu \
-    file://makefile_utils \
+    file://makefile_profiling \
 "
 
 PR = "r2"
@@ -40,7 +40,7 @@ MAKEFILES = ""
 
 MAKEFILES_append_ti33x = "\
     osal \
-    utils \
+    profiling \
     starterware \
     board \
     gpio \
@@ -55,7 +55,7 @@ MAKEFILES_append_ti33x = "\
 
 MAKEFILES_append_ti43x = "\
     osal \
-    utils \
+    profiling \
     starterware \
     board \
     gpio \
@@ -71,7 +71,7 @@ MAKEFILES_append_ti43x = "\
 
 MAKEFILES_append_omap-a15 = "\
     csl \
-    utils \
+    profiling \
     osal \
     board \
     gpio \
