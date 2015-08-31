@@ -23,8 +23,7 @@ PDK_LLDS_append_ti43x = " usb-lld-rtos"
 
 PDK_LLDS_append_omap-a15 = " pcie-lld-rtos"
 
-PDK_TRANSPORTS = ""
-PDK_TRANSPORTS_append_omap-a15 = "\
+PDK_TRANSPORTS = "\
     nimu-icss-rtos \
     nimu-rtos \
 "

@@ -4,8 +4,6 @@ LIC_FILES_CHKSUM = "file://nimu_eth.h;beginline=1;endline=35;md5=52ba99291b03b91
 require transport.inc
 inherit ti-pdk
 
-COMPATIBLE_MACHINE = "omap-a15"
-
 S = "${WORKDIR}/git/ndk/nimu"
 
 DEPENDS += "ti-ndk"
