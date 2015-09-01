@@ -1,5 +1,5 @@
 DESCRIPTION = "TI CTools Libraries"
-LICENSE = "BSD, MIT"
+LICENSE = "BSD & MIT"
 LIC_FILES_CHKSUM = "file://GettingStarted.htm;md5=d2eea20de71d2e8df509fbffe19c6540"
 
 inherit eclipse-plugin
@@ -9,7 +9,7 @@ require recipes-ti/includes/ti-paths-append.inc
 COMPATIBLE_MACHINE = "omap-a15"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PV = "1_1_1_0"
+PV = "2_0_0_0"
 PR = "r1"
 
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/1188/7333/GettingStarted.htm;name=gettingstarted;subdir=${PN}-${PV}"
@@ -45,28 +45,7 @@ SRC_URI_SCILIB = "https://gforge.ti.com/gf/download/frsrelease/1236/7461/SCILib_
 SRC_URI[scilib.md5sum] = "131d970c348c30fbd144af338c04303a"
 SRC_URI[scilib.sha256sum] = "6e68331f6b1a6aa55afc49ee0854160258ae8c58911b18ece0fa30a028f0abb0"
 
-
-SRC_URI_append_ti33x = "\
-    ${SRC_URI_AETLIB} \
-    ${SRC_URI_STMLIB} \
-    ${SRC_URI_ETBLIB} \
-    ${SRC_URI_DSPTRACE} \
-    ${SRC_URI_ETMLIB} \
-    ${SRC_URI_PMICMILIB} \
-    ${SRC_URI_SCILIB} \
-"
-
-SRC_URI_append_ti43x = "\
-    ${SRC_URI_AETLIB} \
-    ${SRC_URI_STMLIB} \
-    ${SRC_URI_ETBLIB} \
-    ${SRC_URI_DSPTRACE} \
-    ${SRC_URI_ETMLIB} \
-    ${SRC_URI_PMICMILIB} \
-    ${SRC_URI_SCILIB} \
-"
-
-SRC_URI_append_omap-a15 = "\
+SRC_URI_append = "\
     ${SRC_URI_AETLIB} \
     ${SRC_URI_STMLIB} \
     ${SRC_URI_ETBLIB} \
@@ -79,7 +58,7 @@ SRC_URI_append_omap-a15 = "\
 ECLIPSE_PLUGIN_DIR     = "${CTOOLSLIB_INSTALL_DIR_RECIPE}/eclipse"
 ECLIPSE_PLUGIN_NAME    = "CTools Library"
 ECLIPSE_PLUGIN_RTSC    = "com.ti.ctoolslib"
-ECLIPSE_PLUGIN_VERSION = "1.1.1.00"
+ECLIPSE_PLUGIN_VERSION = "2.0.0.00"
 ECLIPSE_PLUGIN_DESC    = "CTools Library"
 
 ECLIPSE_PLUGIN_PROVIDER  = "Texas Instruments Inc."

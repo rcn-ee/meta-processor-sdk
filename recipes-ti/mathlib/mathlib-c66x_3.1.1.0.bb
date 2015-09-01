@@ -3,19 +3,19 @@ HOMEPAGE = "http://www.ti.com/tool/sprc265"
 SECTION = "devel"
 LICENSE = "BSD"
 
-LIC_FILES_CHKSUM = "file://packages/ti/mathlib/mathlib.h;beginline=9;endline=35;md5=17733f9e1100f8a628512f47c4bf676a"
+LIC_FILES_CHKSUM = "file://packages/ti/mathlib/mathlib.h;beginline=9;endline=35;md5=954ed7074e987be574989f985f1897db"
 
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
 
-PV = "3_1_0_0"
+PV = "3_1_1_0"
 PR = "r0"
 
 SRC_URI = "http://software-dl.ti.com/sdoemb/sdoemb_public_sw/mathlib/${PV}/exports/${BINFILE};name=mathlib"
 
-SRC_URI[mathlib.md5sum] = "d72aec950770523d5f96fbfac7baf860"
-SRC_URI[mathlib.sha256sum] = "3c799cb4c271a7e5ad66740edef90c538dc99bb372632bdf018a25165515748e"
+SRC_URI[mathlib.md5sum] = "f3c9ad06dfcea780b5362c57a4bc48b8"
+SRC_URI[mathlib.sha256sum] = "85df897c94e8768e9a1f186c21702ed3887d39cda6dc67cb4580fa3f083e8925"
 
 BINFILE = "mathlib_c66x_${PV}_Linux.bin"
 TI_BIN_UNPK_ARGS = "--mode silent --prefix ${S}"
@@ -29,7 +29,6 @@ do_install() {
 ALLOW_EMPTY_${PN} = "1"
 FILES_${PN}-dev += "${MATHLIB_C66_INSTALL_DIR_RECIPE}"
 
-#INSANE_SKIP_${PN}-dev = "arch ldflags staticdev"
 INSANE_SKIP_${PN}-dev = "arch"
 
 CREATE_SRCIPK = "1"
