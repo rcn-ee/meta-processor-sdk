@@ -9,12 +9,12 @@ require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
 
-PV = "3_2_0_1"
+PV = "3_1_1_0"
 PR = "r0"
 
 SRC_URI = "http://software-dl.ti.com/sdoemb/sdoemb_public_sw/imglib/${PV}/exports/${BINFILE};name=imglib"
 
-SRC_URI[imglib.md5sum] = "fbf4e04ad50476ed8026ea2df8fcd13b"
+SRC_URI[imglib.md5sum] = "9d64f213e040899048446df5055deeca"
 SRC_URI[imglib.sha256sum] = "e331d454b539d5287486ab7d48a3aa5bf42711c091960c3138d11441f4050f60"
 
 BINFILE = "imglib_c66x_${PV}_Linux.bin"
