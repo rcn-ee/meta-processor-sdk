@@ -1,5 +1,5 @@
 DESCRIPTION = "MATHLIB contains optimized general-purpose signal-processing routines for TI DSPs"
-HOMEPAGE = "http://www.ti.com/tool/sprc265"
+HOMEPAGE = "http://www.ti.com/tool/mathlib"
 SECTION = "devel"
 LICENSE = "BSD"
 
