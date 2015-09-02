@@ -3,7 +3,7 @@ HOMEPAGE = "http://www.ti.com/tool/sprc264"
 SECTION = "devel"
 LICENSE = "BSD"
 
-LIC_FILES_CHKSUM = "file://packages/ti/imglib/imglib.h;beginline=9;endline=35;md5=17733f9e1100f8a628512f47c4bf676a"
+LIC_FILES_CHKSUM = "file://packages/ti/imglib/src/common/IMG_profile.h;beginline=1;endline=35;md5=a21fc16da34b650ce33a9a7143908667"
 
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
@@ -15,7 +15,7 @@ PR = "r0"
 SRC_URI = "http://software-dl.ti.com/sdoemb/sdoemb_public_sw/imglib/${PV}/exports/${BINFILE};name=imglib"
 
 SRC_URI[imglib.md5sum] = "9d64f213e040899048446df5055deeca"
-SRC_URI[imglib.sha256sum] = "e331d454b539d5287486ab7d48a3aa5bf42711c091960c3138d11441f4050f60"
+SRC_URI[imglib.sha256sum] = "f3153e51530f26cfc638efca7ca6ae1bbaf7736daf287fc972592372a676ed21"
 
 BINFILE = "imglib_c66x_${PV}_Linux.bin"
 TI_BIN_UNPK_ARGS = "--mode silent --prefix ${S}"
