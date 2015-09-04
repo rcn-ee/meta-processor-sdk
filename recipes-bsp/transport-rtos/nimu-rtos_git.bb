@@ -6,7 +6,7 @@ inherit ti-pdk
 
 S = "${WORKDIR}/git/ndk/nimu"
 
-DEPENDS += "ti-ndk"
+DEPENDS += "osal-rtos ti-ndk"
 
 export NDK_INSTALL_PATH = "${NDK_INSTALL_DIR}"
 XDCPATH_append = ";${NDK_INSTALL_DIR}/packages"
