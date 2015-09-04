@@ -1,10 +1,10 @@
 DESCRIPTION = "Package containing scripts to setup the PDK development environment"
 LICENSE = "BSD"
-LIC_FILES_CHKSUM = "file://pdksetupenv.sh;beginline=1;endline=20;md5=19359852b140a148fd4399d93d26d0e8"
+LIC_FILES_CHKSUM = "file://pdksetupenv.sh;beginline=1;endline=20;md5=50fd2da740dc38f10a23efb4a85590e6"
 
 require recipes-ti/includes/ti-paths-append.inc
 
-PR = "r3"
+PR = "r4"
 
 BRANCH = "releases/procsdk_01_xx"
 SRCREV = "f59633b9261b79025707db456cb083076c6911fe"
