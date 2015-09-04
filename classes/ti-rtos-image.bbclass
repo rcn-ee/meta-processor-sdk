@@ -86,18 +86,20 @@ tisdk_image_build() {
         fi
     fi
 
+    PROC_SDK_DEVICE="pdk_${@'${MACHINE}'.replace('-evm','')}"
     PROC_SDK_VER=`echo ${TISDK_VERSION} | sed -e 's|\.|_|g' -e 's|^0||'`
+    PROC_SDK_DIR_NAME=processor_sdk_rtos_${PROC_SDK_NAME}_${PROC_SDK_VER}
 
     if [ -d ${IMAGE_ROOTFS}/processor_sdk_rtos ]
     then
-        mv ${IMAGE_ROOTFS}/processor_sdk_rtos ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER
+        mv ${IMAGE_ROOTFS}/processor_sdk_rtos ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}
     fi
-    mkdir -p ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER/docs
+    mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
 
     generate_sw_manifest
 
-    mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER/docs
-    mv ${SW_MANIFEST_TEXT} ${IMAGE_ROOTFS}/processor_sdk_rtos_$PROC_SDK_VER/docs
+    mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
+    mv ${SW_MANIFEST_TEXT} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
 
     if [ -d ${IMAGE_ROOTFS}/component-sources ]
     then
