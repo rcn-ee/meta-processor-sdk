@@ -88,7 +88,7 @@ tisdk_image_build() {
 
     PROC_SDK_DEVICE="${@'${MACHINE}'.replace('-evm','')}"
     PROC_SDK_VER=`echo ${TISDK_VERSION} | sed -e 's|\.|_|g' -e 's|^0||'`
-    PROC_SDK_DIR_NAME="processor_sdk_rtos_${PROC_SDK_DEVICE}_${PROC_SDK_VER}"
+    PROC_SDK_DIR_NAME=processor_sdk_rtos_${PROC_SDK_DEVICE}_${PROC_SDK_VER}
 
     if [ -d ${IMAGE_ROOTFS}/processor_sdk_rtos ]
     then
