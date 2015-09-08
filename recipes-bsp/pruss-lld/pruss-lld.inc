@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/pruss-lld.git;protocol=gi
 
 SRCREV = "18e8645e82bdf605c822e4c08c3048d0d843a7ae"
 PV = "01.00.00.00"
-PR = "r1"
+PR = "r2"

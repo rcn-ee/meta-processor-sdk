@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/pcie-lld.git;protocol=git
 
 SRCREV = "22422d93e5483f8008d2e4c106658c6866702813"
 PV = "02.02.00.00"
-PR = "r1"
+PR = "r2"

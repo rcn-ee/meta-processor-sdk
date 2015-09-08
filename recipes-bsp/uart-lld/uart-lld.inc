@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/uart-lld.git;protocol=git
 
 SRCREV = "8f38b4c4ebaa9637ede0ff8ed6cfc236655cbae1"
 PV = "01.00.00.00"
-PR = "r1"
+PR = "r2"

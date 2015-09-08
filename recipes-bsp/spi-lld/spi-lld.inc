@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/spi-lld.git;protocol=git;
 
 SRCREV = "9d46bceca4c50b3572a28bc22fc59790547408c9"
 PV = "01.00.00.00"
-PR = "r1"
+PR = "r2"

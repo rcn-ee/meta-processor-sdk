@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/i2c-lld.git;protocol=git;
 
 SRCREV = "a5ec905f1965a0cebca1260aca5d1eb180c19c7c"
 PV = "01.00.00.00"
-PR = "r0"
+PR = "r1"
