@@ -1,0 +1,71 @@
+diff --git a/monitor_vayu/custom_rsc_table_vayu_dsp.h b/monitor_vayu/custom_rsc_table_vayu_dsp.h
+index 4ce5a31..85c0c33 100644
+--- a/monitor_vayu/custom_rsc_table_vayu_dsp.h
++++ b/monitor_vayu/custom_rsc_table_vayu_dsp.h
+@@ -89,7 +89,7 @@
+ 
+ // Static DDR range used by monitor (DDR3 region in Platform.xdc)
+ #define DSP_MEM_DDR             0xFE800000
+-#define DSP_MEM_DDR_SIZE        (SZ_1M * 5)
++#define DSP_MEM_DDR_SIZE        (SZ_1M * (8 + 1))
+ 
+ // CMEM buffers mapped by MMU to PHYS_MEM_IOBUFS
+ #define DSP_MEM_IOBUFS          0x80000000
+diff --git a/monitor_vayu/monitor.cfg b/monitor_vayu/monitor.cfg
+index 4630dce..e5a3447 100644
+--- a/monitor_vayu/monitor.cfg
++++ b/monitor_vayu/monitor.cfg
+@@ -67,6 +67,7 @@ Startup.firstFxns.$add('&ocl_set_multiproc_id');
+ 
+ var BIOS        = xdc.useModule('ti.sysbios.BIOS');
+ BIOS.addUserStartupFunction('&IpcMgr_ipcStartup');
++BIOS.addUserStartupFunction('&IpcMgr_callIpcStart');
+ 
+ 
+ 
+@@ -119,6 +120,23 @@ var Resource = xdc.useModule('ti.ipc.remoteproc.Resource');
+ Resource.loadSegment = "DDR3"
+ Resource.customTable = true;
+ 
++var GateMP = xdc.useModule('ti.sdo.ipc.GateMP');
++GateMP.hostSupport = true;
++
++var SharedRegion = xdc.useModule('ti.sdo.ipc.SharedRegion');
++
++var SR0Mem = Program.cpu.memoryMap["SR_0"];
++
++SharedRegion.setEntryMeta(0,
++    new SharedRegion.Entry({
++        name:           "SR0",
++        base:           SR0Mem.base,
++        len:            SR0Mem.len,
++        ownerProcId:    MultiProc.getIdMeta("DSP1"),
++        cacheEnable:    true,
++        isValid:        true
++    })
++);
+ 
+ 
+ /*  Use SysMin because trace buffer address is required for Linux/QNX
+diff --git a/monitor_vayu/ocl_platforms/am57x/Platform.xdc b/monitor_vayu/ocl_platforms/am57x/Platform.xdc
+index ea2aae5..a245a27 100644
+--- a/monitor_vayu/ocl_platforms/am57x/Platform.xdc
++++ b/monitor_vayu/ocl_platforms/am57x/Platform.xdc
+@@ -47,9 +47,15 @@ config ti.platforms.generic.Platform.Instance CPU =
+ 			  access: "RWX", } ],
+ 
+       /* Non-cached DDR */
+-      [ "DDR3_NC",   { name: "DDR3_NC",
++      [ "SR_0",         { name: "SR_0",
+                           base: 0xFF000000,
+-                          len:  0x01000000,
++                          len:  0x00100000,
++                          space: "data",
++                          access: "RWX", } ],
++
++      [ "DDR3_NC",   { name: "DDR3_NC",
++                          base: 0xFF100000,
++                          len:  0x00F00000,
+                           space: "code/data",
+                           access: "RWX", } ],
+ 
