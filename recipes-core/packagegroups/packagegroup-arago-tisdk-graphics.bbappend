@@ -1,10 +1,8 @@
-PR_append = "-tisdk1"
+PR_append = ".tisdk2"
 
 GRAPHICS_DEMO = ""
 GRAPHICS_DEMO_omap-a15 = "\
     kmscube \
 "
-
-GRAPHICS_RDEPENDS_append_omap-a15 = " omapdrm-pvr img-pvr-sdk"
 
 RDEPENDS_${PN} += "${GRAPHICS_DEMO}"
