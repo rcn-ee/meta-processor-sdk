@@ -2,6 +2,8 @@ inherit ti-pdk
 require spi-lld.inc
 
 DEPENDS += "osal-rtos"
+DEPENDS_append_ti33x = " starterware"
+DEPENDS_append_ti43x = " starterware"
 
 XDCARGS = ""
 XDCARGS_ti33x = "am335x"
