@@ -44,10 +44,6 @@ do_configure() {
     find -name "*.xs" -exec sed -i "s/sectti\.exe/sectti/" {} \;
     find -name "*.xs" -exec sed -i "/\.chm/d" {} \;
     find -name "*.xs" -exec sed -i "s/pasm\_dos/pasm\_linux/" {} \;
-
-    # Workaround to enable sectti in parallel builds.
-    sed -i build/buildlib.xs \
-        -e 's|sectti|$(SECTTI)|g'
 }
 
 do_compile() {
