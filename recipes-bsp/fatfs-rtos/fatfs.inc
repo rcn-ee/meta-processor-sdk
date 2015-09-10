@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/fatfs.git;protocol=git;br
 
 SRCREV = "d09ff3124338fd4981bcd0de5eead7f9e0babd49"
 PV = "01.00.00.00"
-PR = "r1"
+PR = "r2"

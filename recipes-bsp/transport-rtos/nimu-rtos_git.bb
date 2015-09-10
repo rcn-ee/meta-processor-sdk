@@ -10,3 +10,5 @@ DEPENDS += "osal-rtos ti-ndk"
 
 export NDK_INSTALL_PATH = "${NDK_INSTALL_DIR}"
 XDCPATH_append = ";${NDK_INSTALL_DIR}/packages"
+
+PARALLEL_XDC = "--jobs=${BB_NUMBER_THREADS}"

@@ -5,3 +5,5 @@ inherit ti-pdk
 require utils.inc
 
 S = "${WORKDIR}/git/profiling"
+
+PARALLEL_XDC = "--jobs=${BB_NUMBER_THREADS}"

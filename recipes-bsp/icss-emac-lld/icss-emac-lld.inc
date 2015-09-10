@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/icss-emac-lld.git;protoco
 
 SRCREV = "4034a49aa39733feddfb3a9a20cd8b8fadf345f8"
 PV = "01.00.00.00"
-PR = "r2"
+PR = "r3"

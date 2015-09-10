@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/usb-lld.git;protocol=git;
 
 SRCREV = "30335117d5d73f1da48cdae2f0561420de8b4cda"
 PV = "01.00.00.01"
-PR = "r0"
+PR = "r1"
