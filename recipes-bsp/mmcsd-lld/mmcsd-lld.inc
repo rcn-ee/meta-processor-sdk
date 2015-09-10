@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/sd-mmc-lld.git;protocol=g
 
 SRCREV = "62cef9ba3912698677e3f5262ca4f094a1ca80c8"
 PV = "01.00.00.00"
-PR = "r1"
+PR = "r2"
