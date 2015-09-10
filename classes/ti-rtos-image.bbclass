@@ -90,12 +90,6 @@ tisdk_image_build() {
     PROC_SDK_VER=`echo ${TISDK_VERSION} | sed -e 's|\.|_|g' -e 's|^0||'`
     PROC_SDK_DIR_NAME=processor_sdk_rtos_${PROC_SDK_DEVICE}_${PROC_SDK_VER}
 
-    if [ -d ${IMAGE_ROOTFS}/processor_sdk_rtos ]
-    then
-        mv ${IMAGE_ROOTFS}/processor_sdk_rtos ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}
-    fi
-    mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
-
     generate_sw_manifest
 
     mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
@@ -117,5 +111,5 @@ IMAGE_FSTYPES = "tar.gz"
 
 IMAGE_INSTALL ?= "packagegroup-arago-tisdk-rtos"
 
-EXTRA_IMAGES ?= "ti-pdk-image"
+EXTRA_IMAGES ?= "ti-proc-sdk-image ti-pdk-image"
 EXTRA_TOOLS ?= ""
