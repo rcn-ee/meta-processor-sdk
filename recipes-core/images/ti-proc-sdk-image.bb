@@ -42,6 +42,19 @@ tisdk_image_setup () {
 
 tisdk_image_build() {
 
+    # Add the EXTRA_TISDK_FILES contents if they exist
+    # Make sure EXTRA_TISDK_FILES is not empty so we don't accidentaly
+    # copy the root directory.
+    # Use -L to copy the actual contents of symlinks instead of just
+    # the links themselves
+    if [ "${EXTRA_TISDK_FILES}" != "" ]
+    then
+        if [ -d "${EXTRA_TISDK_FILES}" ]
+        then
+            cp -rLf ${EXTRA_TISDK_FILES}/* ${IMAGE_ROOTFS}/
+        fi
+    fi
+
     PROC_SDK_DEVICE="${@'${MACHINE}'.replace('-evm','')}"
     PROC_SDK_VER=`echo ${TISDK_VERSION} | sed -e 's|\.|_|g' -e 's|^0||'`
     PROC_SDK_DIR_NAME=processor_sdk_rtos_${PROC_SDK_DEVICE}_${PROC_SDK_VER}
@@ -50,9 +63,11 @@ tisdk_image_build() {
     then
         mv ${IMAGE_ROOTFS}/processor_sdk_rtos ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}
     fi
+
+    mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/demos
     mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
 
-    cp -pPrf ${IMAGE_ROOTFS}${DEMOS_INSTALL_DIR_RECIPE}/* ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}
+    cp -pPrf ${IMAGE_ROOTFS}${DEMOS_INSTALL_DIR_RECIPE}/* ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/demos/
 }
 
 tisdk_image_cleanup_append () {
