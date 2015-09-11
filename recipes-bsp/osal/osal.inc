@@ -6,4 +6,4 @@ SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/osal.git;protocol=git;bra
 
 SRCREV = "37c75ddb236d2050022f8dc62faf76bc64304d62"
 PV = "01.00.00.00"
-PR = "r0"
+PR = "r1"
