@@ -67,7 +67,11 @@ tisdk_image_build() {
     mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/demos
     mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
 
-    cp -pPrf ${IMAGE_ROOTFS}${DEMOS_INSTALL_DIR_RECIPE}/* ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/demos/
+    # Copy any existing demo content
+    if [ -d ${IMAGE_ROOTFS}${DEMOS_INSTALL_DIR_RECIPE} ]
+    then
+        cp -pPrf ${IMAGE_ROOTFS}${DEMOS_INSTALL_DIR_RECIPE}/* ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/demos/
+    fi
 }
 
 tisdk_image_cleanup_append () {
