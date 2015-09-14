@@ -7,33 +7,26 @@ require recipes-ti/includes/ti-staging.inc
 DEPENDS = "ti-ccsv6-native uart-lld-rtos spi-lld-rtos mmcsd-lld-rtos i2c-lld-rtos fatfs-rtos board-rtos"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
-COMPATIBLE_MACHINE = "am57xx-evm"
+COMPATIBLE_MACHINE = "omap-a15"
 
 BRANCH = "master"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/sbl.git;protocol=git;branch=${BRANCH}"
 
 SRCREV = "969d7a2d6bd0b0c610e11801280a4e9d2a4037bb"
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/git"
+
+PARTNO = ""
+PARTNO_omap-a15 = "am57xx"
 
 export TOOLCHAIN_PATH_A15 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export CROSS_TOOL_PRFX = "arm-none-eabi-"
 export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}/packages"
-LDFLAGS = ""
-CFLAGS = ""
-
-SBL_SRC_OPTS = "SBL_SRC_DIR=${S}"
 
 do_compile() {
-  make -f makefile_armv7 clean BOARD=idkAM571x ${SBL_SRC_OPTS}
-  make -f makefile_armv7 clean BOARD=idkAM572x ${SBL_SRC_OPTS}
-  make -f makefile_armv7 clean BOARD=evmAM572x ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=idkAM571x SOC=AM571x BOOTMODE=qspi ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=idkAM571x SOC=AM571x BOOTMODE=mmcsd ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=idkAM572x SOC=AM572x BOOTMODE=qspi ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=idkAM572x SOC=AM572x BOOTMODE=mmcsd ${SBL_SRC_OPTS}
-  make -f makefile_armv7 all BOARD=evmAM572x SOC=AM572x BOOTMODE=mmcsd ${SBL_SRC_OPTS}
+    cd build
+    ./sbl_${PARTNO}.sh
 }
 
 do_install() {
@@ -41,6 +34,6 @@ do_install() {
   cp -r ${S}/. ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/boot/sbl
 }
 
-FILES_${PN} = "${PDK_INSTALL_DIR_RECIPE}/packages"
+FILES_${PN} += "${PDK_INSTALL_DIR_RECIPE}/packages"
 
 INSANE_SKIP_${PN} = "arch"

@@ -94,14 +94,6 @@ BOARD_ALL_BOARDS = ""
 BOARD_DIAG_DEPS_omap-a15 = "csl gpio i2c icss-emac pruss spi uart"
 BOARD_ALL_BOARDS_omap-a15 = "idkAM571x idkAM572x evmAM571x evmAM572x"
 
-SBL_DEPS = ""
-SBL_BOARDS = ""
-SBL_BOOTMODES = ""
-
-SBL_DEPS_omap-a15 = "board_lib uart spi mmcsd fatfs"
-SBL_BOARDS_omap-a15 = "idkAM572x"
-SBL_BOOTMODES_omap-a15 = "mmcsd qspi"
-
 STARTERWARE_PLATFORM = ""
 STARTERWARE_BOOTMODES = ""
 STARTERWARE_APPS = ""
@@ -138,13 +130,6 @@ do_install() {
     sed -i -e "s|__BOARD_DIAG_DEPS__|${BOARD_DIAG_DEPS}|g" \
         ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
     sed -i -e "s|__BOARD_ALL_BOARDS__|${BOARD_ALL_BOARDS}|g" \
-        ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
-
-    sed -i -e "s|__SBL_DEPS__|${SBL_DEPS}|g" \
-        ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
-    sed -i -e "s|__SBL_BOARDS__|${SBL_BOARDS}|g" \
-        ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
-    sed -i -e "s|__SBL_BOOTMODES__|${SBL_BOOTMODES}|g" \
         ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
 
     sed -i -e "s|__STARTERWARE_PLATFORM__|${STARTERWARE_PLATFORM}|g" \
