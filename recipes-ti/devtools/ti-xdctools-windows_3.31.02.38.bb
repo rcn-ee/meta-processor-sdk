@@ -15,4 +15,4 @@ SRC_URI[xdczip.sha256sum] = "43b017ca01d50a1c644cc263b32fa274234b1c014340d8ae5f4
 S = "${WORKDIR}/xdctools_${PV}_core"
 
 CREATE_SRCIPK = "1"
-SRCIPK_INSTALL_DIR = "xdctools_${PV}"
+SRCIPK_INSTALL_DIR = "xdctools_${PV}_core"
