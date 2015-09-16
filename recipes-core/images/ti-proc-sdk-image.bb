@@ -37,7 +37,6 @@ tisdk_image_setup () {
     mkdir -p ${IMAGE_ROOTFS}/etc
     mkdir -p ${IMAGE_ROOTFS}/var/lib/opkg
     mkdir -p ${IMAGE_ROOTFS}/lib
-    mkdir -p ${IMAGE_ROOTFS}/docs
 }
 
 tisdk_image_build() {
