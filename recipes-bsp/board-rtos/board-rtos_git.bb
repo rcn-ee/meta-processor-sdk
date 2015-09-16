@@ -20,7 +20,7 @@ DEPENDS_append_ti43x = "\
 "
 
 XDCARGS = ""
-XDCARGS_ti33x = "evmAM335x icev2AM335x"
+XDCARGS_ti33x = "evmAM335x icev2AM335x bbbAM335x skAM335x"
 XDCARGS_ti43x = "evmAM437x idkAM437x"
 XDCARGS_omap-a15 = "evmAM571x evmAM572x idkAM571x idkAM572x"
 
