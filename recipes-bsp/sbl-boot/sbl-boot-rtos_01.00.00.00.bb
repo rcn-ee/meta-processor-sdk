@@ -31,7 +31,7 @@ do_compile() {
 
 do_install() {
   install -d ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/boot/sbl
-  cp -r ${S}/. ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/boot/sbl
+  find -name "*.tar" -exec tar xf {} -C ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/boot/sbl \;
 }
 
 FILES_${PN} += "${PDK_INSTALL_DIR_RECIPE}/packages"
