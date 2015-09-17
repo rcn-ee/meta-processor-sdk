@@ -10,7 +10,7 @@ require recipes-ti/includes/ti-unpack.inc
 require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-paths-append.inc
 
-SRC_URI = "http://software-dl.ti.com/ccs/esd/CCSv6/CCS_6_1_0/exports/CCS${PV}_linux.tar.gz;name=ccsv6"
+SRC_URI = "http://software-dl.ti.com/ccs/esd/CCSv6/CCS_6_1_1/exports/CCS${PV}_linux.tar.gz;name=ccsv6"
 
 S = "${WORKDIR}/CCS${PV}_linux"
 
@@ -18,8 +18,8 @@ BINFILE = "CCS${PV}_linux/ccs_setup_${PV}.bin"
 TI_BIN_UNPK_ARGS = "--mode unattended --prefix ${WORKDIR}"
 TI_BIN_UNPK_CMDS = ""
 
-SRC_URI[ccsv6.md5sum] = "72970262e34399e69403837a4021538e"
-SRC_URI[ccsv6.sha256sum] = "89da2ed70a48da5ecef9b9fbbb3612fb6f013e779412def3cddc81bf3c24eaf4"
+SRC_URI[ccsv6.md5sum] = "648d5f41e8a7a93c16d51cd34045ba15"
+SRC_URI[ccsv6.sha256sum] = "b82958a125d5c6bea07cfc12a6f2a77c45e1560217c1aac02194b6e3408c5105"
 
 DEPENDS = "ti-cgt6x-native"
 
@@ -32,10 +32,8 @@ do_install() {
           ${D}${A15_TOOLCHAIN_INSTALL_DIR_RECIPE}
 
     install -d ${D}${M4_TOOLCHAIN_INSTALL_DIR_RECIPE}
-    cp -r ${WORKDIR}/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/. \
+    cp -r ${WORKDIR}/ccsv6/tools/compiler/ti-cgt-arm_5.2.5/. \
           ${D}${M4_TOOLCHAIN_INSTALL_DIR_RECIPE}
-
-    ln -sfv ../../../cgt-c6x ${D}${CCSv6_INSTALL_DIR_RECIPE}/tools/compiler/
 }
 
 FILES_${PN} += "\
