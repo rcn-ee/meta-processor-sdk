@@ -14,10 +14,10 @@ do_compile() {
 }
 
 do_install() {
-    install -d ${D}${DEMOS_INSTALL_DIR_RECIPE}/image_processing
-    cp -pPrf ${S}/* ${D}${DEMOS_INSTALL_DIR_RECIPE}/image_processing
+    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/image_processing
+    cp -pPrf ${S}/* ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/image_processing
 }
 
-FILES_${PN} += "${DEMOS_INSTALL_DIR_RECIPE}/image_processing"
+FILES_${PN} += "${PROC_SDK_INSTALL_DIR_RECIPE}/demos"
 
 CREATE_SRCIPK = "1"

@@ -11,5 +11,6 @@ DEMOS = ""
 DEMOS_append_omap-a15 = " image-proc-rtos"
 
 RDEPENDS_${PN} = "\
+    ti-proc-sdk-eclipse \
     ${DEMOS} \
 "

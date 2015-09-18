@@ -1,0 +1,27 @@
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690"
+
+inherit eclipse-plugin
+require ../includes/ti-paths-append.inc
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+PROC_SDK_DEVICE="${@'${MACHINE}'.replace('-evm','')}"
+
+ECLIPSE_PLUGIN_DIR     = "${PROC_SDK_INSTALL_DIR_RECIPE}/eclipse"
+ECLIPSE_PLUGIN_MACHINE = "${PROC_SDK_DEVICE}"
+ECLIPSE_PLUGIN_NAME    = "${ECLIPSE_PLUGIN_MACHINE} Processor SDK RTOS"
+ECLIPSE_PLUGIN_RTSC    = "com.ti.proc.sdk.rtos.${ECLIPSE_PLUGIN_MACHINE}"
+ECLIPSE_PLUGIN_VERSION = "2.0.0.00"
+ECLIPSE_PLUGIN_DESC    = "RTOS Processor Software Development Kit"
+
+ECLIPSE_PLUGIN_PROVIDER  = "Texas Instruments Inc."
+ECLIPSE_PLUGIN_DESC_URL  = "http://www.ti.com"
+ECLIPSE_PLUGIN_COPYRIGHT = "Copyright Texas Instruments 2015"
+
+ECLIPSE_PLUGIN_ROOT_MACRO = "TI_PROC_SDK_INSTALL_DIR"
+ECLIPSE_PLUGIN_ROOT       = "../../.."
+ECLIPSE_PLUGIN_REPO       = "${ECLIPSE_PLUGIN_ROOT}/packages"
+ECLIPSE_PLUGIN_DOCS       = "${ECLIPSE_PLUGIN_ROOT}/docs"
+ECLIPSE_FOLDER_PREFIX     = "processor_sdk_rtos_${PROC_SDK_DEVICE}"
+ECLIPSE_ROOT_MACRO        = "TI_PROC_SDK_INSTALL_DIR"
