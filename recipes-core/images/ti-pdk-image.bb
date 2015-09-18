@@ -135,22 +135,26 @@ tisdk_image_setup () {
 }
 
 tisdk_image_build() {
-    local cwd=`pwd`
 
-    cd ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE}
-    ccs_detect
+    # WORKAROUND: Disable pre-built CCS project creation until it can be
+    # properly implemented using pdkProjectCreate script
+
+    #local cwd=`pwd`
+
+    #cd ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE}
+    #ccs_detect
 
     # need to make sure project dir is empty.
-    mkdir -p ${TI_PDK_PROJECT_DIR}
-    rm -rf ${TI_PDK_PROJECT_DIR}/*
-    rm -rf ${TI_PDK_PROJECT_DIR}/.metadata
+    #mkdir -p ${TI_PDK_PROJECT_DIR}
+    #rm -rf ${TI_PDK_PROJECT_DIR}/*
+    #rm -rf ${TI_PDK_PROJECT_DIR}/.metadata
 
-    for project in `find -iname "*project.txt"`
-    do
-        create_ccs_project "${project}"
-    done
+    #for project in `find -iname "*project.txt"`
+    #do
+    #    create_ccs_project "${project}"
+    #done
 
-    cd $cwd
+    #cd $cwd
 
     generate_sw_manifest
 
