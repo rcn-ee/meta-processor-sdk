@@ -23,6 +23,10 @@ PARTNO_omap-a15 = "am57xx"
 export TOOLCHAIN_PATH_A15 = "${A15_TOOLCHAIN_INSTALL_DIR}"
 export CROSS_TOOL_PRFX = "arm-none-eabi-"
 export PDK_INSTALL_PATH = "${PDK_INSTALL_DIR}/packages"
+LDFLAGS = ""
+CFLAGS = ""
+
+export SBL_SRC_DIR= "${S}"
 
 do_compile() {
     cd build
