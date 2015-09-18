@@ -1,3 +1,4 @@
+
 sbl: board_lib uart spi mmcsd fatfs
 	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=idkAM572x SOC=AM572x BOOTMODE=mmcsd
 	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=idkAM572x SOC=AM572x BOOTMODE=qspi
