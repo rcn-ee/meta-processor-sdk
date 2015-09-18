@@ -1,8 +1,4 @@
-PR_append = "-tisdk1"
-
-IMAGE_INSTALL += "\
-    packagegroup-arago-tisdk-dev \
-"
+PR_append = "-tisdk2"
 
 BAD_RECOMMENDATIONS += " \
     ti-llvm3.3-dev \
