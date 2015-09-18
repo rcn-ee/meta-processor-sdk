@@ -1,7 +1,8 @@
-PR_append = "-tisdk4"
+PR_append = "-tisdk5"
 
 UTILS_append_dra7xx = " \
-    opencl-examples \
+    opencl-staticdev \
+    opencl-examples-dev \
 "
 
 UTILS_append_omap-a15 = " \
