@@ -87,7 +87,6 @@ do_compile() {
 do_install() {
   install -d ${D}${PDK_INSTALL_DIR_RECIPE}/packages
 
-  install -m 0755 armv7setupenv.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdksetupenv.sh ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdksetupenv.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
   install -m 0755 pdkProjectCreate.bat ${D}${PDK_INSTALL_DIR_RECIPE}/packages
