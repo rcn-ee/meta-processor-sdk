@@ -92,7 +92,7 @@ BOARD_DIAG_DEPS = ""
 BOARD_ALL_BOARDS = ""
 
 BOARD_DIAG_DEPS_omap-a15 = "csl gpio i2c icss-emac pruss spi uart"
-BOARD_ALL_BOARDS_omap-a15 = "idkAM571x idkAM572x evmAM571x evmAM572x"
+BOARD_ALL_BOARDS_omap-a15 = "idkAM571x idkAM572x evmAM572x"
 
 STARTERWARE_PLATFORM = ""
 STARTERWARE_BOOTMODES = ""

@@ -1,12 +1,16 @@
 
 sbl: board_lib uart spi mmcsd fatfs
-	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=idkAM572x SOC=AM572x BOOTMODE=mmcsd
-	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=idkAM572x SOC=AM572x BOOTMODE=qspi
-	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=idkAM571x SOC=AM571x BOOTMODE=mmcsd
-	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=idkAM571x SOC=AM571x BOOTMODE=qspi
-	$(MAKE) -C ./ti/boot/sbl -f makefile all BOARD=evmAM572x SOC=AM572x BOOTMODE=mmcsd
+	$(MAKE) -C ./ti/boot/sbl all BOARD=idkAM572x SOC=AM572x BOOTMODE=mmcsd
+	$(MAKE) -C ./ti/boot/sbl all BOARD=idkAM572x SOC=AM572x BOOTMODE=qspi
+	$(MAKE) -C ./ti/boot/sbl all BOARD=idkAM571x SOC=AM571x BOOTMODE=mmcsd
+	$(MAKE) -C ./ti/boot/sbl all BOARD=idkAM571x SOC=AM571x BOOTMODE=qspi
+	$(MAKE) -C ./ti/boot/sbl all BOARD=evmAM572x SOC=AM572x BOOTMODE=mmcsd
+	$(MAKE) -C ./ti/boot/sbl flashwriter BOARD=idkAM572x SOC=AM572x
+	$(MAKE) -C ./ti/boot/sbl flashwriter BOARD=idkAM571x SOC=AM571x
 
 sbl_clean:
-	$(MAKE) -C ./ti/boot/sbl -f makefile clean BOARD=idkAM572x
-	$(MAKE) -C ./ti/boot/sbl -f makefile clean BOARD=idkAM571x
-	$(MAKE) -C ./ti/boot/sbl -f makefile clean BOARD=evmAM572x
+	$(MAKE) -C ./ti/boot/sbl clean BOARD=idkAM572x
+	$(MAKE) -C ./ti/boot/sbl clean BOARD=idkAM571x
+	$(MAKE) -C ./ti/boot/sbl clean BOARD=evmAM572x
+	$(MAKE) -C ./ti/boot/sbl flashwriter_clean BOARD=idkAM572x
+	$(MAKE) -C ./ti/boot/sbl flashwriter_clean BOARD=idkAM571x

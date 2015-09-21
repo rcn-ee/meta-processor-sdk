@@ -17,4 +17,4 @@ board_lib_clean:
 	$(MAKE) -C ./ti/board clean
 
 board_diag_clean:
-	$(MAKE) -C ./ti/board/diag TARGET=armv7 clean
+	$(MAKE) -C ./ti/board/diag clean ALL_BOARDS="$(ALL_BOARDS)"
