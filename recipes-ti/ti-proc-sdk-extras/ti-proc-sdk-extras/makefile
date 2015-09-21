@@ -1,10 +1,10 @@
 #*******************************************************************************
-#* FILE PURPOSE: Top level makefile for Creating Processor SDK Component 
+#* FILE PURPOSE: Top level makefile for Creating Processor SDK Component
 #*               Libraries and binaries
 #*******************************************************************************
 #* FILE NAME: makefile
 #*
-#* DESCRIPTION: Defines Compiler tools paths, libraries , Build Options
+#* DESCRIPTION: Makefile for SDK level components
 #*
 #*
 #*******************************************************************************
@@ -19,15 +19,25 @@ ifndef ECHO
 export ECHO = echo
 endif
 
-ifndef PDK_SUB_COMP
-PDK_SUB_COMP = all
-endif
-
 all: pdk
 clean: pdk_clean
 
+help:
+	@echo "Standard Targets:"
+	@echo "    help      - Prints target information"
+	@echo "    all       - Builds all Component targets"
+	@echo "    clean     - Cleans all Component targets"
+	@echo ""
+	@echo "Component Targets:"
+	@echo "    pdk       - Builds all targets within the PDK top-level makefile"
+	@echo "    pdk_clean - Cleans all targets within the PDK top-level makefile"
+	@echo ""
+	@echo "    NOTE: Instructions for rebuilding all other components"
+	@echo "          installed with Processor SDK can be found in each"
+	@echo "          component's sub-directory"
+
 pdk:
-	$(MAKE) -C $(PDK_INSTALL_PATH)/packages $(PDK_SUB_COMP)
+	$(MAKE) -C $(PDK_INSTALL_PATH) all
 
 pdk_clean:
-	$(MAKE) -C $(PDK_INSTALL_PATH)/packages $(PDK_SUB_COMP)_clean
+	$(MAKE) -C $(PDK_INSTALL_PATH) clean
