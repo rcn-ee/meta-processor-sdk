@@ -63,9 +63,7 @@ tisdk_image_build() {
         mv ${IMAGE_ROOTFS}/processor_sdk_rtos ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}
     fi
 
-    mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/demos
     mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
-    mkdir -p ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/eclipse
 
     # Copy the processor sdk content
     if [ -d ${IMAGE_ROOTFS}${PROC_SDK_INSTALL_DIR_RECIPE} ]
