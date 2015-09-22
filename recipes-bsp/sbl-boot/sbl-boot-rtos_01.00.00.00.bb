@@ -13,7 +13,7 @@ BRANCH = "master"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/sbl.git;protocol=git;branch=${BRANCH}"
 
 SRCREV = "969d7a2d6bd0b0c610e11801280a4e9d2a4037bb"
-PR = "r2"
+PR = "r3"
 
 S = "${WORKDIR}/git"
 
@@ -27,6 +27,7 @@ LDFLAGS = ""
 CFLAGS = ""
 
 export SBL_SRC_DIR= "${S}"
+export QSPI_WRTR_SRC_DIR= "${S}"
 
 do_compile() {
     cd build
