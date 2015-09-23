@@ -34,7 +34,7 @@ SRC_URI = "\
     file://makefile_profiling \
 "
 
-PR = "r2"
+PR = "r3"
 
 MAKEFILES = ""
 
@@ -91,7 +91,7 @@ MAKEFILES_append_omap-a15 = "\
 BOARD_DIAG_DEPS = ""
 BOARD_ALL_BOARDS = ""
 
-BOARD_DIAG_DEPS_omap-a15 = "csl gpio i2c icss-emac pruss spi uart"
+BOARD_DIAG_DEPS_omap-a15 = "csl fatfs gpio i2c icss-emac mmcsd pruss spi uart"
 BOARD_ALL_BOARDS_omap-a15 = "idkAM571x idkAM572x evmAM572x"
 
 STARTERWARE_PLATFORM = ""
