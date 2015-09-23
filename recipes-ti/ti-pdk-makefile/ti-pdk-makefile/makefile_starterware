@@ -37,5 +37,4 @@ starterware_apps:
 	done
 
 starterware_clean:
-	cd ./ti/starterware; \
-	make clean KW_BUILD=no
+	$(MAKE) -C ./ti/starterware clean KW_BUILD=no
