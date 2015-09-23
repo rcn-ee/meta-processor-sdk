@@ -1,5 +1,5 @@
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://src/qspi/sbl_qspi.h;beginline=1;endline=31;md5=269b656e0e4c45364b72240ef4657080"
+LIC_FILES_CHKSUM = "file://src/qspi/sbl_qspi.h;beginline=1;endline=40;md5=db47887841d8a8cd6c41e72dd13b6d20"
 
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
