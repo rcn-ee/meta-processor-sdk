@@ -95,16 +95,8 @@ BOARD_DIAG_DEPS_omap-a15 = "csl gpio i2c icss-emac pruss spi uart"
 BOARD_ALL_BOARDS_omap-a15 = "idkAM571x idkAM572x evmAM572x"
 
 STARTERWARE_PLATFORM = ""
-STARTERWARE_BOOTMODES = ""
-STARTERWARE_APPS = ""
-
 STARTERWARE_PLATFORM_ti33x = "am335x-evm"
-STARTERWARE_BOOTMODES_ti33x = "uart mmcsd nand mcspi"
-STARTERWARE_APPS_ti33x = "lcdc_app_raster mcspi_app_flash"
-
-STARTERWARE_PLATFORM_ti43x = "am437x-evm"
-STARTERWARE_BOOTMODES_ti43x = "uart mmcsd nand"
-STARTERWARE_APPS_ti43x = "usb_dev_msc_app vpfe_app_capture_display cap_tsc_app grlib_demo_app dss_app_raster qspi_app_flash_writer qspi_app_read_write"
+STARTERWARE_PLATFORM_ti43x = "am43xx-evm"
 
 do_install() {
     install -d ${D}${PDK_INSTALL_DIR_RECIPE}/packages
@@ -133,10 +125,6 @@ do_install() {
         ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
 
     sed -i -e "s|__STARTERWARE_PLATFORM__|${STARTERWARE_PLATFORM}|g" \
-        ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
-    sed -i -e "s|__STARTERWARE_BOOTMODES__|${STARTERWARE_BOOTMODES}|g" \
-        ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
-    sed -i -e "s|__STARTERWARE_APPS__|${STARTERWARE_APPS}|g" \
         ${D}${PDK_INSTALL_DIR_RECIPE}/packages/makefile
 }
 
