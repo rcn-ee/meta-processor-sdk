@@ -1,11 +1,11 @@
 require recipes-ti/includes/ti-paths-append.inc
 
 SRC_URI = "git://gitorious.design.ti.com/+edma3-lld-developers/edma3/edma3_lld_development.git;protocol=git;branch=${BRANCH}"
-SRCREV = "8171836a264aa0a48d5465489376ca36449e1ae9"
+SRCREV = "eada0a9946c779e158e91b255fa4ceca9d29c1e2"
 
 PV = "2.12.01.22"
 
-PR = "r2"
+PR = "r3"
 PR_append = ".ti-int0"
 
 DEPENDS_append = " ti-ccsv6-native"
