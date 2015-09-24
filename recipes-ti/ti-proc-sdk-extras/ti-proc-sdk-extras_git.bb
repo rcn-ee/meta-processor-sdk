@@ -13,6 +13,7 @@ SRC_URI = "\
     file://setupenv.sh \
     file://makefile \
     file://create-sdcard.sh \
+    file://create_img.sh \
 "
 
 do_compile() {
@@ -27,6 +28,7 @@ do_install() {
     install -m 0755 setupenv.bat ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 makefile ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+    install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
 }
 
 FILES_${PN} += "${PROC_SDK_INSTALL_DIR_RECIPE}/*"

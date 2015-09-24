@@ -56,7 +56,7 @@ The script must be run with root permissions and from the bin directory of
 the SDK
 
 Example:
- $ sudo ./create-sdcard.sh
+ $ sudo ./create-sdcard.sh [demo|diag]
 
 Formatting can be skipped if the SD card is already formatted and
 partitioned properly.
@@ -225,89 +225,14 @@ do
         echo "Current size of $DEVICEDRIVENAME$P$c $SIZE bytes"
 done
 
-# check to see if the device is already partitioned
-for ((  c=1; c<5; c++ ))
-do
-	eval "SIZE$c=`cat /proc/partitions | grep -v $ROOTDRIVE | grep '\<'$DEVICEDRIVENAME$P$c'\>'  | awk '{print $3}'`"
-done
-
-PARTITION="0"
-if [ -n "$SIZE1" -a -n "$SIZE2" ] ; then
-	if  [ "$SIZE1" -gt "72000" -a "$SIZE2" -gt "700000" ]
-	then
-		PARTITION=1
-
-		if [ -z "$SIZE3" -a -z "$SIZE4" ]
-		then
-			#Detected 2 partitions
-			PARTS=2
-
-		else
-			echo "SD Card is not correctly partitioned"
-			PARTITION=0
-		fi
-	fi
-else
-	echo "SD Card is not correctly partitioned"
-	PARTITION=0
-	PARTS=0
-fi
-
-
-#Partition is found
-if [ "$PARTITION" -eq "1" ]
-then
-cat << EOM
-
-################################################################################
-
-   Detected device has $PARTS partitions already
-
-   Re-partitioning will allow the choice of 2 partitions only
-
-################################################################################
-
-EOM
-
-	ENTERCORRECTLY=0
-	while [ $ENTERCORRECTLY -ne 1 ]
-	do
-		read -p 'Would you like to re-partition the drive anyways [y/n] : ' CASEPARTITION
-		echo ""
-		echo " "
-		ENTERCORRECTLY=1
-		case $CASEPARTITION in
-		"y")  echo "Now partitioning $DEVICEDRIVENAME ...";PARTITION=0;;
-		"n")  echo "Skipping partitioning";;
-		*)  echo "Please enter y or n";ENTERCORRECTLY=0;;
-		esac
-		echo ""
-	done
-
-fi
-
-#Partition is not found, choose to partition 2 segments
-if [ "$PARTITION" -eq "0" ]
-then
-echo "Now partitioning $DEVICEDRIVENAME with 2 partitions..."
-PARTITION=2
-echo " "
-fi
-
-
 #Section for partitioning the drive
+#create 1 partition
 
-#create only 2 partitions
-if [ "$PARTITION" -eq "2" ]
-then
-
-# Set the PARTS value as well
-PARTS=2
 cat << EOM
 
 ################################################################################
 
-		Now making 2 partitions
+		Now making partition
 
 ################################################################################
 
@@ -321,8 +246,7 @@ echo DISK SIZE - $SIZE bytes
 CYLINDERS=`echo $SIZE/255/63/512 | bc`
 
 sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
-,9,0x0C,*
-10,,,-
+,,,-
 EOF
 
 cat << EOM
@@ -334,50 +258,6 @@ cat << EOM
 ################################################################################
 EOM
 	mkfs.vfat -F 32 -n "boot" ${DRIVE}${P}1
-cat << EOM
-
-################################################################################
-
-		Partitioning rootfs
-
-################################################################################
-EOM
-	mkfs.ext3 -L "rootfs" ${DRIVE}${P}2
-	sync
-	sync
-	INSTALLSTARTHERE=n
-fi
-
-
-
-#Break between partitioning and installing file system
-cat << EOM
-
-
-################################################################################
-
-   Partitioning is now done
-   Continue to install filesystem or select 'n' to safe exit
-
-   **Warning** Continuing will erase files any files in the partitions
-
-################################################################################
-
-
-EOM
-ENTERCORRECTLY=0
-while [ $ENTERCORRECTLY -ne 1 ]
-do
-	read -p 'Would you like to continue? [y/n] : ' EXITQ
-	echo ""
-	echo " "
-	ENTERCORRECTLY=1
-	case $EXITQ in
-	"y") ;;
-	"n") exit;;
-	*)  echo "Please enter y or n";ENTERCORRECTLY=0;;
-	esac
-done
 
 #Add directories for images
 export START_DIR=$PWD
@@ -401,69 +281,6 @@ sync
 sync
 sync
 
-#check that in the right directory
-
-THEEVMSDK=`echo $PARSEPATH | grep -o 'processor_sdk_rtos_am57xx_2_00_00_00'`
-
-if [ $PATHVALID -eq 1 ]; then
-echo "now installing:  $THEEVMSDK"
-else
-echo "no SDK PATH found"
-ENTERCORRECTLY=0
-	while [ $ENTERCORRECTLY -ne 1 ]
-	do
-		read -e -p 'Enter path to SDK : '  SDKFILEPATH
-
-		echo ""
-		ENTERCORRECTLY=1
-		if [ -d $SDKFILEPATH ]
-		then
-			echo "Directory exists"
-			echo ""
-			PARSEPATH=`echo $SDKFILEPATH | grep -o '.*processor_sdk_rtos_am57xx_2_00_00_00/'`
-			#echo $PARSEPATH
-
-			if [ "$PARSEPATH" != "" ] ; then
-			PATHVALID=1
-			else
-			PATHVALID=0
-			fi
-			#echo $PATHVALID
-			if [ $PATHVALID -eq 1 ] ; then
-
-			THEEVMSDK=`echo $SDKFILEPATH | grep -o 'processor_sdk_rtos_am57xx_2_00_00_00'`
-			echo "Is this the correct SDK: $THEEVMSDK"
-			echo ""
-			read -p 'Is this correct? [y/n] : ' ISRIGHTPATH
-				case $ISRIGHTPATH in
-				"y") ;;
-				"n") ENTERCORRECTLY=0;;
-				*)  echo "Please enter y or n";ENTERCORRECTLY=0;;
-				esac
-			else
-			echo "Invalid SDK path make sure to include ti-sdk-xxxx"
-			ENTERCORRECTLY=0
-			fi
-
-		else
-			echo "Invalid path make sure to include complete path"
-
-			ENTERCORRECTLY=0
-		fi
-	done
-fi
-
-
-
-#check that files are in SDK
-BOOTFILEPATH="$PARSEPATH/demos/image_processing/ipc/evmam572x/sd_card"
-MLO=`ls $BOOTFILEPATH | grep MLO | awk {'print $1'}`
-APP=`ls $BOOTFILEPATH | grep app | awk {'print $1'}`
-TTIMG=`ls $BOOTFILEPATH | grep tiny | grep .bmp | awk {'print $1'}`
-SSIMG=`ls $BOOTFILEPATH | grep small | grep .bmp | awk {'print $1'}`
-MMIMG=`ls $BOOTFILEPATH | grep medium | grep .bmp | awk {'print $1'}`
-LLIMG=`ls $BOOTFILEPATH | grep large | grep .bmp | awk {'print $1'}`
-
 cat << EOM
 ################################################################################
 
@@ -476,62 +293,20 @@ EOM
 
 echo ""
 #copy boot files out of board support
-if [ "$MLO" != "" ] ; then
-	cp $BOOTFILEPATH/$MLO $PATH_TO_SDBOOT/MLO
-	echo "MLO copied"
+if [ -f "$1/MLO" ] ; then
+   cp -f $1/* $PATH_TO_SDBOOT/
 else
-	echo "MLO file not found"
+cat << EOM
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ERROR: SD card file directory does not exist 
+ERROR: ($1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+EOM
 fi
-echo ""
-
-if [ "$APP" != "" ] ; then
-	cp $BOOTFILEPATH/$APP $PATH_TO_SDBOOT/app
-	echo "app copied"
-else
-	echo "appe not found"
-fi
-echo ""
-
-if [ "$TTIMG" != "" ] ; then
-	cp $BOOTFILEPATH/$TTIMG $PATH_TO_SDBOOT/tiny.bmp
-	echo "tiny.bmp copied"
-else
-	echo "tiny.bmp not found"
-fi
-echo ""
-
-if [ "$SSIMG" != "" ] ; then
-	cp $BOOTFILEPATH/$SSIMG $PATH_TO_SDBOOT/small.bmp
-	echo "small.bmp copied"
-else
-	echo "small.bmp not found"
-fi
-echo ""
-
-if [ "$MMIMG" != "" ] ; then
-	cp $BOOTFILEPATH/$MMIMG $PATH_TO_SDBOOT/medium.bmp
-	echo "medium.bmp copied"
-else
-	echo "medium.bmp not found"
-fi
-echo ""
-
-if [ "$LLIMG" != "" ] ; then
-	cp $BOOTFILEPATH/$LLIMG $PATH_TO_SDBOOT/large.bmp
-	echo "large.bmp copied"
-else
-	echo "large.bmp not found"
-fi
-echo ""
 
 echo ""
 echo ""
 echo "Syncing..."
-sync
-sync
-sync
-sync
-sync
 sync
 sync
 sync
