@@ -79,8 +79,11 @@ tisdk_image_build() {
 
     generate_sw_manifest
 
-    mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
-    mv ${SW_MANIFEST_TEXT} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
+    # Don't copy manifest into proc sdk until proper license automation
+    # is implemented.  License manifests will be imported as part of
+    # EXTRA_TISDK_FILES until then
+    #mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
+    #mv ${SW_MANIFEST_TEXT} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
 
     if [ -d ${IMAGE_ROOTFS}/component-sources ]
     then
