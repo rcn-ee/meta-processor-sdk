@@ -44,12 +44,20 @@ goto ENDSCRIPT
 
 :end_soc_check
 
+@REM Version of Processor SDK
+set PROC_SDK_VERSION=%SOC%_2_00_00_00
+
+@REM Version of PDK
+set PDK_VERSION=%SOC%_1_0_0
+
 if not defined SDK_INSTALL_PATH (
     set SDK_INSTALL_PATH="C:/ti"
 )
 
-@REM Version of PDK
-set PDK_VERSION=%SOC%_1_0_0
+if not defined PROC_SDK_INSTALL_PATH (
+    set PROC_SDK_INSTALL_PATH="%SDK_INSTALL_PATH%/processor_sdk_rtos_%PROC_SDK_VERSION%"
+)
+set PROC_SDK_INSTALL_PATH=%PROC_SDK_INSTALL_PATH:\=/%
 
 @REM Set PDK_PATH so path to PDK is known.  PDK_PATH is different from
 @REM PDK_INSTALL_PATH so as to not conflict when configuring environment
@@ -59,6 +67,10 @@ set PDK_PATH=%PDK_PATH:\=/%
 
 call %PDK_PATH%/packages/pdksetupenv.bat
 
+for /f "tokens=1* delims=" %%a in ('cmd /q/c path2dos %PROC_SDK_INSTALL_PATH%') do set PROC_SDK_INSTALL_PATH=%%a
+
+@echo     PROC_SDK_INSTALL_PATH     : %PROC_SDK_INSTALL_PATH%
+@echo 
 @echo PROCESSOR SDK BUILD ENVIRONMENT CONFIGURED
 :ENDSCRIPT
 @echo **************************************************************************

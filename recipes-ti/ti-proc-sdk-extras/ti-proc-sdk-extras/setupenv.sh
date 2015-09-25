@@ -51,13 +51,20 @@ if [ $in_list -eq 0 ]; then
     return 1
 fi
 
+# Version of Processor SDK
+PROC_SDK_VERSION=${SOC}_2_00_00_00
+
+# Version of PDK
+PDK_VERSION=${SOC}_1_0_0
+
 # TI SDK root directory
 if [ -z $SDK_INSTALL_PATH ]; then
     export SDK_INSTALL_PATH=~/ti
 fi
 
-# Version of PDK
-PDK_VERSION=${SOC}_1_0_0
+if [ -z $PROC_SDK_INSTALL_PATH ]; then
+    export PROC_SDK_INSTALL_PATH="${SDK_INSTALL_PATH}/processor_sdk_rtos_PROC_SDK_VERSION"
+fi
 
 # Set PDK_PATH so path to PDK is known.  PDK_PATH is different from
 # PDK_INSTALL_PATH so as to not conflict when configuring environment
@@ -72,5 +79,7 @@ pushd $PDK_PATH/packages > /dev/null
 source ./pdksetupenv.sh
 popd > /dev/null
 
+echo "    PROC_SDK_INSTALL_PATH     : $PROC_SDK_INSTALL_PATH"
+echo ""
 echo "PROCESSOR SDK BUILD ENVIRONMENT CONFIGURED"
 echo "*******************************************************************************"
