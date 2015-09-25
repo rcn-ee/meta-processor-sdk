@@ -1,7 +1,7 @@
 DESCRIPTION = "IMGLIB contains optimized general-purpose image/video processing routines for TI DSPs"
 HOMEPAGE = "http://www.ti.com/tool/sprc264"
 SECTION = "devel"
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 
 LIC_FILES_CHKSUM = "file://packages/ti/imglib/src/common/IMG_profile.h;beginline=1;endline=35;md5=a21fc16da34b650ce33a9a7143908667"
 
@@ -10,7 +10,7 @@ require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
 
 PV = "3_1_1_0"
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "http://software-dl.ti.com/sdoemb/sdoemb_public_sw/imglib/${PV}/exports/${BINFILE};name=imglib"
 

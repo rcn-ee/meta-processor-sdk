@@ -1,7 +1,7 @@
 DESCRIPTION = "MATHLIB contains optimized general-purpose signal-processing routines for TI DSPs"
 HOMEPAGE = "http://www.ti.com/tool/mathlib"
 SECTION = "devel"
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 
 LIC_FILES_CHKSUM = "file://packages/ti/mathlib/mathlib.h;beginline=9;endline=35;md5=954ed7074e987be574989f985f1897db"
 
@@ -10,7 +10,7 @@ require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
 
 PV = "3_1_1_0"
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "http://software-dl.ti.com/sdoemb/sdoemb_public_sw/mathlib/${PV}/exports/${BINFILE};name=mathlib"
 

@@ -1,7 +1,7 @@
 DESCRIPTION = "DSPLIB contains optimized general-purpose signal-processing routines for TI DSPs"
 HOMEPAGE = "http://www.ti.com/tool/sprc265"
 SECTION = "devel"
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 
 LIC_FILES_CHKSUM = "file://packages/ti/dsplib/dsplib.h;beginline=9;endline=35;md5=17733f9e1100f8a628512f47c4bf676a"
 
@@ -10,7 +10,7 @@ require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
 
 PV = "3_4_0_0"
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "http://software-dl.ti.com/sdoemb/sdoemb_public_sw/dsplib/${PV}/exports/${BINFILE};name=dsplib"
 
