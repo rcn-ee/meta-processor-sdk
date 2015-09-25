@@ -99,14 +99,6 @@ create_ccs_project() {
     cd $cwd
 }
 
-
-generate_sw_manifest() {
-    sw_manifest_header
-    sw_manifest_host
-    sw_manifest_footer
-}
-
-
 python do_rootfs () {
     from oe.rootfs import create_rootfs
     from oe.image import create_image
@@ -131,7 +123,6 @@ tisdk_image_setup () {
     mkdir -p ${IMAGE_ROOTFS}/etc
     mkdir -p ${IMAGE_ROOTFS}/var/lib/opkg
     mkdir -p ${IMAGE_ROOTFS}/lib
-    mkdir -p ${IMAGE_ROOTFS}/docs
 }
 
 tisdk_image_build() {
@@ -156,10 +147,7 @@ tisdk_image_build() {
 
     #cd $cwd
 
-    generate_sw_manifest
-
     mv ${IMAGE_ROOTFS}${PDK_INSTALL_DIR_RECIPE} ${IMAGE_ROOTFS}/${TI_PDK_NAME}_${TI_PDK_VERSION}
-    mv ${IMAGE_ROOTFS}/docs ${IMAGE_ROOTFS}/${TI_PDK_NAME}_${TI_PDK_VERSION}
 }
 
 tisdk_image_cleanup_append () {
