@@ -51,17 +51,17 @@ if [ $in_list -eq 0 ]; then
     return 1
 fi
 
-# TI component root directory
-TIROOT=~/ti
+# TI SDK root directory
+if [ -z $SDK_INSTALL_PATH ]; then
+    export SDK_INSTALL_PATH=~/ti
+fi
 
 # Version of PDK
 PDK_VERSION=${SOC}_1_0_0
 
 # Set PDK_PATH so path to PDK is known.  PDK_PATH is different from
 # PDK_INSTALL_PATH so as to not conflict when configuring environment
-if [ -z $PDK_PATH ]; then
-    export PDK_PATH=${TIROOT}/pdk_$PDK_VERSION
-fi
+export PDK_PATH=${SDK_INSTALL_PATH}/pdk_$PDK_VERSION
 
 # Unset the input arguments so they're not passed to the sourced script
 while (( "$#" )); do
