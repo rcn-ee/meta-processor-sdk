@@ -1,5 +1,8 @@
 ARAGO_TISDK_IMAGE = "processor-sdk-linux-image"
 
+PREFERRED_PROVIDER_virtual/kernel = "linux-processor-sdk"
+PREFERRED_VERSION_linux-processor-sdk = "4.1%"
+
 # Remove wayland from ti33x and ti43x DISTRO_FEATURES.
 DISTRO_FEATURES_remove_ti33x = "wayland"
 DISTRO_FEATURES_remove_ti43x = "wayland"
@@ -27,6 +30,14 @@ script located in the sdk\'s bin directory\\n\
 \\n\
 The script may take several minutes but you will then have a full copy of\\n\
 the git repository including its entire git history.\\n"
+
+CREATE_SRCIPK_pn-linux-processor-sdk = "1"
+SRCIPK_INSTALL_DIR_pn-linux-processor-sdk = "board-support/linux-${PV}${KERNEL_LOCALVERSION}"
+SRCIPK_PRESERVE_GIT_pn-linux-processor-sdk = "true"
+SRCIPK_CUSTOM_GIT_BRANCH_pn-linux-processor-sdk = "processor-sdk-local"
+SRCIPK_CUSTOM_GIT_MESSAGE_pn-linux-processor-sdk = "${SRCIPK_SHALLOW_GIT_COMMIT_MESSAGE}"
+SRCIPK_SHALLOW_CLONE_pn-linux-processor-sdk = "true"
+SRCIPK_SHALLOW_DEPTH_pn-linux-processor-sdk = "400"
 
 SRCIPK_CUSTOM_GIT_BRANCH_pn-linux-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-linux-ti-staging = "${SRCIPK_SHALLOW_GIT_COMMIT_MESSAGE}"
