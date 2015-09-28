@@ -1,4 +1,6 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
+
+require ocl-1.1.6.inc
 
 do_install_append_dra7xx() {
     mv ${D}/lib/firmware/dra7-dsp1-fw.xe66 \
