@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://pdksetupenv.sh;beginline=1;endline=20;md5=50fd2da740d
 
 require recipes-ti/includes/ti-paths-append.inc
 
-PR = "r4"
+PR = "r5"
 
 BRANCH = "releases/procsdk_01_xx"
-SRCREV = "f59633b9261b79025707db456cb083076c6911fe"
+SRCREV = "a2f48b3ece20ef4f6dcda31337da75ea9ba069d3"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/keystone-2-csl-lld.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git/ti/release/full/"

@@ -4,6 +4,6 @@ LIC_FILES_CHKSUM = "file://SPI.h;beginline=1;endline=31;md5=269b656e0e4c45364b72
 BRANCH ="master"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/spi-lld.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "9d46bceca4c50b3572a28bc22fc59790547408c9"
+SRCREV = "23ef4d999d8ce548077c7b72214b5d87fae5d4d6"
 PV = "01.00.00.00"
-PR = "r2"
+PR = "r3"

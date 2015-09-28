@@ -12,8 +12,8 @@ COMPATIBLE_MACHINE = "omap-a15"
 BRANCH = "master"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/sbl.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "969d7a2d6bd0b0c610e11801280a4e9d2a4037bb"
-PR = "r3"
+SRCREV = "ed95dcf36176e28efdd84021a3f6ddceb8465cde"
+PR = "r4"
 
 S = "${WORKDIR}/git"
 

@@ -13,8 +13,8 @@ DEPENDS = "ti-ccsv6-native"
 BRANCH = "master"
 SRC_URI = "git://gitorious.design.ti.com/starterware/starterware-src.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "2b12ac9c7697d704020ecc8701cc28c2b74006c6"
-PR = "r2"
+SRCREV = "44c3d863873db48055d7d3d4a80ca159ba8dbb8c"
+PR = "r3"
 
 S = "${WORKDIR}/git"
 
