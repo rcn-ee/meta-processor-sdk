@@ -14,6 +14,13 @@ SRC_URI = "\
     file://makefile \
     file://create-sdcard.sh \
     file://create_img.sh \
+    file://oob/evmAM572x/bin/app \
+    file://oob/evmAM572x/bin/large.bmp \
+    file://oob/evmAM572x/bin/medium.bmp \
+    file://oob/evmAM572x/bin/MLO \
+    file://oob/evmAM572x/bin/small.bmp \
+    file://oob/evmAM572x/bin/tiny.bmp \
+    file://oob/evmAM572x/sd_card_img/sd_card.img \
 "
 
 do_compile() {
@@ -23,12 +30,21 @@ do_compile() {
 do_install() {
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/sd_card_img
 
     install -m 0755 setupenv.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 setupenv.bat ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 makefile ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
     install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+    install -m 0755 oob/evmAM572x/bin/app ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -m 0755 oob/evmAM572x/bin/large.bmp ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -m 0755 oob/evmAM572x/bin/medium.bmp ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -m 0755 oob/evmAM572x/bin/MLO ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -m 0755 oob/evmAM572x/bin/small.bmp ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -m 0755 oob/evmAM572x/bin/tiny.bmp ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -m 0755 oob/evmAM572x/sd_card_img/sd_card.img ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/sd_card_img/sd_card.img.gz
 }
 
 FILES_${PN} += "${PROC_SDK_INSTALL_DIR_RECIPE}/*"
