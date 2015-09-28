@@ -63,7 +63,7 @@ if [ -z $SDK_INSTALL_PATH ]; then
 fi
 
 if [ -z $PROC_SDK_INSTALL_PATH ]; then
-    export PROC_SDK_INSTALL_PATH="${SDK_INSTALL_PATH}/processor_sdk_rtos_PROC_SDK_VERSION"
+    export PROC_SDK_INSTALL_PATH="${SDK_INSTALL_PATH}/processor_sdk_rtos_$PROC_SDK_VERSION"
 fi
 
 # Set PDK_PATH so path to PDK is known.  PDK_PATH is different from

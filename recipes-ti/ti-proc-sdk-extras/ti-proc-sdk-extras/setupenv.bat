@@ -51,7 +51,7 @@ set PROC_SDK_VERSION=%SOC%_2_00_00_00
 set PDK_VERSION=%SOC%_1_0_0
 
 if not defined SDK_INSTALL_PATH (
-    set SDK_INSTALL_PATH="C:/ti"
+    set SDK_INSTALL_PATH=C:/ti
 )
 
 if not defined PROC_SDK_INSTALL_PATH (
@@ -70,7 +70,6 @@ call %PDK_PATH%/packages/pdksetupenv.bat
 for /f "tokens=1* delims=" %%a in ('cmd /q/c path2dos %PROC_SDK_INSTALL_PATH%') do set PROC_SDK_INSTALL_PATH=%%a
 
 @echo     PROC_SDK_INSTALL_PATH     : %PROC_SDK_INSTALL_PATH%
-@echo 
 @echo PROCESSOR SDK BUILD ENVIRONMENT CONFIGURED
 :ENDSCRIPT
 @echo **************************************************************************

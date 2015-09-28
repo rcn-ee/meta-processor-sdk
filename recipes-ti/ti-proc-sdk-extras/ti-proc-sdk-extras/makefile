@@ -19,8 +19,8 @@ ifndef ECHO
 export ECHO = echo
 endif
 
-all: pdk
-clean: pdk_clean
+all: pdk demo
+clean: pdk_clean demo_clean
 
 help:
 	@echo "Standard Targets:"
@@ -32,6 +32,10 @@ help:
 	@echo "    pdk       - Builds all targets within the PDK top-level makefile"
 	@echo "    pdk_clean - Cleans all targets within the PDK top-level makefile"
 	@echo ""
+	@echo "Demo Targets:"
+	@echo "    demo       - Builds image processing demo for AM572x EVM"
+	@echo "    demo_clean - Cleans image processing demo for AM572x EVM"
+	@echo ""
 	@echo "    NOTE: Instructions for rebuilding all other components"
 	@echo "          installed with Processor SDK can be found in each"
 	@echo "          component's sub-directory"
@@ -41,3 +45,10 @@ pdk:
 
 pdk_clean:
 	$(MAKE) -C $(PDK_INSTALL_PATH) clean
+
+demo:
+	$(MAKE) -C ./demos/image_processing/ipc/evmam572x all
+
+demo_clean:
+	$(MAKE) -C ./demos/image_processing/ipc/evmam572x clean
+
