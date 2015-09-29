@@ -9,8 +9,8 @@ PR = "r1.ti-int5"
 
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/common-csl-ip.git;protocol=git;branch=${BRANCH};destsuffix=${S}"
 BRANCH = "releases/PROCESSOR-SDK.01.00.00"
-SRCREV = "d8157101da9a5f2af17be72f2a9710018d9f0982"
-SRCREV_dra7xx = "d8157101da9a5f2af17be72f2a9710018d9f0982"
+SRCREV = "829b1e60756b8d8180fe978c14365563961b0396"
+SRCREV_dra7xx = "829b1e60756b8d8180fe978c14365563961b0396"
 
 XDCARGS = ""
 XDCARGS_ti33x = "am335x"

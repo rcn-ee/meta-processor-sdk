@@ -7,7 +7,7 @@ require recipes-ti/includes/ti-paths-append.inc
 PR = "r5"
 
 BRANCH = "releases/procsdk_01_xx"
-SRCREV = "a2f48b3ece20ef4f6dcda31337da75ea9ba069d3"
+SRCREV = "60e83b94fbe6c9e7f6418ac8e193c7e0e3134516"
 SRC_URI = "git://gtgit02.gt.design.ti.com/git/projects/keystone-2-csl-lld.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git/ti/release/full/"
