@@ -77,11 +77,12 @@ tisdk_image_build() {
     PROC_SDK_VER=`echo ${TISDK_VERSION} | sed -e 's|\.|_|g' -e 's|^0||'`
     PROC_SDK_DIR_NAME=processor_sdk_rtos_${PROC_SDK_DEVICE}_${PROC_SDK_VER}
 
-    generate_sw_manifest
+    # Don't create and copy manifest into proc sdk until proper license
+    # automation is implemented.  Until then the license manifests will be
+    # imported as part of EXTRA_TISDK_FILES
 
-    # Don't copy manifest into proc sdk until proper license automation
-    # is implemented.  License manifests will be imported as part of
-    # EXTRA_TISDK_FILES until then
+    # generate_sw_manifest
+
     #mv ${SW_MANIFEST_FILE} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
     #mv ${SW_MANIFEST_TEXT} ${IMAGE_ROOTFS}/${PROC_SDK_DIR_NAME}/docs
 
