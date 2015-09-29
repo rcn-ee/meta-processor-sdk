@@ -30,14 +30,19 @@ do_compile() {
 do_install() {
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
-    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
-    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/sd_card_img
+
 
     install -m 0755 setupenv.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 setupenv.bat ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 makefile ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
     install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+}
+
+do_install_append_omap-a15() {
+    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
+    install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/sd_card_img
+
     install -m 0755 oob/evmAM572x/bin/app ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
     install -m 0755 oob/evmAM572x/bin/large.bmp ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
     install -m 0755 oob/evmAM572x/bin/medium.bmp ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/demos/oob/evmAM572x/bin
