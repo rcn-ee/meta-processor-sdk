@@ -9,7 +9,7 @@
 # This distribution contains contributions or derivatives under copyright
 # as follows:
 #
-# Copyright (c) 2010, Texas Instruments Incorporated
+# Copyright (c) 2010-2015, Texas Instruments Incorporated
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,7 @@ The script must be run with root permissions and from the bin directory of
 the SDK
 
 Example:
- $ sudo ./create-sdcard.sh [demo|diag]
+ $ sudo ./create-sdcard.sh path/to/sdcard/files
 
 Formatting can be skipped if the SD card is already formatted and
 partitioned properly.
@@ -74,13 +74,6 @@ if [ "$AMIROOT" != "root" ] ; then
 fi
 
 THEPWD=$EXEPATH
-PARSEPATH=`echo $THEPWD | grep -o '.*processor_sdk_rtos_am57xx_2_00_00_00/'`
-
-if [ "$PARSEPATH" != "" ] ; then
-PATHVALID=1
-else
-PATHVALID=0
-fi
 
 check_for_sdcards()
 {
@@ -214,6 +207,11 @@ if [ "$NUM_OF_DRIVES" != "0" ]; then
                 fi
 
         done
+        echo " unmounted ${DRIVE}$P"
+        sudo umount -f ${DRIVE}$P
+else
+        echo " unmounted ${DRIVE}$P"
+        sudo umount -f ${DRIVE}$P
 fi
 
 # Refresh this variable as the device may not be mounted at script instantiation time
@@ -232,22 +230,13 @@ cat << EOM
 
 ################################################################################
 
-		Now making partition
+		Now erasing partition table
 
 ################################################################################
 
 EOM
 dd if=/dev/zero of=$DRIVE bs=1024 count=1024
 
-SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
-
-echo DISK SIZE - $SIZE bytes
-
-CYLINDERS=`echo $SIZE/255/63/512 | bc`
-
-sfdisk -D -H 255 -S 63 -C $CYLINDERS $DRIVE << EOF
-,,,-
-EOF
 
 cat << EOM
 
@@ -257,7 +246,7 @@ cat << EOM
 
 ################################################################################
 EOM
-	mkfs.vfat -F 32 -n "boot" ${DRIVE}${P}1
+	mkfs.vfat -I -F 32 -n "boot" ${DRIVE}${P}
 
 #Add directories for images
 export START_DIR=$PWD
@@ -267,7 +256,7 @@ echo " "
 echo "Mount the partitions "
 mkdir $PATH_TO_SDBOOT
 
-sudo mount -t vfat ${DRIVE}${P}1 boot/
+sudo mount -t vfat ${DRIVE}${P} boot/
 
 echo " "
 echo "Emptying partitions "
