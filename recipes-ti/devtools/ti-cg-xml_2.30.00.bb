@@ -35,14 +35,17 @@ do_install() {
     install -d ${D}${CG_XML_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${CG_XML_INSTALL_DIR_RECIPE}
 
-    install -m 755 ${WORKDIR}/${BINFILE} ${D}
-    install -m 755 ${WORKDIR}/cg_xml-v${PV}-Setup.exe ${D}
+    # install -m 755 ${WORKDIR}/${BINFILE} ${D}
+    # install -m 755 ${WORKDIR}/cg_xml-v${PV}-Setup.exe ${D}
 }
 
 FILES_${PN} += "${CG_XML_INSTALL_DIR_RECIPE}"
-FILES_${PN}-installer-linux = "/${BINFILE}"
-FILES_${PN}-installer-windows = "/cg_xml-v${PV}-Setup.exe"
+# FILES_${PN}-installer-linux = "/${BINFILE}"
+# FILES_${PN}-installer-windows = "/cg_xml-v${PV}-Setup.exe"
 
-INSANE_SKIP_${PN}-dev = "arch ldflags"
+INSANE_SKIP_${PN} = "arch ldflags"
+
+CREATE_SRCIPK = "1"
+SRCIPK_INSTALL_DIR = "cg_xml"
 
 BBCLASSEXTEND = "native nativesdk"

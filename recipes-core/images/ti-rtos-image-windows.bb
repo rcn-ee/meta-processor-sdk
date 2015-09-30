@@ -6,7 +6,7 @@ inherit ti-rtos-image
 export IMAGE_BASENAME = "processor-sdk-rtos-image-windows"
 
 EXTRA_TOOLS = "\
-    nativesdk-ti-cg-xml-installer-windows \
+    ti-cg-xml-src \
 "
 
 IMAGE_INSTALL += "\

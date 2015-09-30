@@ -6,7 +6,7 @@ inherit ti-rtos-image
 export IMAGE_BASENAME = "processor-sdk-rtos-image-linux"
 
 EXTRA_TOOLS = "\
-    nativesdk-ti-cg-xml-installer-linux \
+    ti-cg-xml-src \
 "
 
 IMAGE_INSTALL += "\
