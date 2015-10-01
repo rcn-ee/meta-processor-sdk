@@ -1,4 +1,4 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -8,3 +8,5 @@ SRC_URI_append = " \
 
 SRCREV_ti33x    = "e527b3e6a548fe5b5fb743dde357a817e0b33d6f"
 SRCREV_ti43x    = "e527b3e6a548fe5b5fb743dde357a817e0b33d6f"
+
+FILES_SOLIBSDEV = ""
