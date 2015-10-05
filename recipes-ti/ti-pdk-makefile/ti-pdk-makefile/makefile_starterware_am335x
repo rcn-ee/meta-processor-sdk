@@ -1,0 +1,48 @@
+
+# Linux default build environment
+ifeq ($(OS), )
+    OS := linux
+endif
+
+ifeq ($(OS),Windows_NT)
+    # Object clean on Windows
+    CLEAN_RECURSIVE_OBJ=cmd /C del /s ti\\starterware\\*.o ti\\starterware\\*.a > NUL
+else
+    # Object clean on Linux
+    CLEAN_RECURSIVE_OBJ=find ti/starterware -name "*.[ao]" -delete
+endif
+
+STARTERWARE_PLATFORM = __STARTERWARE_PLATFORM__
+
+starterware: starterware_boot starterware_libs starterware_apps
+
+starterware_boot:
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=uart PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=debug -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=uart PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=mmcsd PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=debug -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=mmcsd PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=nand PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=debug -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=nand PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=mcspi PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=debug -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=mcspi PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
+
+starterware_libs:
+	$(MAKE) -C ./ti/starterware PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+
+starterware_apps:
+	$(MAKE) -C ./ti/starterware lcdc_app_raster PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware lcdc_app_raster PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware mcspi_app_flash PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware mcspi_app_flash PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+
+starterware_clean:
+	$(MAKE) -C ./ti/starterware clean KW_BUILD=no

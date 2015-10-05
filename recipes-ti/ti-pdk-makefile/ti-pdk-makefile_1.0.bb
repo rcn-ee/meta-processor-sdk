@@ -25,7 +25,8 @@ SRC_URI = "\
     file://makefile_pcie \
     file://makefile_pruss \
     file://makefile_sbl \
-    file://makefile_starterware \
+    file://makefile_starterware_am335x \
+    file://makefile_starterware_am437x \
     file://makefile_spi \
     file://makefile_uart \
     file://makefile_usb \
@@ -34,14 +35,14 @@ SRC_URI = "\
     file://makefile_profiling \
 "
 
-PR = "r3"
+PR = "r4"
 
 MAKEFILES = ""
 
 MAKEFILES_append_ti33x = "\
     osal \
     profiling \
-    starterware \
+    starterware_am335x \
     board \
     gpio \
     i2c \
@@ -56,7 +57,7 @@ MAKEFILES_append_ti33x = "\
 MAKEFILES_append_ti43x = "\
     osal \
     profiling \
-    starterware \
+    starterware_am437x \
     board \
     gpio \
     i2c \
