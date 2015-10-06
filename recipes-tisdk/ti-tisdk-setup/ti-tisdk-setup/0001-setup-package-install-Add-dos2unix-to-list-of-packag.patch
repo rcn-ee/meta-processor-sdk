@@ -1,0 +1,26 @@
+From f92016bc1b4350ae3cb3b9dfa290d6ced11b38c1 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Tue, 6 Oct 2015 14:43:28 -0400
+Subject: [PATCH] setup-package-install: Add "dos2unix" to list of packages
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-package-install.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup-package-install.sh b/setup-package-install.sh
+index b934213..ddddecd 100644
+--- a/setup-package-install.sh
++++ b/setup-package-install.sh
+@@ -56,7 +56,7 @@ cwd=`dirname $0`
+ 
+ entry_header
+ 
+-packages_to_install="xinetd tftpd nfs-kernel-server minicom build-essential libncurses5-dev autoconf automake"
++packages_to_install="xinetd tftpd nfs-kernel-server minicom build-essential libncurses5-dev autoconf automake dos2unix"
+ 
+ get_host_type host
+ 
+-- 
+1.9.1
+
