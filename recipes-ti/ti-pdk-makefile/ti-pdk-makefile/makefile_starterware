@@ -30,19 +30,46 @@ starterware_boot:
 	$(CLEAN_RECURSIVE_OBJ)
 	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=nand PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
 	$(CLEAN_RECURSIVE_OBJ)
+ifeq ($(STARTERWARE_PLATFORM), am335x-evm)
+	# am335x-evm
 	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=mcspi PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=debug -s KW_BUILD=no
 	$(CLEAN_RECURSIVE_OBJ)
 	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=mcspi PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
+else ifeq ($(STARTERWARE_PLATFORM), am43xx-evm)
+	# am437x-evm
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=qspi PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=debug -s KW_BUILD=no
+	$(CLEAN_RECURSIVE_OBJ)
+	$(MAKE) -C ./ti/starterware bootloader BUILDCFG=boot BOOTMODE=qspi PLATFORM=$(STARTERWARE_PLATFORM) PROFILE=release -s KW_BUILD=no
+endif
 
 starterware_libs:
 	$(MAKE) -C ./ti/starterware PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
 	$(MAKE) -C ./ti/starterware PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
 
 starterware_apps:
+ifeq ($(STARTERWARE_PLATFORM), am335x-evm)
+	# am335x-evm
 	$(MAKE) -C ./ti/starterware lcdc_app_raster PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
 	$(MAKE) -C ./ti/starterware lcdc_app_raster PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
 	$(MAKE) -C ./ti/starterware mcspi_app_flash PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
 	$(MAKE) -C ./ti/starterware mcspi_app_flash PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+else ifeq ($(STARTERWARE_PLATFORM), am43xx-evm)
+	# am437x-evm
+	$(MAKE) -C ./ti/starterware usb_dev_msc_app PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware usb_dev_msc_app PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware vpfe_app_capture_display PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware vpfe_app_capture_display PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware cap_tsc_app PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware cap_tsc_app PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware grlib_demo_app PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware grlib_demo_app PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware dss_app_raster PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware dss_app_raster PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware qspi_app_flash_writer PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware qspi_app_flash_writer PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware qspi_app_read_write PROFILE=debug PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+	$(MAKE) -C ./ti/starterware qspi_app_read_write PROFILE=release PLATFORM=$(STARTERWARE_PLATFORM) -s KW_BUILD=no
+endif
 
 starterware_clean:
-	$(MAKE) -C ./ti/starterware clean KW_BUILD=no
+	$(MAKE) -C ./ti/starterware clean PLATFORM=$(STARTERWARE_PLATFORM) KW_BUILD=no
