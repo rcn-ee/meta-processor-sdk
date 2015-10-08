@@ -1,0 +1,38 @@
+From 8178ce9ddf7ef843b4292bdf481bbb07e7088f9e Mon Sep 17 00:00:00 2001
+From: Hongmei Gou <h-gou@ti.com>
+Date: Tue, 29 Sep 2015 15:41:00 -0400
+Subject: [PATCH 8/9] drivers:media:v4l2-core:videobuf2-core: supress the
+ warning for zero bytes used
+
+* Revisit this after proper fix is done for "HACK: Remove the V4L2 check
+  and fix the DMA address". The warning will go away with the right fix.
+
+Signed-off-by: Hongmei Gou <h-gou@ti.com>
+---
+ drivers/media/v4l2-core/videobuf2-core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index 119fcd9..6919d35 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -1305,8 +1305,14 @@ static void __fill_vb2_buffer(struct vb2_buffer *vb, const struct v4l2_buffer *b
+ 				struct v4l2_plane *pdst = &v4l2_planes[plane];
+ 				struct v4l2_plane *psrc = &b->m.planes[plane];
+ 
+-				if (psrc->bytesused == 0)
+-					vb2_warn_zero_bytesused(vb);
++                                /*
++                                 * Supress the warning for zero bytesused.
++                                 * The warning will go away after proper
++                                 * fix is done for "HACK: Remove the V4L2
++                                 * check and fix the DMA address"
++                                 */
++				/*if (psrc->bytesused == 0)
++					vb2_warn_zero_bytesused(vb);*/
+ 
+ 				if (vb->vb2_queue->allow_zero_bytesused)
+ 					pdst->bytesused = psrc->bytesused;
+-- 
+1.9.1
+
