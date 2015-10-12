@@ -53,12 +53,14 @@ COMPATIBLE_MACHINE = "ti33x|ti43x|omap-a15|omap3|omap4|keystone"
 S = "${WORKDIR}/git"
 
 BRANCH = "processor-sdk-linux-02.00.00"
+BRANCH_keystone = "processor-sdk-linux-next"
 
 SRCREV = "52c4aa7cdb93d61f8008f380135beaf7b8fa6593"
+SRCREV_keystone = "1bbc2b03418a5bee8e2bb47fa46cba3e0455e177"
 PV = "4.1.6+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
-MACHINE_KERNEL_PR_append = "d"
+MACHINE_KERNEL_PR_append = "e"
 PR = "${MACHINE_KERNEL_PR}"
 
 KERNEL_CONFIG_DIR = "${S}/ti_config_fragments"
