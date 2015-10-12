@@ -1,0 +1,94 @@
+From f6317f6fe5471fe11532268c2bd1c20584154fb8 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Tue, 6 Oct 2015 09:45:24 -0400
+Subject: [PATCH] setup-tftp: Also copy boot-monitor and u-boot.gph
+
+* This is required for keystone devices
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-tftp.sh | 60 ++++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 35 insertions(+), 25 deletions(-)
+
+diff --git a/setup-tftp.sh b/setup-tftp.sh
+index 3428c73..714968f 100644
+--- a/setup-tftp.sh
++++ b/setup-tftp.sh
+@@ -55,6 +55,34 @@ disable = no
+      echo "$tftpcfg successfully created"
+ }
+ 
++prebuiltimagesdir=`cd $cwd/../board-support/prebuilt-images/ ; echo $PWD`
++copy_to_tftproot() {
++    files="$1"
++    for file in $files
++    do
++	if [ -f $tftproot/$file ]; then
++	    echo
++	    echo "$tftproot/$file already exists. The existing installed file can be renamed and saved under the new name."
++	    echo "(o) overwrite (s) skip copy "
++	    read -p "[o] " exists
++	    case "$exists" in
++	      s) echo "Skipping copy of $file, existing version will be used"
++		 ;;
++	      *) sudo cp "$prebuiltimagesdir/$file" $tftproot
++		 check_status
++		 echo
++		 echo "Successfully overwritten $file in tftp root directory $tftproot"
++		 ;;
++	    esac
++	else
++	    sudo cp "$prebuiltimagesdir/$file" $tftproot
++	    check_status
++	    echo
++	    echo "Successfully copied $file to tftp root directory $tftproot"
++	fi
++    done
++}
++
+ echo "--------------------------------------------------------------------------------"
+ echo "Which directory do you want to be your tftp root directory?(if this directory does not exist it will be created for you)"
+ read -p "[ $tftprootdefault ] " tftproot
+@@ -122,32 +150,14 @@ else
+     echo "Successfully copied $kernelimage to tftp root directory $tftproot"
+ fi
+ 
+-dtbfiles=`cd $cwd/../board-support/prebuilt-images/;ls -1 *.dtb`
+-prebuiltimagesdir=`cd $cwd/../board-support/prebuilt-images/ ; echo $PWD`
++dtbfiles=`cd $prebuiltimagesdir;ls -1 *.dtb`
++copy_to_tftproot "$dtbfiles"
+ 
+-for dtbfile in $dtbfiles
+-do
+-    if [ -f $tftproot/$dtbfile ]; then
+-        echo
+-        echo "$tftproot/$dtbfile already exists. The existing installed file can be renamed and saved under the new name."
+-        echo "(o) overwrite (s) skip copy "
+-        read -p "[o] " exists
+-        case "$exists" in
+-          s) echo "Skipping copy of $dtbfile, existing version will be used"
+-             ;;
+-          *) sudo cp "$prebuiltimagesdir/$dtbfile" $tftproot
+-             check_status
+-             echo
+-             echo "Successfully overwritten $$dtbfile in tftp root directory $tftproot"
+-             ;;
+-        esac
+-    else
+-        sudo cp "$prebuiltimagesdir/$dtbfile" $tftproot
+-        check_status
+-        echo
+-        echo "Successfully copied $dtbfile to tftp root directory $tftproot"
+-    fi
+-done
++uboot_gph_files=`cd $prebuiltimagesdir;ls -1 u-boot*.gph 2> /dev/null`
++copy_to_tftproot "$uboot_gph_files"
++
++monfiles=`cd $prebuiltimagesdir;ls -1 skern*.bin 2> /dev/null`
++copy_to_tftproot "$monfiles"
+ 
+ echo
+ if [ -f $tftpcfg ]; then
+-- 
+1.9.1
+
