@@ -1,4 +1,9 @@
-PR_append = "-tisdk17"
+PR_append = "-tisdk18"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
+SRC_URI_append = " file://Makefile_uio-module-drv \
+"
 
 MAKEFILES_COMMON_remove_keystone = " refresh-screen \
                                      matrix-gui-browser \
@@ -11,6 +16,7 @@ MAKEFILES_append_omap-a15 = " \
 MAKEFILES_append_keystone = " u-boot-spl \
                               linux-dtbs \
                               cmem-mod \
+                              uio-module-drv \
                               cryptodev \
                               ti-crypto-examples \
 "
