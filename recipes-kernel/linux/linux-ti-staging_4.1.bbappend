@@ -1,4 +1,4 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
 
@@ -12,4 +12,5 @@ SRC_URI_append = " \
     file://0007-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
     file://0008-drivers-media-v4l2-core-videobuf2-core-supress-the-w.patch \
     file://0009-ARM-DTS-am437x-sk-evm-Switch-using-simple-audio-card.patch \
+    file://0001-dts-dra7-evm-Increase-dsp2-CMA-region.patch \
 "

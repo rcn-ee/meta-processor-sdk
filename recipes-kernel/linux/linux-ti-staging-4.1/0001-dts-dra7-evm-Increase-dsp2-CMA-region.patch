@@ -1,0 +1,29 @@
+From d8bbb903e3422f020ad0f27cb986f8651f10d1ae Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Tue, 13 Oct 2015 14:36:41 -0400
+Subject: [PATCH] dts/dra7-evm: Increase dsp2 CMA region
+
+* The extra space is needed for the opencl monitor firmware to add
+  GateMP support
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/dra7-evm.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/dra7-evm.dts b/arch/arm/boot/dts/dra7-evm.dts
+index bb7ad5c..72c3352 100644
+--- a/arch/arm/boot/dts/dra7-evm.dts
++++ b/arch/arm/boot/dts/dra7-evm.dts
+@@ -49,7 +49,7 @@
+ 
+ 		dsp2_cma_pool: dsp2_cma@9f000000 {
+ 			compatible = "shared-dma-pool";
+-			reg = <0x9f000000 0x800000>;
++			reg = <0x9f000000 0x1000000>;
+ 			reusable;
+ 			status = "okay";
+ 		};
+-- 
+1.9.1
+
