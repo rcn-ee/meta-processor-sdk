@@ -1,0 +1,193 @@
+From 57f3bf838c8ebba7305e975d299fa61f67a4447a Mon Sep 17 00:00:00 2001
+From: Sam Nelson <sam.nelson@ti.com>
+Date: Thu, 17 Sep 2015 12:47:06 -0400
+Subject: [PATCH 02/10] remoteproc: Add hooks to download and run firmware from
+ user space
+
+- Add APIs to support user space loader
+- Add hooks to handle firmware download using userspace loader.
+
+Signed-off-by: Sam Nelson <sam.nelson@ti.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 80 ++++++++++++++++++++++++++++--------
+ include/linux/remoteproc.h           |  4 ++
+ 2 files changed, 67 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a75f30e..9dbeecd 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1138,7 +1138,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	if (ret)
+ 		return ret;
+ 
+-	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
++	if (fw && !rproc->use_userspace_loader)
++		dev_info(
++			dev, "Booting fw image %s, size %zd\n",
++			name, fw->size
++		);
++	else
++		dev_info(dev, "Booting unspecified firmware\n");
+ 
+ 	/*
+ 	 * if enabling an IOMMU isn't relevant for this rproc, this is
+@@ -1181,12 +1187,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 			goto clean_up;
+ 		}
+ 	}
+-
+-	/* load the ELF segments to memory */
+-	ret = rproc_load_segments(rproc, fw);
+-	if (ret) {
+-		dev_err(dev, "Failed to load program segments: %d\n", ret);
+-		goto clean_up;
++	if (!rproc->use_userspace_loader) {
++		/* load the ELF segments to memory */
++		ret = rproc_load_segments(rproc, fw);
++		if (ret) {
++			dev_err(dev, "Failed to load program segments: %d\n",
++				ret);
++			goto clean_up;
++		}
+ 	}
+ 
+ 	/*
+@@ -1288,9 +1296,27 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ out:
+ 	release_firmware(fw);
+ 	/* allow rproc_del() contexts, if any, to proceed */
+-	complete_all(&rproc->firmware_loading_complete);
++		complete_all(&rproc->firmware_loading_complete);
+ }
+ 
++/**
++ * rproc_boot_config_virtio() - Configure virtio in case of external downloader
++ * @rproc: handle of a remote processor
++ * @use_userspace_loader: indicates to use user space loader
++ *
++ * Configure virtio, based on resource table
++ * ( with firmware download externally )
++ *
++ */
++
++void rproc_boot_config_virtio(struct rproc *rproc, bool use_userspace_loader)
++{
++	rproc->use_userspace_loader = use_userspace_loader;
++	/* Call to configure virtio */
++	rproc_fw_config_virtio(NULL, (void *)rproc);
++}
++EXPORT_SYMBOL(rproc_boot_config_virtio);
++
+ static int rproc_add_virtio_devices(struct rproc *rproc)
+ {
+ 	int ret;
+@@ -1298,6 +1324,9 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
+ 	/* rproc_del() calls must wait until async loader completes */
+ 	init_completion(&rproc->firmware_loading_complete);
+ 
++	if (rproc->use_userspace_loader)
++		return 0;
++
+ 	/*
+ 	 * We must retrieve early virtio configuration info from
+ 	 * the firmware (e.g. whether to register a virtio device,
+@@ -1413,7 +1442,7 @@ EXPORT_SYMBOL(rproc_get_alias_id);
+  */
+ int rproc_boot(struct rproc *rproc)
+ {
+-	const struct firmware *firmware_p;
++	const struct firmware *firmware_p = NULL;
+ 	struct device *dev;
+ 	int ret;
+ 
+@@ -1452,16 +1481,19 @@ int rproc_boot(struct rproc *rproc)
+ 
+ 	dev_info(dev, "powering up %s\n", rproc->name);
+ 
+-	/* load firmware */
+-	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+-	if (ret < 0) {
+-		dev_err(dev, "request_firmware failed: %d\n", ret);
+-		goto downref_rproc;
++	if (!rproc->use_userspace_loader) {
++		/* load firmware */
++		ret = request_firmware(&firmware_p, rproc->firmware, dev);
++		if (ret < 0) {
++			dev_err(dev, "request_firmware failed: %d\n", ret);
++			goto downref_rproc;
++		}
+ 	}
+ 
+ 	ret = rproc_fw_boot(rproc, firmware_p);
+ 
+-	release_firmware(firmware_p);
++	if (!rproc->use_userspace_loader)
++		release_firmware(firmware_p);
+ 
+ downref_rproc:
+ 	if (ret) {
+@@ -1473,6 +1505,18 @@ unlock_mutex:
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_boot);
++/**
++ * rproc_cleanup_vdev_entries() - cleanup vdev entries
++ */
++void rproc_cleanup_vdev_entries(struct rproc *rproc)
++{
++	struct rproc_vdev *rvdev, *tmp;
++
++	/* clean up remote vdev entries */
++	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
++		rproc_remove_virtio_dev(rvdev);
++}
++EXPORT_SYMBOL(rproc_cleanup_vdev_entries);
+ 
+ /**
+  * rproc_shutdown() - power off the remote processor
+@@ -1802,8 +1846,10 @@ int rproc_del(struct rproc *rproc)
+ 	if (!rproc)
+ 		return -EINVAL;
+ 
+-	/* if rproc is just being registered, wait */
+-	wait_for_completion(&rproc->firmware_loading_complete);
++	if (!rproc->use_userspace_loader) {
++		/* if rproc is just being registered, wait */
++		wait_for_completion(&rproc->firmware_loading_complete);
++	}
+ 
+ 	/* clean up remote vdev entries */
+ 	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 1c93b9a..6cd22e1 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -488,6 +488,7 @@ enum rproc_crash_type {
+  * @table_csum: checksum of the resource table
+  * @fw_version: human readable version information extracted from f/w
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
++ * @use_userspace_loader: flag that state if user space loader is enabled
+  */
+ struct rproc {
+ 	struct list_head node;
+@@ -523,6 +524,7 @@ struct rproc {
+ 	u32 table_csum;
+ 	char *fw_version;
+ 	bool has_iommu;
++	bool use_userspace_loader;
+ };
+ 
+ /* we currently support only two vrings per rvdev */
+@@ -582,6 +584,8 @@ struct rproc *rproc_vdev_to_rproc_safe(struct virtio_device *vdev);
+ int rproc_get_alias_id(struct rproc *rproc);
+ int rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags);
++void rproc_boot_config_virtio(struct rproc *rproc, bool use_userspace_loader);
++void rproc_cleanup_vdev_entries(struct rproc *rproc);
+ 
+ static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+ {
+-- 
+1.9.1
+

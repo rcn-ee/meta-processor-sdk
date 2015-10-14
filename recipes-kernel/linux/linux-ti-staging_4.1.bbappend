@@ -1,4 +1,6 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
+
+SRCREV = "5423bfb317de2380393fcf4cc382bb817807a07e"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
 
@@ -13,4 +15,17 @@ SRC_URI_append = " \
     file://0008-drivers-media-v4l2-core-videobuf2-core-supress-the-w.patch \
     file://0009-ARM-DTS-am437x-sk-evm-Switch-using-simple-audio-card.patch \
     file://0001-dts-dra7-evm-Increase-dsp2-CMA-region.patch \
+"
+
+SRC_URI_append_keystone = " \
+    file://0001-uio-add-support-for-ioctls.patch \
+    file://0002-remoteproc-Add-hooks-to-download-and-run-firmware-fr.patch \
+    file://0003-Documentation-ti-keystone-rproc-Add-documentation-fo.patch \
+    file://0004-remoteproc-Add-support-for-remoteproc-for-Keystone2-.patch \
+    file://0005-Documentation-uio-ti-pdrv-Add-documentation-for-ti-u.patch \
+    file://0006-uio-ti-pdrv-Add-uio-based-driver-for-TI-peripheral-m.patch \
+    file://0007-dts-k2hk-Add-entries-for-DSP-remote-proc-nodes-for-k.patch \
+    file://0008-configs-Update-keystone_defconfig-with-new-modules.patch \
+    file://0009-virtio_rpmsg-Add-dma-sync-ipc-messages-when-dma-cohe.patch \
+    file://0010-ipc.cfg-Add-keystone-remoteproc.patch \
 "

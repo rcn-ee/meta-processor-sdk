@@ -1,0 +1,1030 @@
+From baae4821a3be59ea65680284b7aa0094b3190c3b Mon Sep 17 00:00:00 2001
+From: Sam Nelson <sam.nelson@ti.com>
+Date: Thu, 17 Sep 2015 12:49:46 -0400
+Subject: [PATCH 04/10] remoteproc: Add support for remoteproc for Keystone2
+ devices
+
+- Adds support for keystone devices with  user space loader
+- remoteproc: keystone-rproc: honor names
+
+- Acknowledge contribution of initial version by Cyril Chemparathy
+
+Signed-off-by: Sam Nelson <sam.nelson@ti.com>
+---
+ drivers/remoteproc/Kconfig               |  14 +
+ drivers/remoteproc/Makefile              |   1 +
+ drivers/remoteproc/keystone_remoteproc.c | 910 +++++++++++++++++++++++++++++++
+ include/uapi/linux/Kbuild                |   1 +
+ include/uapi/linux/keystone_remoteproc.h |  39 ++
+ 5 files changed, 965 insertions(+)
+ create mode 100644 drivers/remoteproc/keystone_remoteproc.c
+ create mode 100644 include/uapi/linux/keystone_remoteproc.h
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 535fe93..57611c2 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -109,4 +109,18 @@ config PRUSS_REMOTEPROC
+ 	  not interested in the PRU or if you are unsure.
+ 	  If unsure say N.
+ 
++config KEYSTONE_REMOTEPROC
++	tristate "Keystone Remoteproc support"
++	depends on UIO
++	depends on ARCH_KEYSTONE
++	select REMOTEPROC
++	select RPMSG
++	help
++	  Say y here here to support Keystone remote processors (DSP)
++	  via the remote processor framework. The drivers support a user-land driven
++	  interface to the remoteprocessor download
++
++	  It's safe to say n here if you're not interested in multimedia
++	  offloading or just want a bare minimum kernel.
++
+ endmenu
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 6448bf8..2acde09 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -12,3 +12,4 @@ obj-$(CONFIG_STE_MODEM_RPROC)	 	+= ste_modem_rproc.o
+ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+ obj-$(CONFIG_PRUSS_REMOTEPROC)		+= pruss_remoteproc.o
++obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+new file mode 100644
+index 0000000..3b6f637
+--- /dev/null
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -0,0 +1,910 @@
++/*
++ * Keystone User-space remoteproc loader interface
++ *
++ * Copyright (C) 2012-2015 Texas Instruments Incorporated - http://www.ti.com
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/slab.h>
++#include <linux/module.h>
++#include <linux/uaccess.h>
++#include <linux/of_gpio.h>
++#include <linux/remoteproc.h>
++#include <linux/spinlock.h>
++#include <linux/uio_driver.h>
++#include <linux/platform_device.h>
++#include <linux/workqueue.h>
++#include <linux/miscdevice.h>
++#include <linux/io.h>
++#include <linux/of_reserved_mem.h>
++
++#include <uapi/linux/keystone_remoteproc.h>
++
++#include "remoteproc_internal.h"
++
++#define DRIVER_NAME		"keystone-rproc"
++#define DRIVER_VERSION		"0.1"
++#define KEYSTONE_RPROC_MAX_RSC_TABLE	SZ_64K
++
++#define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK (SZ_16M - 1)
++#define MD_CTRL_LRST BIT(8)
++
++/**
++ * struct keystone_rproc_info - local information for remoteproc user
++ * @uio: uio device information
++ * @rproc: remote proc device handle
++ * @dev: device pointer
++ * @misc: Misc device pointer
++ * @clk: Clock pointer
++ * @flags: flags to keep track of interrupt occurrence
++ * @lock: Lock to protect shared resources with interrupt handler
++ * @irq_ctl: irq entry for control
++ * @irq_ring: irq entry for vring
++ * @kick_gpio: kick gpio property
++ * @rsc_table: Resource table pointer
++ * @workqueue: Workqueue for interrupt triggered tasks
++ * @mem: uio memory regions pointer
++ * @num_maps: Number of uio memory regions
++ * @bootreg: Boot register pointer
++ * @mdctl: mdctl register pointer
++ * @mdstat: mdstat register pointer
++ * @open_count: open Reference counter
++ * @
++ */
++struct keystone_rproc_info {
++	struct uio_info uio;
++	struct rproc *rproc;
++	struct device *dev;
++	struct miscdevice misc;
++	struct clk *clk;
++	unsigned long flags;
++	spinlock_t lock;
++	int irq_ctl, irq_ring;
++	int kick_gpio;
++	struct resource_table *rsc_table;
++	int rsc_table_size;
++	unsigned int rsc_table_runaddr_dma;
++	void __iomem *rsc_table_runaddr_va;
++	struct work_struct workqueue;
++	struct uio_mem *mem;
++	int num_maps;
++	void __iomem *bootreg;
++	void __iomem *mdctl;
++	void __iomem *mdstat;
++	int open_count;
++};
++
++/**
++ * keystone_rproc_open - uio driver open routine
++ */
++static int keystone_rproc_open(struct uio_info *uio, struct inode *inode)
++{
++	struct keystone_rproc_info *keystone_rproc = uio->priv;
++	int ret = 0;
++
++	spin_lock(&keystone_rproc->lock);
++	ret =  clk_prepare_enable(keystone_rproc->clk);
++	keystone_rproc->open_count++;
++	spin_unlock(&keystone_rproc->lock);
++
++	return ret;
++}
++
++/**
++ * keystone_rproc_release - uio driver release routine
++ */
++static int keystone_rproc_release(struct uio_info *uio, struct inode *inode)
++{
++	struct keystone_rproc_info *keystone_rproc = uio->priv;
++	struct rproc *rproc = keystone_rproc->rproc;
++
++	spin_lock(&keystone_rproc->lock);
++
++	if ((WARN_ON(keystone_rproc->open_count == 0)))
++		goto end;
++
++	if (--keystone_rproc->open_count > 0)
++		goto end;
++
++	if (rproc->state != RPROC_OFFLINE) {
++		rproc_shutdown(rproc);
++		rproc_cleanup_vdev_entries(rproc);
++		WARN_ON(rproc->state != RPROC_OFFLINE);
++	}
++
++	kfree(keystone_rproc->rsc_table);
++
++	clk_disable_unprepare(keystone_rproc->clk);
++end:
++	spin_unlock(&keystone_rproc->lock);
++	return 0;
++}
++
++/**
++ * keystone_rproc_handler - uio interrupt handler
++ */
++static irqreturn_t keystone_rproc_handler(int irq, struct uio_info *uio)
++{
++	struct keystone_rproc_info *keystone_rproc = uio->priv;
++
++	spin_lock(&keystone_rproc->lock);
++	if (!__test_and_set_bit(0, &keystone_rproc->flags))
++		disable_irq_nosync(irq);
++	spin_unlock(&keystone_rproc->lock);
++
++	return IRQ_HANDLED;
++}
++
++/**
++ * keystone_rproc_irqcontrol - uio driver interrupt control
++ */
++static int keystone_rproc_irqcontrol(struct uio_info *uio, s32 irq_on)
++{
++	struct keystone_rproc_info *keystone_rproc = uio->priv;
++	unsigned long flags;
++
++	spin_lock_irqsave(&keystone_rproc->lock, flags);
++	if (irq_on) {
++		if (__test_and_clear_bit(0, &keystone_rproc->flags))
++			enable_irq(uio->irq);
++	} else {
++		if (!__test_and_set_bit(0, &keystone_rproc->flags))
++			disable_irq(uio->irq);
++	}
++	spin_unlock_irqrestore(&keystone_rproc->lock, flags);
++
++	return 0;
++}
++
++/**
++ * keystone_rproc_set_state - Get rproc running or switch to offline
++ */
++static int
++keystone_rproc_set_state(struct keystone_rproc_info *keystone_rproc,
++			 enum keystone_rproc_state state)
++{
++	struct rproc *rproc = keystone_rproc->rproc;
++	int ret = 0;
++
++	switch (state) {
++	case KEYSTONE_RPROC_RUNNING:
++		rproc_boot_config_virtio(rproc, true);
++		ret = rproc_boot(rproc);
++		break;
++	case KEYSTONE_RPROC_OFFLINE:
++		rproc_shutdown(rproc);
++		rproc_cleanup_vdev_entries(rproc);
++		break;
++	default:
++		ret = -ENOTSUPP;
++	}
++	return ret;
++}
++
++/**
++ * keystone_rproc_set_rsc_table - Set RSC information to rproc driver
++ */
++static int
++keystone_rproc_set_rsc_table(struct keystone_rproc_info *keystone_rproc,
++			     void __user *data)
++{
++	unsigned long len = 0;
++	void *rsc_table = NULL;
++
++	if (!data)
++		return -EFAULT;
++
++	if (copy_from_user(&len, data, sizeof(len)))
++		return -EFAULT;
++
++	if (len >= KEYSTONE_RPROC_MAX_RSC_TABLE)
++		return -EOVERFLOW;
++
++	data += sizeof(len);
++
++	rsc_table = kzalloc(len, GFP_KERNEL);
++	if (!rsc_table)
++		return -ENOMEM;
++
++	if (copy_from_user(rsc_table, data, len))
++		goto error_return;
++
++	spin_lock(&keystone_rproc->lock);
++
++	kfree(keystone_rproc->rsc_table);
++
++	keystone_rproc->rsc_table = rsc_table;
++	keystone_rproc->rsc_table_size = len;
++
++	spin_unlock(&keystone_rproc->lock);
++
++	return 0;
++error_return:
++	kfree(rsc_table);
++	return -EFAULT;
++}
++
++/**
++ * keystone_rproc_set_rsc_table_runaddr - Routine to set rsc table run address
++ */
++static int
++keystone_rproc_set_rsc_table_runaddr
++(struct keystone_rproc_info *keystone_rproc, unsigned int dma_addr)
++{
++	keystone_rproc->rsc_table_runaddr_dma = dma_addr;
++	return 0;
++}
++
++/**
++ * keystone_rproc_cpu_reset - Routine to reset remote cpu
++ */
++static void keystone_rproc_cpu_reset(struct keystone_rproc_info *keystone_rproc)
++{
++	uint32_t read_value;
++	
++	read_value = readl(keystone_rproc->mdctl);
++	writel(read_value & (~((uint32_t)MD_CTRL_LRST)),
++	       keystone_rproc->mdctl);
++}
++
++/**
++ * keystone_rproc_cpu_start - Routine to start remote cpu
++ */
++static int
++keystone_rproc_cpu_start(struct keystone_rproc_info *keystone_rproc,
++			 uint32_t boot_addr)
++{
++	uint32_t read_value;
++
++	/* hw requires the start (boot) address be on 1KB boundary */
++	if (boot_addr & (SZ_1K - 1)) {
++		dev_err(keystone_rproc->dev,
++			"invalid boot address: must be aligned to 1KB\n");
++		return -EINVAL;
++	}
++
++	/* Write the boot address */
++	writel(boot_addr, keystone_rproc->bootreg);
++
++	/* Deassert local reset */
++	read_value = readl(keystone_rproc->mdctl);
++	writel(read_value | MD_CTRL_LRST, keystone_rproc->mdctl);
++
++	return 0;
++}
++
++/**
++ * keystone_rproc_ioctl - Function to handle IOCTL commands
++ */
++static long keystone_rproc_ioctl(struct uio_info *uio,
++				 unsigned cmd, unsigned long arg)
++{
++	void __user *argp = (void __user *)arg;
++	struct keystone_rproc_info *keystone_rproc = uio->priv;
++	int ret = 0;
++
++	if (_IOC_TYPE(cmd) != KEYSTONE_RPROC_IOC_MAGIC) {
++		dev_err(keystone_rproc->dev,
++			"IOC Type doesnot match\n");
++		return -EINVAL;
++	}
++
++	switch (_IOC_NR(cmd)) {
++	case _IOC_NR(KEYSTONE_RPROC_IOC_SET_STATE):
++		ret = keystone_rproc_set_state(keystone_rproc, arg);
++		break;
++
++	case _IOC_NR(KEYSTONE_RPROC_IOC_SET_RSC):
++		ret = keystone_rproc_set_rsc_table(keystone_rproc, argp);
++		break;
++
++	case _IOC_NR(KEYSTONE_RPROC_IOC_SET_RSC_TABLE_RUNADDR):
++		ret = keystone_rproc_set_rsc_table_runaddr(keystone_rproc,
++							   arg);
++		break;
++
++	case _IOC_NR(KEYSTONE_RPROC_IOC_CPU_RESET):
++		keystone_rproc_cpu_reset(keystone_rproc);
++		break;
++
++	case _IOC_NR(KEYSTONE_RPROC_IOC_CPU_START):
++		ret = keystone_rproc_cpu_start(keystone_rproc, arg);
++		break;
++
++	default:
++		ret = -ENOTSUPP;
++	}
++	if (ret)
++		dev_err(keystone_rproc->dev,
++			"Error in ioctl call: cmd %d: ret %d\n", cmd, ret);
++	return ret;
++}
++
++/**
++ * handle_event() - inbound virtqueue message workqueue function
++ *
++ * This funciton is registered with 'workqueue' and is scheduled by the
++ * ISR handler.
++ *
++ * There is no "payload" message indicating the virtqueue index as is the
++ * case with mailbox-based implementations on OMAP4.  As such, this
++ * handler "polls" each known virtqueue index for every invocation.
++ *
++ * A payload could be added by using some of the source bits in the IPC
++ * generation registers, but we would need to change the logic in
++ * drivers/misc/keystone-ipc-int.c to avoid interpreting these as extra
++ * interrupts.
++ */
++static void handle_event(struct work_struct *work)
++{
++	struct keystone_rproc_info *keystone_rproc =
++		container_of(work, struct keystone_rproc_info, workqueue);
++
++	/* Process incoming buffers on our vring */
++	if (rproc_vq_interrupt(keystone_rproc->rproc, 0) != IRQ_HANDLED)
++		dev_err(keystone_rproc->dev,
++			"IRQ handled not returned\n");
++
++	/* Must allow wakeup of potentially blocking senders: */
++	rproc_vq_interrupt(keystone_rproc->rproc, 1);
++}
++
++/**
++ * keystone_rproc_interrupt - rproc interrupt handler
++ */
++static irqreturn_t keystone_rproc_interrupt(int irq, void *dev_id)
++{
++	struct keystone_rproc_info *keystone_rproc = dev_id;
++
++	dev_dbg(keystone_rproc->dev, "Scheduling_work...\n");
++
++	schedule_work(&keystone_rproc->workqueue);
++
++	return IRQ_HANDLED;
++}
++
++/**
++ * keystone_rproc_start - rproc start function
++ */
++static int keystone_rproc_start(struct rproc *rproc)
++{
++	struct keystone_rproc_info *keystone_rproc = rproc->priv;
++	int ret;
++
++	if (!rproc->use_userspace_loader) {
++		dev_err(keystone_rproc->dev,
++			"Non userspace load not currently supported\n");
++		return -1;
++	}
++	dev_dbg(keystone_rproc->dev, "start\n");
++
++	INIT_WORK(&keystone_rproc->workqueue, handle_event);
++
++	ret = request_irq(keystone_rproc->irq_ring, keystone_rproc_interrupt,
++			    0, dev_name(keystone_rproc->dev), keystone_rproc);
++	if (ret)
++		dev_err(keystone_rproc->dev, "failed to grab ring irq\n");
++	return ret;
++}
++
++/**
++ * keystone_rproc_stop - rproc stop function
++ */
++static int keystone_rproc_stop(struct rproc *rproc)
++{
++	struct keystone_rproc_info *keystone_rproc = rproc->priv;
++
++	dev_dbg(keystone_rproc->dev, "stop\n");
++	if (!rproc->use_userspace_loader) {
++		dev_err(keystone_rproc->dev,
++			"Non user space load not currently supported\n");
++		return -1;
++	}
++	if (keystone_rproc->rsc_table_runaddr_va)
++		devm_iounmap(&rproc->dev,
++			     keystone_rproc->rsc_table_runaddr_va);
++	free_irq(keystone_rproc->irq_ring, keystone_rproc);
++	/* Flush any pending work: */
++	flush_work(&keystone_rproc->workqueue);
++	return 0;
++}
++
++/**
++ * keystone_rproc_kick - rproc kick function to send interrupt to remote cpu
++ */
++static void keystone_rproc_kick(struct rproc *rproc, int vqid)
++{
++	struct keystone_rproc_info *keystone_rproc = rproc->priv;
++
++	dev_dbg(keystone_rproc->dev, "kick vqid: %d\n", vqid);
++	if (keystone_rproc->kick_gpio < 0)
++		return;
++
++	/* interrupt the remote core */
++	gpio_set_value(keystone_rproc->kick_gpio, 1);
++}
++
++/**
++ * keystone_rproc_da_to_va - rproc function to translate DMA address to virtual address
++ * 			     Also allocates virtual memory of the section as needed.
++ */
++static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
++			    u32 flags)
++{
++	struct keystone_rproc_info *keystone_rproc = rproc->priv;
++
++	void __iomem *va = NULL;
++	int i;
++	u32 offset;
++
++	if (len <= 0)
++		return NULL;
++
++	for (i = 0; i < keystone_rproc->num_maps; i++) {
++		/* Handle local address */
++		if (da < KEYSTONE_RPROC_LOCAL_ADDRESS_MASK) {
++			if ((da >=
++			     (keystone_rproc->mem[i].addr &
++			      KEYSTONE_RPROC_LOCAL_ADDRESS_MASK)) &&
++			    (((da + len) <=
++			      ((keystone_rproc->mem[i].addr &
++				KEYSTONE_RPROC_LOCAL_ADDRESS_MASK) +
++			       keystone_rproc->mem[i].size)))
++			) {
++				if (!keystone_rproc->mem[i].internal_addr)
++					keystone_rproc->mem[i].internal_addr =
++					 devm_ioremap_nocache
++					 (&rproc->dev,
++					  keystone_rproc->mem[i].addr,
++					  keystone_rproc->mem[i].size);
++				if (!keystone_rproc->mem[i].internal_addr) {
++					dev_err(keystone_rproc->dev,
++						"io remap failed addr 0x%llx size 0x%llx\n",
++						keystone_rproc->mem[i].addr,
++						keystone_rproc->mem[i].size);
++					return NULL;
++				}
++				offset = da -
++					(keystone_rproc->mem[i].addr
++					 & KEYSTONE_RPROC_LOCAL_ADDRESS_MASK);
++				va = keystone_rproc->mem[i].internal_addr
++					+ offset;
++				break;
++			}
++		} else {
++			if ((da >= keystone_rproc->mem[i].addr) && (da + len)
++			    <= (keystone_rproc->mem[i].addr
++				+ keystone_rproc->mem[i].size)
++			) {
++				if (!keystone_rproc->mem[i].internal_addr)
++					keystone_rproc->mem[i].internal_addr =
++					 devm_ioremap_nocache
++					 (&rproc->dev,
++					  keystone_rproc->mem[i].addr,
++					  keystone_rproc->mem[i].size);
++				if (!keystone_rproc->mem[i].internal_addr) {
++					dev_err(keystone_rproc->dev,
++						"io remap failed addr 0x%llx size 0x%llx\n",
++						keystone_rproc->mem[i].addr,
++						keystone_rproc->mem[i].size);
++					return NULL;
++				}
++				offset = da - keystone_rproc->mem[i].addr;
++				va = keystone_rproc->mem[i].internal_addr
++					+ offset;
++				break;
++			}
++		}
++	}
++	return (__force void *)va;
++}
++
++static struct rproc_ops keystone_rproc_ops = {
++	.start		= keystone_rproc_start,
++	.stop		= keystone_rproc_stop,
++	.kick		= keystone_rproc_kick,
++	.da_to_va	= keystone_rproc_da_to_va,
++};
++
++/**
++ * keystone_rproc_dev_open() for the rproc-user driver
++ */
++static int keystone_rproc_dev_open(struct inode *inode, struct file *file)
++{
++	/* Need an empty open so that file->private_data gets populated */
++	return 0;
++}
++
++/**
++ * keystone_rproc_dev_mmap() - provides mmap support for
++ * rproc memory. This checks if user request is in valid range before providing
++ * mmap access. The valid range can be configured using device tree.
++ */
++static int
++keystone_rproc_dev_mmap(struct file *file,
++			    struct vm_area_struct *vma)
++{
++	size_t size = vma->vm_end - vma->vm_start;
++	struct miscdevice *misc = file->private_data;
++	struct keystone_rproc_info *keystone_rproc =
++		container_of(misc, struct keystone_rproc_info, misc);
++	int index;
++	size_t req_offset;
++
++	index = vma->vm_pgoff & KEYSTONE_RPROC_UIO_MAP_INDEX_MASK;
++	/* Check if index is valid */
++	if (index >= keystone_rproc->num_maps) {
++		dev_err(keystone_rproc->dev,
++			"mmap index %d is outside the allowed range\n",
++			index);
++		return -EINVAL;
++	}
++
++	req_offset = (vma->vm_pgoff - index)  << PAGE_SHIFT;
++
++	/* Check size requested with offset */
++	if ((req_offset + size) > keystone_rproc->mem[index].size) {
++		dev_err(keystone_rproc->dev,
++			"mmap index %d: mmap offset(0x%zx) and size (0x%zx) is outside the allowed range\n",
++			index, req_offset, size);
++		return -EINVAL;
++	}
++
++	vma->vm_page_prot = phys_mem_access_prot(
++		file, (keystone_rproc->mem[index].addr >> PAGE_SHIFT)
++		+ (vma->vm_pgoff - index),
++		size, vma->vm_page_prot
++	);
++
++	if (remap_pfn_range(vma, vma->vm_start,
++			    (keystone_rproc->mem[index].addr >> PAGE_SHIFT)
++			     + (vma->vm_pgoff - index),
++			    size, vma->vm_page_prot)) {
++		return -EAGAIN;
++	}
++	return 0;
++}
++
++static const struct file_operations keystone_rproc_dev_fops = {
++	.owner		= THIS_MODULE,
++	.open		= keystone_rproc_dev_open,
++	.mmap		= keystone_rproc_dev_mmap,
++};
++
++
++static struct resource_table *keystone_rproc_find_rsc_table(struct rproc *rproc,
++						   const struct firmware *fw,
++						   int *tablesz)
++{
++	struct keystone_rproc_info *keystone_rproc = rproc->priv;
++
++	if (rproc->use_userspace_loader) {
++		if (tablesz)
++			*tablesz = keystone_rproc->rsc_table_size;
++		return keystone_rproc->rsc_table;
++	}
++	dev_err(keystone_rproc->dev,
++		"Non user space load not currently supported\n");
++	return NULL;
++}
++
++static struct resource_table *
++keystone_rproc_find_loaded_rsc_table(struct rproc *rproc,
++				     const struct firmware *fw)
++{
++	struct keystone_rproc_info *keystone_rproc = rproc->priv;
++
++	if (!rproc->use_userspace_loader) {
++		dev_err(keystone_rproc->dev,
++			"Non User space load not currently supported\n");
++		return NULL;
++	}
++	/* Convert to virtual address */
++	keystone_rproc->rsc_table_runaddr_va
++	 = devm_ioremap_nocache
++		(&rproc->dev,
++		 keystone_rproc->rsc_table_runaddr_dma,
++		 keystone_rproc->rsc_table_size);
++	if (!keystone_rproc->rsc_table_runaddr_va) {
++		dev_err(keystone_rproc->dev,
++			"devm_ioremap_nocache err: %d\n",
++			keystone_rproc->rsc_table_size);
++		return NULL;
++	}
++
++	return (__force void *)keystone_rproc->rsc_table_runaddr_va;
++}
++
++static struct rproc_fw_ops keystone_rproc_fw_ops = {
++	.find_rsc_table		= keystone_rproc_find_rsc_table,
++	.find_loaded_rsc_table  = keystone_rproc_find_loaded_rsc_table,
++	.load			= NULL,
++	.sanity_check		= NULL,
++	.get_boot_addr		= NULL,
++};
++
++/**
++ * keystone_rproc_populate_segments() - scan the configuration for "mem" and
++ * polulate in keystone_rproc local structure. This information will be used
++ * to process user mmap requests.
++ */
++static inline int
++keystone_rproc_populate_segments(struct device_node *np,
++				 struct keystone_rproc_info *keystone_rproc)
++{
++	int len, i;
++	u32 dt_value;
++	int num_maps = 0;
++
++	if (!of_get_property(np, "mem", &len))
++		return 0;
++
++	/*
++	 * check if length even multiple of sizeof(u32), i.e.,
++	 * the dt bindings need to be of the form <addr length>
++	 */
++	len = len / sizeof(u32);
++	if ((len % 2) != 0) {
++		dev_err(keystone_rproc->dev,
++			"invalid address map in dt binding\n");
++		return -EINVAL;
++	}
++	num_maps = len / 2;
++
++	keystone_rproc->mem = devm_kzalloc(keystone_rproc->dev,
++			sizeof(struct uio_mem) * num_maps,
++			GFP_KERNEL);
++
++	/* populate the keystone_rproc structure for policing */
++	for (i = 0; i < num_maps; i++) {
++		keystone_rproc->mem[i].memtype = UIO_MEM_PHYS;
++		if (of_property_read_u32_index(np, "mem", 2 * i,
++					       &dt_value)) {
++			dev_err(keystone_rproc->dev,
++				"Error reading dt bindings: addr\n");
++			return -ENODEV;
++		}
++		keystone_rproc->mem[i].addr = dt_value;
++		if (of_property_read_u32_index(np, "mem", (2 * i) + 1,
++					       &dt_value)) {
++			dev_err(keystone_rproc->dev,
++				"Error reading dt bindings: size\n");
++			return -ENODEV;
++		}
++		keystone_rproc->mem[i].size = dt_value;
++	}
++	keystone_rproc->num_maps = num_maps;
++
++	return 0;
++}
++
++static void __iomem *
++get_reg_map_va(struct platform_device *pdev, const char *name)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *r;
++	void __iomem *va;
++
++	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
++
++	if (!r)
++		return NULL;
++
++	va = devm_ioremap_resource(dev, r);
++	if (IS_ERR((__force void *)va))
++		return NULL;
++
++	return va;
++}
++
++static int keystone_rproc_driver_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct keystone_rproc_info *keystone_rproc;
++	struct miscdevice *misc;
++	struct uio_info *uio;
++	struct rproc *rproc;
++	char *name;
++	int ret = 0;
++
++	if (!np) {
++		dev_err(dev, "Non dt case not supported\n");
++		return -EINVAL;
++	}
++
++	rproc = rproc_alloc(dev, dev_name(dev), &keystone_rproc_ops, NULL,
++			    sizeof(*keystone_rproc));
++	if (!rproc)
++		return -ENOMEM;
++
++	rproc->use_userspace_loader  = true;
++	rproc->fw_ops	= &keystone_rproc_fw_ops;
++
++	keystone_rproc		= rproc->priv;
++	keystone_rproc->rproc	= rproc;
++	keystone_rproc->dev	= dev;
++	spin_lock_init(&keystone_rproc->lock);
++
++	uio		= &keystone_rproc->uio;
++	name = strchr(dev_name(dev), '.');
++	if (name)
++		uio->name	= name + 1;
++	else
++		uio->name = dev_name(dev);
++
++	uio->version	= DRIVER_VERSION;
++	uio->priv	= keystone_rproc;
++	uio->handler	= keystone_rproc_handler;
++	uio->irqcontrol	= keystone_rproc_irqcontrol;
++	uio->open	= keystone_rproc_open;
++	uio->release	= keystone_rproc_release;
++	uio->ioctl	= keystone_rproc_ioctl;
++
++	keystone_rproc->irq_ring	= platform_get_irq(pdev, 0);
++	if (keystone_rproc->irq_ring < 0) {
++		dev_err(dev, "No irq ring found\n");
++		goto fail_uio;
++	}
++
++	keystone_rproc->irq_ctl	= platform_get_irq(pdev, 1);
++
++	/* pass up control irq to user-space */
++	if (keystone_rproc->irq_ctl >= 0)
++		uio->irq	= keystone_rproc->irq_ctl;
++
++	keystone_rproc->kick_gpio = -1;
++
++	ret = of_get_named_gpio_flags(np, "kick-gpio", 0, NULL);
++	if (ret >= 0)
++		keystone_rproc->kick_gpio = ret;
++
++	if (keystone_rproc->kick_gpio < 0) {
++		dev_err(dev, "kick gpio not defined\n");
++		goto fail_kick_gpio;
++	}
++
++	keystone_rproc->bootreg = get_reg_map_va(pdev, "boot-address");
++	if (!keystone_rproc->bootreg) {
++		dev_err(dev, "bootreg map failed\n");
++		goto fail_bootreg;
++	}
++
++	keystone_rproc->mdctl = get_reg_map_va(pdev, "psc-mdctl");
++	if (!keystone_rproc->mdctl) {
++		dev_err(dev, "MDCTL map failed\n");
++		goto fail_mdctl;
++	}
++
++	keystone_rproc->mdstat = get_reg_map_va(pdev, "psc-mdstat");
++	if (!keystone_rproc->mdstat) {
++		dev_err(dev, "MDSTAT map failed\n");
++		goto fail_mdstat;
++	}
++
++	keystone_rproc->clk = clk_get(dev, NULL);
++	if (IS_ERR(keystone_rproc->clk)) {
++		dev_err(dev, "failed getting clock\n");
++		goto fail_clk;
++	}
++
++
++	ret = keystone_rproc_populate_segments(np, keystone_rproc);
++	if (ret) {
++		dev_err(dev, "failed populating memory segments\n");
++		goto fail_uio;
++	}
++
++	ret = uio_register_device(dev, uio);
++	if (ret) {
++		dev_err(dev, "failed to register uio device\n");
++		goto fail_uio;
++	}
++
++	if (of_reserved_mem_device_init(dev)) {
++		dev_err(dev, "device does not have specific CMA pool\n");
++		goto free_mem_device_init;
++	}
++
++	ret = rproc_add(rproc);
++	if (ret) {
++		dev_err(dev, "error adding remoteproc device\n");
++		goto fail_rproc;
++	}
++
++	if (rproc_get_alias_id(rproc) < 0)
++		dev_warn(&pdev->dev, "device does not have an alias id\n");
++
++	platform_set_drvdata(pdev, keystone_rproc);
++
++	if (keystone_rproc->num_maps) {
++		misc = &keystone_rproc->misc;
++		misc->minor	= MISC_DYNAMIC_MINOR;
++		misc->name = uio->name;
++		misc->fops	= &keystone_rproc_dev_fops;
++		misc->parent	= dev;
++
++		if (misc_register(misc)) {
++			dev_err(dev, "could not register misc device\n");
++			goto fail_misc;
++		}
++		dev_info(dev, "registered misc device %s\n", misc->name);
++	}
++
++	return 0;
++fail_misc:
++	rproc_del(rproc);
++	rproc_put(rproc);
++fail_rproc:
++	of_reserved_mem_device_release(dev);
++free_mem_device_init:
++	uio_unregister_device(uio);
++fail_uio:
++	clk_put(keystone_rproc->clk);
++fail_clk:
++	devm_iounmap(dev, keystone_rproc->mdstat);
++fail_mdstat:
++	devm_iounmap(dev, keystone_rproc->mdctl);
++fail_mdctl:
++	devm_iounmap(dev, keystone_rproc->bootreg);
++fail_bootreg:
++fail_kick_gpio:
++	return ret;
++}
++
++static int keystone_rproc_driver_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct keystone_rproc_info *keystone_rproc;
++	int i;
++
++	keystone_rproc = platform_get_drvdata(pdev);
++
++	for (i = 0; i < keystone_rproc->num_maps; i++)
++		if (keystone_rproc->mem[i].internal_addr)
++			devm_iounmap(dev, keystone_rproc->mem[i].internal_addr);
++
++	if (keystone_rproc->num_maps)
++		misc_deregister(&keystone_rproc->misc);
++
++	rproc_del(keystone_rproc->rproc);
++	rproc_put(keystone_rproc->rproc);
++	of_reserved_mem_device_release(&pdev->dev);
++	uio_unregister_device(&keystone_rproc->uio);
++	clk_put(keystone_rproc->clk);
++	devm_iounmap(dev, keystone_rproc->mdstat);
++	devm_iounmap(dev, keystone_rproc->mdctl);
++	devm_iounmap(dev, keystone_rproc->bootreg);
++
++	return 0;
++}
++
++static const struct of_device_id keystone_rproc_of_match[] = {
++	{ .compatible = "ti,keystone-rproc", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, keystone_rproc_of_match);
++
++static struct platform_driver keystone_rproc_driver = {
++	.driver	= {
++		.name	= DRIVER_NAME,
++		.of_match_table = keystone_rproc_of_match,
++	},
++	.probe	= keystone_rproc_driver_probe,
++	.remove	= keystone_rproc_driver_remove,
++};
++
++module_platform_driver(keystone_rproc_driver);
++MODULE_AUTHOR("Sam Nelson Siluvaimani");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Keystone Remote proc driver with User-space download");
++MODULE_ALIAS("platform:" DRIVER_NAME);
+diff --git a/include/uapi/linux/Kbuild b/include/uapi/linux/Kbuild
+index b362c8d..190d971 100644
+--- a/include/uapi/linux/Kbuild
++++ b/include/uapi/linux/Kbuild
+@@ -223,6 +223,7 @@ header-y += kernel-page-flags.h
+ header-y += kexec.h
+ header-y += keyboard.h
+ header-y += keyctl.h
++header-y += keystone_remoteproc.h
+ 
+ ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/uapi/asm/kvm.h \
+ 		  $(srctree)/arch/$(SRCARCH)/include/asm/kvm.h),)
+diff --git a/include/uapi/linux/keystone_remoteproc.h b/include/uapi/linux/keystone_remoteproc.h
+new file mode 100644
+index 0000000..2f7c7e0
+--- /dev/null
++++ b/include/uapi/linux/keystone_remoteproc.h
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (C) 2012-2015 Texas Instruments Incorporated
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef _UAPI__LINUX_KEYSTONE_REMOTEPROC_H
++#define _UAPI__LINUX_KEYSTONE_REMOTEPROC_H
++
++#include <linux/types.h>
++
++enum keystone_rproc_state {
++	KEYSTONE_RPROC_OFFLINE,
++	KEYSTONE_RPROC_RUNNING,
++};
++
++#define KEYSTONE_RPROC_UIO_MAP_INDEX_MASK 0x7
++#define KEYSTONE_RPROC_UIO_MAP_OFFSET_SHIFT 3
++
++#define KEYSTONE_RPROC_IOC_MAGIC	 'I'
++
++#define KEYSTONE_RPROC_IOC_SET_RSC _IOW(KEYSTONE_RPROC_IOC_MAGIC, 0, \
++			void *)
++#define KEYSTONE_RPROC_IOC_SET_STATE _IOW(KEYSTONE_RPROC_IOC_MAGIC, 1, \
++			enum keystone_rproc_state)
++#define KEYSTONE_RPROC_IOC_SET_RSC_TABLE_RUNADDR \
++			_IOW(KEYSTONE_RPROC_IOC_MAGIC, 2, \
++			enum keystone_rproc_state)
++#define KEYSTONE_RPROC_IOC_CPU_RESET _IO(KEYSTONE_RPROC_IOC_MAGIC, 3)
++#define KEYSTONE_RPROC_IOC_CPU_START _IOW(KEYSTONE_RPROC_IOC_MAGIC, 4, \
++			unsigned long)
++
++#endif /* _UAPI__LINUX_KEYSTONE_REMOTEPROC_H */
+-- 
+1.9.1
+

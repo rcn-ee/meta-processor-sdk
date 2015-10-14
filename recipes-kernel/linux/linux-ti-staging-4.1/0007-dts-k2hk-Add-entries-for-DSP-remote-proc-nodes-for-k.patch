@@ -1,0 +1,274 @@
+From 81822388800a5cdcadc80125711e890a975e1630 Mon Sep 17 00:00:00 2001
+From: Sam Nelson <sam.nelson@ti.com>
+Date: Mon, 14 Sep 2015 15:59:47 -0400
+Subject: [PATCH 07/10] dts: k2hk: Add entries for DSP remote proc nodes for
+ k2hk platform
+
+Signed-off-by: Sam Nelson <sam.nelson@ti.com>
+---
+ arch/arm/boot/dts/k2hk-evm.dts |  66 +++++++++++++++++
+ arch/arm/boot/dts/k2hk.dtsi    | 160 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 225 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/k2hk-evm.dts b/arch/arm/boot/dts/k2hk-evm.dts
+index 8161bf5..6b1d464 100644
+--- a/arch/arm/boot/dts/k2hk-evm.dts
++++ b/arch/arm/boot/dts/k2hk-evm.dts
+@@ -16,6 +16,26 @@
+ 	compatible =  "ti,k2hk-evm", "ti,k2hk", "ti,keystone";
+ 	model = "Texas Instruments Keystone 2 Kepler/Hawking EVM";
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		dsp_common_cma_pool: dsp_common_cma_pool {
++			compatible = "shared-dma-pool";
++			reg = <0x00000008 0x20000000 0x00000000 0x800000>;
++			reusable;
++			status = "okay";
++		};
++
++		dsp_reserved_code_area: dsp_reserved_code_area {
++			compatible = "shared-dma-pool";
++			reg = <0x00000008 0x20800000 0x00000000 0x1F7FFFFF>;
++			no-map;
++			status = "okay";
++		};
++	};
++
+ 	soc {
+ 		clocks {
+ 			refclksys: refclksys {
+@@ -180,3 +200,49 @@
+ 		reg = <1>;
+ 	};
+ };
++
++&dsp0 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp1 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp2 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp3 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp4 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp5 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp6 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&dsp7 {
++	status = "okay";
++	memory-region = <&dsp_common_cma_pool>;
++};
++
++&uio_dspmem {
++	status = "okay";
++	mem  = <0x0c000000 0x000600000
++		0xa0000000 0x20000000>;
++};
+diff --git a/arch/arm/boot/dts/k2hk.dtsi b/arch/arm/boot/dts/k2hk.dtsi
+index ada4c7a..50d1839 100644
+--- a/arch/arm/boot/dts/k2hk.dtsi
++++ b/arch/arm/boot/dts/k2hk.dtsi
+@@ -42,7 +42,16 @@
+ 			reg = <3>;
+ 		};
+ 	};
+-
++	aliases {
++		rproc0 = &dsp0;
++		rproc1 = &dsp1;
++		rproc2 = &dsp2;
++		rproc3 = &dsp3;
++		rproc4 = &dsp4;
++		rproc5 = &dsp5;
++		rproc6 = &dsp6;
++		rproc7 = &dsp7;
++	};
+ 	soc {
+ 		/include/ "k2hk-clocks.dtsi"
+ 
+@@ -112,6 +121,155 @@
+ 			clock-names = "fck";
+ 			bus_freq	= <2500000>;
+ 		};
++
++		dsp0: dsp0 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x02620040 4
++			       0x0235083c 4
++			       0x02350a3c 4
++			       0x02620240 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x10e00000 0x00008000
++			       0x10f00000 0x00008000
++			       0x10800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <0 8>;
++			kick-gpio = <&dspgpio0 27 0>;
++			clocks = <&clkgem0>;
++			status = "disabled";
++		};
++
++		dsp1: dsp1 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x02620044 4
++			       0x02350840 4
++			       0x02350a40 4
++			       0x02620244 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x11e00000 0x00008000
++			       0x11f00000 0x00008000
++			       0x11800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <1 9>;
++			kick-gpio = <&dspgpio1 27 0>;
++			clocks = <&clkgem1>;
++			status = "disabled";
++		};
++
++		dsp2: dsp2 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x02620048 4
++			       0x02350844 4
++			       0x02350a44 4
++			       0x02620248 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x12e00000 0x00008000
++			       0x12f00000 0x00008000
++			       0x12800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <2 10>;
++			kick-gpio = <&dspgpio2 27 0>;
++			clocks = <&clkgem2>;
++			status = "disabled";
++		};
++
++		dsp3: dsp3 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x0262004c 4
++			       0x02350848 4
++			       0x02350a48 4
++			       0x0262024c 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x13e00000 0x00008000
++			       0x13f00000 0x00008000
++			       0x13800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <3 11>;
++			kick-gpio = <&dspgpio3 27 0>;
++			clocks = <&clkgem3>;
++			status = "disabled";
++		};
++
++		dsp4: dsp4 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x02620050 4
++			       0x0235084C 4
++			       0x02350a4C 4
++			       0x02620250 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x14e00000 0x00008000
++			       0x14f00000 0x00008000
++			       0x14800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <4 12>;
++			kick-gpio = <&dspgpio4 27 0>;
++			clocks = <&clkgem4>;
++			status = "disabled";
++		};
++
++		dsp5: dsp5 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x02620054 4
++			       0x02350850 4
++			       0x02350a50 4
++			       0x02620254 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x15e00000 0x00008000
++			       0x15f00000 0x00008000
++			       0x15800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <5 13>;
++			kick-gpio = <&dspgpio5 27 0>;
++			clocks = <&clkgem5>;
++			status = "disabled";
++		};
++
++		dsp6: dsp6 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x02620058 4
++			       0x02350854 4
++			       0x02350a54 4
++			       0x02620258 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x16e00000 0x00008000
++			       0x16f00000 0x00008000
++			       0x16800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <6 14>;
++			kick-gpio = <&dspgpio6 27 0>;
++			clocks = <&clkgem6>;
++			status = "disabled";
++		};
++
++		dsp7: dsp7 {
++			compatible = "ti,keystone-rproc";
++			reg = <0x0262005C 4
++			       0x02350858 4
++			       0x02350a58 4
++			       0x0262025C 4>;
++			reg-names = "boot-address", "psc-mdstat", "psc-mdctl",
++				"ipcgr";
++			mem = <0x17e00000 0x00008000
++			       0x17f00000 0x00008000
++			       0x17800000 0x00100000>;
++			interrupt-parent = <&kirq0>;
++			interrupts = <7 15>;
++			kick-gpio = <&dspgpio7 27 0>;
++			clocks = <&clkgem7>;
++			status = "disabled";
++		};
++
++		uio_dspmem: dspmem {
++			compatible = "ti,uio-ti-pdrv";
++			status = "disabled";
++		};
+ 		/include/ "k2hk-netcp.dtsi"
+ 	};
+ };
+-- 
+1.9.1
+

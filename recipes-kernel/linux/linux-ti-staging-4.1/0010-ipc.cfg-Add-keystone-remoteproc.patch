@@ -1,0 +1,30 @@
+From 18d8bc46363fd309ad48fd2fce048da897ccbe4b Mon Sep 17 00:00:00 2001
+From: Sam Nelson <sam.nelson@ti.com>
+Date: Fri, 18 Sep 2015 16:31:27 -0400
+Subject: [PATCH 10/10] ipc.cfg: Add keystone remoteproc
+
+- Add keystone remoteproc and uio-ti-pdrv as modules
+
+Signed-off-by: Sam Nelson <sam.nelson@ti.com>
+---
+ ti_config_fragments/ipc.cfg | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/ti_config_fragments/ipc.cfg b/ti_config_fragments/ipc.cfg
+index 95753b6..95aaeda 100644
+--- a/ti_config_fragments/ipc.cfg
++++ b/ti_config_fragments/ipc.cfg
+@@ -15,6 +15,10 @@ CONFIG_OMAP_IOMMU_DEBUG=y
+ # Remoteproc
+ CONFIG_OMAP_REMOTEPROC=m
+ CONFIG_OMAP_REMOTEPROC_WATCHDOG=y
++CONFIG_KEYSTONE_REMOTEPROC=m
+ 
+ # RPMsg
+ CONFIG_RPMSG_RPC=m
++
++# UIO Module
++CONFIG_UIO_MODULE_DRV=m
+-- 
+1.9.1
+
