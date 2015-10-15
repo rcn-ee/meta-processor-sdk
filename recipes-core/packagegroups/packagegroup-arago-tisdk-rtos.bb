@@ -2,10 +2,10 @@ DESCRIPTION = "Task to install low-level drivers and platform libraries for the 
 LICENSE = "MIT"
 PR = "r1"
 
-inherit packagegroup
-
 COMPATIBLE_MACHINE = "ti33x|ti43x|omap-a15"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+inherit packagegroup
 
 IPC = ""
 IPC_append_omap-a15 = "\
