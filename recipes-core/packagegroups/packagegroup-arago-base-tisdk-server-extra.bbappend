@@ -1,4 +1,4 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
 ARAGO_TI_KEYSTONE_PKGS_append_keystone = "\
     ti-ipc \
@@ -17,10 +17,8 @@ ARAGO_TI_KEYSTONE_PKGS_append_keystone = "\
     pktlib \
     cppi-lld \
     ipsecmgr-mod \
+    netapi-test \
     "
-# Following package need to be fixed before adding:
-# netapi-test
-# ipsecmgr
 
 ARAGO_TI_PKGS_append_k2hk-evm = "\
     srio-lld \
