@@ -164,7 +164,7 @@ export IMAGE_BASENAME = "ti-pdk-image"
 TI_PDK_NAME ?= "pdk_${@'${MACHINE}'.replace('-evm','')}"
 TI_PDK_NAME_omap-a15 = "pdk_am57xx"
 
-TI_PDK_VERSION = "1_0_0"
+TI_PDK_VERSION = "1_0_1"
 
 IMAGE_FSTYPES = "tar.gz"
 
