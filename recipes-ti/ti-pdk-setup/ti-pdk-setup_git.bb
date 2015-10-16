@@ -71,6 +71,9 @@ API_DOC_append_omap-a15 = "\
     profiling \
 "
 
+API_DOC_append_keystone = "\
+"
+
 do_compile() {
     api_table="\n"
     for lld in ${API_DOC}; do

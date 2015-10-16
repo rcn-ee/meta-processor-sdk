@@ -38,6 +38,7 @@ SDK_SOC = ""
 SDK_SOC_ti33x = "am335x"
 SDK_SOC_ti43x = "am437x"
 SDK_SOC_omap-a15 = "am57xx"
+SDK_SOC_keystone = "k2hk"
 
 do_install() {
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}

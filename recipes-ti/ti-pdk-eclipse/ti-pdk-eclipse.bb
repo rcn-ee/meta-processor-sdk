@@ -69,3 +69,6 @@ ECLIPSE_PLUGIN_CDOC_append_am57xx-evm = "\
     ti-osal.xml \
     ti-utils-profiling.xml \
 "
+
+ECLIPSE_PLUGIN_CDOC_append_k2hk-evm = "\
+"

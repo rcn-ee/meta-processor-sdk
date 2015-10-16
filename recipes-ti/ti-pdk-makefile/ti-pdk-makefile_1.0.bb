@@ -88,6 +88,11 @@ MAKEFILES_append_omap-a15 = "\
     fatfs \
 "
 
+MAKEFILES_append_keystone = "\
+    csl \
+"
+
+
 BOARD_DIAG_DEPS = ""
 BOARD_ALL_BOARDS = ""
 
