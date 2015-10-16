@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${S}/uia.bld;beginline=1;endline=31;md5=a13af1ef589b9
 require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 
-COMPATIBLE_MACHINE = "omap-a15"
+COMPATIBLE_MACHINE = "omap-a15 keystone"
 
 PV = "2_00_03_43"
 PR = "r0"

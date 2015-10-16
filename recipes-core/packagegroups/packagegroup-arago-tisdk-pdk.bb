@@ -29,7 +29,7 @@ PDK_LLDS_append_ti43x = "\
     icss-emac-lld-rtos \
     mmcsd-lld-rtos \
     pruss-lld-rtos \
-    usb-lld-rtos
+    usb-lld-rtos \
 "
 
 PDK_LLDS_append_omap-a15 = "\
@@ -39,7 +39,7 @@ PDK_LLDS_append_omap-a15 = "\
     uart-lld-rtos \
     icss-emac-lld-rtos \
     mmcsd-lld-rtos \
-    pcie-lld-rtos
+    pcie-lld-rtos \
     pruss-lld-rtos \
 "
 

@@ -46,8 +46,6 @@ do_install() {
 
     install -m 0755 setupenv.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
     install -m 0755 setupenv.bat ${D}${PROC_SDK_INSTALL_DIR_RECIPE}
-    install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
-    install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
 
     sed -i -e "s|__SDK_SOC__|${SDK_SOC}|g" \
         ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/setupenv.sh
@@ -58,6 +56,8 @@ do_install() {
 do_install_append_ti33x() {
     PREBUILT_DIR=prebuilt-sdcards/evmAM335x
 
+    install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+    install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/${PREBUILT_DIR}/sd_card_files
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/${PREBUILT_DIR}/sd_card_img
 
@@ -70,6 +70,8 @@ do_install_append_ti33x() {
 do_install_append_ti43x() {
     PREBUILT_DIR=prebuilt-sdcards/evmAM437x
 
+    install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+    install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/${PREBUILT_DIR}/sd_card_files
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/${PREBUILT_DIR}/sd_card_img
 
@@ -82,6 +84,8 @@ do_install_append_ti43x() {
 do_install_append_omap-a15() {
     PREBUILT_DIR=prebuilt-sdcards/evmAM572x
 
+    install -m 0755 create-sdcard.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
+    install -m 0755 create_img.sh ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/bin
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/${PREBUILT_DIR}/sd_card_files
     install -d ${D}${PROC_SDK_INSTALL_DIR_RECIPE}/${PREBUILT_DIR}/sd_card_img
 
