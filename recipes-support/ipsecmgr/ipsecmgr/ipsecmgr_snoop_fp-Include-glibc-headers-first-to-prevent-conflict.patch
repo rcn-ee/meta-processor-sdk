@@ -1,0 +1,20 @@
+diff --git a/src/snoop/ipsecmgr_snoop_fp.c b/src/snoop/ipsecmgr_snoop_fp.c
+index 733da52..9f07433 100644
+--- a/src/snoop/ipsecmgr_snoop_fp.c
++++ b/src/snoop/ipsecmgr_snoop_fp.c
+@@ -38,12 +38,13 @@
+ 
+ /* standard includes */
+ #include <stdlib.h>
+-#include <linux/xfrm.h>
+-#include <linux/udp.h>
+ 
+ /* module specific includes */
+ #include "ipsecmgr_snoop_loc.h"
+ 
++#include <linux/xfrm.h>
++#include <linux/udp.h>
++
+ /* Transaction id for FP transactions */
+ static ipsecmgr_trans_id_t   fp_trans_id;
+ 
