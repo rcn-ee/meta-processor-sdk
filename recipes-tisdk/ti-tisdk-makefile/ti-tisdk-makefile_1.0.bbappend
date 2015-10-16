@@ -1,10 +1,11 @@
-PR_append = "-tisdk20"
+PR_append = "-tisdk21"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = " file://Makefile_uio-module-drv \
                    file://Makefile_boot-monitor \
                    file://Makefile_ipsecmgr-mod \
+                   file://Makefile_hplib-mod \
 "
 
 MAKEFILES_COMMON_remove_keystone = " refresh-screen \
@@ -21,6 +22,7 @@ MAKEFILES_append_keystone = " u-boot-spl \
                               cmem-mod \
                               uio-module-drv \
                               ipsecmgr-mod \
+                              hplib-mod \
                               cryptodev \
                               ti-crypto-examples \
 "
