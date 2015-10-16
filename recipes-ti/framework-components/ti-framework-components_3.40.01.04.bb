@@ -1,6 +1,6 @@
 require recipes-ti/framework-components/ti-framework-components.inc
 
-COMPATIBLE_MACHINE = "omap-a15 keystone"
+COMPATIBLE_MACHINE = "omap-a15|keystone"
 
 PV = "3_40_01_04"
 PR = "r0"
