@@ -11,9 +11,9 @@ IPC = ""
 IPC_append_omap-a15 = "\
     ti-ipc-rtos-src \
 "
-IPC_append_keystone = "\
-    ti-ipc-rtos-src \
-"
+#IPC_append_keystone = "\
+#   ti-ipc-rtos-src \
+#"
 
 FRAMEWORK_COMPONENTS = ""
 FRAMEWORK_COMPONENTS_append_omap-a15 = "\
@@ -22,6 +22,11 @@ FRAMEWORK_COMPONENTS_append_omap-a15 = "\
 
 DSP_LIBS = ""
 DSP_LIBS_append_omap-a15 = "\
+    mathlib-c66x-src \
+    dsplib-c66x-src \
+    imglib-c66x-src \
+"
+DSP_LIBS_append_keystone = "\
     mathlib-c66x-src \
     dsplib-c66x-src \
     imglib-c66x-src \
