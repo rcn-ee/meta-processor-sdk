@@ -44,6 +44,9 @@ UIA = ""
 UIA_append_omap-a15 = "\
     uia-src \
 "
+UIA_append_keystone = "\
+    uia-src \
+"
 
 XDAIS = ""
 XDAIS_append_omap-a15 = "\
