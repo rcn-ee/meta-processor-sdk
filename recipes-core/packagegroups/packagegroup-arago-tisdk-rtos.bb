@@ -11,25 +11,14 @@ IPC = ""
 IPC_append_omap-a15 = "\
     ti-ipc-rtos-src \
 "
-IPC_append_keystone = "\
-    ti-ipc-rtos-src \
-"
 
 FRAMEWORK_COMPONENTS = ""
 FRAMEWORK_COMPONENTS_append_omap-a15 = "\
     ti-framework-components-src \
 "
-FRAMEWORK_COMPONENTS_append_keystone = "\
-    ti-framework-components-src \
-"
 
 DSP_LIBS = ""
 DSP_LIBS_append_omap-a15 = "\
-    mathlib-c66x-src \
-    dsplib-c66x-src \
-    imglib-c66x-src \
-"
-DSP_LIBS_append_keystone = "\
     mathlib-c66x-src \
     dsplib-c66x-src \
     imglib-c66x-src \
@@ -44,15 +33,9 @@ UIA = ""
 UIA_append_omap-a15 = "\
     uia-src \
 "
-UIA_append_keystone = "\
-    uia-src \
-"
 
 XDAIS = ""
 XDAIS_append_omap-a15 = "\
-    ti-xdais-src \
-"
-XDAIS_append_keystone = "\
     ti-xdais-src \
 "
 
