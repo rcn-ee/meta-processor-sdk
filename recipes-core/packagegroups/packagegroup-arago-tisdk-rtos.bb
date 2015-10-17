@@ -19,6 +19,9 @@ FRAMEWORK_COMPONENTS = ""
 FRAMEWORK_COMPONENTS_append_omap-a15 = "\
     ti-framework-components-src \
 "
+FRAMEWORK_COMPONENTS_append_keystone = "\
+    ti-framework-components-src \
+"
 
 DSP_LIBS = ""
 DSP_LIBS_append_omap-a15 = "\
@@ -44,6 +47,9 @@ UIA_append_omap-a15 = "\
 
 XDAIS = ""
 XDAIS_append_omap-a15 = "\
+    ti-xdais-src \
+"
+XDAIS_append_keystone = "\
     ti-xdais-src \
 "
 
