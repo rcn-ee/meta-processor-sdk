@@ -9,6 +9,8 @@ require recipes-ti/includes/ti-paths-append.inc
 require recipes-ti/includes/ti-staging.inc
 require recipes-ti/includes/ti-unpack.inc
 
+COMPATIBLE_MACHINE = "omap-a15|keystone"
+
 PV = "3_1_1_0"
 PR = "r1"
 
