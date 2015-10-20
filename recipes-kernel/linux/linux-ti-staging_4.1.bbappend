@@ -1,6 +1,4 @@
-PR_append = ".tisdk3"
-
-SRCREV = "c9770c21bfb5c3a3fcc5eaf969988f79bd4dc2b8"
+PR_append = ".tisdk4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
 
@@ -27,4 +25,6 @@ SRC_URI_append_keystone = " \
     file://0008-configs-Update-keystone_defconfig-with-new-modules.patch \
     file://0009-virtio_rpmsg-Add-dma-sync-ipc-messages-when-dma-cohe.patch \
     file://0010-ipc.cfg-Add-keystone-remoteproc.patch \
+    file://0001-dts-k2l-Add-entries-for-DSP-remote-proc-nodes-for-k2.patch \
+    file://0002-dts-k2e-Add-entries-for-DSP-remote-proc-nodes-for-k2.patch \
 "
