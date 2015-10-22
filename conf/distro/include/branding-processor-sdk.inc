@@ -11,9 +11,9 @@ PREFERRED_VERSION_linux-processor-sdk = "4.1%"
 DISTRO_FEATURES_remove_ti33x = "wayland"
 DISTRO_FEATURES_remove_ti43x = "wayland"
 
-# Set CMEM reserved memory region
-CMEM_BASE_omap-a15 ?= "a0000000"
-CMEM_SIZE_omap-a15 ?= "0a000000"
+# CMEM reserved memory
+RESERVE_CMEM_dra7xx = "1"
+RESERVE_CMEM_k2hk-evm = "1"
 
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
