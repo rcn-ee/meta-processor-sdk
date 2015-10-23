@@ -1,4 +1,16 @@
-PR_append = "-tisdk7"
+PR_append = "-tisdk8"
+
+UTILS_append_ti33x = " \
+    pru-icss-src \
+"
+
+UTILS_append_ti43x = " \
+    pru-icss-src \
+"
+
+UTILS_append_omap-a15 = " \
+    pru-icss-src \
+"
 
 UTILS_append_dra7xx = " \
     opencl-examples-src \
