@@ -15,7 +15,7 @@ UTILS_append_dra7xx = " \
 
 UTILS_append_omap-a15 = " \
     opencv-apps \
-    pru-icss
+    pru-icss \
 "
 
 DEVTOOLS_append = " \
