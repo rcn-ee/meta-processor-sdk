@@ -1,4 +1,4 @@
-PR_append = "-tisdk21"
+PR_append = "-tisdk22"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -6,14 +6,24 @@ SRC_URI_append = " file://Makefile_uio-module-drv \
                    file://Makefile_boot-monitor \
                    file://Makefile_ipsecmgr-mod \
                    file://Makefile_hplib-mod \
+                   file://Makefile_pru-icss \
 "
 
 MAKEFILES_COMMON_remove_keystone = " refresh-screen \
                                      matrix-gui-browser \
 "
 
+MAKEFILES_append_ti33x = " \
+    pru-icss \
+"
+
+MAKEFILES_append_ti43x = " \
+    pru-icss \
+"
+
 MAKEFILES_append_omap-a15 = " \
     opencl-examples \
+    pru-icss \
 "
 
 MAKEFILES_append_keystone = " u-boot-spl \
@@ -33,4 +43,6 @@ KERNEL_DEVICETREE_k2l-evm = "k2l-evm.dtb"
 
 do_install_append() {
     sed -i -e "s/__BOOT_MONITOR_MAKE_TARGET__/${BOOT_MONITOR_MAKE_TARGET}/g" ${D}/Makefile
+
+    sed -i -e "s/__SDKMACHINE__/${SDKMACHINE}/g" ${D}/Makefile
 }
