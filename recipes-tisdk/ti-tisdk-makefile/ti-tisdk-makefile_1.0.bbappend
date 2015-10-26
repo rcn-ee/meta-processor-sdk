@@ -1,4 +1,4 @@
-PR_append = "-tisdk22"
+PR_append = "-tisdk23"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -13,15 +13,15 @@ MAKEFILES_COMMON_remove_keystone = " refresh-screen \
                                      matrix-gui-browser \
 "
 
-MAKEFILES_append_ti33x = " \
+MAKEFILES_append_am335x-evm = " \
     pru-icss \
 "
 
-MAKEFILES_append_ti43x = " \
+MAKEFILES_append_am437x-evm = " \
     pru-icss \
 "
 
-MAKEFILES_append_omap-a15 = " \
+MAKEFILES_append_am57xx-evm = " \
     opencl-examples \
     pru-icss \
 "
