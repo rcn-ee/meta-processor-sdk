@@ -8,8 +8,9 @@ BRANCH = "master"
 SRC_URI = "git://git.ti.com/pru-software-support-package/pru-software-support-package.git;protocol=git;branch=${BRANCH}"
 SRCREV = "476289eb7c3a91977bae84aea55c56f3120b48ea"
 
-PV = "4.0.0.0+git${SRCPV}"
-PR = "r1"
+BASE_PV = "4.0.0.0"
+PV = "${BASE_PV}+git${SRCPV}"
+PR = "r2"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -68,4 +69,4 @@ FILES_${PN} += "/lib/firmware"
 INSANE_SKIP_${PN} = "arch"
 
 CREATE_SRCIPK = "1"
-SRCIPK_INSTALL_DIR = "example-applications/${PN}-${PV}"
+SRCIPK_INSTALL_DIR = "example-applications/${PN}-${BASE_PV}"
