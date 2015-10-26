@@ -1,4 +1,4 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -14,6 +14,7 @@ SRC_URI_append = " \
     file://0007-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
     file://0008-drivers-media-v4l2-core-videobuf2-core-supress-the-w.patch \
     file://0001-dts-dra7-evm-Increase-dsp2-CMA-region.patch \
+    file://0002-rpmsg-pru-Add-a-PRU-RPMsg-driver.patch \
 "
 
 SRC_URI_append_keystone = " \
