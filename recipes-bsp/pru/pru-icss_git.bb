@@ -9,6 +9,9 @@ SRC_URI = "git://git.ti.com/pru-software-support-package/pru-software-support-pa
 SRCREV = "476289eb7c3a91977bae84aea55c56f3120b48ea"
 
 PV = "4.0.0.0+git${SRCPV}"
+PR = "r1"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "ti-cgt-pru-native"
 
@@ -25,13 +28,44 @@ do_compile() {
     done
 }
 
-TARGET_FIRMWARE = ""
-
+# By default, do not install anything
 do_install() {
-    install -d ${D}/lib/firmware/pru-fw
+    :
+}
+
+do_install_am335x-evm() {
+    install -d ${D}/lib/firmware
+    for i in 0 1
+    do
+        install -m 0644 ${S}/examples/am335x/PRU_RPMsg_Echo_Interrupt${i}/gen/PRU_RPMsg_Echo_Interrupt${i}.out \
+                        ${D}/lib/firmware/am335x-pru${i}-fw
+    done
+}
+
+do_install_am437x-evm() {
+    install -d ${D}/lib/firmware
+    for i in 0 1
+    do
+        install -m 0644 ${S}/examples/am437x/PRU_RPMsg_Echo_Interrupt${i}/gen/PRU_RPMsg_Echo_Interrupt${i}.out \
+                        ${D}/lib/firmware/am437x-pru1_${i}-fw
+    done
+}
+
+do_install_am57xx-evm() {
+    install -d ${D}/lib/firmware
+    for i in 1 2
+    do
+        for j in 0 1
+        do
+            install -m 0644 ${S}/examples/am572x/PRU_RPMsg_Echo_Interrupt${i}_${j}/gen/PRU_RPMsg_Echo_Interrupt${i}_${j}.out \
+                            ${D}/lib/firmware/am57xx-pru${i}_${j}-fw
+        done
+    done
 }
 
 FILES_${PN} += "/lib/firmware"
+
+INSANE_SKIP_${PN} = "arch"
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "example-applications/${PN}-${PV}"
