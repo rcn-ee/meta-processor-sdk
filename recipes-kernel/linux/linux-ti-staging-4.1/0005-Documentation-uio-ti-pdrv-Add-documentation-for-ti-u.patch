@@ -1,7 +1,7 @@
-From 3974a286c5edc46019902a083471cfb21f76c18e Mon Sep 17 00:00:00 2001
+From 1de19dbee86af30c2efff5a975f26b18005fa862 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Mon, 14 Sep 2015 15:56:43 -0400
-Subject: [PATCH 05/10] Documentation: uio-ti-pdrv: Add documentation for
+Subject: [PATCH 05/12] Documentation: uio-ti-pdrv: Add documentation for
  ti,uio-ti-pdrv
 
 - uio-ti-pdrv add user space access to TI peripheral modules

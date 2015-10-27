@@ -1,7 +1,7 @@
-From 57f3bf838c8ebba7305e975d299fa61f67a4447a Mon Sep 17 00:00:00 2001
+From 35c5d7b6f433b247f9a345a7fd23122e9cd9237f Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Thu, 17 Sep 2015 12:47:06 -0400
-Subject: [PATCH 02/10] remoteproc: Add hooks to download and run firmware from
+Subject: [PATCH 02/12] remoteproc: Add hooks to download and run firmware from
  user space
 
 - Add APIs to support user space loader

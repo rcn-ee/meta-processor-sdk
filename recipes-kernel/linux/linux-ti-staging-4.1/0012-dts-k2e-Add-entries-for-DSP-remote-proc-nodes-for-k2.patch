@@ -1,7 +1,7 @@
-From a0b95e752527177cb5149d98c606f2840d4c16fd Mon Sep 17 00:00:00 2001
+From 8982ba6d6308be52c388bf99ba64593b946f2ae3 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Tue, 20 Oct 2015 07:22:28 -0400
-Subject: [PATCH 2/2] dts: k2e: Add entries for DSP remote proc nodes for k2e
+Subject: [PATCH 12/12] dts: k2e: Add entries for DSP remote proc nodes for k2e
  platform
 
 - Add entries for common memory pool to be used for Remote proc
@@ -10,16 +10,16 @@ Subject: [PATCH 2/2] dts: k2e: Add entries for DSP remote proc nodes for k2e
 
 Signed-off-by: Sam Nelson <sam.nelson@ti.com>
 ---
- arch/arm/boot/dts/k2e-evm.dts |   31 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/k2e.dtsi    |   27 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/k2e-evm.dts | 31 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/k2e.dtsi    | 27 +++++++++++++++++++++++++++
  2 files changed, 58 insertions(+)
 
 diff --git a/arch/arm/boot/dts/k2e-evm.dts b/arch/arm/boot/dts/k2e-evm.dts
-index 9dd2bb0..82e3b22 100644
+index a8b12a7..0c529c9 100644
 --- a/arch/arm/boot/dts/k2e-evm.dts
 +++ b/arch/arm/boot/dts/k2e-evm.dts
 @@ -16,6 +16,26 @@
- 	compatible =  "ti,k2e-evm","ti,keystone";
+ 	compatible = "ti,k2e-evm", "ti,k2e", "ti,keystone";
  	model = "Texas Instruments Keystone 2 Edison EVM";
  
 +	reserved-memory {
@@ -61,10 +61,10 @@ index 9dd2bb0..82e3b22 100644
 +		0xa0000000 0x20000000>;
 +};
 diff --git a/arch/arm/boot/dts/k2e.dtsi b/arch/arm/boot/dts/k2e.dtsi
-index 1394e06..125050e 100644
+index ac30527..149b9f3 100644
 --- a/arch/arm/boot/dts/k2e.dtsi
 +++ b/arch/arm/boot/dts/k2e.dtsi
-@@ -40,6 +40,10 @@
+@@ -43,6 +43,10 @@
  		};
  	};
  
@@ -75,7 +75,7 @@ index 1394e06..125050e 100644
  	soc {
  		/include/ "k2e-clocks.dtsi"
  
-@@ -86,6 +90,29 @@
+@@ -89,6 +93,29 @@
  			gpio,syscon-dev = <&devctrl 0x240>;
  		};
  
@@ -106,5 +106,5 @@ index 1394e06..125050e 100644
  			#phy-cells = <0>;
  			compatible = "ti,keystone-serdes-phy";
 -- 
-1.7.9.5
+1.9.1
 

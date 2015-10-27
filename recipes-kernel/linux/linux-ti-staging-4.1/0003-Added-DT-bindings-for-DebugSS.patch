@@ -1,4 +1,4 @@
-From 3c7cf39ad8369051bf3f701f0b6d123e952f3dc5 Mon Sep 17 00:00:00 2001
+From aa27ee619c5bbf6f9171d3a02e35870d3cc66bbf Mon Sep 17 00:00:00 2001
 From: Karthik R Sankar <k-sankar@ti.com>
 Date: Fri, 1 May 2015 15:27:01 -0500
 Subject: [PATCH 3/9] Added DT bindings for DebugSS
@@ -38,7 +38,7 @@ index 0000000..79a3ba8
 +        clock-names = "sysclockin1";
 +};
 diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index 79a2c79..f2fa217 100644
+index 526a855..0d3a969 100644
 --- a/arch/arm/boot/dts/dra7.dtsi
 +++ b/arch/arm/boot/dts/dra7.dtsi
 @@ -2145,6 +2145,12 @@

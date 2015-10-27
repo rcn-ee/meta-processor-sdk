@@ -1,7 +1,7 @@
-From cf02102013314ba5e5cc927cce85d3d2acb0d0ce Mon Sep 17 00:00:00 2001
+From aa2011f74f1743ee007427f5a56ec235742db326 Mon Sep 17 00:00:00 2001
 From: Archit Taneja <archit@ti.com>
 Date: Thu, 19 Dec 2013 15:05:31 +0530
-Subject: [PATCH 5/9] media: ti-vpe: vpe: Add cropping ioctl support
+Subject: [PATCH 4/9] media: ti-vpe: vpe: Add cropping ioctl support
 
 Add crop ioctl ops. For VPE, cropping only makes sense with the input to VPE, or
 the V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE buffer type.
@@ -23,10 +23,10 @@ Signed-off-by: Nikhil Devshatwar <nikhil.nd@ti.com>
  1 file changed, 88 insertions(+)
 
 diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index 1233123..7493622 100644
+index 25c20e8..048d57b 100644
 --- a/drivers/media/platform/ti-vpe/vpe.c
 +++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -1917,6 +1917,90 @@ static const struct v4l2_ctrl_ops vpe_ctrl_ops = {
+@@ -1918,6 +1918,90 @@ static const struct v4l2_ctrl_ops vpe_ctrl_ops = {
  	.s_ctrl = vpe_s_ctrl,
  };
  
@@ -117,7 +117,7 @@ index 1233123..7493622 100644
  static const struct v4l2_ioctl_ops vpe_ioctl_ops = {
  	.vidioc_querycap		= vpe_querycap,
  
-@@ -1933,6 +2017,10 @@ static const struct v4l2_ioctl_ops vpe_ioctl_ops = {
+@@ -1934,6 +2018,10 @@ static const struct v4l2_ioctl_ops vpe_ioctl_ops = {
  	.vidioc_g_selection		= vpe_g_selection,
  	.vidioc_s_selection		= vpe_s_selection,
  

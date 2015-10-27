@@ -1,7 +1,7 @@
-From 1b091d093fe509ea17b4886da7de749cefbb96c6 Mon Sep 17 00:00:00 2001
+From e0b39626ab42b82e063a9eb3875f3ef0dec4b016 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Tue, 20 Oct 2015 07:20:38 -0400
-Subject: [PATCH 1/2] dts: k2l: Add entries for DSP remote proc nodes for k2l
+Subject: [PATCH 11/12] dts: k2l: Add entries for DSP remote proc nodes for k2l
  platform
 
 - Add entries for common memory pool to be used for Remote proc
@@ -10,16 +10,16 @@ Subject: [PATCH 1/2] dts: k2l: Add entries for DSP remote proc nodes for k2l
 
 Signed-off-by: Sam Nelson <sam.nelson@ti.com>
 ---
- arch/arm/boot/dts/k2l-evm.dts |   46 +++++++++++++++++++++++
- arch/arm/boot/dts/k2l.dtsi    |   82 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 128 insertions(+)
+ arch/arm/boot/dts/k2l-evm.dts | 46 ++++++++++++++++++++++++
+ arch/arm/boot/dts/k2l.dtsi    | 84 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
 
 diff --git a/arch/arm/boot/dts/k2l-evm.dts b/arch/arm/boot/dts/k2l-evm.dts
-index 9a69a6b..cc79a8b 100644
+index 0086124..9c2b597 100644
 --- a/arch/arm/boot/dts/k2l-evm.dts
 +++ b/arch/arm/boot/dts/k2l-evm.dts
 @@ -16,6 +16,26 @@
- 	compatible =  "ti,k2l-evm","ti,keystone";
+ 	compatible = "ti,k2l-evm", "ti,k2l", "ti,keystone";
  	model = "Texas Instruments Keystone 2 Lamarr EVM";
  
 +	reserved-memory {
@@ -76,10 +76,10 @@ index 9a69a6b..cc79a8b 100644
 +		0xa0000000 0x20000000>;
 +};
 diff --git a/arch/arm/boot/dts/k2l.dtsi b/arch/arm/boot/dts/k2l.dtsi
-index 0e00748..11ff412 100644
+index 4446da7..1d7c30a 100644
 --- a/arch/arm/boot/dts/k2l.dtsi
 +++ b/arch/arm/boot/dts/k2l.dtsi
-@@ -28,6 +28,13 @@
+@@ -31,6 +31,13 @@
  		};
  	};
  
@@ -91,12 +91,13 @@ index 0e00748..11ff412 100644
 +	};
 +
  	soc {
- 
  		/include/ "k2l-clocks.dtsi"
-@@ -79,6 +86,81 @@
- 			#gpio-cells = <2>;
- 			gpio,syscon-dev = <&devctrl 0x24c>;
+ 
+@@ -92,6 +99,83 @@
+ 			clock-names = "fck";
+ 			bus_freq	= <2500000>;
  		};
++
 +		dsp0: dsp0 {
 +			compatible = "ti,keystone-rproc";
 +			reg = <0x02620844 4
@@ -168,6 +169,7 @@ index 0e00748..11ff412 100644
 +			clocks = <&clkgem3>;
 +			status = "disabled";
 +		};
++
 +		uio_dspmem: dspmem {
 +			compatible = "ti,uio-ti-pdrv";
 +			status = "disabled";
@@ -176,5 +178,5 @@ index 0e00748..11ff412 100644
  	};
  };
 -- 
-1.7.9.5
+1.9.1
 

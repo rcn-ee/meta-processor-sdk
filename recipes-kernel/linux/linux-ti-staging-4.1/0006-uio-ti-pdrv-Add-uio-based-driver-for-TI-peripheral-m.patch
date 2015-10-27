@@ -1,7 +1,7 @@
-From 1d3a1f112c2bded27188a0e0f500a49f04c7bad6 Mon Sep 17 00:00:00 2001
+From c1c063ef533071c4788e4aafba63b303757699a3 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Mon, 14 Sep 2015 15:58:41 -0400
-Subject: [PATCH 06/10] uio-ti-pdrv: Add uio based driver for TI peripheral
+Subject: [PATCH 06/12] uio-ti-pdrv: Add uio based driver for TI peripheral
  modules
 
 - Provide generic uio driver for TI peripheral modules

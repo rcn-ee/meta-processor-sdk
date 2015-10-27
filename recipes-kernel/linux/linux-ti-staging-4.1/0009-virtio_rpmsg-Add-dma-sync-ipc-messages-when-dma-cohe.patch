@@ -1,7 +1,7 @@
-From 0ffe0fbac98a77888ac4ffbcf1a6eeef42af55da Mon Sep 17 00:00:00 2001
+From 376d722c946549b4a891237cf559a22e1de38267 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Fri, 18 Sep 2015 14:13:36 -0400
-Subject: [PATCH 09/10] virtio_rpmsg: Add dma sync ipc messages when dma
+Subject: [PATCH 09/12] virtio_rpmsg: Add dma sync ipc messages when dma
  coherency is enabled
 
 - In Keystone 2 devices, if dma coherency is enabled, the

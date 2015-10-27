@@ -1,7 +1,7 @@
-From c99f75d802d2e9a88f82a5ed2efcc853f3c33a60 Mon Sep 17 00:00:00 2001
+From 9b03e6b5ad6164f53ce57d43ff6b703dccc5db39 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Mon, 14 Sep 2015 16:13:26 -0400
-Subject: [PATCH 08/10] configs: Update keystone_defconfig with new modules
+Subject: [PATCH 08/12] configs: Update keystone_defconfig with new modules
 
 - Add uio_module_drv & keystone_rproc
 

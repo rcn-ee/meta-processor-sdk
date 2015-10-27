@@ -1,7 +1,7 @@
-From 3023a3a97d52b578b39c256e6dd9310024aeb0c2 Mon Sep 17 00:00:00 2001
+From 202b1aabe95a1e8a826fd3f13545851bb8fea01c Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Mon, 3 Aug 2015 13:36:15 -0400
-Subject: [PATCH 03/10] Documentation: ti,keystone-rproc: Add documentation for
+Subject: [PATCH 03/12] Documentation: ti,keystone-rproc: Add documentation for
  Keystone remote proc driver
 
 - Documents device tree entries needed for the driver

@@ -1,7 +1,7 @@
-From 18d8bc46363fd309ad48fd2fce048da897ccbe4b Mon Sep 17 00:00:00 2001
+From 0bb9dd4621897b111885eca9d5fd2f2f202e5808 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Fri, 18 Sep 2015 16:31:27 -0400
-Subject: [PATCH 10/10] ipc.cfg: Add keystone remoteproc
+Subject: [PATCH 10/12] ipc.cfg: Add keystone remoteproc
 
 - Add keystone remoteproc and uio-ti-pdrv as modules
 

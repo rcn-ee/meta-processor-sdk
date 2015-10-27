@@ -1,7 +1,7 @@
-From 81822388800a5cdcadc80125711e890a975e1630 Mon Sep 17 00:00:00 2001
+From 2d841a241a00c0c1d5eb720710094b385312572c Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Mon, 14 Sep 2015 15:59:47 -0400
-Subject: [PATCH 07/10] dts: k2hk: Add entries for DSP remote proc nodes for
+Subject: [PATCH 07/12] dts: k2hk: Add entries for DSP remote proc nodes for
  k2hk platform
 
 Signed-off-by: Sam Nelson <sam.nelson@ti.com>

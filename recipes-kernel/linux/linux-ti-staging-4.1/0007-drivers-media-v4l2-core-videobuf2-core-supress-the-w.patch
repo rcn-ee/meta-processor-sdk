@@ -1,7 +1,7 @@
-From 8178ce9ddf7ef843b4292bdf481bbb07e7088f9e Mon Sep 17 00:00:00 2001
+From 39d68240de864c2c905edd76c23a35cdba3996e0 Mon Sep 17 00:00:00 2001
 From: Hongmei Gou <h-gou@ti.com>
 Date: Tue, 29 Sep 2015 15:41:00 -0400
-Subject: [PATCH 8/9] drivers:media:v4l2-core:videobuf2-core: supress the
+Subject: [PATCH 7/9] drivers:media:v4l2-core:videobuf2-core: supress the
  warning for zero bytes used
 
 * Revisit this after proper fix is done for "HACK: Remove the V4L2 check

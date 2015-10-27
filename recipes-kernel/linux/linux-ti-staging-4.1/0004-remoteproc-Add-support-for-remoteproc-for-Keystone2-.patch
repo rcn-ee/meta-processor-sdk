@@ -1,7 +1,7 @@
-From baae4821a3be59ea65680284b7aa0094b3190c3b Mon Sep 17 00:00:00 2001
+From 37c7e9aa19b45a7dc43b476fb21cdf447231bfc9 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Thu, 17 Sep 2015 12:49:46 -0400
-Subject: [PATCH 04/10] remoteproc: Add support for remoteproc for Keystone2
+Subject: [PATCH 04/12] remoteproc: Add support for remoteproc for Keystone2
  devices
 
 - Adds support for keystone devices with  user space loader
