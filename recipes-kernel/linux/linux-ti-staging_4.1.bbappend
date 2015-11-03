@@ -1,4 +1,4 @@
-PR_append = ".tisdk8"
+PR_append = ".tisdk9"
 
 SRCREV = "2eaf4adc0d8e6d2562df945923e57e508d26160c"
 
@@ -7,11 +7,9 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 include cmem.inc
 
 SRC_URI_append = " \
-    file://0001-dts-am57xx-beagle-x15-Increase-dsp2-CMA-region.patch \
     file://0002-HACK-remoteproc-Prevent-backtrace-for-RSC_INTMEM-dep.patch \
     file://0003-Added-DT-bindings-for-DebugSS.patch \
     file://0004-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
-    file://0005-dts-dra7-evm-Increase-dsp2-CMA-region.patch \
     file://0006-rpmsg-pru-Add-a-PRU-RPMsg-driver.patch \
 "
 
