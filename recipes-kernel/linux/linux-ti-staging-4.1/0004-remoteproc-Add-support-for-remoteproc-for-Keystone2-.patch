@@ -1,4 +1,4 @@
-From 37c7e9aa19b45a7dc43b476fb21cdf447231bfc9 Mon Sep 17 00:00:00 2001
+From 2286220523bd34d176d2eea6d09422c90b391e2e Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Thu, 17 Sep 2015 12:49:46 -0400
 Subject: [PATCH 04/12] remoteproc: Add support for remoteproc for Keystone2

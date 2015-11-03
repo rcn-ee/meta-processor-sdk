@@ -1,7 +1,7 @@
-From 62de9432047857eafa154f3ef521887cb6d60e25 Mon Sep 17 00:00:00 2001
+From d98c8fcde2b5212a49d7121f7f91a52f29d2d1b9 Mon Sep 17 00:00:00 2001
 From: Jason Reeder <jreeder@ti.com>
 Date: Wed, 3 Jun 2015 16:18:54 -0500
-Subject: [PATCH 9/9] rpmsg: pru: Add a PRU RPMsg driver
+Subject: [PATCH 6/6] rpmsg: pru: Add a PRU RPMsg driver
 
 An RPMsg driver that exposes interfaces to user space, to
 allow applications to communicate with the PRU processors

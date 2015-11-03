@@ -1,4 +1,4 @@
-From e0b39626ab42b82e063a9eb3875f3ef0dec4b016 Mon Sep 17 00:00:00 2001
+From 4e85d498c3d1b467656f7ce178221ba7a3eb5658 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Tue, 20 Oct 2015 07:20:38 -0400
 Subject: [PATCH 11/12] dts: k2l: Add entries for DSP remote proc nodes for k2l

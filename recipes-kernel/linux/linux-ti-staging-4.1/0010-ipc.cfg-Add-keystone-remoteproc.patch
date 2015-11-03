@@ -1,4 +1,4 @@
-From 0bb9dd4621897b111885eca9d5fd2f2f202e5808 Mon Sep 17 00:00:00 2001
+From 10af610ec68b46786dfc0fbaa47e705db42903d6 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Fri, 18 Sep 2015 16:31:27 -0400
 Subject: [PATCH 10/12] ipc.cfg: Add keystone remoteproc

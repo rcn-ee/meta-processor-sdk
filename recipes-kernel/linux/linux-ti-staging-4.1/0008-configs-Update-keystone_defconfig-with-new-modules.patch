@@ -1,4 +1,4 @@
-From 9b03e6b5ad6164f53ce57d43ff6b703dccc5db39 Mon Sep 17 00:00:00 2001
+From 52b18804aff0a164ad67290499fbd92eb60b273a Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Mon, 14 Sep 2015 16:13:26 -0400
 Subject: [PATCH 08/12] configs: Update keystone_defconfig with new modules
@@ -11,10 +11,10 @@ Signed-off-by: Sam Nelson <sam.nelson@ti.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm/configs/keystone_defconfig b/arch/arm/configs/keystone_defconfig
-index 95ce128..9acc74de 100644
+index 403017a..88840c2 100644
 --- a/arch/arm/configs/keystone_defconfig
 +++ b/arch/arm/configs/keystone_defconfig
-@@ -158,6 +158,9 @@ CONFIG_TI_EDMA=y
+@@ -173,6 +173,9 @@ CONFIG_TI_EDMA=y
  CONFIG_SOC_TI=y
  CONFIG_KEYSTONE_NAVIGATOR_QMSS=y
  CONFIG_KEYSTONE_NAVIGATOR_DMA=y
@@ -23,7 +23,7 @@ index 95ce128..9acc74de 100644
 +CONFIG_KEYSTONE_REMOTEPROC=y
  CONFIG_MEMORY=y
  CONFIG_TI_AEMIF=y
- CONFIG_EXT4_FS=y
+ CONFIG_KEYSTONE_IRQ=y
 -- 
 1.9.1
 

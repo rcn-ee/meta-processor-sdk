@@ -1,4 +1,4 @@
-From 8982ba6d6308be52c388bf99ba64593b946f2ae3 Mon Sep 17 00:00:00 2001
+From 56b970fc27f68a3a58c660941f40595aa73fa821 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Tue, 20 Oct 2015 07:22:28 -0400
 Subject: [PATCH 12/12] dts: k2e: Add entries for DSP remote proc nodes for k2e

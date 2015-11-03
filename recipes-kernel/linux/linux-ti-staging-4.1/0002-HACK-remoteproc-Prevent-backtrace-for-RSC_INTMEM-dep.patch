@@ -1,7 +1,7 @@
-From 623503de1e8277831bb9b4d2343e82ee629b5267 Mon Sep 17 00:00:00 2001
+From 508eee0c8a4ca4dcab5f110ab50a08aca1e4a796 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Wed, 16 Sep 2015 10:35:59 -0400
-Subject: [PATCH 2/9] HACK: remoteproc: Prevent backtrace for RSC_INTMEM
+Subject: [PATCH 2/6] HACK: remoteproc: Prevent backtrace for RSC_INTMEM
  deprecation warning
 
 * The backtrace during boot makes it appear that there is a serious

@@ -1,4 +1,4 @@
-From 3e73b5462d4c82fd2a8cd83b530890c17f82c33c Mon Sep 17 00:00:00 2001
+From 242d4f2507f27b0e3a9f42c1a29f0fe1ee407c5f Mon Sep 17 00:00:00 2001
 From: Cyril Chemparathy <cyril@ti.com>
 Date: Mon, 10 Dec 2012 13:24:04 -0500
 Subject: [PATCH 01/12] uio: add support for ioctls

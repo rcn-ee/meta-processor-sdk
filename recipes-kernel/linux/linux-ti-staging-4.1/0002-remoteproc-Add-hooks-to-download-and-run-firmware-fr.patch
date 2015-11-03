@@ -1,4 +1,4 @@
-From 35c5d7b6f433b247f9a345a7fd23122e9cd9237f Mon Sep 17 00:00:00 2001
+From f00cef35b042e826d4a7460c18b15778e1fba380 Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Thu, 17 Sep 2015 12:47:06 -0400
 Subject: [PATCH 02/12] remoteproc: Add hooks to download and run firmware from
