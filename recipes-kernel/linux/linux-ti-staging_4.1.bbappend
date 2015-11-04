@@ -1,10 +1,6 @@
-PR_append = ".tisdk9"
+PR_append = ".tisdk10"
 
-SRCREV = "2eaf4adc0d8e6d2562df945923e57e508d26160c"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
-
-include cmem.inc
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
 
 SRC_URI_append = " \
     file://0002-HACK-remoteproc-Prevent-backtrace-for-RSC_INTMEM-dep.patch \
