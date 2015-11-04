@@ -1,4 +1,4 @@
-PR_append = "-tisdk23"
+PR_append = "-tisdk24"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -31,11 +31,13 @@ MAKEFILES_append_keystone = " u-boot-spl \
                               boot-monitor \
                               cmem-mod \
                               uio-module-drv \
-                              ipsecmgr-mod \
                               hplib-mod \
                               cryptodev \
                               ti-crypto-examples \
 "
+
+# Remoe ipsecmgr until it may be updated
+# ipsecmgr-mod
 
 KERNEL_DEVICETREE_k2hk-evm = "k2hk-evm.dtb"
 KERNEL_DEVICETREE_k2e-evm = "k2e-evm.dtb"
