@@ -1,4 +1,4 @@
-PR_append = "-tisdk8"
+PR_append = "-tisdk9"
 
 UTILS_append_ti33x = " \
     pru-icss-src \
@@ -18,6 +18,8 @@ UTILS_append_dra7xx = " \
 
 EXTRA_LIBS_append_keystone = " cmem-mod-src \
                                uio-module-drv-src \
-                               ipsecmgr-mod-src \
                                hplib-mod-src \
 "
+
+# Remove ipsecmgr until it may be updated
+# ipsecmgr-mod-src
