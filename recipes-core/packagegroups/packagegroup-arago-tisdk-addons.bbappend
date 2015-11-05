@@ -1,4 +1,4 @@
-PR_append = "-tisdk8"
+PR_append = "-tisdk9"
 
 UTILS_append_ti33x = " \
     pru-icss \
@@ -8,11 +8,6 @@ UTILS_append_ti33x = " \
 UTILS_append_ti43x = " \
     pru-icss \
     strongswan \
-"
-
-UTILS_append_dra7xx = " \
-    opencl-staticdev \
-    opencl-examples-dev \
 "
 
 UTILS_append_omap-a15 = " \
