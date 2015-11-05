@@ -1,6 +1,5 @@
-PR_append = "-tisdk1"
+PR_append = "-tisdk2"
 
 EXTRA_TOOLS_append = " \
-    nativesdk-clocl \
     nativesdk-ti-cgt-pru \
 "
