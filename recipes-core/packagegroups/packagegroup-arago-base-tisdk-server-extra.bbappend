@@ -24,6 +24,7 @@ ARAGO_TI_KEYSTONE_PKGS_append_keystone = "\
 
 ARAGO_TI_PKGS_append_k2hk-evm = "\
     srio-lld \
+    aif2-lld \
     "
 
 RDEPENDS_${PN}_remove = "recovery-kernel \
