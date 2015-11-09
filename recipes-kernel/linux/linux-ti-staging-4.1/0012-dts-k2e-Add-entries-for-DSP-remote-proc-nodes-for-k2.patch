@@ -1,4 +1,4 @@
-From 56b970fc27f68a3a58c660941f40595aa73fa821 Mon Sep 17 00:00:00 2001
+From 8c9921aee6c7115007235828340885a2f1b184db Mon Sep 17 00:00:00 2001
 From: Sam Nelson <sam.nelson@ti.com>
 Date: Tue, 20 Oct 2015 07:22:28 -0400
 Subject: [PATCH 12/12] dts: k2e: Add entries for DSP remote proc nodes for k2e
@@ -61,7 +61,7 @@ index a8b12a7..0c529c9 100644
 +		0xa0000000 0x20000000>;
 +};
 diff --git a/arch/arm/boot/dts/k2e.dtsi b/arch/arm/boot/dts/k2e.dtsi
-index ac30527..149b9f3 100644
+index 3109368..80234c4 100644
 --- a/arch/arm/boot/dts/k2e.dtsi
 +++ b/arch/arm/boot/dts/k2e.dtsi
 @@ -43,6 +43,10 @@
@@ -102,9 +102,9 @@ index ac30527..149b9f3 100644
 +			status = "disabled";
 +		};
 +
- 		pcie1_phy: pciephy@2326000 {
+ 		pcie1_phy: phy@2326000 {
  			#phy-cells = <0>;
- 			compatible = "ti,keystone-serdes-phy";
+ 			compatible = "ti,keystone-serdes-pcie";
 -- 
 1.9.1
 
