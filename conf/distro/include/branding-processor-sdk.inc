@@ -1,4 +1,4 @@
-ARAGO_TISDK_IMAGE = "processor-sdk-linux-image"
+ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_RT_SUFFIX}-image"
 
 #PREFERRED_PROVIDER_virtual/kernel = "linux-processor-sdk"
 #PREFERRED_PROVIDER_virtual/kernel_am335x-evm = "linux-processor-sdk"
