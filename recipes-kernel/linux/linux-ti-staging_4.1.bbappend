@@ -1,4 +1,4 @@
-PR_append = ".tisdk11"
+PR_append = ".tisdk12"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
 
@@ -14,6 +14,10 @@ SRC_URI_append = " \
     file://0005-ti_config_fragments-connectivity.cfg-enable-INET_ESP.patch \
     file://0006-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
     file://0007-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
+    file://0001-net-netcp-cpts-introduce-keystone-netcp-cpts-softwar.patch \
+    file://0002-net-netcp-add-support-of-cpts.patch \
+    file://0003-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
+    file://0004-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
 "
 
 SRC_URI_append_keystone = " \
