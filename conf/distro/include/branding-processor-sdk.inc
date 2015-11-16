@@ -47,5 +47,13 @@ SRCIPK_CUSTOM_GIT_MESSAGE_pn-linux-ti-staging = "${SRCIPK_SHALLOW_GIT_COMMIT_MES
 SRCIPK_SHALLOW_CLONE_pn-linux-ti-staging = "true"
 SRCIPK_SHALLOW_DEPTH_pn-linux-ti-staging = "400"
 
+CREATE_SRCIPK_pn-linux-ti-staging-rt = "1"
+SRCIPK_INSTALL_DIR_pn-linux-ti-staging-rt = "board-support/linux-rt-${PV}${KERNEL_LOCALVERSION}"
+SRCIPK_PRESERVE_GIT_pn-linux-ti-staging-rt = "true"
+SRCIPK_CUSTOM_GIT_BRANCH_pn-linux-ti-staging-rt = "processor-sdk-local"
+SRCIPK_CUSTOM_GIT_MESSAGE_pn-linux-ti-staging-rt = "${SRCIPK_SHALLOW_GIT_COMMIT_MESSAGE}"
+SRCIPK_SHALLOW_CLONE_pn-linux-ti-staging-rt = "true"
+SRCIPK_SHALLOW_DEPTH_pn-linux-ti-staging-rt = "400"
+
 SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-u-boot-ti-staging = "${SRCIPK_GIT_COMMIT_MESSAGE}"
