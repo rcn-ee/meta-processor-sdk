@@ -1,6 +1,8 @@
-PR_append = ".tisdk14"
+PR_append = ".tisdk15"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
+
+include ti-uio.inc
 
 SRC_URI_append = " \
     file://0002-HACK-remoteproc-Prevent-backtrace-for-RSC_INTMEM-dep.patch \
