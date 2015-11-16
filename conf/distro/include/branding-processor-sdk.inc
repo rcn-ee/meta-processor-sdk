@@ -13,6 +13,8 @@ DISTRO_FEATURES_remove_ti33x = "wayland"
 # CMEM reserved memory
 RESERVE_CMEM_dra7xx = "1"
 RESERVE_CMEM_k2hk-evm = "1"
+RESERVE_CMEM_k2e-evm = "1"
+RESERVE_CMEM_k2l-evm = "1"
 
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
