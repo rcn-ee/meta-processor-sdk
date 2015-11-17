@@ -1,6 +1,8 @@
-PR_append = ".tisdk15"
+PR_append = ".tisdk16"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
+
+SRCREV = "94357534a0bd95791c5664a3a9075cece87eb350"
 
 include ti-uio.inc
 
