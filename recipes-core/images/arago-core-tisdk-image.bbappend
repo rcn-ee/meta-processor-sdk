@@ -1,4 +1,4 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
 DTB_FILTER_k2hk-evm = "k2hk"
 DTB_FILTER_k2e-evm = "k2e"
@@ -40,6 +40,14 @@ tisdk_image_build_append () {
         if [ -e $s ]
         then
             cp $s ${prebuilt_dir}/
+        fi
+    done
+
+    for fw in ${DEPLOY_DIR_IMAGE}/pmmc-firmware*.bin
+    do
+        if [ -e $fw ]
+        then
+            cp $fw ${prebuilt_dir}/
         fi
     done
 }
