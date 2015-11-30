@@ -1,7 +1,7 @@
-From 687edc1112899bde687d0e07ffbe6c8ca8370c0a Mon Sep 17 00:00:00 2001
+From ec1a894b95e15d4bc6f036ff33274d3ddf6c3642 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Oct 2015 13:59:45 -0400
-Subject: [PATCH 3/7] crypto: keystone: keystone sideband crypto driver
+Subject: [PATCH 06/14] crypto: keystone: keystone sideband crypto driver
 
 This commits adds the driver support for keystone SA in sideband mode.
 The driver registers algorithm implementations in the Kernel crypto

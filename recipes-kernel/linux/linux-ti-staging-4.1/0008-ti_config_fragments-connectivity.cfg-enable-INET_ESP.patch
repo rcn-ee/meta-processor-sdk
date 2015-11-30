@@ -1,7 +1,7 @@
-From 7ed4ed0fa31d42c7583c6e0d5d1a7e4e34331a36 Mon Sep 17 00:00:00 2001
+From e59a784dee189e47f12a5172b1d01616c2361950 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 3 Nov 2015 09:03:39 -0500
-Subject: [PATCH 5/7] ti_config_fragments/connectivity.cfg: enable INET_ESP
+Subject: [PATCH 08/14] ti_config_fragments/connectivity.cfg: enable INET_ESP
 
 CONFIG_INET_ESP enables encapsulated security payload.
 
@@ -11,10 +11,10 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index d48c6c6..f37f2e0 100644
+index ab29694..eb53cd0 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
-@@ -188,3 +188,6 @@ CONFIG_USB_OTG=y
+@@ -179,3 +179,6 @@ CONFIG_USB_OTG=y
  #USB MUSB DMA
  CONFIG_TI_CPPI41=y
  CONFIG_USB_TI_CPPI41_DMA=y

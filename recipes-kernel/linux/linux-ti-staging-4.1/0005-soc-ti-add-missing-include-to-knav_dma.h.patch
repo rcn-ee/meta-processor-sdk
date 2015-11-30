@@ -1,7 +1,7 @@
-From a8eb30a140c30b36d0bd61a973da0e9356e05009 Mon Sep 17 00:00:00 2001
+From ab192927e5dd2ef975be38b92d1b50347ac858e8 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Oct 2015 11:06:00 -0400
-Subject: [PATCH 2/7] soc: ti: add missing include to knav_dma.h
+Subject: [PATCH 05/14] soc: ti: add missing include to knav_dma.h
 
 The knav_dma.h uses some definitions from dmaengine.h.
 
@@ -11,7 +11,7 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/include/linux/soc/ti/knav_dma.h b/include/linux/soc/ti/knav_dma.h
-index 4fff4ff..0c94ee5 100644
+index 7f7db9e..b2bc752 100644
 --- a/include/linux/soc/ti/knav_dma.h
 +++ b/include/linux/soc/ti/knav_dma.h
 @@ -17,6 +17,8 @@

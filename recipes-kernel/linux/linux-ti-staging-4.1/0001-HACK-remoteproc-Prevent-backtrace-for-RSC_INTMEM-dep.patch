@@ -1,7 +1,7 @@
-From 508eee0c8a4ca4dcab5f110ab50a08aca1e4a796 Mon Sep 17 00:00:00 2001
+From 432add36ad09f9f968594584a51f5c340b82a61b Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Wed, 16 Sep 2015 10:35:59 -0400
-Subject: [PATCH 2/6] HACK: remoteproc: Prevent backtrace for RSC_INTMEM
+Subject: [PATCH 01/14] HACK: remoteproc: Prevent backtrace for RSC_INTMEM
  deprecation warning
 
 * The backtrace during boot makes it appear that there is a serious
@@ -15,7 +15,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 8656094..a75f30e 100644
+index aa3e325..8e6ca80 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
 @@ -870,7 +870,7 @@ static int rproc_handle_intmem(struct rproc *rproc, struct fw_rsc_intmem *rsc,
