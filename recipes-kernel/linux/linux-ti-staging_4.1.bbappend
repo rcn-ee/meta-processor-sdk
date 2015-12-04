@@ -22,3 +22,7 @@ SRC_URI_append = " \
     file://0013-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
     file://0014-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
 "
+
+do_compile_kernel_modules_append() {
+	cp Module.symvers ${STAGING_KERNEL_BUILDDIR}/
+}
