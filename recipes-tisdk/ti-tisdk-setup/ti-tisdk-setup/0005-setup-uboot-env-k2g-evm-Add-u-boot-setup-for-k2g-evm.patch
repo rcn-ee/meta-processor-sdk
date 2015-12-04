@@ -1,7 +1,7 @@
-From ad9924cd35c2d3ea837debcaf6a3e1060a493784 Mon Sep 17 00:00:00 2001
+From 4c18e4a3628b1eba7cf1b11723a9d4e9c24adc11 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Mon, 30 Nov 2015 12:11:50 -0500
-Subject: [PATCH 2/2] setup-uboot-env-k2g-evm: Add u-boot seupt for k2g-evm
+Subject: [PATCH 5/5] setup-uboot-env-k2g-evm: Add u-boot setup for k2g-evm
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
@@ -11,7 +11,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 
 diff --git a/setup-uboot-env-k2g-evm.sh b/setup-uboot-env-k2g-evm.sh
 new file mode 100755
-index 0000000..3295c7b
+index 0000000..f7c8561
 --- /dev/null
 +++ b/setup-uboot-env-k2g-evm.sh
 @@ -0,0 +1,253 @@
@@ -20,7 +20,7 @@ index 0000000..3295c7b
 +# This distribution contains contributions or derivatives under copyright
 +# as follows:
 +#
-+# Copyright (c) 2010, Texas Instruments Incorporated
++# Copyright (c) 2015, Texas Instruments Incorporated
 +# All rights reserved.
 +#
 +# Redistribution and use in source and binary forms, with or without

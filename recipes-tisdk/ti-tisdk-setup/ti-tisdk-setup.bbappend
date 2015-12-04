@@ -1,10 +1,13 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = " \
-    file://0001-setup-tftp-Copy-pmmc-firmware-if-available.patch \
-    file://0002-setup-uboot-env-k2g-evm-Add-u-boot-seupt-for-k2g-evm.patch \
+    file://0001-setup-minicom-Update-list-of-auto-detected-EVMs.patch \
+    file://0002-setup-uboot-env-keystone-Enhance-board-detection-for.patch \
+    file://0003-setup-uboot-env-keystone-Add-error-checking-to-u-boo.patch \
+    file://0004-setup-tftp-Copy-pmmc-firmware-if-available.patch \
+    file://0005-setup-uboot-env-k2g-evm-Add-u-boot-setup-for-k2g-evm.patch \
 "
 
 SDCARD_SCRIPT_k2g-evm = " create-sdcard.sh"

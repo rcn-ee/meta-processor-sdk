@@ -1,0 +1,29 @@
+From 999e28e41ba6fa26fee5027c7087117af71c15ff Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Fri, 4 Dec 2015 09:38:36 -0500
+Subject: [PATCH 1/5] setup-minicom: Update list of auto-detected EVMs
+
+* Add K2H, K2E, and K2L EVMs
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-minicom.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/setup-minicom.sh b/setup-minicom.sh
+index aa18dd4..7ec0ec6 100644
+--- a/setup-minicom.sh
++++ b/setup-minicom.sh
+@@ -47,7 +47,8 @@ For boards that contain a USB-to-Serial converter on the board such as:
+ 	* BeagleBone
+ 	* Beaglebone Black
+ 	* AM335x EVM-SK
+-        * AM57xx EVM
++	* AM57xx EVM
++	* K2H, K2L, and K2E EVMs
+ 
+ the port used for minicom will be automatically detected. By default Ubuntu
+ will not recognize this device. Setup will add a udev rule to
+-- 
+1.9.1
+

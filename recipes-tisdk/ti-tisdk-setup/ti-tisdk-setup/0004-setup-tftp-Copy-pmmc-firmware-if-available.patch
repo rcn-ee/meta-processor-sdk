@@ -1,7 +1,7 @@
-From 3aae57c40c5a7ed6a35ffc5292839f905b100abf Mon Sep 17 00:00:00 2001
+From f079333ce40a27755c6ac5ebdece9b6583459896 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Mon, 30 Nov 2015 12:11:21 -0500
-Subject: [PATCH 1/2] setup-tftp: Copy pmmc-firmware if available
+Subject: [PATCH 4/5] setup-tftp: Copy pmmc-firmware if available
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
