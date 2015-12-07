@@ -1,7 +1,7 @@
-From f079333ce40a27755c6ac5ebdece9b6583459896 Mon Sep 17 00:00:00 2001
+From 354d6e9c679a2a0517fe74fd48314ef5ba4aaa26 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Mon, 30 Nov 2015 12:11:21 -0500
-Subject: [PATCH 4/5] setup-tftp: Copy pmmc-firmware if available
+Subject: [PATCH 4/5] setup-tftp: Copy firmware if available
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
@@ -9,15 +9,15 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/setup-tftp.sh b/setup-tftp.sh
-index 714968f..d675ba4 100644
+index 714968f..f62ef67 100644
 --- a/setup-tftp.sh
 +++ b/setup-tftp.sh
 @@ -159,6 +159,9 @@ copy_to_tftproot "$uboot_gph_files"
  monfiles=`cd $prebuiltimagesdir;ls -1 skern*.bin 2> /dev/null`
  copy_to_tftproot "$monfiles"
  
-+pmmcfiles=`cd $prebuiltimagesdir;ls -1 pmmc*.bin 2> /dev/null`
-+copy_to_tftproot "$pmmcfiles"
++fw_files=`cd $prebuiltimagesdir;ls -1 *firmware*.bin 2> /dev/null`
++copy_to_tftproot "$fw_files"
 +
  echo
  if [ -f $tftpcfg ]; then
