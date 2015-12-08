@@ -1,4 +1,4 @@
-PR_append = ".tisdk19"
+PR_append = ".tisdk20"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -23,6 +23,6 @@ SRC_URI_append = " \
     file://0014-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
 "
 
-do_compile_kernel_modules_append() {
+do_compile_kernelmodules_append() {
 	cp Module.symvers ${STAGING_KERNEL_BUILDDIR}/
 }
