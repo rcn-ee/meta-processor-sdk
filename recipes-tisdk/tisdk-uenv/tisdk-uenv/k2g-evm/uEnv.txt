@@ -10,3 +10,5 @@
 
 # Override deault to boot kernel and rootfs from mmc
 boot=mmc
+set_name_pmmc=setenv name_pmmc ti-sci-firmware-${soc_variant}.bin
+uenvcmd=run set_name_pmmc
