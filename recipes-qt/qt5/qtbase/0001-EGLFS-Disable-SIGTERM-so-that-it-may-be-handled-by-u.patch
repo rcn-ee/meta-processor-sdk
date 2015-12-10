@@ -1,0 +1,31 @@
+From 76ad45f0b24b0b7b79ef74962f8cd669ddd5206e Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Tue, 22 Sep 2015 16:03:38 -0400
+Subject: [PATCH] EGLFS: Disable SIGTERM so that it may be handled by user
+ application
+
+The signal SIGTERM can be handled by either QT or user application. We
+need to handle this signal at the user application to close gracefully.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ src/platformsupport/fbconvenience/qfbvthandler.cpp |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/platformsupport/fbconvenience/qfbvthandler.cpp b/src/platformsupport/fbconvenience/qfbvthandler.cpp
+index c46e470..964d814 100644
+--- a/src/platformsupport/fbconvenience/qfbvthandler.cpp
++++ b/src/platformsupport/fbconvenience/qfbvthandler.cpp
+@@ -116,7 +116,8 @@ QFbVtHandler::QFbVtHandler(QObject *parent)
+ 
+     // Default signal used by kill. To overcome the common issue of no cleaning
+     // up when killing a locally started app via a remote session.
+-    sigaddset(&mask, SIGTERM);
++    // Disable SIGTEM so that we can handle this signal at user application
++    //sigaddset(&mask, SIGTERM);
+ 
+     m_signalFd = signalfd(-1, &mask, SFD_CLOEXEC);
+     if (m_signalFd < 0) {
+-- 
+1.7.9.5
+
