@@ -2,7 +2,7 @@
 	soc {
 		uio_hyperlink0: hyperlink0 {
 			compatible = "ti,uio-ti-pdrv";
-			mem  = <0x21400000 0x00000100
+			mem  = <0x21400000 0x00001000
 				0x40000000 0x10000000
 				0x0231a000 0x00002000>;
 			clocks = <&clkhyperlink0>;
