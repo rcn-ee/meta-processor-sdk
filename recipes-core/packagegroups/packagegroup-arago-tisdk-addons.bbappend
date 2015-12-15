@@ -1,4 +1,4 @@
-PR_append = "-tisdk10"
+PR_append = "-tisdk11"
 
 UTILS_append_ti33x = " \
     strongswan \
@@ -11,6 +11,11 @@ UTILS_append_ti43x = " \
 UTILS_append_omap-a15 = " \
     opencv-apps \
     strongswan \
+    ti-ipc-rtos-fw \
+"
+
+UTILS_append_keystone = " \
+    ti-ipc-rtos-fw \
 "
 
 DEVTOOLS_append = " \
