@@ -1,4 +1,4 @@
-PR_append = "-tisdk17"
+PR_append = "-tisdk18"
 
 MATRIX_APPS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -14,4 +14,8 @@ MATRIX_APPS_remove_ti43x = " \
 
 MATRIX_APPS_remove_keystone = " \
     matrix-gui-mc-demos \
+"
+
+MATRIX_APPS_append_keystone = " \
+    matrix-mc-demo-ipc \
 "
