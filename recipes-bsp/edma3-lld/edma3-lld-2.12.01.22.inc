@@ -1,10 +1,5 @@
-EDMA3_LLD_SRCREV = "d648aada3c2dfc3f6a4acc0f0660f1ec0b0ed367"
+EDMA3_LLD_SRCREV = "9a94177958b9269b1b8aeeb2a5d362ca4e64dafa"
 
 PV = "2.12.01.22"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/edma3-lld:"
-
-SRC_URI_append = " \
-    file://0001-Revert-edma3-add-CFLAGS_XDCINTERNAL-flag-in-rules_GC.patch \
-    file://0002-edma3-k2h-fix-Linux-user-space-drv-rm-libs-build-err.patch \
-"
