@@ -1,4 +1,4 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
 TEST_ADDONS_TI_append = " \
     cmem-test \
@@ -42,3 +42,10 @@ TEST_ADDONS_TI_append_k2e-evm = " \
     mmap-lld-test \
     hyplnk-lld-test \
     "
+
+TEST_ADDONS_TI_remove_k2g-evm = " \
+    nwal-lld-test \
+    hplib-test \
+    nwal-lld \
+    ipc-transport-qmss-test \
+"
