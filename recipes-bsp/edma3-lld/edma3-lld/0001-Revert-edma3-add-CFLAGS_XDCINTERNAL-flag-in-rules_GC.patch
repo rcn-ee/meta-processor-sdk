@@ -1,0 +1,13 @@
+diff --git a/makerules/rules_GCC_a15.mk b/makerules/rules_GCC_a15.mk
+index e7e26ef..607d0e5 100755
+--- a/makerules/rules_GCC_a15.mk
++++ b/makerules/rules_GCC_a15.mk
+@@ -27,8 +27,6 @@ endif
+ ifeq ($(PROFILE_$(CORE)), release)
+  LNKFLAGS_INTERNAL_PROFILE =
+ endif
+-# CFLAGS based on profile selected
+-CFLAGS_XDCINTERNAL = -Dxdc_target_name__=A15F -Dxdc_target_types__=gnu/targets/arm/std.h -Dxdc_cfg__header__='$(CONFIGURO_DIR)/package/cfg/$(XDC_CFG_BASE_FILE_NAME)_xem3.h'
+ 
+ # Assemble CFLAGS from all other CFLAGS definitions
+ _CFLAGS = $(CFLAGS_INTERNAL) $(CFLAGS_XDCINTERNAL) $(CFLAGS_GLOBAL_$(CORE)) $(CFLAGS_LOCAL_COMMON) $(CFLAGS_LOCAL_$(CORE)) $(CFLAGS_LOCAL_$(PLATFORM)) $(CFLAGS_LOCAL_$(SOC)) $(CFLAGS_APP_DEFINES) $(CFLAGS_COMP_COMMON) $(CFLAGS_GLOBAL_$(PLATFORM))
