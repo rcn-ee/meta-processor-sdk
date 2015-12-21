@@ -16,6 +16,9 @@ RESERVE_CMEM_k2hk-evm = "1"
 RESERVE_CMEM_k2e-evm = "1"
 RESERVE_CMEM_k2l-evm = "1"
 
+# Additional moules to autoload
+KERNEL_MODULE_AUTOLOAD_keystone += "rpmsg_proto"
+
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
 
