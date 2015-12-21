@@ -1,4 +1,4 @@
-PR_append = ".tisdk6"
+PR_append = ".tisdk7"
 
 ARAGO_TI_KEYSTONE_PKGS_append_keystone = "\
     ti-ipc \
@@ -36,4 +36,8 @@ ARAGO_TI_PKGS_remove_k2g-evm = " \
 RDEPENDS_${PN}_remove = "recovery-kernel \
                          kexec \
                          kdump \
+"
+
+RDEPENDS_${PN}_append = " \
+    parse-ip \
 "
