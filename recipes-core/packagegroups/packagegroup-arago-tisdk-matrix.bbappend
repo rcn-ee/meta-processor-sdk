@@ -1,4 +1,4 @@
-PR_append = "-tisdk19"
+PR_append = "-tisdk20"
 
 MATRIX_APPS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -33,4 +33,8 @@ MATRIX_APPS_append_k2l-evm = "       \
 MATRIX_APPS_append_k2e-evm = "       \
     matrix-opencl-demo-floatcompute  \
     matrix-opencl-demo-vecadd        \
+"
+
+MATRIX_APPS_append_dra7xx = " \
+   matrix-video-analytics-opencv-opencl-opengl-demo \
 "
