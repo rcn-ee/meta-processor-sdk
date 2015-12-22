@@ -42,4 +42,12 @@ tisdk_image_build_append () {
             cp $s ${prebuilt_dir}/
         fi
     done
+
+    for fw in ${DEPLOY_DIR_IMAGE}/*fw-initrd.cpio.gz
+    do
+        if [ -e $fw ]
+        then
+            cp $fw ${prebuilt_dir}/
+        fi
+    done
 }
