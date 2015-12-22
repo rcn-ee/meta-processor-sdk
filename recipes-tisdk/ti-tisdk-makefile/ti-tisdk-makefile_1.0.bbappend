@@ -1,4 +1,14 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
+SRC_URI += " \
+    file://Makefile_qt-opencv-opencl-opengl-multithreaded \
+"
+
+MAKEFILES_append_dra7xx += " \
+    qt-opencv-opencl-opengl-multithreaded \
+"
 
 MAKEFILES_append_k2hk-evm = " \
     opencl-examples \
