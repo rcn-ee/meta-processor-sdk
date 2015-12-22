@@ -1,4 +1,26 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
+
+MAKEFILES_append_k2hk-evm = " \
+    opencl-examples \
+    gdbserverproxy-module-drv \
+    debugss-module-drv \
+"
+
+MAKEFILES_append_k2l-evm = " \
+    opencl-examples \
+    gdbserverproxy-module-drv \
+    debugss-module-drv \
+"
+
+MAKEFILES_append_k2e-evm = " \
+    opencl-examples \
+    gdbserverproxy-module-drv \
+    debugss-module-drv \
+"
+
+PLATFORM_DEBUGSS_keystone = "KEYSTONE_PLATFORM"
+
+PLATFORM_GDBSERVERPROXY_keystone = "KEYSTONE_PLATFORM"
 
 KERNEL_DEVICETREE_append_ti43x = " am43x-epos-evm-hdmi.dtb \
                                    am437x-gp-evm-hdmi.dtb \
