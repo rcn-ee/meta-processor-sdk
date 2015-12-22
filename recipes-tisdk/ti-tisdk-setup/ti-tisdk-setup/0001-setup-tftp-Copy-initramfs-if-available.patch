@@ -1,0 +1,27 @@
+From f5f98af08a5b15126fea9e8019f8c9aebdb219a6 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Tue, 22 Dec 2015 09:30:13 -0500
+Subject: [PATCH] setup-tftp: Copy initramfs if available
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-tftp.sh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/setup-tftp.sh b/setup-tftp.sh
+index f62ef67..90f122b 100644
+--- a/setup-tftp.sh
++++ b/setup-tftp.sh
+@@ -162,6 +162,9 @@ copy_to_tftproot "$monfiles"
+ fw_files=`cd $prebuiltimagesdir;ls -1 *firmware*.bin 2> /dev/null`
+ copy_to_tftproot "$fw_files"
+ 
++initramfs_files=`cd $prebuiltimagesdir;ls -1 *fw-initrd*.cpio.gz 2> /dev/null`
++copy_to_tftproot "$initramfs_files"
++
+ echo
+ if [ -f $tftpcfg ]; then
+     echo "$tftpcfg already exists.."
+-- 
+1.9.1
+
