@@ -1,4 +1,4 @@
-PR_append = ".tisdk0"
+PR = "${INC_PR}.1"
 
 PV = "3.3.0.1"
 
