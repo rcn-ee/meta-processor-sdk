@@ -1,16 +1,9 @@
+require common-csl-ip-03.03.0.01.inc
 PR = "${INC_PR}.1"
 
-PV = "3.3.0.1"
-
 inherit ti-pdk
-require recipes-bsp/common-csl-ip/common-csl-ip.inc
 
 DEPENDS_remove = "${PN}"
-
-CSL_GIT_BRANCH_dra7xx = "master"
-
-CSL_SRCREV = "70270a39bbd63cc93fd12e8d9c525b7be3d87c10"
-CSL_SRCREV_dra7xx = "70270a39bbd63cc93fd12e8d9c525b7be3d87c10"
 
 XDCARGS_ti33x = "am335x"
 XDCARGS_ti43x = "am437x"
