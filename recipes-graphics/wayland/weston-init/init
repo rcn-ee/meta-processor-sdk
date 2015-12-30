@@ -86,7 +86,7 @@ case "$1" in
         udevadm control --reload
         udevadm trigger
         killproc weston
-        sleep 1
+        sleep 2
         openvt -c 4 -f runWeston
   ;;
 
@@ -97,7 +97,7 @@ case "$1" in
 
   restart)
 	$0 stop
-        sleep 1
+        sleep 2
         $0 start
   ;;
 
