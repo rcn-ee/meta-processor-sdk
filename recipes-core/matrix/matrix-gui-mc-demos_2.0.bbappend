@@ -1,4 +1,6 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
+
+SRCREV = "497b2c6c9b748a3b3c5911bff200e027be45e0db"
 
 MC_RDEPENDS = "matrix-gui-apps-images matrix-gui-submenus-mc-demo"
 
