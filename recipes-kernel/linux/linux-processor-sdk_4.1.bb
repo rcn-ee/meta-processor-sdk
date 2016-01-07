@@ -11,6 +11,8 @@ require recipes-kernel/linux/multi-kernel.inc
 require recipes-kernel/linux/cmem.inc
 require recipes-kernel/linux/copy-defconfig.inc
 
+include ti-uio.inc
+
 # Look in the generic major.minor directory for files
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:"
 
@@ -65,7 +67,7 @@ SRCREV = "1e47a17a48619ae05e05d5438c33362b741c133f"
 PV = "4.1.13+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
-MACHINE_KERNEL_PR_append = "a"
+MACHINE_KERNEL_PR_append = "b"
 PR = "${MACHINE_KERNEL_PR}"
 
 KERNEL_CONFIG_DIR = "${S}/ti_config_fragments"
@@ -90,4 +92,8 @@ kernel_do_configure_prepend() {
         echo ${KERNEL_LOCALVERSION} > ${B}/.scmversion
         echo ${KERNEL_LOCALVERSION} > ${S}/.scmversion
     fi
+}
+
+do_compile_kernelmodules_append() {
+        cp Module.symvers ${STAGING_KERNEL_BUILDDIR}/
 }
