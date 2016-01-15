@@ -1,11 +1,10 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
 include ti-uio.inc
 
 SRC_URI_append = " \
-    file://0001-HACK-remoteproc-Prevent-backtrace-for-RSC_INTMEM-dep.patch \
     file://0002-Added-DT-bindings-for-DebugSS.patch \
     file://0003-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
     file://0004-soc-ti-add-knav_dma_get_flow-to-retrieve-flow-of-giv.patch \
