@@ -1,4 +1,4 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 TEST_ADDONS_TI_append = " \
     cmem-test \
@@ -21,9 +21,9 @@ TEST_ADDONS_TI_append_keystone = " \
     udma-test \
     mpm-transport-test \
     ipc-transport-qmss-test \
+    ipsecmgr \
+    netapi-test \
     "
-#    ipsecmgr 
-#    netapi-test 
 
 TEST_ADDONS_TI_append_k2hk-evm = " \
     srio-lld-test \
