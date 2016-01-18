@@ -1,27 +1,48 @@
-From 9a5eb18c77b101527a98e375b5c461bea5b206ef Mon Sep 17 00:00:00 2001
-From: Vivek Chengalvala <vchengalvala@ti.com>
-Date: Wed, 14 Oct 2015 23:00:21 -0400
-Subject: [PATCH] Update esp4.c and esp6.c to match Kernel v4.1
+From 5ecb7eac0494e0c19b5970034329da85a113adaf Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Thu, 17 Dec 2015 08:11:53 -0500
+Subject: [PATCH] port ipsecmgr_mod to 4.1.13 kernel
 
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
 ---
- src/module/esp4.c | 116 +++++++++++++++++++++++-----------------------------
- src/module/esp6.c | 120 ++++++++++++++++++++++++------------------------------
- 2 files changed, 106 insertions(+), 130 deletions(-)
+ src/module/esp4.c            | 150 ++++++++++++++--------------------------
+ src/module/esp6.c            | 159 +++++++++++++++----------------------------
+ src/module/ipsecmgr_module.c |  23 ++-----
+ 3 files changed, 114 insertions(+), 218 deletions(-)
+ mode change 100755 => 100644 src/module/esp4.c
+ mode change 100755 => 100644 src/module/esp6.c
 
 diff --git a/src/module/esp4.c b/src/module/esp4.c
-index 94678b8..1bb6372 100755
+old mode 100755
+new mode 100644
+index 94678b8..3c3b0ed
 --- a/src/module/esp4.c
 +++ b/src/module/esp4.c
-@@ -3,7 +3,7 @@
-  */
- 
- /*
+@@ -1,14 +1,3 @@
+-/* Code copied from following Linux kernel files:
+- *   - net/ipv4/esp4.c
+- */
+-
+-/*
 - * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
-+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
-  * This file has been modified by Texas Instruments.
-  * The original Linux file (net/ipv4/esp4.c) did not have copyright or
-  * License header.
-@@ -134,7 +134,6 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
+- * This file has been modified by Texas Instruments.
+- * The original Linux file (net/ipv4/esp4.c) did not have copyright or
+- * License header.
+- */
+-
+ #define pr_fmt(fmt) "IPsec: " fmt
+ 
+ #include <crypto/aead.h>
+@@ -29,8 +18,6 @@
+ #include <net/protocol.h>
+ #include <net/udp.h>
+ 
+-#include "ipsecmgr_mod_loc.h"
+-
+ struct esp_skb_cb {
+ 	struct xfrm_skb_cb xfrm;
+ 	void *tmp;
+@@ -134,7 +121,6 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
  	struct aead_givcrypt_request *req;
  	struct scatterlist *sg;
  	struct scatterlist *asg;
@@ -29,11 +50,13 @@ index 94678b8..1bb6372 100755
  	struct sk_buff *trailer;
  	void *tmp;
  	u8 *iv;
-@@ -152,11 +151,9 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
- 	struct ipsecmgr_mod_sa_info *sa_info;
+@@ -149,14 +135,10 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	int sglists;
+ 	int seqhilen;
+ 	__be32 *seqhi;
+-	struct ipsecmgr_mod_sa_info *sa_info;
  
  	/* skb is pure payload to encrypt */
-+    err = -ENOMEM;
  
 -	err = -ENOMEM;
 -
@@ -43,7 +66,7 @@ index 94678b8..1bb6372 100755
  	alen = crypto_aead_authsize(aead);
  
  	tfclen = 0;
-@@ -170,8 +167,6 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
+@@ -170,19 +152,11 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
  	}
  	blksize = ALIGN(crypto_aead_blocksize(aead), 4);
  	clen = ALIGN(skb->len + 2 + tfclen, blksize);
@@ -52,7 +75,60 @@ index 94678b8..1bb6372 100755
  	plen = clen - skb->len - tfclen;
  
  	err = skb_cow_data(skb, tfclen + plen + alen, &trailer);
-@@ -287,7 +282,8 @@ pad_fill:
+ 	if (err < 0)
+ 		goto error;
+-
+-	sa_info = ipsecmgr_mod_esp4_is_offloaded_sa(x, IPSECMGR_MOD_DIR_OUT);
+-	if (sa_info != NULL) {
+-		goto pad_fill;
+-	}
+-
+ 	nfrags = err;
+ 
+ 	assoclen = sizeof(*esph);
+@@ -196,8 +170,10 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	}
+ 
+ 	tmp = esp_alloc_tmp(aead, nfrags + sglists, seqhilen);
+-	if (!tmp)
++	if (!tmp) {
++		err = -ENOMEM;
+ 		goto error;
++	}
+ 
+ 	seqhi = esp_tmp_seqhi(tmp);
+ 	iv = esp_tmp_iv(aead, tmp, seqhilen);
+@@ -205,7 +181,6 @@ static int esp_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	asg = esp_givreq_sg(aead, req);
+ 	sg = asg + sglists;
+ 
+-pad_fill:
+ 	/* Fill padding... */
+ 	tail = skb_tail_pointer(trailer);
+ 	if (tfclen) {
+@@ -219,7 +194,7 @@ pad_fill:
+ 	} while (0);
+ 	tail[plen - 2] = plen - 2;
+ 	tail[plen - 1] = *skb_mac_header(skb);
+-	esp_pskb_put(skb, trailer, clen - skb->len + alen);
++	pskb_put(skb, trailer, clen - skb->len + alen);
+ 
+ 	skb_push(skb, -skb_network_offset(skb));
+ 	esph = ip_esp_hdr(skb);
+@@ -263,12 +238,6 @@ pad_fill:
+ 	esph->spi = x->id.spi;
+ 	esph->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
+ 
+-	if (sa_info != NULL) {
+-		err = 0;
+-		if (add_sa_ctx(sa_info, skb)) err = -ENOMEM;
+-		goto error;
+-	}
+-
+ 	sg_init_table(sg, nfrags);
+ 	skb_to_sgvec(skb, sg,
+ 		     esph->enc_data + crypto_aead_ivsize(aead) - skb->data,
+@@ -287,7 +256,8 @@ pad_fill:
  	aead_givcrypt_set_crypt(req, sg, sg, clen, iv);
  	aead_givcrypt_set_assoc(req, asg, assoclen);
  	aead_givcrypt_set_giv(req, esph->enc_data,
@@ -62,7 +138,7 @@ index 94678b8..1bb6372 100755
  
  	ESP_SKB_CB(skb)->tmp = tmp;
  	err = crypto_aead_givencrypt(req);
-@@ -307,8 +303,7 @@ static int esp_input_done2(struct sk_buff *skb, int err)
+@@ -307,8 +277,7 @@ static int esp_input_done2(struct sk_buff *skb, int err)
  {
  	const struct iphdr *iph;
  	struct xfrm_state *x = xfrm_input_state(skb);
@@ -72,7 +148,7 @@ index 94678b8..1bb6372 100755
  	int alen = crypto_aead_authsize(aead);
  	int hlen = sizeof(struct ip_esp_hdr) + crypto_aead_ivsize(aead);
  	int elen = skb->len - hlen;
-@@ -376,7 +371,7 @@ static int esp_input_done2(struct sk_buff *skb, int err)
+@@ -376,7 +345,7 @@ static int esp_input_done2(struct sk_buff *skb, int err)
  	if (x->props.mode == XFRM_MODE_TUNNEL)
  		skb_reset_transport_header(skb);
  	else
@@ -81,7 +157,7 @@ index 94678b8..1bb6372 100755
  
  	err = nexthdr[1];
  
-@@ -403,8 +398,7 @@ static void esp_input_done(struct crypto_async_request *base, int err)
+@@ -403,8 +372,7 @@ static void esp_input_done(struct crypto_async_request *base, int err)
  static int esp_input(struct xfrm_state *x, struct sk_buff *skb)
  {
  	struct ip_esp_hdr *esph;
@@ -91,24 +167,21 @@ index 94678b8..1bb6372 100755
  	struct aead_request *req;
  	struct sk_buff *trailer;
  	int elen = skb->len - sizeof(*esph) - crypto_aead_ivsize(aead);
-@@ -422,20 +416,21 @@ static int esp_input(struct xfrm_state *x, struct sk_buff *skb)
+@@ -422,20 +390,13 @@ static int esp_input(struct xfrm_state *x, struct sk_buff *skb)
  	if (!pskb_may_pull(skb, sizeof(*esph) + crypto_aead_ivsize(aead)))
  		goto out;
  
 -
  	if (elen <= 0)
  		goto out;
- 	/* Check for offloaded SA and not a fragment*/
+-	/* Check for offloaded SA and not a fragment*/
 -	if ((ipsecmgr_mod_esp4_is_offloaded_sa(x, IPSECMGR_MOD_DIR_IN)) && (!skb->local_df)){
-+	if ((ipsecmgr_mod_esp4_is_offloaded_sa(x, IPSECMGR_MOD_DIR_IN)) && (!skb->ignore_df)){
- 		skb->ip_summed = CHECKSUM_UNNECESSARY;
- 		err =0;
+-		skb->ip_summed = CHECKSUM_UNNECESSARY;
+-		err =0;
 -		skb->local_df = 0;
-+		skb->ignore_df = 0;
- 		goto input_done2;
- 	}
+-		goto input_done2;
+-	}
 -	skb->local_df = 0;
-+	skb->ignore_df= 0;
  
 -	if ((err = skb_cow_data(skb, 0, &trailer)) < 0)
 +	err = skb_cow_data(skb, 0, &trailer);
@@ -118,7 +191,15 @@ index 94678b8..1bb6372 100755
  	nfrags = err;
  
  	assoclen = sizeof(*esph);
-@@ -496,9 +491,8 @@ out:
+@@ -487,7 +448,6 @@ static int esp_input(struct xfrm_state *x, struct sk_buff *skb)
+ 	if (err == -EINPROGRESS)
+ 		goto out;
+ 
+-input_done2:
+ 	err = esp_input_done2(skb, err);
+ 
+ out:
+@@ -496,9 +456,8 @@ out:
  
  static u32 esp4_get_mtu(struct xfrm_state *x, int mtu)
  {
@@ -130,7 +211,7 @@ index 94678b8..1bb6372 100755
  	unsigned int net_adj;
  
  	switch (x->props.mode) {
-@@ -513,11 +507,11 @@ static u32 esp4_get_mtu(struct xfrm_state *x, int mtu)
+@@ -513,11 +472,11 @@ static u32 esp4_get_mtu(struct xfrm_state *x, int mtu)
  		BUG();
  	}
  
@@ -145,7 +226,7 @@ index 94678b8..1bb6372 100755
  {
  	struct net *net = dev_net(skb->dev);
  	const struct iphdr *iph = (const struct iphdr *)skb->data;
-@@ -527,41 +521,39 @@ static void esp4_err(struct sk_buff *skb, u32 info)
+@@ -527,41 +486,39 @@ static void esp4_err(struct sk_buff *skb, u32 info)
  	switch (icmp_hdr(skb)->type) {
  	case ICMP_DEST_UNREACH:
  		if (icmp_hdr(skb)->code != ICMP_FRAG_NEEDED)
@@ -197,7 +278,7 @@ index 94678b8..1bb6372 100755
  	struct crypto_aead *aead;
  	int err;
  
-@@ -570,7 +562,7 @@ static int esp_init_aead(struct xfrm_state *x)
+@@ -570,7 +527,7 @@ static int esp_init_aead(struct xfrm_state *x)
  	if (IS_ERR(aead))
  		goto error;
  
@@ -206,7 +287,7 @@ index 94678b8..1bb6372 100755
  
  	err = crypto_aead_setkey(aead, x->aead->alg_key,
  				 (x->aead->alg_key_len + 7) / 8);
-@@ -587,7 +579,6 @@ error:
+@@ -587,7 +544,6 @@ error:
  
  static int esp_init_authenc(struct xfrm_state *x)
  {
@@ -214,7 +295,7 @@ index 94678b8..1bb6372 100755
  	struct crypto_aead *aead;
  	struct crypto_authenc_key_param *param;
  	struct rtattr *rta;
-@@ -598,7 +589,7 @@ static int esp_init_authenc(struct xfrm_state *x)
+@@ -598,7 +554,7 @@ static int esp_init_authenc(struct xfrm_state *x)
  	int err;
  
  	err = -EINVAL;
@@ -223,7 +304,7 @@ index 94678b8..1bb6372 100755
  		goto error;
  
  	err = -ENAMETOOLONG;
-@@ -622,7 +613,7 @@ static int esp_init_authenc(struct xfrm_state *x)
+@@ -622,7 +578,7 @@ static int esp_init_authenc(struct xfrm_state *x)
  	if (IS_ERR(aead))
  		goto error;
  
@@ -232,7 +313,7 @@ index 94678b8..1bb6372 100755
  
  	keylen = (x->aalg ? (x->aalg->alg_key_len + 7) / 8 : 0) +
  		 (x->ealg->alg_key_len + 7) / 8 + RTA_SPACE(sizeof(*param));
-@@ -648,12 +639,12 @@ static int esp_init_authenc(struct xfrm_state *x)
+@@ -648,12 +604,12 @@ static int esp_init_authenc(struct xfrm_state *x)
  		BUG_ON(!aalg_desc);
  
  		err = -EINVAL;
@@ -250,7 +331,7 @@ index 94678b8..1bb6372 100755
  			goto free_key;
  		}
  
-@@ -677,16 +668,11 @@ error:
+@@ -677,16 +633,11 @@ error:
  
  static int esp_init_state(struct xfrm_state *x)
  {
@@ -268,7 +349,7 @@ index 94678b8..1bb6372 100755
  
  	if (x->aead)
  		err = esp_init_aead(x);
-@@ -696,9 +682,7 @@ static int esp_init_state(struct xfrm_state *x)
+@@ -696,9 +647,7 @@ static int esp_init_state(struct xfrm_state *x)
  	if (err)
  		goto error;
  
@@ -279,7 +360,7 @@ index 94678b8..1bb6372 100755
  
  	x->props.header_len = sizeof(struct ip_esp_hdr) +
  			      crypto_aead_ivsize(aead);
-@@ -722,19 +706,22 @@ static int esp_init_state(struct xfrm_state *x)
+@@ -722,19 +671,22 @@ static int esp_init_state(struct xfrm_state *x)
  	}
  
  	align = ALIGN(crypto_aead_blocksize(aead), 4);
@@ -306,7 +387,7 @@ index 94678b8..1bb6372 100755
  	.flags		= XFRM_TYPE_REPLAY_PROT,
  	.init_state	= esp_init_state,
  	.destructor	= esp_destroy,
-@@ -743,11 +730,12 @@ static const struct xfrm_type esp_type =
+@@ -743,11 +695,12 @@ static const struct xfrm_type esp_type =
  	.output		= esp_output
  };
  
@@ -322,7 +403,7 @@ index 94678b8..1bb6372 100755
  };
  
  int esp4_init(void)
-@@ -756,7 +744,7 @@ int esp4_init(void)
+@@ -756,7 +709,7 @@ int esp4_init(void)
  		pr_info("%s: can't add xfrm type\n", __func__);
  		return -EAGAIN;
  	}
@@ -331,7 +412,7 @@ index 94678b8..1bb6372 100755
  		pr_info("%s: can't add protocol\n", __func__);
  		xfrm_unregister_type(&esp_type, AF_INET);
  		return -EAGAIN;
-@@ -766,7 +754,7 @@ int esp4_init(void)
+@@ -766,9 +719,10 @@ int esp4_init(void)
  
  void esp4_fini(void)
  {
@@ -340,8 +421,13 @@ index 94678b8..1bb6372 100755
  		pr_info("%s: can't remove protocol\n", __func__);
  	if (xfrm_unregister_type(&esp_type, AF_INET) < 0)
  		pr_info("%s: can't remove xfrm type\n", __func__);
+ }
+ 
++
 diff --git a/src/module/esp6.c b/src/module/esp6.c
-index fea21c5..91adf28 100755
+old mode 100755
+new mode 100644
+index fea21c5..97291b9
 --- a/src/module/esp6.c
 +++ b/src/module/esp6.c
 @@ -12,16 +12,15 @@
@@ -365,10 +451,22 @@ index fea21c5..91adf28 100755
   */
  
  #define pr_fmt(fmt) "IPv6: " fmt
-@@ -169,10 +168,9 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
+@@ -45,9 +44,6 @@
+ #include <net/protocol.h>
+ #include <linux/icmpv6.h>
+ 
+-#include "ipsecmgr_mod_loc.h"
+-
+-
+ struct esp_skb_cb {
+ 	struct xfrm_skb_cb xfrm;
+ 	void *tmp;
+@@ -167,12 +163,9 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	u8 *iv;
+ 	u8 *tail;
  	__be32 *seqhi;
- 	struct ipsecmgr_mod_sa_info *sa_info;
- 	
+-	struct ipsecmgr_mod_sa_info *sa_info;
+-	
 -	struct esp_data *esp = x->data;
  
  	/* skb is pure payload to encrypt */
@@ -377,7 +475,7 @@ index fea21c5..91adf28 100755
  	alen = crypto_aead_authsize(aead);
  
  	tfclen = 0;
-@@ -186,8 +184,6 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
+@@ -186,20 +179,11 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
  	}
  	blksize = ALIGN(crypto_aead_blocksize(aead), 4);
  	clen = ALIGN(skb->len + 2 + tfclen, blksize);
@@ -386,7 +484,49 @@ index fea21c5..91adf28 100755
  	plen = clen - skb->len - tfclen;
  
  	err = skb_cow_data(skb, tfclen + plen + alen, &trailer);
-@@ -271,7 +267,8 @@ pad_fill:
+ 	if (err < 0)
+ 		goto error;
+-
+-
+-	sa_info = ipsecmgr_mod_esp6_is_offloaded_sa(x, IPSECMGR_MOD_DIR_OUT);
+-	if (sa_info != NULL) {
+-		goto pad_fill;
+-	}
+-
+ 	nfrags = err;
+ 
+ 	assoclen = sizeof(*esph);
+@@ -224,7 +208,6 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	asg = esp_givreq_sg(aead, req);
+ 	sg = asg + sglists;
+ 
+-pad_fill:
+ 	/* Fill padding... */
+ 	tail = skb_tail_pointer(trailer);
+ 	if (tfclen) {
+@@ -238,7 +221,7 @@ pad_fill:
+ 	} while (0);
+ 	tail[plen - 2] = plen - 2;
+ 	tail[plen - 1] = *skb_mac_header(skb);
+-	esp_pskb_put(skb, trailer, clen - skb->len + alen);
++	pskb_put(skb, trailer, clen - skb->len + alen);
+ 
+ 	skb_push(skb, -skb_network_offset(skb));
+ 	esph = ip_esp_hdr(skb);
+@@ -247,12 +230,6 @@ pad_fill:
+ 	esph->spi = x->id.spi;
+ 	esph->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
+ 
+-	if (sa_info != NULL) {
+-		err = 0;
+-		if (add_sa_ctx(sa_info, skb)) err = -ENOMEM;
+-		goto error;
+-	}
+-
+ 	sg_init_table(sg, nfrags);
+ 	skb_to_sgvec(skb, sg,
+ 		     esph->enc_data + crypto_aead_ivsize(aead) - skb->data,
+@@ -271,7 +248,8 @@ pad_fill:
  	aead_givcrypt_set_crypt(req, sg, sg, clen, iv);
  	aead_givcrypt_set_assoc(req, asg, assoclen);
  	aead_givcrypt_set_giv(req, esph->enc_data,
@@ -396,7 +536,7 @@ index fea21c5..91adf28 100755
  
  	ESP_SKB_CB(skb)->tmp = tmp;
  	err = crypto_aead_givencrypt(req);
-@@ -290,8 +287,7 @@ error:
+@@ -290,8 +268,7 @@ error:
  static int esp_input_done2(struct sk_buff *skb, int err)
  {
  	struct xfrm_state *x = xfrm_input_state(skb);
@@ -406,7 +546,7 @@ index fea21c5..91adf28 100755
  	int alen = crypto_aead_authsize(aead);
  	int hlen = sizeof(struct ip_esp_hdr) + crypto_aead_ivsize(aead);
  	int elen = skb->len - hlen;
-@@ -310,8 +306,8 @@ static int esp_input_done2(struct sk_buff *skb, int err)
+@@ -310,8 +287,8 @@ static int esp_input_done2(struct sk_buff *skb, int err)
  	err = -EINVAL;
  	padlen = nexthdr[0];
  	if (padlen + 2 + alen >= elen) {
@@ -417,7 +557,7 @@ index fea21c5..91adf28 100755
  		goto out;
  	}
  
-@@ -344,8 +340,7 @@ static void esp_input_done(struct crypto_async_request *base, int err)
+@@ -344,8 +321,7 @@ static void esp_input_done(struct crypto_async_request *base, int err)
  static int esp6_input(struct xfrm_state *x, struct sk_buff *skb)
  {
  	struct ip_esp_hdr *esph;
@@ -427,25 +567,45 @@ index fea21c5..91adf28 100755
  	struct aead_request *req;
  	struct sk_buff *trailer;
  	int elen = skb->len - sizeof(*esph) - crypto_aead_ivsize(aead);
-@@ -371,14 +366,14 @@ static int esp6_input(struct xfrm_state *x, struct sk_buff *skb)
+@@ -359,7 +335,7 @@ static int esp6_input(struct xfrm_state *x, struct sk_buff *skb)
+ 	u8 *iv;
+ 	struct scatterlist *sg;
+ 	struct scatterlist *asg;
+-	int err = -EINVAL;
++
+ 	if (!pskb_may_pull(skb, sizeof(*esph) + crypto_aead_ivsize(aead))) {
+ 		ret = -EINVAL;
+ 		goto out;
+@@ -370,18 +346,8 @@ static int esp6_input(struct xfrm_state *x, struct sk_buff *skb)
+ 		goto out;
  	}
  
- 	/* Check for offloaded SA */
+-	/* Check for offloaded SA */
 -	if ((ipsecmgr_mod_esp6_is_offloaded_sa(x, IPSECMGR_MOD_DIR_IN)) &&(!skb->local_df)){
-+	if ((ipsecmgr_mod_esp6_is_offloaded_sa(x, IPSECMGR_MOD_DIR_IN)) &&(!skb->ignore_df)){
- 		skb->ip_summed = CHECKSUM_UNNECESSARY;
- 		err =0;
+-		skb->ip_summed = CHECKSUM_UNNECESSARY;
+-		err =0;
 -		skb->local_df = 0;
-+		skb->ignore_df = 0;
- 		goto input_done2;
+-		goto input_done2;
+-	}
+-
+-		skb->local_df = 0;
+-
+-
+-	if ((nfrags = skb_cow_data(skb, 0, &trailer)) < 0) {
++	nfrags = skb_cow_data(skb, 0, &trailer);
++	if (nfrags < 0) {
+ 		ret = -EINVAL;
+ 		goto out;
  	}
+@@ -436,7 +402,6 @@ static int esp6_input(struct xfrm_state *x, struct sk_buff *skb)
+ 	if (ret == -EINPROGRESS)
+ 		goto out;
  
--		skb->local_df = 0;
-+		skb->ignore_df = 0;
+-input_done2:
+ 	ret = esp_input_done2(skb, ret);
  
- 
- 	if ((nfrags = skb_cow_data(skb, 0, &trailer)) < 0) {
-@@ -445,9 +440,8 @@ out:
+ out:
+@@ -445,9 +410,8 @@ out:
  
  static u32 esp6_get_mtu(struct xfrm_state *x, int mtu)
  {
@@ -457,7 +617,7 @@ index fea21c5..91adf28 100755
  	unsigned int net_adj;
  
  	if (x->props.mode != XFRM_MODE_TUNNEL)
-@@ -455,49 +449,48 @@ static u32 esp6_get_mtu(struct xfrm_state *x, int mtu)
+@@ -455,49 +419,48 @@ static u32 esp6_get_mtu(struct xfrm_state *x, int mtu)
  	else
  		net_adj = 0;
  
@@ -520,7 +680,7 @@ index fea21c5..91adf28 100755
  	struct crypto_aead *aead;
  	int err;
  
-@@ -506,7 +499,7 @@ static int esp_init_aead(struct xfrm_state *x)
+@@ -506,7 +469,7 @@ static int esp_init_aead(struct xfrm_state *x)
  	if (IS_ERR(aead))
  		goto error;
  
@@ -529,7 +689,7 @@ index fea21c5..91adf28 100755
  
  	err = crypto_aead_setkey(aead, x->aead->alg_key,
  				 (x->aead->alg_key_len + 7) / 8);
-@@ -523,7 +516,6 @@ error:
+@@ -523,7 +486,6 @@ error:
  
  static int esp_init_authenc(struct xfrm_state *x)
  {
@@ -537,7 +697,7 @@ index fea21c5..91adf28 100755
  	struct crypto_aead *aead;
  	struct crypto_authenc_key_param *param;
  	struct rtattr *rta;
-@@ -534,7 +526,7 @@ static int esp_init_authenc(struct xfrm_state *x)
+@@ -534,7 +496,7 @@ static int esp_init_authenc(struct xfrm_state *x)
  	int err;
  
  	err = -EINVAL;
@@ -546,7 +706,7 @@ index fea21c5..91adf28 100755
  		goto error;
  
  	err = -ENAMETOOLONG;
-@@ -558,7 +550,7 @@ static int esp_init_authenc(struct xfrm_state *x)
+@@ -558,7 +520,7 @@ static int esp_init_authenc(struct xfrm_state *x)
  	if (IS_ERR(aead))
  		goto error;
  
@@ -555,7 +715,7 @@ index fea21c5..91adf28 100755
  
  	keylen = (x->aalg ? (x->aalg->alg_key_len + 7) / 8 : 0) +
  		 (x->ealg->alg_key_len + 7) / 8 + RTA_SPACE(sizeof(*param));
-@@ -584,12 +576,12 @@ static int esp_init_authenc(struct xfrm_state *x)
+@@ -584,12 +546,12 @@ static int esp_init_authenc(struct xfrm_state *x)
  		BUG_ON(!aalg_desc);
  
  		err = -EINVAL;
@@ -573,7 +733,7 @@ index fea21c5..91adf28 100755
  			goto free_key;
  		}
  
-@@ -613,7 +605,6 @@ error:
+@@ -613,7 +575,6 @@ error:
  
  static int esp6_init_state(struct xfrm_state *x)
  {
@@ -581,7 +741,7 @@ index fea21c5..91adf28 100755
  	struct crypto_aead *aead;
  	u32 align;
  	int err;
-@@ -621,11 +612,7 @@ static int esp6_init_state(struct xfrm_state *x)
+@@ -621,11 +582,7 @@ static int esp6_init_state(struct xfrm_state *x)
  	if (x->encap)
  		return -EINVAL;
  
@@ -594,7 +754,7 @@ index fea21c5..91adf28 100755
  
  	if (x->aead)
  		err = esp_init_aead(x);
-@@ -635,9 +622,7 @@ static int esp6_init_state(struct xfrm_state *x)
+@@ -635,9 +592,7 @@ static int esp6_init_state(struct xfrm_state *x)
  	if (err)
  		goto error;
  
@@ -605,7 +765,7 @@ index fea21c5..91adf28 100755
  
  	x->props.header_len = sizeof(struct ip_esp_hdr) +
  			      crypto_aead_ivsize(aead);
-@@ -645,7 +630,7 @@ static int esp6_init_state(struct xfrm_state *x)
+@@ -645,7 +600,7 @@ static int esp6_init_state(struct xfrm_state *x)
  	case XFRM_MODE_BEET:
  		if (x->sel.family != AF_INET6)
  			x->props.header_len += IPV4_BEET_PHMAXLEN +
@@ -614,7 +774,7 @@ index fea21c5..91adf28 100755
  		break;
  	case XFRM_MODE_TRANSPORT:
  		break;
-@@ -657,19 +642,21 @@ static int esp6_init_state(struct xfrm_state *x)
+@@ -657,19 +612,21 @@ static int esp6_init_state(struct xfrm_state *x)
  	}
  
  	align = ALIGN(crypto_aead_blocksize(aead), 4);
@@ -642,7 +802,7 @@ index fea21c5..91adf28 100755
  	.flags		= XFRM_TYPE_REPLAY_PROT,
  	.init_state	= esp6_init_state,
  	.destructor	= esp6_destroy,
-@@ -679,10 +666,11 @@ static const struct xfrm_type esp6_type =
+@@ -679,10 +636,11 @@ static const struct xfrm_type esp6_type =
  	.hdr_offset	= xfrm6_find_1stfragopt,
  };
  
@@ -657,7 +817,7 @@ index fea21c5..91adf28 100755
  };
  
  int esp6_init(void)
-@@ -691,7 +679,7 @@ int esp6_init(void)
+@@ -691,7 +649,7 @@ int esp6_init(void)
  		pr_info("%s: can't add xfrm type\n", __func__);
  		return -EAGAIN;
  	}
@@ -666,7 +826,7 @@ index fea21c5..91adf28 100755
  		pr_info("%s: can't add protocol\n", __func__);
  		xfrm_unregister_type(&esp6_type, AF_INET6);
  		return -EAGAIN;
-@@ -702,7 +690,7 @@ int esp6_init(void)
+@@ -702,16 +660,9 @@ int esp6_init(void)
  
  void esp6_fini(void)
  {
@@ -675,6 +835,56 @@ index fea21c5..91adf28 100755
  		pr_info("%s: can't remove protocol\n", __func__);
  	if (xfrm_unregister_type(&esp6_type, AF_INET6) < 0)
  		pr_info("%s: can't remove xfrm type\n", __func__);
+ }
+ 
+-#if 0
+-module_init(esp6_init);
+-module_exit(esp6_fini);
+-
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS_XFRM_TYPE(AF_INET6, XFRM_PROTO_ESP);
+-#endif
+diff --git a/src/module/ipsecmgr_module.c b/src/module/ipsecmgr_module.c
+index e164cb4..a4147b6 100755
+--- a/src/module/ipsecmgr_module.c
++++ b/src/module/ipsecmgr_module.c
+@@ -653,14 +653,9 @@ static struct nf_hook_ops netfilter_opsv6;
+ /* Netfilter LOCAL_OUT hook to force inner IP fragmentation
+  * on UDP IPSec packets
+  */
+-static unsigned int gso_hookv6
+-(
+-    unsigned int hooknum,
+-    struct sk_buff *skb,
+-    const struct net_device *in,
+-    const struct net_device *out,
+-    int (*okfn)(struct sk_buff*)
+-)
++static unsigned int gso_hookv6(const struct nf_hook_ops *ops,
++			       struct sk_buff *skb,
++			       const struct nf_hook_state *state)
+ {
+     struct dst_entry *dst;
+     struct xfrm_state *x;
+@@ -707,14 +702,10 @@ static unsigned int gso_hookv6
+     skb_shinfo(skb)->gso_type = SKB_GSO_UDP;
+     return NF_ACCEPT;
+ }
+-static unsigned int gso_hook
+-(
+-    unsigned int hooknum,
+-    struct sk_buff *skb,
+-    const struct net_device *in,
+-    const struct net_device *out,
+-    int (*okfn)(struct sk_buff*)
+-)
++
++static unsigned int gso_hook(const struct nf_hook_ops *ops,
++			     struct sk_buff *skb,
++			     const struct nf_hook_state *state)
+ {
+     struct dst_entry *dst;
+     struct xfrm_state *x;
 -- 
 1.9.1
 
