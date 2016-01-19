@@ -1,4 +1,4 @@
-PR_append = ".tisdk8"
+PR_append = ".tisdk9"
 
 ARAGO_TI_KEYSTONE_PKGS_append_keystone = "\
     ti-ipc \
@@ -29,6 +29,7 @@ ARAGO_TI_PKGS_remove_k2g-evm = " \
     netapi \
     hplib \
     nwal-lld \
+    netapi-test \
 "
 
 RDEPENDS_${PN}_remove = "recovery-kernel \
