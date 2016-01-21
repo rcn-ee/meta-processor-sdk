@@ -1,4 +1,4 @@
-PR_append = "-tisdk12"
+PR_append = "-tisdk13"
 
 UTILS_append_ti33x = " \
     strongswan \
@@ -47,4 +47,16 @@ UTILS_append_k2e-evm = " \
 
 DEVTOOLS_append = " \
     packagegroup-core-tools-debug \
+"
+
+DEVTOOLS_append_ti33x = " \
+    nodejs \
+"
+
+DEVTOOLS_append_ti43x = " \
+    nodejs \
+"
+
+DEVTOOLS_append_omap-a15 = " \
+    nodejs \
 "
