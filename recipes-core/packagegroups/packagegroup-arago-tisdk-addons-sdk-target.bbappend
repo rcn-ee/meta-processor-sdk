@@ -1,7 +1,12 @@
-PR_append = "-tisdk7"
+PR_append = "-tisdk8"
 
 UTILS_append_omap-a15 = " \
     opencv-dev \
+"
+
+UTILS_append_dra7xx = " \
+    elfutils-dev \
+    elfutils-staticdev \
 "
 
 EXTRA_LIBS_append_k2hk-evm = " \
