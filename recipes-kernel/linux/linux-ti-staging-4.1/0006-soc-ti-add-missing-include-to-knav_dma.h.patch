@@ -1,9 +1,9 @@
-From ab192927e5dd2ef975be38b92d1b50347ac858e8 Mon Sep 17 00:00:00 2001
+From 245854aee472c06ed01c914f5bbc70619fb0513e Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Oct 2015 11:06:00 -0400
-Subject: [PATCH 05/14] soc: ti: add missing include to knav_dma.h
+Subject: [tiL4.1-P v1 PATCH 1/6] soc: ti: add missing include to knav_dma.h
 
-The knav_dma.h uses some definitions from dmaengine.h.
+The knav_dma.h uses "enum dma_transfer_direction" defined in dmaengine.h
 
 Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
 ---

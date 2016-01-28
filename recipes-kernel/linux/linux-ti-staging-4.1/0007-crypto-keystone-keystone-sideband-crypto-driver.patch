@@ -1,7 +1,7 @@
-From ec1a894b95e15d4bc6f036ff33274d3ddf6c3642 Mon Sep 17 00:00:00 2001
+From c986c38412147f03869f6a4a3402f2be20f28283 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
-Date: Fri, 30 Oct 2015 13:59:45 -0400
-Subject: [PATCH 06/14] crypto: keystone: keystone sideband crypto driver
+Date: Wed, 13 Jan 2016 13:18:28 -0500
+Subject: [tiL4.1-P v1 PATCH 2/6] crypto: keystone: keystone sideband crypto driver
 
 This commits adds the driver support for keystone SA in sideband mode.
 The driver registers algorithm implementations in the Kernel crypto
@@ -19,24 +19,139 @@ Signed-off-by: Tinku Mannan <tmannan@ti.com>
 Signed-off-by: Hao Zhang <hzhang@ti.com>
 Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
 ---
- drivers/crypto/Kconfig             |   16 +
- drivers/crypto/Makefile            |    3 +
- drivers/crypto/keystone-sa-hlp.h   |  404 ++++++++
- drivers/crypto/keystone-sa-lld.c   |  448 +++++++++
- drivers/crypto/keystone-sa-tbls.c  |  452 +++++++++
- drivers/crypto/keystone-sa-utils.c | 1775 ++++++++++++++++++++++++++++++++++++
- drivers/crypto/keystone-sa.c       | 1009 ++++++++++++++++++++
- drivers/crypto/keystone-sa.h       |  311 +++++++
- 8 files changed, 4418 insertions(+)
+ Documentation/arm/keystone/keystone-crypto.txt     |   35 +
+ .../devicetree/bindings/soc/ti/keystone-crypto.txt |   66 +
+ drivers/crypto/Kconfig                             |   16 +
+ drivers/crypto/Makefile                            |    3 +
+ drivers/crypto/keystone-sa-hlp.h                   |  419 +++++
+ drivers/crypto/keystone-sa-lld.c                   |  453 +++++
+ drivers/crypto/keystone-sa-utils.c                 | 1776 ++++++++++++++++++++
+ drivers/crypto/keystone-sa.c                       | 1023 +++++++++++
+ drivers/crypto/keystone-sa.h                       |  311 ++++
+ 9 files changed, 4102 insertions(+)
+ create mode 100644 Documentation/arm/keystone/keystone-crypto.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
  create mode 100644 drivers/crypto/keystone-sa-hlp.h
  create mode 100644 drivers/crypto/keystone-sa-lld.c
- create mode 100644 drivers/crypto/keystone-sa-tbls.c
  create mode 100644 drivers/crypto/keystone-sa-utils.c
  create mode 100644 drivers/crypto/keystone-sa.c
  create mode 100644 drivers/crypto/keystone-sa.h
 
+diff --git a/Documentation/arm/keystone/keystone-crypto.txt b/Documentation/arm/keystone/keystone-crypto.txt
+new file mode 100644
+index 0000000..f10062d
+--- /dev/null
++++ b/Documentation/arm/keystone/keystone-crypto.txt
+@@ -0,0 +1,35 @@
++﻿* Texas Instruments Keystone Security Accelerator Crypto Driver
++
++The Security Accelerator (SA) is one of the main components of the Network
++Coprocessor (NETCP) peripheral. The SA works together with the Packet
++Accelerator (PA) and the Gigabit Ethernet (GbE) switch subsystem to
++form a network processing solution. The purpose of the SA is to assist
++the host by performing security related tasks. The SA provides hardware
++engines to perform encryption, decryption, and authentication operations on
++packets for commonly supported protocols, including IPsec ESP and AH, SRTP,
++and Air Cipher.
++
++See the http://www.ti.com/lit/ug/sprugy6b/sprugy6b.pdf for details.
++
++Keystone Linux kernel implements a crypto driver which offloads crypto
++algorithm processing to CP_ACE. Crypto driver registers algorithm implementations
++in the kernel's crypto algorithm management framework. Since the primary use
++case for this driver is IPSec ESP offload, it currently registers only AEAD
++algorithms.
++
++Following algorithms are supported by the driver:
++1. authenc(hmac(sha1),cbc(aes))
++2. authenc(hmac(sha1),cbc(des3-ede))
++3. authenc(xcbc(aes),cbc(aes))
++4. authenc(xcbc(aes),cbc(des3-ede))
++
++The driver source code:
++drivers/crypto/keystone-*.[ch]
++
++See the Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt for
++configuration.
++
++In order to work driver requires the sa_mci.fw firmware. By default driver compiled as kernel
++module and loaded after root file system is mounted, it is enough to place the firmware to
++the /lib/firmware directory.
++
+diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt b/Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
+new file mode 100644
+index 0000000..82784ec
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
+@@ -0,0 +1,66 @@
++Keystone Crypto Driver
++
++This document explains the device tree bindings for the side-band Security
++Accelerator on keystone devices.
++
++Required properties:
++ - compatible: should be "ti,netcp-sa-crypto".
++
++ - clock: pandle to clksa clock.
++
++ - reg: Should contain register location and length of the SA hardware
++	module.
++
++ - ti,navigator-dmas and ti,navigator-dma-names: Security accelerator uses
++	2 dma channels. Rx and Tx. The first property is the pandle to the
++	knav_dmas subsystem and flow for RX channel and channel number for
++	TX channel. The second property is corresponding channel names.
++
++ - rx-channel: name of RX channel.
++
++ - rx-queue-depth and rx-buffer-size: RX channel may use upto 4 free
++	descriptor queue. Those properties describes number of buffers in
++	each queue and the buffer's length.
++
++ - rx-compl-queue: RX completion queue number.
++
++ - rx-pool: number of buffer descriptos and region for rx-pool.
++
++ - tx-channel: name of TX channel.
++
++ - tx-queue-depth: number of TX descriptos.
++
++ - tx-completion-queue: TX completion queue number.
++
++ - tx-pool: number of buffer descriptos and region for tx-pool.
++
++ - tx-submit-queue: submition queue number for TX channel.
++
++ - sc-id: ???
++
++
++Example:
++
++crypto@20c0000 {
++	compatible = "ti,keystone-crypto";
++	label = "crypto-gbe";
++	reg = <0x20c0000 0x40000>;
++	clocks = <&clksa>;
++
++	ti,navigator-dmas = <&dma_gbe 26>, <&dma_gbe 6>;
++	ti,navigator-dma-names = "crypto-rx", "crypto-tx";
++
++	rx-channel = "crypto-rx";
++	rx-queue-depth = <256 64 0 0>;
++	rx-buffer-size = <1500 4096 0 0>;
++	rx-compl-queue = <8712>;
++	rx-pool	= <512 12>;
++
++	tx-channel = "crypto-tx";
++	tx-queue-depth = <256>;
++	tx-completion-queue = <8713>;
++	tx-pool = <512 12>;
++	tx-submit-queue = <646>;
++
++	sc-id = <0x7000 0x71ff>;
++};
 diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 033c0c8..e84d6c4 100644
+index 033c0c8..65b187e 100644
 --- a/drivers/crypto/Kconfig
 +++ b/drivers/crypto/Kconfig
 @@ -273,6 +273,22 @@ config CRYPTO_DEV_OMAP_DES
@@ -53,7 +168,7 @@ index 033c0c8..e84d6c4 100644
 +	select CRYPTO_ALGAPI
 +	select CRYPTO_AUTHENC
 +	select HW_RANDOM
-+	default y if ARCH_KEYSTONE
++	default m if ARCH_KEYSTONE
 +	help
 +	  Keystone devices include a security accelerator engine that may be
 +	  used for crypto offload.  Select this if you want to use hardware
@@ -63,7 +178,7 @@ index 033c0c8..e84d6c4 100644
  	tristate "Support for picoXcell IPSEC and Layer2 crypto engines"
  	depends on ARCH_PICOXCELL && HAVE_CLK
 diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-index 3afad7b..2af7f31 100644
+index 3afad7b..f96ddb9 100644
 --- a/drivers/crypto/Makefile
 +++ b/drivers/crypto/Makefile
 @@ -8,6 +8,9 @@ obj-$(CONFIG_CRYPTO_DEV_GEODE) += geode-aes.o
@@ -72,16 +187,16 @@ index 3afad7b..2af7f31 100644
  obj-$(CONFIG_CRYPTO_DEV_IXP4XX) += ixp4xx_crypto.o
 +obj-$(CONFIG_CRYPTO_DEV_KEYSTONE) += keystone-sa-driver.o
 +keystone-sa-driver-objs := keystone-sa.o keystone-sa-utils.o \
-+			   keystone-sa-lld.o keystone-sa-tbls.o
++			   keystone-sa-lld.o
  obj-$(CONFIG_CRYPTO_DEV_MV_CESA) += mv_cesa.o
  obj-$(CONFIG_CRYPTO_DEV_MXS_DCP) += mxs-dcp.o
  obj-$(CONFIG_CRYPTO_DEV_NIAGARA2) += n2_crypto.o
 diff --git a/drivers/crypto/keystone-sa-hlp.h b/drivers/crypto/keystone-sa-hlp.h
 new file mode 100644
-index 0000000..fafa312
+index 0000000..a8815da
 --- /dev/null
 +++ b/drivers/crypto/keystone-sa-hlp.h
-@@ -0,0 +1,404 @@
+@@ -0,0 +1,419 @@
 +/*
 + * Keystone crypto accelerator driver
 + *
@@ -244,11 +359,13 @@ index 0000000..fafa312
 +	void		*tx_pool;
 +
 +	struct hwrng	rng;
++	int		rng_initialized;
 +
 +	spinlock_t	scid_lock; /* lock for SC-ID allocation */
 +	spinlock_t	trng_lock; /* reading random data from TRNG */
 +
 +	struct kobject	stats_kobj;
++	int		stats_fl;
 +
 +	/* Security context data */
 +	u16		sc_id_start;
@@ -324,10 +441,10 @@ index 0000000..fafa312
 + * word-0: Request type
 + * word-1: pointer to request
 + */
-+#define SA_NUM_PSDATA_CTX_WORDS 4
++#define SA_PSDATA_CTX_WORDS 4
 +
 +/* Maximum size of Command label in 32 words */
-+#define SA_MAX_CMDL_WORDS (SA_DMA_NUM_PS_WORDS - SA_NUM_PSDATA_CTX_WORDS)
++#define SA_MAX_CMDL_WORDS (SA_DMA_NUM_PS_WORDS - SA_PSDATA_CTX_WORDS)
 +
 +struct sa_ctx_info {
 +	u8		*sc;
@@ -352,7 +469,7 @@ index 0000000..fafa312
 +/* Tx DMA callback param */
 +struct sa_dma_req_ctx {
 +	struct keystone_crypto_data *dev_data;
-+	u32		cmdl[SA_MAX_CMDL_WORDS + SA_NUM_PSDATA_CTX_WORDS];
++	u32		cmdl[SA_MAX_CMDL_WORDS + SA_PSDATA_CTX_WORDS];
 +	unsigned	map_idx;
 +	struct sg_table sg_tbl;
 +	dma_cookie_t	cookie;
@@ -405,6 +522,7 @@ index 0000000..fafa312
 +	SA_ENG_ALGO_OFB,
 +	SA_ENG_ALGO_CTR,
 +	SA_ENG_ALGO_F8,
++	SA_ENG_ALGO_F8F9,
 +	SA_ENG_ALGO_GCM,
 +	SA_ENG_ALGO_GMAC,
 +	SA_ENG_ALGO_CCM,
@@ -412,6 +530,14 @@ index 0000000..fafa312
 +	SA_ENG_ALGO_CBCMAC,
 +	SA_NUM_ENG_ALGOS
 +};
++
++/* 3DES only supports ECB, CBC, CFB and OFB. */
++#define SA_3DES_FIRST_ALGO          SA_ENG_ALGO_ECB
++#define SA_3DES_LAST_ALGO           SA_ENG_ALGO_OFB
++#define SA_3DES_NUM_ALGOS           (SA_3DES_LAST_ALGO - SA_3DES_FIRST_ALGO + 1)
++
++#define NKEY_SZ			3
++#define MCI_SZ			27
 +
 +struct sa_eng_info {
 +	u8	eng_id;
@@ -478,20 +604,24 @@ index 0000000..fafa312
 +	return 0;
 +}
 +
++struct sa_eng_mci_tbl {
++	uint8_t aes_enc[SA_NUM_ENG_ALGOS][NKEY_SZ][MCI_SZ];
++	uint8_t aes_dec[SA_NUM_ENG_ALGOS][NKEY_SZ][MCI_SZ];
++	uint8_t _3des_enc[SA_3DES_NUM_ALGOS][MCI_SZ];
++	uint8_t _3des_dec[SA_3DES_NUM_ALGOS][MCI_SZ];
++};
 +
-+extern const uint8_t sa_eng_aes_enc_mci_tbl[11][3][27];
-+extern const uint8_t sa_eng_aes_dec_mci_tbl[11][3][27];
-+extern const uint8_t sa_eng_3des_enc_mci_tbl[4][27];
-+extern const uint8_t sa_eng_3des_dec_mci_tbl[4][27];
++extern struct sa_eng_mci_tbl sa_mci_tbl;
++
 +extern struct device *sa_ks2_dev;
 +
 +#endif /* _KEYSTONE_SA_HLP_ */
 diff --git a/drivers/crypto/keystone-sa-lld.c b/drivers/crypto/keystone-sa-lld.c
 new file mode 100644
-index 0000000..1b92fa4
+index 0000000..921c27f
 --- /dev/null
 +++ b/drivers/crypto/keystone-sa-lld.c
-@@ -0,0 +1,448 @@
+@@ -0,0 +1,453 @@
 +/*
 + * Keystone crypto accelerator driver
 + *
@@ -529,6 +659,8 @@ index 0000000..1b92fa4
 +
 +#include "keystone-sa.h"
 +#include "keystone-sa-hlp.h"
++
++struct sa_eng_mci_tbl sa_mci_tbl;
 +
 +/* Perform 16 byte swizzling */
 +void sa_swiz_128(u8 *in, u8 *out, u16 len)
@@ -661,7 +793,7 @@ index 0000000..1b92fa4
 +}
 +
 +/* Generate HMAC-MD5 intermediate Hash */
-+void sa_hmac_md5_get_pad(const u8 *key, u16 key_sz, u32 *ipad, u32 *opad)
++static void sa_hmac_md5_get_pad(const u8 *key, u16 key_sz, u32 *ipad, u32 *opad)
 +{
 +	u8 k_ipad[MD5_MESSAGE_BYTES];
 +	u8 k_opad[MD5_MESSAGE_BYTES];
@@ -687,6 +819,7 @@ index 0000000..1b92fa4
 +}
 +
 +/* Generate HMAC-SHA1 intermediate Hash */
++static
 +void sa_hmac_sha1_get_pad(const u8 *key, u16 key_sz, u32 *ipad, u32 *opad)
 +{
 +	u32 ws[SHA_WORKSPACE_WORDS];
@@ -720,16 +853,18 @@ index 0000000..1b92fa4
 +}
 +
 +/* Derive GHASH to be used in the GCM algorithm */
-+void sa_calc_ghash(const u8 *key, u16 key_sz, u8 *ghash)
++static void sa_calc_ghash(const u8 *key, u16 key_sz, u8 *ghash)
 +{
 +}
 +
 +/* Generate HMAC-SHA224 intermediate Hash */
++static
 +void sa_hmac_sha224_get_pad(const u8 *key, u16 key_sz, u32 *ipad, u32 *opad)
 +{
 +}
 +
 +/* Generate HMAC-SHA256 intermediate Hash */
++static
 +void sa_hmac_sha256_get_pad(const u8 *key, u16 key_sz, u32 *ipad, u32 *opad)
 +{
 +}
@@ -789,26 +924,26 @@ index 0000000..1b92fa4
 +	/* Select the mode control instruction */
 +	switch (alg_id) {
 +	case SA_EALG_ID_AES_CBC:
-+		mci = (enc) ? sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_CBC][key_idx] :
-+			sa_eng_aes_dec_mci_tbl[SA_ENG_ALGO_CBC][key_idx];
++		mci = (enc) ? sa_mci_tbl.aes_enc[SA_ENG_ALGO_CBC][key_idx] :
++			sa_mci_tbl.aes_dec[SA_ENG_ALGO_CBC][key_idx];
 +		break;
 +
 +	case SA_EALG_ID_CCM:
-+		mci = (enc) ? sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_CCM][key_idx] :
-+			sa_eng_aes_dec_mci_tbl[SA_ENG_ALGO_CCM][key_idx];
++		mci = (enc) ? sa_mci_tbl.aes_enc[SA_ENG_ALGO_CCM][key_idx] :
++			sa_mci_tbl.aes_dec[SA_ENG_ALGO_CCM][key_idx];
 +		break;
 +
 +	case SA_EALG_ID_AES_F8:
-+		mci = sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_F8][key_idx];
++		mci = sa_mci_tbl.aes_enc[SA_ENG_ALGO_F8][key_idx];
 +		break;
 +
 +	case SA_EALG_ID_AES_CTR:
-+		mci = sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_CTR][key_idx];
++		mci = sa_mci_tbl.aes_enc[SA_ENG_ALGO_CTR][key_idx];
 +		break;
 +
 +	case SA_EALG_ID_GCM:
-+		mci = (enc) ? sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_GCM][key_idx] :
-+			sa_eng_aes_dec_mci_tbl[SA_ENG_ALGO_GCM][key_idx];
++		mci = (enc) ? sa_mci_tbl.aes_enc[SA_ENG_ALGO_GCM][key_idx] :
++			sa_mci_tbl.aes_dec[SA_ENG_ALGO_GCM][key_idx];
 +		/* Set AAD length at byte offset 23 in Aux-1 */
 +		sc_buf[SC_ENC_AUX1_OFFSET + 23] = (aad_len << 3);
 +		/* fall through to GMAC */
@@ -821,16 +956,16 @@ index 0000000..1b92fa4
 +
 +	case SA_AALG_ID_AES_XCBC:
 +	case SA_AALG_ID_CMAC:
-+		mci = sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_CMAC][key_idx];
++		mci = sa_mci_tbl.aes_enc[SA_ENG_ALGO_CMAC][key_idx];
 +		break;
 +
 +	case SA_AALG_ID_CBC_MAC:
-+		mci = sa_eng_aes_enc_mci_tbl[SA_ENG_ALGO_CBCMAC][key_idx];
++		mci = sa_mci_tbl.aes_enc[SA_ENG_ALGO_CBCMAC][key_idx];
 +		break;
 +
 +	case SA_EALG_ID_3DES_CBC:
-+		mci = (enc) ? sa_eng_3des_enc_mci_tbl[SA_ENG_ALGO_CBC] :
-+			sa_eng_3des_dec_mci_tbl[SA_ENG_ALGO_CBC];
++		mci = (enc) ? sa_mci_tbl._3des_enc[SA_ENG_ALGO_CBC] :
++			sa_mci_tbl._3des_dec[SA_ENG_ALGO_CBC];
 +		break;
 +	}
 +
@@ -940,470 +1075,12 @@ index 0000000..1b92fa4
 +}
 +
 +
-diff --git a/drivers/crypto/keystone-sa-tbls.c b/drivers/crypto/keystone-sa-tbls.c
-new file mode 100644
-index 0000000..6090cbb
---- /dev/null
-+++ b/drivers/crypto/keystone-sa-tbls.c
-@@ -0,0 +1,452 @@
-+/*
-+ * Keystone crypto accelerator driver
-+ *
-+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com
-+ *
-+ * Authors:	Sandeep Nair
-+ *		Vitaly Andrianov
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ */
-+
-+#include <linux/types.h>
-+
-+/************************************************************
-+ * Note: The below tables are generated.
-+ * Do not update it manually.
-+ *
-+ * Note: This is a special version of MCI file with
-+ * 3GPP standard modes disabled.
-+************************************************************/
-+const uint8_t sa_eng_aes_enc_mci_tbl[11][3][27] = {
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x80, 0x8a, 0x04, 0xb7, 0x90, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x84, 0x8a, 0x04, 0xb7, 0x90, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x88, 0x8a, 0x04, 0xb7, 0x90, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x18, 0x88, 0x0a, 0xaa, 0x4b, 0x7e,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x18, 0x88, 0x4a, 0xaa, 0x4b, 0x7e,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x18, 0x88, 0x8a, 0xaa, 0x4b, 0x7e,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x80, 0x9a, 0x09, 0x94, 0x7c, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x84, 0x9a, 0x09, 0x94, 0x7c, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x88, 0x9a, 0x09, 0x94, 0x7c, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x80, 0x9a, 0xa5, 0xb4, 0x60, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x84, 0x9a, 0xa5, 0xb4, 0x60, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x88, 0x9a, 0xa5, 0xb4, 0x60, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x80, 0x9a, 0x8f, 0x54, 0x1b, 0x82,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x84, 0x9a, 0x8f, 0x54, 0x1b, 0x82,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x88, 0x9a, 0x8f, 0x54, 0x1b, 0x82,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x22, 0x3b, 0xa3, 0xfb, 0x19, 0x31, 0x91,
-+			0x80, 0xa5, 0xc3, 0xa8, 0x89, 0x9e, 0x10, 0x2c, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x22, 0x3b, 0xa3, 0xfb, 0x19, 0x31, 0x91,
-+			0x84, 0xa5, 0xc3, 0xa8, 0x89, 0x9e, 0x10, 0x2c, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x22, 0x3b, 0xa3, 0xfb, 0x19, 0x31, 0x91,
-+			0x88, 0xa5, 0xc3, 0xa8, 0x89, 0x9e, 0x10, 0x2c, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x61, 0x00, 0x44, 0x80, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x58, 0x2e, 0x0a, 0x90, 0x71, 0x41, 0x83, 0x9d, 0x63,
-+			0xaa, 0x0b, 0x7e, 0x9a, 0x78, 0x3a, 0xa3, 0x8b, 0x1e
-+		},
-+		{
-+			0x61, 0x00, 0x44, 0x84, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x58, 0x2e, 0x4a, 0x90, 0x71, 0x41, 0x83, 0x9d, 0x63,
-+			0xaa, 0x0b, 0x7e, 0x9a, 0x78, 0x3a, 0xa3, 0x8b, 0x1e
-+		},
-+		{
-+			0x61, 0x00, 0x44, 0x88, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x58, 0x2e, 0x8a, 0x90, 0x71, 0x41, 0x83, 0x9d, 0x63,
-+			0xaa, 0x0b, 0x7e, 0x9a, 0x78, 0x3a, 0xa3, 0x8b, 0x1e
-+		}
-+	},
-+	{
-+		{
-+			0x41, 0x00, 0x44, 0x80, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x14, 0x18, 0x39, 0xd4, 0xba, 0xa0, 0xb7, 0xe9, 0xa7,
-+			0x83, 0xaa, 0x38, 0xb5, 0xe0, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x41, 0x00, 0x44, 0x84, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x14, 0x18, 0x39, 0xd4, 0xba, 0xa0, 0xb7, 0xe9, 0xa7,
-+			0x83, 0xaa, 0x38, 0xb5, 0xe0, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x41, 0x00, 0x44, 0x88, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x14, 0x18, 0x39, 0xd4, 0xba, 0xa0, 0xb7, 0xe9, 0xa7,
-+			0x83, 0xaa, 0x38, 0xb5, 0xe0, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x61, 0x00, 0x66, 0x80, 0xa9, 0x8f, 0x80, 0xa9, 0xbe,
-+			0x80, 0xb9, 0x7e, 0x18, 0x28, 0x0a, 0x9b, 0xe5, 0xc3,
-+			0x80, 0xbd, 0x6c, 0x15, 0x1a, 0x8e, 0xb0, 0x00, 0x00
-+		},
-+		{
-+			0x61, 0x00, 0x66, 0x84, 0xa9, 0x8f, 0x84, 0xa9, 0xbe,
-+			0x84, 0xb9, 0x7e, 0x18, 0x28, 0x4a, 0x9b, 0xe5, 0xc3,
-+			0x84, 0xbd, 0x6c, 0x15, 0x1a, 0x8e, 0xb0, 0x00, 0x00
-+		},
-+		{
-+			0x61, 0x00, 0x66, 0x88, 0xa9, 0x8f, 0x88, 0xa9, 0xbe,
-+			0x88, 0xb9, 0x7e, 0x18, 0x28, 0x8a, 0x9b, 0xe5, 0xc3,
-+			0x88, 0xbd, 0x6c, 0x15, 0x1a, 0x8e, 0xb0, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x41, 0x00, 0x00, 0xf1, 0x0d, 0x19, 0x10, 0x8d, 0x2c,
-+			0x12, 0x88, 0x08, 0xa6, 0x4b, 0x7e, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x41, 0x00, 0x00, 0xf1, 0x0d, 0x19, 0x10, 0x8d, 0x2c,
-+			0x12, 0x88, 0x48, 0xa6, 0x4b, 0x7e, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x41, 0x00, 0x00, 0xf1, 0x0d, 0x19, 0x10, 0x8d, 0x2c,
-+			0x12, 0x88, 0x88, 0xa6, 0x4b, 0x7e, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x01, 0x00, 0x11, 0x37, 0x91, 0x41, 0x80, 0x9a, 0x4c,
-+			0x97, 0xec, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x01, 0x00, 0x11, 0x37, 0x91, 0x41, 0x84, 0x9a, 0x4c,
-+			0x97, 0xec, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x01, 0x00, 0x11, 0x37, 0x91, 0x41, 0x88, 0x9a, 0x4c,
-+			0x97, 0xec, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	}
-+};
-+
-+const uint8_t sa_eng_aes_dec_mci_tbl[11][3][27] = {
-+	{
-+		{
-+			0x31, 0x00, 0x00, 0x80, 0x8a, 0x04, 0xb7, 0x90, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x31, 0x00, 0x00, 0x84, 0x8a, 0x04, 0xb7, 0x90, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x31, 0x00, 0x00, 0x88, 0x8a, 0x04, 0xb7, 0x90, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x31, 0x00, 0x00, 0x80, 0x8a, 0xca, 0x98, 0xf4, 0x40,
-+			0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x31, 0x00, 0x00, 0x84, 0x8a, 0xca, 0x98, 0xf4, 0x40,
-+			0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x31, 0x00, 0x00, 0x88, 0x8a, 0xca, 0x98, 0xf4, 0x40,
-+			0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x80, 0x9a, 0xc7, 0x44, 0x0b, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x84, 0x9a, 0xc7, 0x44, 0x0b, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x88, 0x9a, 0xc7, 0x44, 0x0b, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x21, 0x00, 0x00, 0x80, 0x9a, 0xa5, 0xb4, 0x60, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x84, 0x9a, 0xa5, 0xb4, 0x60, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x21, 0x00, 0x00, 0x88, 0x9a, 0xa5, 0xb4, 0x60, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x61, 0x00, 0x44, 0x80, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x58, 0x2e, 0x0a, 0x14, 0x19, 0x07, 0x83, 0x9d, 0x63,
-+			0xaa, 0x0b, 0x7e, 0x9a, 0x78, 0x3a, 0xa3, 0x8b, 0x1e
-+		},
-+		{
-+			0x61, 0x00, 0x44, 0x84, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x58, 0x2e, 0x4a, 0x14, 0x19, 0x07, 0x83, 0x9d, 0x63,
-+			0xaa, 0x0b, 0x7e, 0x9a, 0x78, 0x3a, 0xa3, 0x8b, 0x1e
-+		},
-+		{
-+			0x61, 0x00, 0x44, 0x88, 0xa9, 0xfe, 0x83, 0x99, 0x7e,
-+			0x58, 0x2e, 0x8a, 0x14, 0x19, 0x07, 0x83, 0x9d, 0x63,
-+			0xaa, 0x0b, 0x7e, 0x9a, 0x78, 0x3a, 0xa3, 0x8b, 0x1e
-+		}
-+	},
-+	{
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x61, 0x00, 0x66, 0x80, 0xa9, 0x8f, 0x80, 0xa9, 0xbe,
-+			0x80, 0xb9, 0x7e, 0x5c, 0x3e, 0x0b, 0x90, 0x71, 0x82,
-+			0x80, 0xaa, 0x88, 0x9b, 0xed, 0x7c, 0x14, 0xac, 0x00
-+		},
-+		{
-+			0x61, 0x00, 0x66, 0x84, 0xa9, 0x8f, 0x84, 0xa9, 0xbe,
-+			0x84, 0xb9, 0x7e, 0x5c, 0x3e, 0x4b, 0x90, 0x71, 0x82,
-+			0x84, 0xaa, 0x88, 0x9b, 0xed, 0x7c, 0x14, 0xac, 0x00
-+		},
-+		{
-+			0x61, 0x00, 0x66, 0x88, 0xa9, 0x8f, 0x88, 0xa9, 0xbe,
-+			0x88, 0xb9, 0x7e, 0x5c, 0x3e, 0x8b, 0x90, 0x71, 0x82,
-+			0x88, 0xaa, 0x88, 0x9b, 0xed, 0x7c, 0x14, 0xac, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	},
-+	{
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		},
-+		{
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+		}
-+	}
-+};
-+
-+const uint8_t sa_eng_3des_enc_mci_tbl[4][27] = {
-+	{
-+		0x20, 0x00, 0x00, 0x85, 0x0a, 0x04, 0xb7, 0x90, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	},
-+	{
-+		0x20, 0x00, 0x00, 0x18, 0x88, 0x52, 0xaa, 0x4b, 0x7e, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	},
-+	{
-+		0x20, 0x00, 0x00, 0x85, 0x1a, 0x09, 0x94, 0x7c, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	},
-+	{
-+		0x20, 0x00, 0x00, 0x85, 0x1a, 0xa5, 0xb4, 0x60, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	}
-+};
-+
-+const uint8_t sa_eng_3des_dec_mci_tbl[4][27] = {
-+	{
-+		0x30, 0x00, 0x00, 0x85, 0x0a, 0x04, 0xb7, 0x90, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	},
-+	{
-+		0x30, 0x00, 0x00, 0x85, 0x0a, 0xca, 0x98, 0xf4, 0x40, 0xc0,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	},
-+	{
-+		0x20, 0x00, 0x00, 0x85, 0x1a, 0xc7, 0x44, 0x0b, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	},
-+	{
-+		0x20, 0x00, 0x00, 0x85, 0x1a, 0xa5, 0xb4, 0x60, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-+	}
-+};
 diff --git a/drivers/crypto/keystone-sa-utils.c b/drivers/crypto/keystone-sa-utils.c
 new file mode 100644
-index 0000000..ea15c55
+index 0000000..f7b3e33
 --- /dev/null
 +++ b/drivers/crypto/keystone-sa-utils.c
-@@ -0,0 +1,1775 @@
+@@ -0,0 +1,1776 @@
 +/*
 + * Keystone crypto accelerator driver
 + *
@@ -1588,7 +1265,7 @@ index 0000000..ea15c55
 +	return 0;
 +}
 +
-+void sa_scatterwalk_copy(void *buf, struct scatterlist *sg,
++static void sa_scatterwalk_copy(void *buf, struct scatterlist *sg,
 +			 unsigned int start, unsigned int nbytes, int out)
 +{
 +	struct scatter_walk walk;
@@ -2380,7 +2057,7 @@ index 0000000..ea15c55
 +	return 0;
 +}
 +
-+dma_addr_t
++static dma_addr_t
 +sa_prepare_tx_desc(struct keystone_crypto_data *pdata, struct scatterlist *_sg,
 +		   int num_sg, u32 pslen, u32 *psdata,
 +		   u32 epiblen, u32 *epib, struct sa_dma_req_ctx *ctx)
@@ -2551,18 +2228,18 @@ index 0000000..ea15c55
 +		/* NOTE: We receive the tag as host endian 32bit words */
 +		auth_words = auth_size/sizeof(u32);
 +
-+		for (i = 2; i < (auth_words + SA_NUM_PSDATA_CTX_WORDS); i++)
++		for (i = 2; i < (auth_words + SA_PSDATA_CTX_WORDS); i++)
 +			hwdesc[0]->psdata[i] = htonl(hwdesc[0]->psdata[i]);
 +
 +		/* if encryption, copy the authentication tag */
 +		if (enc) {
 +			sa_scatterwalk_copy(
-+				&(hwdesc[0]->psdata[SA_NUM_PSDATA_CTX_WORDS]),
++				&(hwdesc[0]->psdata[SA_PSDATA_CTX_WORDS]),
 +				req->dst, enc_len, auth_size, 1);
 +#ifdef DEBUG
 +			dev_info(sa_ks2_dev, "computed tag:\n");
 +			print_hex_dump(KERN_CONT, "", DUMP_PREFIX_OFFSET,
-+			16, 1, &(hwdesc[0]->psdata[SA_NUM_PSDATA_CTX_WORDS]),
++			16, 1, &(hwdesc[0]->psdata[SA_PSDATA_CTX_WORDS]),
 +			auth_size, false);
 +#endif
 +		} else  {
@@ -2578,11 +2255,11 @@ index 0000000..ea15c55
 +			16, 1, auth_tag, auth_size, false);
 +			dev_info(sa_ks2_dev, "computed tag:\n");
 +			print_hex_dump(KERN_CONT, "", DUMP_PREFIX_OFFSET,
-+			16, 1, &(hwdesc[0]->psdata[SA_NUM_PSDATA_CTX_WORDS]),
++			16, 1, &(hwdesc[0]->psdata[SA_PSDATA_CTX_WORDS]),
 +			auth_size, false);
 +#endif
 +
-+			err = memcmp(&(hwdesc[0]->psdata[SA_NUM_PSDATA_CTX_WORDS]),
++			err = memcmp(&(hwdesc[0]->psdata[SA_PSDATA_CTX_WORDS]),
 +					auth_tag, auth_size) ? -EBADMSG : 0;
 +			if (unlikely(err))
 +				goto aead_err;
@@ -2632,8 +2309,9 @@ index 0000000..ea15c55
 +		desc_num = 0;
 +
 +		do {
-+			hwdesc[desc_num] = knav_pool_desc_unmap(dev_data->rx_pool, dma,
-+						      sizeof(hwdesc));
++			hwdesc[desc_num] =
++				knav_pool_desc_unmap(dev_data->rx_pool, dma,
++						     sizeof(hwdesc));
 +			if (!hwdesc[desc_num]) {
 +				pr_err("failed to unmap descriptor 0x%08x\n",
 +				       dma);
@@ -2673,7 +2351,7 @@ index 0000000..ea15c55
 +
 +		/* return descriptor to the pool */
 +		for (j = 0; j < desc_num; j++)
-+			knav_pool_desc_put(dev_data->tx_pool, hwdesc[j]);
++			knav_pool_desc_put(dev_data->rx_pool, hwdesc[j]);
 +
 +		/* increment rx packet counter */
 +	}
@@ -2812,7 +2490,7 @@ index 0000000..ea15c55
 +	desc_dma_addr = sa_prepare_tx_desc(pdata, req_ctx->sg_tbl.sgl,
 +					   sg_nents,
 +					   (sa_ctx->cmdl_size +
-+					    (SA_NUM_PSDATA_CTX_WORDS *
++					    (SA_PSDATA_CTX_WORDS *
 +					     sizeof(u32))),
 +					   req_ctx->cmdl,
 +					   sizeof(sa_ctx->epib),
@@ -3181,10 +2859,10 @@ index 0000000..ea15c55
 +
 diff --git a/drivers/crypto/keystone-sa.c b/drivers/crypto/keystone-sa.c
 new file mode 100644
-index 0000000..eafa20d
+index 0000000..d37bf3d
 --- /dev/null
 +++ b/drivers/crypto/keystone-sa.c
-@@ -0,0 +1,1009 @@
+@@ -0,0 +1,1023 @@
 +/*
 + * Keystone crypto accelerator driver
 + *
@@ -3217,6 +2895,7 @@ index 0000000..eafa20d
 +#include <linux/of_address.h>
 +#include <linux/rtnetlink.h>
 +#include <linux/dma-mapping.h>
++#include <linux/firmware.h>
 +#include <linux/platform_device.h>
 +#include <linux/soc/ti/knav_dma.h>
 +#include <linux/soc/ti/knav_qmss.h>
@@ -3224,6 +2903,7 @@ index 0000000..eafa20d
 +#include <linux/crypto.h>
 +#include <linux/hw_random.h>
 +#include <linux/cryptohash.h>
++#include <linux/soc/ti/knav_helpers.h>
 +#include <crypto/algapi.h>
 +#include <crypto/aead.h>
 +#include <crypto/authenc.h>
@@ -3237,20 +2917,6 @@ index 0000000..eafa20d
 +
 +#include "keystone-sa.h"
 +#include "keystone-sa-hlp.h"
-+
-+#define knav_queue_get_id(q)	knav_queue_device_control(q, \
-+				KNAV_QUEUE_GET_ID, (unsigned long)NULL)
-+
-+#define knav_queue_enable_notify(q) knav_queue_device_control(q,	\
-+					KNAV_QUEUE_ENABLE_NOTIFY,	\
-+					(unsigned long)NULL)
-+
-+#define knav_queue_disable_notify(q) knav_queue_device_control(q,	\
-+					KNAV_QUEUE_DISABLE_NOTIFY,	\
-+					(unsigned long)NULL)
-+
-+#define knav_queue_get_count(q)	knav_queue_device_control(q, \
-+				KNAV_QUEUE_GET_COUNT, (unsigned long)NULL)
 +
 +
 +/**********************************************************************/
@@ -3394,8 +3060,10 @@ index 0000000..eafa20d
 +		sa_free_rx_buf(dev_data, i);
 +
 +	if (knav_pool_count(dev_data->rx_pool) != dev_data->rx_pool_size)
-+		dev_err(dev, "Lost Rx (%d) descriptors\n",
++		dev_err(dev, "Lost Rx (%d) descriptors %d/%d\n",
 +			dev_data->rx_pool_size -
++			knav_pool_count(dev_data->rx_pool),
++			dev_data->rx_pool_size,
 +			knav_pool_count(dev_data->rx_pool));
 +
 +	knav_pool_destroy(dev_data->rx_pool);
@@ -3446,14 +3114,6 @@ index 0000000..eafa20d
 +{
 +	int	i;
 +
-+	if (!IS_ERR_OR_NULL(dev_data->rx_pool))
-+		sa_rxpool_free(dev_data);
-+
-+	if (!IS_ERR_OR_NULL(dev_data->tx_pool)) {
-+		knav_pool_destroy(dev_data->tx_pool);
-+		dev_data->tx_pool = NULL;
-+	}
-+
 +	if (!IS_ERR_OR_NULL(dev_data->tx_chan)) {
 +		knav_dma_close_channel(dev_data->tx_chan);
 +		dev_data->tx_chan = NULL;
@@ -3474,10 +3134,18 @@ index 0000000..eafa20d
 +		dev_data->tx_compl_q = NULL;
 +	}
 +
++	if (!IS_ERR_OR_NULL(dev_data->tx_pool)) {
++		knav_pool_destroy(dev_data->tx_pool);
++		dev_data->tx_pool = NULL;
++	}
++
 +	if (!IS_ERR_OR_NULL(dev_data->rx_compl_q)) {
 +		knav_queue_close(dev_data->rx_compl_q);
 +		dev_data->rx_compl_q = NULL;
 +	}
++
++	if (!IS_ERR_OR_NULL(dev_data->rx_pool))
++		sa_rxpool_free(dev_data);
 +
 +	for (i = 0; i < KNAV_DMA_FDQ_PER_CHAN &&
 +	     !IS_ERR_OR_NULL(dev_data->rx_fdq[i]) ; ++i) {
@@ -3645,19 +3313,6 @@ index 0000000..eafa20d
 +	return error;
 +}
 +
-+/* Teardown DMA channels */
-+static void sa_teardown_dma(struct keystone_crypto_data *dev_data)
-+{
-+	if (dev_data->tx_chan) {
-+		knav_dma_close_channel(dev_data->tx_chan);
-+		dev_data->tx_chan = NULL;
-+	}
-+
-+	if (dev_data->rx_chan) {
-+		knav_dma_close_channel(dev_data->rx_chan);
-+		dev_data->rx_chan = NULL;
-+	}
-+}
 +/******************************************************************************/
 +/************************************************************/
 +/*	SYSFS interface functions			    */
@@ -3795,18 +3450,22 @@ index 0000000..eafa20d
 +		kobject_put(&crypto->stats_kobj);
 +		kobject_put(&dev->kobj);
 +	}
++
++	if (!ret)
++		crypto->stats_fl = 1;
++
 +	return ret;
 +}
 +
 +static void sa_delete_sysfs_entries(struct keystone_crypto_data *crypto)
 +{
-+	kobject_del(&crypto->stats_kobj);
++	if (crypto->stats_fl)
++		kobject_del(&crypto->stats_kobj);
 +}
 +
 +/*
 + * HW RNG functions
 + */
-+
 +static int sa_rng_init(struct hwrng *rng)
 +{
 +	u32 value;
@@ -3912,6 +3571,7 @@ index 0000000..eafa20d
 +static int sa_register_rng(struct device *dev)
 +{
 +	struct keystone_crypto_data *crypto = dev_get_drvdata(dev);
++	int	ret;
 +
 +	crypto->rng.name = dev_driver_string(dev);
 +	crypto->rng.init = sa_rng_init;
@@ -3919,7 +3579,11 @@ index 0000000..eafa20d
 +	crypto->rng.read = sa_rng_read;
 +	crypto->rng.priv = (unsigned long)dev;
 +
-+	return hwrng_register(&crypto->rng);
++	ret = hwrng_register(&crypto->rng);
++	if (!ret)
++		crypto->rng_initialized = 1;
++
++	return ret;
 +}
 +
 +static void sa_unregister_rng(struct device *dev)
@@ -3961,7 +3625,7 @@ index 0000000..eafa20d
 +	OF_PROP_READ(u32, node, "tx-queue-depth", dev_data->tx_queue_depth);
 +	atomic_set(&dev_data->tx_dma_desc_cnt, dev_data->tx_queue_depth);
 +	OF_PROP_READ(u32, node, "tx-submit-queue", dev_data->tx_submit_qid);
-+	OF_PROP_READ(u32, node, "tx-compl-queue", dev_data->tx_compl_qid);
++	OF_PROP_READ(u32, node, "tx-completion-queue", dev_data->tx_compl_qid);
 +	OF_PROP_READ(string, node, "rx-channel", dev_data->rx_chan_name);
 +
 +	OF_PROP_READ_U32_ARRAY(node, "rx-queue-depth",
@@ -4033,29 +3697,51 @@ index 0000000..eafa20d
 +	if (dev_data->dma_req_ctx_cache)
 +		kmem_cache_destroy(dev_data->dma_req_ctx_cache);
 +}
++
 +static int keystone_crypto_remove(struct platform_device *pdev)
 +{
 +	struct keystone_crypto_data *dev_data = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
 +
 +	/* un-register crypto algorithms */
 +	sa_unregister_algos(&pdev->dev);
 +	/* un-register HW RNG */
-+	sa_unregister_rng(&pdev->dev);
++	if (dev_data->rng_initialized)
++		sa_unregister_rng(&pdev->dev);
++
 +	/* Delete SYSFS entries */
 +	sa_delete_sysfs_entries(dev_data);
-+	/* Release DMA channels */
-+	sa_teardown_dma(dev_data);
++	/* Release DMA resources */
++	sa_free_resources(dev_data);
 +	/* Kill tasklets */
 +	tasklet_kill(&dev_data->rx_task);
 +	/* Free memory pools used by the driver */
 +	sa_free_mem(dev_data);
-+
 +	clk_disable_unprepare(dev_data->clk);
 +	clk_put(dev_data->clk);
-+	kfree(dev_data);
++
++	devm_kfree(dev, dev_data);
 +	platform_set_drvdata(pdev, NULL);
 +	return 0;
 +}
++
++static int sa_request_firmware(struct device *dev)
++{
++	const struct firmware *fw;
++	int	ret;
++
++	ret = request_firmware(&fw, "sa_mci.fw", dev);
++	if (ret < 0) {
++		dev_err(dev, "request_firmware failed\n");
++		return ret;
++	}
++
++	memcpy(&sa_mci_tbl, fw->data, fw->size);
++
++	release_firmware(fw);
++	return 0;
++}
++
 +
 +static int keystone_crypto_probe(struct platform_device *pdev)
 +{
@@ -4066,9 +3752,13 @@ index 0000000..eafa20d
 +	int ret;
 +
 +	sa_ks2_dev = dev;
++
 +	dev_data = devm_kzalloc(dev, sizeof(*dev_data), GFP_KERNEL);
 +	if (!dev_data)
 +		return -ENOMEM;
++
++	dev_data->pdev = pdev;
++	platform_set_drvdata(pdev, dev_data);
 +
 +	dev_data->clk = clk_get(dev, NULL);
 +	if (IS_ERR_OR_NULL(dev_data->clk)) {
@@ -4084,9 +3774,6 @@ index 0000000..eafa20d
 +		ret = -ENODEV;
 +		goto err;
 +	}
-+
-+	dev_data->pdev = pdev;
-+	platform_set_drvdata(pdev, dev_data);
 +
 +	/* Read configuration from device tree */
 +	ret = sa_read_dtb(node, dev_data);
@@ -4152,6 +3839,11 @@ index 0000000..eafa20d
 +
 +	/* Register crypto algorithms */
 +	sa_register_algos(dev);
++
++	ret = sa_request_firmware(dev);
++	if (ret < 0)
++		goto err;
++
 +	dev_info(dev, "crypto accelerator enabled\n");
 +	return 0;
 +
@@ -4161,7 +3853,7 @@ index 0000000..eafa20d
 +}
 +
 +static const struct of_device_id of_match[] = {
-+	{ .compatible = "ti,keystone-crypto", },
++	{ .compatible = "ti,netcp-sa-crypto", },
 +	{},
 +};
 +MODULE_DEVICE_TABLE(of, of_match);

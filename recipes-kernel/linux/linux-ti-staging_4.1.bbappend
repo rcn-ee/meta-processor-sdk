@@ -1,4 +1,4 @@
-PR_append = ".tisdk22"
+PR_append = ".tisdk23"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -8,10 +8,10 @@ SRC_URI_append = " \
     file://0002-Added-DT-bindings-for-DebugSS.patch \
     file://0003-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
     file://0004-soc-ti-add-knav_dma_get_flow-to-retrieve-flow-of-giv.patch \
-    file://0005-soc-ti-add-missing-include-to-knav_dma.h.patch \
-    file://0006-crypto-keystone-keystone-sideband-crypto-driver.patch \
-    file://0007-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
-    file://0008-ti_config_fragments-connectivity.cfg-enable-INET_ESP.patch \
+    file://0005-soc-ti-add-helper-functions-for-use-across-knav-netc.patch \
+    file://0006-soc-ti-add-missing-include-to-knav_dma.h.patch \
+    file://0007-crypto-keystone-keystone-sideband-crypto-driver.patch \
+    file://0008-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
     file://0009-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
     file://0010-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
     file://0011-net-netcp-cpts-introduce-keystone-netcp-cpts-softwar.patch \
