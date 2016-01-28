@@ -1,3 +1,0 @@
-MMAP_LLD_SRCREV = "70c10fbce809a3ed1cd67c9da2e2a47d3de8f832"
-
-PV = "2.0.0.6"
