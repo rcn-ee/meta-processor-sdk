@@ -1,5 +1,0 @@
-PV = "1.1.7.2"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/ocl:"
-
-OCL_SRCREV = "b437300df647551ebd5df7130576c726155eee4d"
