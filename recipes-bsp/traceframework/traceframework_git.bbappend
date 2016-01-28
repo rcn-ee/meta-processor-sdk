@@ -1,4 +1,0 @@
-TRACEFRAMEWORK_SRCREV = "4e84c37c456ca62188cc9560d4ebf22452dab01f"
-
-PV = "01.01.01.08"
-PR_append = ".tisdk0"
