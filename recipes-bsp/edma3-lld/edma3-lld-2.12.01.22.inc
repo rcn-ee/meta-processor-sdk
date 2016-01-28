@@ -1,5 +1,0 @@
-EDMA3_LLD_SRCREV = "9a94177958b9269b1b8aeeb2a5d362ca4e64dafa"
-
-PV = "2.12.01.22"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/edma3-lld:"
