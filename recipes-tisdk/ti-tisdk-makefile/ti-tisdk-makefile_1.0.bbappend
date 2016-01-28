@@ -1,4 +1,4 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -14,28 +14,6 @@ MAKEFILES_append_dra7xx += " \
 MAKEFILES_append_keystone = " \
     ipsecmgr-mod \
 "
-
-MAKEFILES_append_k2hk-evm = " \
-    opencl-examples \
-    gdbserverproxy-module-drv \
-    debugss-module-drv \
-"
-
-MAKEFILES_append_k2l-evm = " \
-    opencl-examples \
-    gdbserverproxy-module-drv \
-    debugss-module-drv \
-"
-
-MAKEFILES_append_k2e-evm = " \
-    opencl-examples \
-    gdbserverproxy-module-drv \
-    debugss-module-drv \
-"
-
-PLATFORM_DEBUGSS_keystone = "KEYSTONE_PLATFORM"
-
-PLATFORM_GDBSERVERPROXY_keystone = "KEYSTONE_PLATFORM"
 
 KERNEL_DEVICETREE_append_ti43x = " am43x-epos-evm-hdmi.dtb \
                                    am437x-gp-evm-hdmi.dtb \
