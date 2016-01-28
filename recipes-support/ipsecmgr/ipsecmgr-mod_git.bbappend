@@ -1,10 +1,6 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-
-SRC_URI_append = "\
-    file://0001-port-ipsecmgr_mod-to-4.1.13-kernel.patch;pnum=3 \
-"
+SRCREV = "58271941feaf7e882c92912f577e0cb3788510bd"
 
 KERNEL_MODULE_AUTOLOAD += "ipsecmgr_mod"
 
