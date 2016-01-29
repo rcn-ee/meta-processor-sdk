@@ -1,4 +1,6 @@
-PR_append = ".tisdk23"
+PR_append = ".tisdk24"
+
+SRCREV = "0d2897f743855361d4c3537bb22ef582a4ac1260"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
