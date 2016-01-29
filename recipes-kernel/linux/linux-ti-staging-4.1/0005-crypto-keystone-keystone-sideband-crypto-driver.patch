@@ -1,7 +1,7 @@
-From c986c38412147f03869f6a4a3402f2be20f28283 Mon Sep 17 00:00:00 2001
+From 32379dc408728312b581c08aa90d6f544585821f Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 13 Jan 2016 13:18:28 -0500
-Subject: [tiL4.1-P v1 PATCH 2/6] crypto: keystone: keystone sideband crypto driver
+Subject: [PATCH 05/12] crypto: keystone: keystone sideband crypto driver
 
 This commits adds the driver support for keystone SA in sideband mode.
 The driver registers algorithm implementations in the Kernel crypto
@@ -151,10 +151,10 @@ index 0000000..82784ec
 +	sc-id = <0x7000 0x71ff>;
 +};
 diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 033c0c8..65b187e 100644
+index 6696c13..b8bf9b2 100644
 --- a/drivers/crypto/Kconfig
 +++ b/drivers/crypto/Kconfig
-@@ -273,6 +273,22 @@ config CRYPTO_DEV_OMAP_DES
+@@ -276,6 +276,22 @@ config CRYPTO_DEV_OMAP_DES
  	  the ECB and CBC modes of operation supported by the driver. Also
  	  accesses made on unaligned boundaries are also supported.
  

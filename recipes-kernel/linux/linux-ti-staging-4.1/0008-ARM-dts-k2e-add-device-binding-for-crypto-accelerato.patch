@@ -1,7 +1,8 @@
-From 1920208d66c30c736e8d6e6a92c125610610c059 Mon Sep 17 00:00:00 2001
+From 9606bc61184c42c2d784c63c309e8c2cfc815d1b Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 4 Nov 2015 12:31:57 -0500
-Subject: [tiL4.1-P v1 PATCH 6/6] ARM: dts: k2e: add device binding for crypto accelerator
+Subject: [PATCH 08/12] ARM: dts: k2e: add device binding for crypto
+ accelerator
 
 This patch enables K2E HW crypto accelerator by adding device binding
 for it.
@@ -12,10 +13,10 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm/boot/dts/k2e-netcp.dtsi b/arch/arm/boot/dts/k2e-netcp.dtsi
-index 85c7612..9180e1d 100644
+index 320cf4d..5e1a742 100644
 --- a/arch/arm/boot/dts/k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/k2e-netcp.dtsi
-@@ -431,3 +431,27 @@ netcpx: netcpx@2f00000 {
+@@ -535,3 +535,27 @@ netcpx: netcpx@2f00000 {
  		};
  	};
  };

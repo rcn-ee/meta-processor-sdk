@@ -1,7 +1,7 @@
-From bf342379cba3c30aaf92ba8d8ec36b76802388c5 Mon Sep 17 00:00:00 2001
+From dde582e604dc25643b9b0667a236f1fcaf90be5f Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 Nov 2015 16:12:50 -0500
-Subject: [PATCH 13/14] ARM: keystone: dts: add gbe and 10gbe netcp cpts
+Subject: [PATCH 11/12] ARM: keystone: dts: add gbe and 10gbe netcp cpts
  bindings
 
 This patch adds the netcp cpts DT bindings for the
@@ -15,7 +15,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  3 files changed, 63 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/k2e-netcp.dtsi b/arch/arm/boot/dts/k2e-netcp.dtsi
-index c6dbb05..fb98bdf 100644
+index 5e1a742..f93cc29 100644
 --- a/arch/arm/boot/dts/k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/k2e-netcp.dtsi
 @@ -222,7 +222,7 @@ netcp: netcp@24000000 {
@@ -26,8 +26,8 @@ index c6dbb05..fb98bdf 100644
 +	clock-names = "pa_clk", "ethss_clk", "cpts";
  	dma-coherent;
  
- 	ti,navigator-dmas = <&dma_gbe 0>,
-@@ -244,6 +244,17 @@ netcp: netcp@24000000 {
+ 	ti,navigator-dmas =	<&dma_gbe 0>,
+@@ -279,6 +279,17 @@ netcp: netcp@24000000 {
  			tx-channel = "nettx";
  			phys = <&gbe_serdes0>, <&gbe_serdes1>;
  
@@ -45,7 +45,7 @@ index c6dbb05..fb98bdf 100644
  			interfaces {
  				gbe0: interface-0 {
  					slave-port = <0>;
-@@ -367,8 +378,8 @@ netcpx: netcpx@2f00000 {
+@@ -471,8 +482,8 @@ netcpx: netcpx@2f00000 {
  	#size-cells	= <1>;
  	ranges;
  
@@ -56,7 +56,7 @@ index c6dbb05..fb98bdf 100644
  	dma-coherent;
  	/* big-endian; */
  
-@@ -392,6 +403,17 @@ netcpx: netcpx@2f00000 {
+@@ -496,6 +507,17 @@ netcpx: netcpx@2f00000 {
  			tx-channel = "xnettx";
  			phys = <&xgbe_serdes>;
  
@@ -75,7 +75,7 @@ index c6dbb05..fb98bdf 100644
  				xgbe0: interface-0 {
  					slave-port = <0>;
 diff --git a/arch/arm/boot/dts/k2hk-netcp.dtsi b/arch/arm/boot/dts/k2hk-netcp.dtsi
-index 8a24edb..e0d0ec0 100644
+index 2f13837..b748ee6 100644
 --- a/arch/arm/boot/dts/k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/k2hk-netcp.dtsi
 @@ -202,8 +202,8 @@ netcp: netcp@2000000 {
@@ -88,8 +88,8 @@ index 8a24edb..e0d0ec0 100644
 +	clock-names = "pa_clk", "ethss_clk", "cpts";
  	dma-coherent;
  
- 	ti,navigator-dmas = <&dma_gbe 22>,
-@@ -225,6 +225,17 @@ netcp: netcp@2000000 {
+ 	ti,navigator-dmas =	<&dma_gbe 22>,	/* rx flow for CPSW port 0 */
+@@ -245,6 +245,17 @@ netcp: netcp@2000000 {
  			tx-channel = "nettx";
  			phys = <&gbe_serdes>;
  
@@ -107,7 +107,7 @@ index 8a24edb..e0d0ec0 100644
  			interfaces {
  				gbe0: interface-0 {
  					slave-port = <0>;
-@@ -357,8 +368,8 @@ netcpx: netcp@2f00000 {
+@@ -447,8 +458,8 @@ netcpx: netcp@2f00000 {
  	#size-cells	= <1>;
  	ranges;
  
@@ -118,7 +118,7 @@ index 8a24edb..e0d0ec0 100644
  	dma-coherent;
  	/* big-endian; */
  
-@@ -382,6 +393,17 @@ netcpx: netcp@2f00000 {
+@@ -472,6 +483,17 @@ netcpx: netcp@2f00000 {
  			tx-channel = "xnettx";
  			phys = <&xgbe_serdes>;
  
@@ -137,7 +137,7 @@ index 8a24edb..e0d0ec0 100644
  				xgbe0: interface-0 {
  					slave-port = <0>;
 diff --git a/arch/arm/boot/dts/k2l-netcp.dtsi b/arch/arm/boot/dts/k2l-netcp.dtsi
-index 60d1311..3aa28b4 100644
+index 275ba70..b3e696f 100644
 --- a/arch/arm/boot/dts/k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/k2l-netcp.dtsi
 @@ -207,7 +207,7 @@ netcp: netcp@26000000 {
@@ -148,8 +148,8 @@ index 60d1311..3aa28b4 100644
 +	clock-names = "pa_clk", "ethss_clk", "cpts", "osr_clk";
  	dma-coherent;
  
- 	ti,navigator-dmas = <&dma_gbe 0>,
-@@ -229,6 +229,17 @@ netcp: netcp@26000000 {
+ 	ti,navigator-dmas =	<&dma_gbe 0>,
+@@ -264,6 +264,17 @@ netcp: netcp@26000000 {
  			tx-channel = "nettx";
  			phys = <&gbe_serdes0>, <&gbe_serdes1>;
  

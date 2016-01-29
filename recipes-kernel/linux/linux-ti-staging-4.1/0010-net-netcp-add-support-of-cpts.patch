@@ -1,7 +1,7 @@
-From 40c47922c2e05063923c4abfe20dca72e7ad0aaa Mon Sep 17 00:00:00 2001
+From 9fae21db1ec5b518df0a77ee03d2a38aa6ae0c71 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 11 Nov 2015 13:31:05 -0500
-Subject: [PATCH 12/14] net: netcp: add support of cpts
+Subject: [PATCH 10/12] net: netcp: add support of cpts
 
 This patch adds support of the cpts device found in the
 gbe and 10gbe ethernet switches on the keystone platforms.
@@ -17,10 +17,10 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  4 files changed, 968 insertions(+), 11 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/net/keystone-netcp.txt b/Documentation/devicetree/bindings/net/keystone-netcp.txt
-index 84bbfce..54cb398 100644
+index e5e76ed..663785b 100644
 --- a/Documentation/devicetree/bindings/net/keystone-netcp.txt
 +++ b/Documentation/devicetree/bindings/net/keystone-netcp.txt
-@@ -122,6 +122,30 @@ Optional properties:
+@@ -124,6 +124,30 @@ Optional properties:
  		see Documentation/devicetree/bindings/phy/ti-phy.txt
  		for Keystone SerDes device specificcations.
  
@@ -52,10 +52,10 @@ index 84bbfce..54cb398 100644
  Required properties:
  - rx-channel:	the navigator packet dma channel name for rx.
 diff --git a/drivers/net/ethernet/ti/netcp.h b/drivers/net/ethernet/ti/netcp.h
-index 28d5541..15fca01 100644
+index f6800fb..6eb5106 100644
 --- a/drivers/net/ethernet/ti/netcp.h
 +++ b/drivers/net/ethernet/ti/netcp.h
-@@ -125,7 +125,7 @@ struct netcp_packet {
+@@ -126,7 +126,7 @@ struct netcp_packet {
  	bool			rxtstamp_complete;
  	void			*ts_context;
  
@@ -65,10 +65,10 @@ index 28d5541..15fca01 100644
  
  static inline u32 *netcp_push_psdata(struct netcp_packet *p_info,
 diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index 035e233..0ee2d55 100644
+index 9ba29e9..b041d1e 100644
 --- a/drivers/net/ethernet/ti/netcp_core.c
 +++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -99,6 +99,11 @@ struct netcp_intf_modpriv {
+@@ -86,6 +86,11 @@ struct netcp_intf_modpriv {
  	void			*module_priv;
  };
  
@@ -80,15 +80,15 @@ index 035e233..0ee2d55 100644
  static LIST_HEAD(netcp_devices);
  static LIST_HEAD(netcp_modules);
  static DEFINE_MUTEX(netcp_modules_lock);
-@@ -703,6 +708,7 @@ static int netcp_process_one_rx_packet(struct netcp_intf *netcp)
+@@ -623,6 +628,7 @@ static int netcp_process_one_rx_packet(struct netcp_intf *netcp)
  
  	/* Call each of the RX hooks */
  	p_info.skb = skb;
 +	skb->dev = netcp->ndev;
  	p_info.rxtstamp_complete = false;
- 	list_for_each_entry(rx_hook, &netcp->rxhook_list_head, list) {
- 		int ret;
-@@ -955,6 +961,7 @@ static int netcp_process_tx_compl_packets(struct netcp_intf *netcp,
+ 	knav_dma_get_desc_info(&tmp, &p_info.eflags, desc);
+ 	p_info.epib = desc->epib;
+@@ -884,6 +890,7 @@ static int netcp_process_tx_compl_packets(struct netcp_intf *netcp,
  					  unsigned int budget)
  {
  	struct knav_dma_desc *desc;
@@ -96,7 +96,7 @@ index 035e233..0ee2d55 100644
  	struct sk_buff *skb;
  	unsigned int dma_sz;
  	dma_addr_t dma;
-@@ -980,6 +987,10 @@ static int netcp_process_tx_compl_packets(struct netcp_intf *netcp,
+@@ -909,6 +916,10 @@ static int netcp_process_tx_compl_packets(struct netcp_intf *netcp,
  			continue;
  		}
  
@@ -107,7 +107,7 @@ index 035e233..0ee2d55 100644
  		if (netif_subqueue_stopped(netcp->ndev, skb) &&
  		    netif_running(netcp->ndev) &&
  		    (knav_pool_count(netcp->tx_pool) >
-@@ -1119,6 +1130,7 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
+@@ -1048,6 +1059,7 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
  	struct netcp_tx_pipe *tx_pipe = NULL;
  	struct netcp_hook_list *tx_hook;
  	struct netcp_packet p_info;
@@ -115,7 +115,7 @@ index 035e233..0ee2d55 100644
  	unsigned int dma_sz;
  	dma_addr_t dma;
  	u32 tmp = 0;
-@@ -1129,7 +1141,7 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
+@@ -1058,7 +1070,7 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
  	p_info.tx_pipe = NULL;
  	p_info.psdata_len = 0;
  	p_info.ts_context = NULL;
@@ -124,7 +124,7 @@ index 035e233..0ee2d55 100644
  	p_info.epib = desc->epib;
  	p_info.psdata = desc->psdata;
  	memset(p_info.epib, 0, KNAV_DMA_NUM_EPIB_WORDS * sizeof(u32));
-@@ -1154,6 +1166,10 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
+@@ -1083,6 +1095,10 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
  		goto out;
  	}
  

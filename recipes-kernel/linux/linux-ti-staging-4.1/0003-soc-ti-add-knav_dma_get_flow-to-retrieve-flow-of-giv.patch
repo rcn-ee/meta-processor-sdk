@@ -1,0 +1,52 @@
+From ffeec1568abec861e203eede0e0bd72d4f837826 Mon Sep 17 00:00:00 2001
+From: Aurelien Jacquiot <a-jacquiot@ti.com>
+Date: Thu, 24 Sep 2015 10:54:00 -0400
+Subject: [PATCH 03/12] soc: ti: add knav_dma_get_flow() to retrieve flow of
+ given channel
+
+Some devices using packet DMA (e.g. PA, SRIO) need to configure additional
+hw registers based on flow Ids. Add a function to retrieve this flow
+Id from a given channel for a DMA client. While at it, also fix some typos.
+
+Signed-off-by: Aurelien Jacquiot <a-jacquiot@ti.com>
+Signed-off-by: Murali Karicheri <m-karicheri@ti.com>
+---
+ drivers/soc/ti/knav_dma.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index b47e912..e78df67 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -415,6 +415,28 @@ static int of_channel_match_helper(struct device_node *np, const char *name,
+ }
+ 
+ /**
++ * knav_dma_get_flow() - retrieve flow Id from a given channel handle
++ * @channel     dma channel handle
++ *
++ * Returns corresponding flow Id on success or -EINVAL in case of error
++ */
++int knav_dma_get_flow(void *channel)
++{
++	struct knav_dma_chan *chan = channel;
++
++	if (!chan)
++		return -EINVAL;
++
++	if (!kdev) {
++		pr_err("keystone-navigator-dma driver not registered\n");
++		return -EINVAL;
++	}
++
++	return chan->flow;
++}
++EXPORT_SYMBOL_GPL(knav_dma_get_flow);
++
++/**
+  * knav_dma_open_channel() - try to setup an exclusive slave channel
+  * @dev:	pointer to client device structure
+  * @name:	slave channel name
+-- 
+1.9.1
+

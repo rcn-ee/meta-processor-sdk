@@ -1,7 +1,8 @@
-From bc521dae0fa3ba099963978e78a8273302154e51 Mon Sep 17 00:00:00 2001
+From bae1a2f72736689789c0235268f3280e0cc620df Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 4 Nov 2015 12:27:03 -0500
-Subject: [tiL4.1-P v1 PATCH 5/6] ARM: dts: k2l: add device binding for crypto accelerator
+Subject: [PATCH 07/12] ARM: dts: k2l: add device binding for crypto
+ accelerator
 
 This patch enables K2L HW crypto accelerator by adding device binding
 for it.
@@ -12,10 +13,10 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm/boot/dts/k2l-netcp.dtsi b/arch/arm/boot/dts/k2l-netcp.dtsi
-index debcbc4..205e383 100644
+index bb57002..275ba70 100644
 --- a/arch/arm/boot/dts/k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/k2l-netcp.dtsi
-@@ -282,3 +282,27 @@ netcp: netcp@26000000 {
+@@ -390,3 +390,27 @@ netcp: netcp@26000000 {
  		};
  	};
  };
