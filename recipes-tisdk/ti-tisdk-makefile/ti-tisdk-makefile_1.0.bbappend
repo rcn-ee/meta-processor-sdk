@@ -1,14 +1,9 @@
-PR_append = ".tisdk6"
+PR_append = ".tisdk7"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
-    file://Makefile_qt-opencv-opencl-opengl-multithreaded \
     file://Makefile_ipsecmgr-mod \
-"
-
-MAKEFILES_append_dra7xx += " \
-    qt-opencv-opencl-opengl-multithreaded \
 "
 
 MAKEFILES_append_keystone = " \
