@@ -1,6 +1,4 @@
-PR_append = ".tisdk4"
-
-SRCREV = "72cd772d24d4bc555bf283a2accad294dd2883ac"
+PR_append = ".tisdk5"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -20,7 +18,3 @@ SRC_URI_append = " \
     file://0011-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
     file://0012-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
 "
-
-do_compile_kernelmodules_append() {
-	cp Module.symvers ${STAGING_KERNEL_BUILDDIR}/
-}
