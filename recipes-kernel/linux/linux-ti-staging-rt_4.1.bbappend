@@ -1,4 +1,4 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -7,7 +7,6 @@ include ti-uio.inc
 SRC_URI_append = " \
     file://0001-Added-DT-bindings-for-DebugSS.patch \
     file://0002-opp33xx_data-Enabled-1-GHz-for-2.0-Silicon.patch \
-    file://0003-soc-ti-add-knav_dma_get_flow-to-retrieve-flow-of-giv.patch \
     file://0004-soc-ti-add-missing-include-to-knav_dma.h.patch \
     file://0005-crypto-keystone-keystone-sideband-crypto-driver.patch \
     file://0006-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \

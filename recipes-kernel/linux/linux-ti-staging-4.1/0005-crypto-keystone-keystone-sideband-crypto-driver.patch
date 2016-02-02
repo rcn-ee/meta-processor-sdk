@@ -1,7 +1,7 @@
-From 32379dc408728312b581c08aa90d6f544585821f Mon Sep 17 00:00:00 2001
+From ff5ac6dbc43d6d3a5544e65da95c4350072b381c Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 13 Jan 2016 13:18:28 -0500
-Subject: [PATCH 05/12] crypto: keystone: keystone sideband crypto driver
+Subject: [PATCH] crypto: keystone: keystone sideband crypto driver
 
 This commits adds the driver support for keystone SA in sideband mode.
 The driver registers algorithm implementations in the Kernel crypto
@@ -21,14 +21,14 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
 ---
  Documentation/arm/keystone/keystone-crypto.txt     |   35 +
  .../devicetree/bindings/soc/ti/keystone-crypto.txt |   66 +
- drivers/crypto/Kconfig                             |   16 +
+ drivers/crypto/Kconfig                             |   17 +
  drivers/crypto/Makefile                            |    3 +
  drivers/crypto/keystone-sa-hlp.h                   |  419 +++++
  drivers/crypto/keystone-sa-lld.c                   |  453 +++++
  drivers/crypto/keystone-sa-utils.c                 | 1776 ++++++++++++++++++++
  drivers/crypto/keystone-sa.c                       | 1023 +++++++++++
  drivers/crypto/keystone-sa.h                       |  311 ++++
- 9 files changed, 4102 insertions(+)
+ 9 files changed, 4103 insertions(+)
  create mode 100644 Documentation/arm/keystone/keystone-crypto.txt
  create mode 100644 Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
  create mode 100644 drivers/crypto/keystone-sa-hlp.h
@@ -151,10 +151,10 @@ index 0000000..82784ec
 +	sc-id = <0x7000 0x71ff>;
 +};
 diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 6696c13..b8bf9b2 100644
+index 6696c13..8ed9720 100644
 --- a/drivers/crypto/Kconfig
 +++ b/drivers/crypto/Kconfig
-@@ -276,6 +276,22 @@ config CRYPTO_DEV_OMAP_DES
+@@ -276,6 +276,23 @@ config CRYPTO_DEV_OMAP_DES
  	  the ECB and CBC modes of operation supported by the driver. Also
  	  accesses made on unaligned boundaries are also supported.
  
@@ -163,6 +163,7 @@ index 6696c13..b8bf9b2 100644
 +	depends on ARCH_KEYSTONE
 +	select CRYPTO_AES
 +	select CRYPTO_AES_ARM
++	select ARM_CRYPTO
 +	select CRYPTO_SHA1
 +	select CRYPTO_MD5
 +	select CRYPTO_ALGAPI
