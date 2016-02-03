@@ -7,8 +7,9 @@ ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_RT_SUFFIX}-image"
 #PREFERRED_PROVIDER_virtual/kernel_keystone = "linux-processor-sdk${ARAGO_RT_SUFFIX}"
 PREFERRED_VERSION_linux-processor-sdk = "4.1%"
 
-# Remove wayland from ti33x DISTRO_FEATURES.
+# Remove wayland from ti33x and keystone DISTRO_FEATURES.
 DISTRO_FEATURES_remove_ti33x = "wayland"
+DISTRO_FEATURES_remove_keystone = "wayland"
 
 # CMEM reserved memory
 RESERVE_CMEM_dra7xx = "1"
