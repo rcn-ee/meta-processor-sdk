@@ -1,6 +1,10 @@
-PR_append = "-tisdk9"
+PR_append = "-tisdk10"
 
 UTILS_append_omap-a15 = " \
+    opencv-dev \
+"
+
+UTILS_append_keystone = " \
     opencv-dev \
 "
 

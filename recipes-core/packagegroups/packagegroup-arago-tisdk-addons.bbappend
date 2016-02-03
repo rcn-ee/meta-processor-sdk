@@ -1,4 +1,4 @@
-PR_append = "-tisdk15"
+PR_append = "-tisdk16"
 
 UTILS_append_ti33x = " \
     strongswan \
@@ -15,6 +15,7 @@ UTILS_append_omap-a15 = " \
 "
 
 UTILS_append_keystone = " \
+    opencv-apps \
     ti-ipc-rtos-fw \
 "
 
