@@ -1,14 +1,6 @@
-PR_append = ".tisdk7"
+PR_append = ".tisdk8"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-
-SRC_URI += " \
-    file://Makefile_ipsecmgr-mod \
-"
-
-MAKEFILES_append_keystone = " \
-    ipsecmgr-mod \
-"
 
 KERNEL_DEVICETREE_append_ti43x = " am43x-epos-evm-hdmi.dtb \
                                    am437x-gp-evm-hdmi.dtb \
