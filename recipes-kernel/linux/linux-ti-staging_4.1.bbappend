@@ -1,8 +1,6 @@
-PR_append = ".tisdk26"
+PR_append = ".tisdk27"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
-
-include ti-uio.inc
 
 SRC_URI_append = " \
     file://0001-Added-DT-bindings-for-DebugSS.patch \
