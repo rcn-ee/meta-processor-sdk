@@ -17,6 +17,9 @@ RESERVE_CMEM_k2hk-evm = "1"
 RESERVE_CMEM_k2e-evm = "1"
 RESERVE_CMEM_k2l-evm = "1"
 
+# Enable TI UIO devices
+ENABLE_TI_UIO_DEVICES = "1"
+
 # Additional moules to autoload
 KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
