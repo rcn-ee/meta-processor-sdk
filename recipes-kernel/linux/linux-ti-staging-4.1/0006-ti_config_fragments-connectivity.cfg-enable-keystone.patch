@@ -1,7 +1,7 @@
-From c6a1ea4c269c107589ded66805e9e8d76d1e4290 Mon Sep 17 00:00:00 2001
+From ae6bdc26722182a1640a36f6ae6ce2ec8effaf4b Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 Nov 2015 16:12:51 -0500
-Subject: [PATCH 12/12] ti_config_fragments/connectivity.cfg: enable keystone
+Subject: [PATCH 06/15] ti_config_fragments/connectivity.cfg: enable keystone
  netcp cpts support
 
 Enable support of cpts for both gbe and 10gbe on keystone

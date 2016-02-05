@@ -1,7 +1,7 @@
-From 0dcb255d6ec14c4e425abf99fed161f69101cf9e Mon Sep 17 00:00:00 2001
+From 2ab6f63664ea601d6bf2e8606de920cf3ea268e0 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
-Date: Wed, 13 Jan 2016 12:20:34 -0500
-Subject: [PATCH 06/12] ARM: dts: k2hk: add device binding for crypto
+Date: Tue, 2 Feb 2016 10:16:34 -0500
+Subject: [PATCH 13/15] ARM: dts: k2hk: add device binding for crypto
  accelerator
 
 This patch enables HW crypto accelerator by adding device binding for it.
@@ -12,10 +12,10 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  1 file changed, 25 insertions(+)
 
 diff --git a/arch/arm/boot/dts/k2hk-netcp.dtsi b/arch/arm/boot/dts/k2hk-netcp.dtsi
-index 9701838..2f13837 100644
+index 3400a87..d4f999a 100644
 --- a/arch/arm/boot/dts/k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/k2hk-netcp.dtsi
-@@ -367,6 +367,31 @@ netcp: netcp@2000000 {
+@@ -378,6 +378,31 @@ netcp: netcp@2000000 {
  			netcp-pa = <&pa1>;
  		};
  	};
@@ -31,19 +31,19 @@ index 9701838..2f13837 100644
 +	ti,navigator-dmas = <&dma_gbe 26>, <&dma_gbe 6>;
 +	ti,navigator-dma-names = "crypto-rx", "crypto-tx";
 +
-+	rx-channel = "crypto-rx";
-+	rx-queue-depth = <256 64 0 0>;
-+	rx-buffer-size = <1500 4096 0 0>;
-+	rx-compl-queue = <8712>;
-+	rx-pool	= <512 12>;
++	ti,rx-channel = "crypto-rx";
++	ti,rx-queue-depth = <256 64 0 0>;
++	ti,rx-buffer-size = <1500 4096 0 0>;
++	ti,rx-compl-queue = <8712>;
++	ti,rx-pool	= <512 12>;
 +
-+	tx-channel = "crypto-tx";
-+	tx-queue-depth = <256>;
-+	tx-completion-queue = <8713>;
-+	tx-pool = <512 12>;
-+	tx-submit-queue = <646>;
++	ti,tx-channel = "crypto-tx";
++	ti,tx-queue-depth = <256>;
++	ti,tx-completion-queue = <8713>;
++	ti,tx-pool = <512 12>;
++	ti,tx-submit-queue = <646>;
 +
-+	sc-id = <0x7000 0x71ff>;
++	ti,sc-id = <0x7000 0x71ff>;
  };
  
  xgbe_subsys: subsys@2f00000 {

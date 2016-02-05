@@ -1,7 +1,7 @@
-From 3ed7edfe4d1760562bf82de558f2d5af2c9c9312 Mon Sep 17 00:00:00 2001
+From a7d02bf51ebb03981aa2f4bffe5d588c8fa694d3 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 Nov 2015 16:12:48 -0500
-Subject: [PATCH 09/12] net: netcp: cpts: introduce keystone netcp cpts
+Subject: [PATCH 03/15] net: netcp: cpts: introduce keystone netcp cpts
  software module
 
 This patch introduces a cpts software module for
@@ -20,7 +20,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  create mode 100644 drivers/net/ethernet/ti/netcp_cpts.h
 
 diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-index 9ffe7a3..8362ca0 100644
+index 71daa03..61db9d2 100644
 --- a/drivers/net/ethernet/ti/Kconfig
 +++ b/drivers/net/ethernet/ti/Kconfig
 @@ -85,6 +85,16 @@ config TI_CPTS
