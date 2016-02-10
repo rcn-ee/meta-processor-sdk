@@ -1,4 +1,4 @@
-PR_append = ".tisdk9"
+PR_append = ".tisdk10"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -18,6 +18,7 @@ SRC_URI_append = " \
     file://0013-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
     file://0014-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
     file://0015-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
+    file://0001-omap2plus_defconfig-Enable-USB_ACM-and-USB_SERIAL-as.patch \
 "
 
 PATCHTOOL = "git"
