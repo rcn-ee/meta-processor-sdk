@@ -23,6 +23,9 @@ ENABLE_TI_UIO_DEVICES = "1"
 # Additional moules to autoload
 KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
+KERNEL_MODULE_AUTOLOAD_EXTRAS_ti33x += "g_ether"
+KERNEL_MODULE_AUTOLOAD_EXTRAS_ti43x += "g_ether"
+KERNEL_MODULE_AUTOLOAD_EXTRAS_omap-a15 += "g_ether"
 KERNEL_MODULE_AUTOLOAD += "${KERNEL_MODULE_AUTOLOAD_EXTRAS}"
 
 # Temporarily disable "sgx" machine feature for all SOCs while building
