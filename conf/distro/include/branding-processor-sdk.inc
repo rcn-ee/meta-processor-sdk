@@ -25,10 +25,6 @@ KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
 KERNEL_MODULE_AUTOLOAD += "${KERNEL_MODULE_AUTOLOAD_EXTRAS}"
 
-# Temporarily disable "sgx" machine feature for all SOCs while building
-# latest 4.1 integration kernel, until DDK 1.14 merges are finished
-MACHINE_FEATURES := "${@d.getVar('MACHINE_FEATURES', True).replace('sgx', '')}"
-
 
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
