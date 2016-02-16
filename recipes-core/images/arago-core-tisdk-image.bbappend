@@ -1,10 +1,8 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 DTB_FILTER_k2hk-evm = "k2hk"
 DTB_FILTER_k2e-evm = "k2e"
 DTB_FILTER_k2l-evm = "k2l"
-
-TARGET_IMAGES_append_keystone = " tisdk-server-extra-rootfs-image"
 
 SW_MANIFEST_QT5_FOOTER = "Any Qt package referenced in this manifest that has LGPL 2.1 or LGPL 3 as a licensing option is only being used and distributed by TI under LGPL 2.1. The choice of having both, as reflected in the manifest table, comes from the licensing line the corresponding recipe. TI has opted to only use LGPL 2.1."
 
