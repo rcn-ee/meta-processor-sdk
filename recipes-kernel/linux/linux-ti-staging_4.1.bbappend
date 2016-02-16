@@ -1,4 +1,4 @@
-PR_append = ".tisdk30"
+PR_append = ".tisdk31"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -19,6 +19,7 @@ SRC_URI_append = " \
     file://0014-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
     file://0015-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
     file://0001-omap2plus_defconfig-Enable-USB_ACM-and-USB_SERIAL-as.patch \
+    file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
 "
 
 PATCHTOOL = "git"
