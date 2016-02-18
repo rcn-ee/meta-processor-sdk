@@ -1,23 +1,24 @@
-From 943e09a2b6332785f37f5200a25a66749d885756 Mon Sep 17 00:00:00 2001
+From 22cb3d4dc7e5aed3ea06fb556769f4268f0efaa4 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Wed, 10 Feb 2016 13:33:25 -0500
 Subject: [PATCH] omap2plus_defconfig: Enable USB_ACM and USB_SERIAL as modules
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
- arch/arm/configs/omap2plus_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/configs/omap2plus_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 9638f1e..98e4ed7 100644
+index 9638f1e..c93b1db 100644
 --- a/arch/arm/configs/omap2plus_defconfig
 +++ b/arch/arm/configs/omap2plus_defconfig
-@@ -184,6 +184,8 @@ CONFIG_USB_EHCI_HCD=m
+@@ -184,6 +184,9 @@ CONFIG_USB_EHCI_HCD=m
  CONFIG_USB_OHCI_HCD=m
  CONFIG_USB_KC2190=y
  CONFIG_USB_CDC_PHONET=m
 +CONFIG_USB_ACM=m
 +CONFIG_USB_SERIAL=m
++CONFIG_USB_SERIAL_FTDI_SIO=m
  CONFIG_LIBERTAS=m
  CONFIG_LIBERTAS_USB=m
  CONFIG_LIBERTAS_SDIO=m
