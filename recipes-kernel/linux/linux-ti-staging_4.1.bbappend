@@ -1,4 +1,4 @@
-PR_append = ".tisdk33"
+PR_append = ".tisdk34"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -20,4 +20,10 @@ SRC_URI_append = " \
     file://0015-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
     file://0001-omap2plus_defconfig-Enable-USB_ACM-and-USB_SERIAL-as.patch \
     file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
+    file://0001-cpsw-ale-enhancement-to-support-sysfs-commands.patch \
+    file://0002-net-netcp-set-proper-ale-revision-mask-for-major-ver.patch \
+    file://0003-net-netcp-pa-add-missing-of_node_put-on-bail-out.patch \
+    file://0004-net-netcp-ethss-move-sysfs-code-to-a-separate-file.patch \
+    file://0005-net-netcp-add-sysfs-control-for-switch-configuration.patch \
+    file://0006-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
 "
