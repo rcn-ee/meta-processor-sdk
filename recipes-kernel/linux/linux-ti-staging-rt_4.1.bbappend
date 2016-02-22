@@ -1,4 +1,4 @@
-PR_append = ".tisdk12"
+PR_append = ".tisdk13"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -21,5 +21,3 @@ SRC_URI_append = " \
     file://0001-omap2plus_defconfig-Enable-USB_ACM-and-USB_SERIAL-as.patch \
     file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
 "
-
-PATCHTOOL = "git"
