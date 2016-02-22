@@ -1,0 +1,54 @@
+From c674988ea93560f9f28aa5ee056ac7f42d89c359 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Mon, 22 Feb 2016 08:45:20 -0500
+Subject: [PATCH] setup-targetfs-nfs: Request user input if multiple
+ filesystems detected
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-targetfs-nfs.sh | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/setup-targetfs-nfs.sh b/setup-targetfs-nfs.sh
+index d8d6805..2b48b31 100644
+--- a/setup-targetfs-nfs.sh
++++ b/setup-targetfs-nfs.sh
+@@ -56,7 +56,34 @@ echo "on your host."
+ read -p "Press return to continue" REPLY
+ 
+ extract_fs() {
+-    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz`
++    num_fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz | wc -l`
++    if [ "$num_fstar" -gt "1" ]; then
++cat << EOM
++
++################################################################################
++
++   Multiple rootfs Tarballs found
++
++################################################################################
++
++EOM
++        fstar=""
++        while [ -z "$fstar" ]; do
++            ls $cwd/../filesystem/??sdk*rootfs*.tar.gz | grep -n '' | awk {'print "   " , $1'}
++            echo ""
++            read -p "Enter Number of rootfs Tarball: " TARNUMBER
++            echo " "
++            fstar=`ls $cwd/../filesystem/??sdk*rootfs*.tar.gz | grep -n '' | grep "${TARNUMBER}:" | cut -c3- | awk {'print$1'}`
++            if [ -z "$TARNUMBER" ] || [ -z "$fstar" ]; then
++                echo ""
++                echo "Please enter a valid number."
++                echo ""
++                fstar=""
++            fi
++        done
++    else
++        fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz`
++    fi
+     me=`whoami`
+     sudo mkdir -p $1
+     check_status
+-- 
+1.9.1
+
