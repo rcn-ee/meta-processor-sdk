@@ -1,4 +1,4 @@
-From f088792ab5996931199d5712e5d91adeb6cfa7ed Mon Sep 17 00:00:00 2001
+From 27fea818448e0af2ff3fadc68822be6dff1354d0 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 16 Feb 2016 17:55:46 -0500
 Subject: [PATCH 2/6] net: netcp: set proper ale revision mask for major
@@ -9,12 +9,13 @@ The mask for major version in ALE register is 4 bit instead of
 mask and use in the ALE driver.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/netcp_ethss.c | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 26a9fda..5be4a60 100644
+index 389af4d..856afd6 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
 @@ -4254,6 +4254,8 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,

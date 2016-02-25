@@ -1,4 +1,4 @@
-From 5dbf8714913aa7515c36b426b886f22495feb87a Mon Sep 17 00:00:00 2001
+From d5ee5822faba84283fb78a4de67668cab6d81f48 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 18 Feb 2016 10:11:19 -0500
 Subject: [PATCH 6/6] net: netcp: cpts: disable cpts time stamping using DT
@@ -15,6 +15,7 @@ The time stamping order is following provided the capability exists.
 Phy -> cpts -> PA
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/netcp_ethss.c | 19 +++++++++++++++++--
  drivers/net/ethernet/ti/netcp_ethss.h |  1 +
@@ -72,7 +73,7 @@ index 71b77b9..35b8c1b 100644
  				   &gbe_dev->tx_queue_id);
  	if (ret < 0) {
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.h b/drivers/net/ethernet/ti/netcp_ethss.h
-index 4d1bfaf..8c298f9 100644
+index bf7727f..ee8aa94 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.h
 +++ b/drivers/net/ethernet/ti/netcp_ethss.h
 @@ -108,6 +108,7 @@ struct gbe_priv {

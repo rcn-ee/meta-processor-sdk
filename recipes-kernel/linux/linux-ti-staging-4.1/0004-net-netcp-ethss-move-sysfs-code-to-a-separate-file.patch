@@ -1,4 +1,4 @@
-From bfca66979d7ebe724731b135322855659fe12b93 Mon Sep 17 00:00:00 2001
+From 0ed439316bd8ab5ba44be3ba6653de6392f46928 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Feb 2016 17:47:09 -0500
 Subject: [PATCH 4/6] net: netcp: ethss: move sysfs code to a separate file
@@ -9,6 +9,7 @@ netcp_ethss_sysfs.c. This requires that common definitions are moved
 to a local header file netcp_ethss.h and included in both driver code.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/Makefile            |   3 +-
  drivers/net/ethernet/ti/netcp_ethss.c       | 538 +---------------------------
@@ -19,10 +20,10 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  create mode 100644 drivers/net/ethernet/ti/netcp_ethss_sysfs.c
 
 diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
-index d4f61ec..3a9618e 100644
+index 35bffd5..bbdf600 100644
 --- a/drivers/net/ethernet/ti/Makefile
 +++ b/drivers/net/ethernet/ti/Makefile
-@@ -19,7 +19,8 @@ obj-$(CONFIG_TI_KEYSTONE_NETCP_CPTS) += netcp_cpts.o
+@@ -23,7 +23,8 @@ obj-$(CONFIG_TI_KEYSTONE_NETCP_CPTS) += netcp_cpts.o
  obj-$(CONFIG_TI_KEYSTONE_NETCP) += keystone_netcp.o
  keystone_netcp-y := netcp_core.o
  obj-$(CONFIG_TI_KEYSTONE_NETCP_ETHSS) += keystone_netcp_ethss.o
@@ -33,14 +34,14 @@ index d4f61ec..3a9618e 100644
  obj-$(CONFIG_TI_KEYSTONE_NETCP_PA) += keystone_netcp_pa.o
  keystone_netcp_pa-y := netcp_pa.o
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 5be4a60..2e6dbdd 100644
+index 856afd6..2e6dbdd 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
 @@ -30,9 +30,7 @@
  #include <linux/ethtool.h>
  #include <linux/phy/phy.h>
  
--#include "cpsw_ale.h"
+-#include "netcp_ale.h"
 -#include "netcp.h"
 -#include "netcp_cpts.h"
 +#include "netcp_ethss.h"
@@ -663,7 +664,7 @@ index 5be4a60..2e6dbdd 100644
  static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.h b/drivers/net/ethernet/ti/netcp_ethss.h
 new file mode 100644
-index 0000000..674d714
+index 0000000..10453a7
 --- /dev/null
 +++ b/drivers/net/ethernet/ti/netcp_ethss.h
 @@ -0,0 +1,155 @@
@@ -701,7 +702,7 @@ index 0000000..674d714
 +#include <linux/timer.h>
 +#include <linux/ethtool.h>
 +
-+#include "cpsw_ale.h"
++#include "netcp_ale.h"
 +#include "netcp.h"
 +#include "netcp_cpts.h"
 +

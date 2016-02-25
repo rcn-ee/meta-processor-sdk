@@ -1,4 +1,4 @@
-From f266abab86c2c21b69af84521c26225f26406cec Mon Sep 17 00:00:00 2001
+From b4c81f8b7ed8e993c81fbacca322ce361d9dd32b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 4 Feb 2016 18:48:21 -0500
 Subject: [PATCH 5/6] net: netcp: add sysfs control for switch configurations
@@ -12,6 +12,7 @@ To do so, some of the macros, defines etc are moved from netcp_ethss.c
 to netcp_ethss.h so that it can be used in netcp_ethss_sysfs.c
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/netcp_ethss.c       |   89 +-
  drivers/net/ethernet/ti/netcp_ethss.h       |   89 +-
@@ -191,7 +192,7 @@ index 2e6dbdd..71b77b9 100644
  		goto free_sec_ports;
  
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.h b/drivers/net/ethernet/ti/netcp_ethss.h
-index 674d714..4d1bfaf 100644
+index 10453a7..bf7727f 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.h
 +++ b/drivers/net/ethernet/ti/netcp_ethss.h
 @@ -23,6 +23,7 @@

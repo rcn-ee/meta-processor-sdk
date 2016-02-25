@@ -1,68 +1,110 @@
-From dabc5812e9abc24585043c54def37d028dbe82d9 Mon Sep 17 00:00:00 2001
+From 1fe774c7c477f15fb35b8d12589339b52cbaf04f Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
-Date: Tue, 2 Feb 2016 17:16:36 -0500
-Subject: [PATCH 1/6] cpsw: ale: enhancement to support sysfs commands
+Date: Wed, 24 Feb 2016 16:11:43 -0500
+Subject: [PATCH 1/6] net: netcp: use keystone specific ale driver
 
-Add sysfs support to control some of the ALE configuration
-at run time. Also add support for update ALE table.
-The update is done to make this driver work on
-netcp based ALE and other TI ALE h/w. Uses version info
-to customize the driver
+As this is a temporary patch, use its own driver for keystone netcp ale.
+This patch is cpsw_ale.c + changes to support netcp ale h/w. systfs
+controls are added to expose additional controls available on keystone
+and also update/dump ale table.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
- drivers/net/ethernet/ti/cpsw_ale.c | 1024 ++++++++++++++++++++++++++++++++++--
- drivers/net/ethernet/ti/cpsw_ale.h |   53 ++
- 2 files changed, 1042 insertions(+), 35 deletions(-)
+ drivers/net/ethernet/ti/Makefile      |    4 +
+ drivers/net/ethernet/ti/netcp_ale.c   | 1785 +++++++++++++++++++++++++++++++++
+ drivers/net/ethernet/ti/netcp_ale.h   |  167 +++
+ drivers/net/ethernet/ti/netcp_ethss.c |    2 +-
+ 4 files changed, 1957 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/ti/netcp_ale.c
+ create mode 100644 drivers/net/ethernet/ti/netcp_ale.h
 
-diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
-index 6e927b4..1bf1258 100644
---- a/drivers/net/ethernet/ti/cpsw_ale.c
-+++ b/drivers/net/ethernet/ti/cpsw_ale.c
-@@ -1,7 +1,7 @@
- /*
-- * Texas Instruments 3-Port Ethernet Switch Address Lookup Engine
-+ * Texas Instruments N-Port Ethernet Switch Address Lookup Engine
-  *
-- * Copyright (C) 2012 Texas Instruments
-+ * Copyright (C) 2012-2016 Texas Instruments
-  *
-  * This program is free software; you can redistribute it and/or
-  * modify it under the terms of the GNU General Public License as
-@@ -26,9 +26,14 @@
- #include "cpsw_ale.h"
+diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
+index d4f61ec..35bffd5 100644
+--- a/drivers/net/ethernet/ti/Makefile
++++ b/drivers/net/ethernet/ti/Makefile
+@@ -11,7 +11,11 @@ obj-$(CONFIG_TI_DAVINCI_EMAC) += davinci_emac.o
+ obj-$(CONFIG_TI_DAVINCI_MDIO) += davinci_mdio.o
+ obj-$(CONFIG_TI_DAVINCI_CPDMA) += davinci_cpdma.o
+ obj-$(CONFIG_TI_CPSW_PHY_SEL) += cpsw-phy-sel.o
++ifdef CONFIG_ARCH_KEYSTONE
++obj-$(CONFIG_TI_CPSW_ALE) += netcp_ale.o
++else
+ obj-$(CONFIG_TI_CPSW_ALE) += cpsw_ale.o
++endif
+ obj-$(CONFIG_TI_CPSW) += ti_cpsw.o
+ ti_cpsw-y := cpsw.o cpts.o
  
- #define BITMASK(bits)		(BIT(bits) - 1)
+diff --git a/drivers/net/ethernet/ti/netcp_ale.c b/drivers/net/ethernet/ti/netcp_ale.c
+new file mode 100644
+index 0000000..e169766
+--- /dev/null
++++ b/drivers/net/ethernet/ti/netcp_ale.c
+@@ -0,0 +1,1785 @@
++/*
++ * Texas Instruments N-Port Ethernet Switch Address Lookup Engine
++ *
++ * Copyright (C) 2012-2016 Texas Instruments
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/seq_file.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/stat.h>
++#include <linux/sysfs.h>
++#include <linux/etherdevice.h>
++
++#include "netcp_ale.h"
++
++#define BITMASK(bits)		(BIT(bits) - 1)
 +#define ALE_ENTRY_BITS		68
 +#define ALE_ENTRY_WORDS	DIV_ROUND_UP(ALE_ENTRY_BITS, 32)
- 
--#define ALE_VERSION_MAJOR(rev)	((rev >> 8) & 0xff)
++
 +#define ALE_VERSION_MAJOR(rev, mask) (((rev) >> 8) & (mask))
- #define ALE_VERSION_MINOR(rev)	(rev & 0xff)
++#define ALE_VERSION_MINOR(rev)	(rev & 0xff)
 +#define ALE_VERSION_1R3		0x0103
 +#define ALE_VERSION_1R4		0x0104
 +#define ALE_VERSION_9R3		0x0903
- 
- /* ALE Registers */
- #define ALE_IDVER		0x00
-@@ -38,6 +43,12 @@
- #define ALE_TABLE_CONTROL	0x20
- #define ALE_TABLE		0x34
- #define ALE_PORTCTL		0x40
++
++/* ALE Registers */
++#define ALE_IDVER		0x00
++#define ALE_CONTROL		0x08
++#define ALE_PRESCALE		0x10
++#define ALE_UNKNOWNVLAN		0x18
++#define ALE_TABLE_CONTROL	0x20
++#define ALE_TABLE		0x34
++#define ALE_PORTCTL		0x40
 +/* ALE Rev 1.4 Specific Registers */
 +#define ALE_UNKNOWNVLAN_MEMBER			0x90
 +#define ALE_UNKNOWNVLAN_UNREG_MCAST_FLOOD	0x94
 +#define ALE_UNKNOWNVLAN_REG_MCAST_FLOOD		0x98
 +#define ALE_UNKNOWNVLAN_FORCE_UNTAG_EGRESS	0x9C
 +#define ALE_VLAN_MASK_MUX(reg)			(0xc0 + (0x4 * reg))
- 
- #define ALE_TABLE_WRITE		BIT(31)
- 
-@@ -51,6 +62,20 @@
- #define ALE_UCAST_OUI			2
- #define ALE_UCAST_TOUCHED		3
- 
++
++#define ALE_TABLE_WRITE		BIT(31)
++
++#define ALE_TYPE_FREE			0
++#define ALE_TYPE_ADDR			1
++#define ALE_TYPE_VLAN			2
++#define ALE_TYPE_VLAN_ADDR		3
++
++#define ALE_UCAST_PERSISTANT		0
++#define ALE_UCAST_UNTOUCHED		1
++#define ALE_UCAST_OUI			2
++#define ALE_UCAST_TOUCHED		3
++
 +#define ALE_TBL_ENTRY_SHOW_LEN		160
 +#define ALE_RAW_TBL_ENTRY_SHOW_LEN	32
 +
@@ -77,13 +119,39 @@ index 6e927b4..1bf1258 100644
 +#define ALE_ENTRY_VLAN_FIELD_BITS	3
 +#define ALE_PORTCTL_BCAST_BITS		8
 +#define ALE_UNKNOWN_VLAN_FIELD_BITS	6
- static inline int cpsw_ale_get_field(u32 *ale_entry, u32 start, u32 bits)
- {
- 	int idx;
-@@ -84,20 +109,35 @@ static inline void cpsw_ale_set_##name(u32 *ale_entry, u32 value)	\
- 	cpsw_ale_set_field(ale_entry, start, bits, value);		\
- }
- 
++static inline int cpsw_ale_get_field(u32 *ale_entry, u32 start, u32 bits)
++{
++	int idx;
++
++	idx    = start / 32;
++	start -= idx * 32;
++	idx    = 2 - idx; /* flip */
++	return (ale_entry[idx] >> start) & BITMASK(bits);
++}
++
++static inline void cpsw_ale_set_field(u32 *ale_entry, u32 start, u32 bits,
++				      u32 value)
++{
++	int idx;
++
++	value &= BITMASK(bits);
++	idx    = start / 32;
++	start -= idx * 32;
++	idx    = 2 - idx; /* flip */
++	ale_entry[idx] &= ~(BITMASK(bits) << start);
++	ale_entry[idx] |=  (value << start);
++}
++
++#define DEFINE_ALE_FIELD(name, start, bits)				\
++static inline int cpsw_ale_get_##name(u32 *ale_entry)			\
++{									\
++	return cpsw_ale_get_field(ale_entry, start, bits);		\
++}									\
++static inline void cpsw_ale_set_##name(u32 *ale_entry, u32 value)	\
++{									\
++	cpsw_ale_set_field(ale_entry, start, bits, value);		\
++}
++
 +#define DEFINE_ALE_FIELD1(name, start)					\
 +static inline int cpsw_ale_get_##name(u32 *ale_entry, u32 bits)		\
 +{									\
@@ -95,98 +163,340 @@ index 6e927b4..1bf1258 100644
 +	cpsw_ale_set_field(ale_entry, start, bits, value);		\
 +}
 +
- DEFINE_ALE_FIELD(entry_type,		60,	2)
- DEFINE_ALE_FIELD(vlan_id,		48,	12)
- DEFINE_ALE_FIELD(mcast_state,		62,	2)
--DEFINE_ALE_FIELD(port_mask,		66,     3)
++DEFINE_ALE_FIELD(entry_type,		60,	2)
++DEFINE_ALE_FIELD(vlan_id,		48,	12)
++DEFINE_ALE_FIELD(mcast_state,		62,	2)
 +DEFINE_ALE_FIELD1(port_mask,		66)
- DEFINE_ALE_FIELD(super,			65,	1)
- DEFINE_ALE_FIELD(ucast_type,		62,     2)
--DEFINE_ALE_FIELD(port_num,		66,     2)
++DEFINE_ALE_FIELD(super,			65,	1)
++DEFINE_ALE_FIELD(ucast_type,		62,     2)
 +DEFINE_ALE_FIELD1(port_num,		66)
- DEFINE_ALE_FIELD(blocked,		65,     1)
- DEFINE_ALE_FIELD(secure,		64,     1)
--DEFINE_ALE_FIELD(vlan_untag_force,	24,	3)
--DEFINE_ALE_FIELD(vlan_reg_mcast,	16,	3)
--DEFINE_ALE_FIELD(vlan_unreg_mcast,	8,	3)
--DEFINE_ALE_FIELD(vlan_member_list,	0,	3)
++DEFINE_ALE_FIELD(blocked,		65,     1)
++DEFINE_ALE_FIELD(secure,		64,     1)
 +DEFINE_ALE_FIELD1(vlan_untag_force,	24)
 +DEFINE_ALE_FIELD1(vlan_reg_mcast,	16)
 +DEFINE_ALE_FIELD1(vlan_unreg_mcast,	8)
 +DEFINE_ALE_FIELD1(vlan_member_list,	0)
- DEFINE_ALE_FIELD(mcast,			40,	1)
++DEFINE_ALE_FIELD(mcast,			40,	1)
 +/* ALE Rev 1.4 specific */
 +DEFINE_ALE_FIELD(vlan_unreg_mcast_idx,	20,	3)
 +DEFINE_ALE_FIELD(vlan_reg_mcast_idx,	44,	3)
 +
- 
- /* The MAC address field in the ALE entry cannot be macroized as above */
- static inline void cpsw_ale_get_addr(u32 *ale_entry, u8 *addr)
-@@ -223,14 +263,16 @@ static void cpsw_ale_flush_mcast(struct cpsw_ale *ale, u32 *ale_entry,
- {
- 	int mask;
- 
--	mask = cpsw_ale_get_port_mask(ale_entry);
++
++/* The MAC address field in the ALE entry cannot be macroized as above */
++static inline void cpsw_ale_get_addr(u32 *ale_entry, u8 *addr)
++{
++	int i;
++
++	for (i = 0; i < 6; i++)
++		addr[i] = cpsw_ale_get_field(ale_entry, 40 - 8*i, 8);
++}
++
++static inline void cpsw_ale_set_addr(u32 *ale_entry, u8 *addr)
++{
++	int i;
++
++	for (i = 0; i < 6; i++)
++		cpsw_ale_set_field(ale_entry, 40 - 8*i, 8, addr[i]);
++}
++
++static int cpsw_ale_read(struct cpsw_ale *ale, int idx, u32 *ale_entry)
++{
++	int i;
++
++	WARN_ON(idx > ale->params.ale_entries);
++
++	__raw_writel(idx, ale->params.ale_regs + ALE_TABLE_CONTROL);
++
++	for (i = 0; i < ALE_ENTRY_WORDS; i++)
++		ale_entry[i] = __raw_readl(ale->params.ale_regs +
++					   ALE_TABLE + 4 * i);
++
++	return idx;
++}
++
++static int cpsw_ale_write(struct cpsw_ale *ale, int idx, u32 *ale_entry)
++{
++	int i;
++
++	WARN_ON(idx > ale->params.ale_entries);
++
++	for (i = 0; i < ALE_ENTRY_WORDS; i++)
++		__raw_writel(ale_entry[i], ale->params.ale_regs +
++			     ALE_TABLE + 4 * i);
++
++	__raw_writel(idx | ALE_TABLE_WRITE, ale->params.ale_regs +
++		     ALE_TABLE_CONTROL);
++
++	return idx;
++}
++
++static int cpsw_ale_match_addr(struct cpsw_ale *ale, u8 *addr, u16 vid)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int type, idx;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		u8 entry_addr[6];
++
++		cpsw_ale_read(ale, idx, ale_entry);
++		type = cpsw_ale_get_entry_type(ale_entry);
++		if (type != ALE_TYPE_ADDR && type != ALE_TYPE_VLAN_ADDR)
++			continue;
++		if (cpsw_ale_get_vlan_id(ale_entry) != vid)
++			continue;
++		cpsw_ale_get_addr(ale_entry, entry_addr);
++		if (ether_addr_equal(entry_addr, addr))
++			return idx;
++	}
++	return -ENOENT;
++}
++
++static int cpsw_ale_match_vlan(struct cpsw_ale *ale, u16 vid)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int type, idx;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		cpsw_ale_read(ale, idx, ale_entry);
++		type = cpsw_ale_get_entry_type(ale_entry);
++		if (type != ALE_TYPE_VLAN)
++			continue;
++		if (cpsw_ale_get_vlan_id(ale_entry) == vid)
++			return idx;
++	}
++	return -ENOENT;
++}
++
++static int cpsw_ale_match_free(struct cpsw_ale *ale)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int type, idx;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		cpsw_ale_read(ale, idx, ale_entry);
++		type = cpsw_ale_get_entry_type(ale_entry);
++		if (type == ALE_TYPE_FREE)
++			return idx;
++	}
++	return -ENOENT;
++}
++
++static int cpsw_ale_find_ageable(struct cpsw_ale *ale)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int type, idx;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		cpsw_ale_read(ale, idx, ale_entry);
++		type = cpsw_ale_get_entry_type(ale_entry);
++		if (type != ALE_TYPE_ADDR && type != ALE_TYPE_VLAN_ADDR)
++			continue;
++		if (cpsw_ale_get_mcast(ale_entry))
++			continue;
++		type = cpsw_ale_get_ucast_type(ale_entry);
++		if (type != ALE_UCAST_PERSISTANT &&
++		    type != ALE_UCAST_OUI)
++			return idx;
++	}
++	return -ENOENT;
++}
++
++static void cpsw_ale_flush_mcast(struct cpsw_ale *ale, u32 *ale_entry,
++				 int port_mask)
++{
++	int mask;
++
 +	mask = cpsw_ale_get_port_mask(ale_entry,
 +				      ale->port_mask_bits);
- 	if ((mask & port_mask) == 0)
- 		return; /* ports dont intersect, not interested */
- 	mask &= ~port_mask;
- 
- 	/* free if only remaining port is host port */
- 	if (mask)
--		cpsw_ale_set_port_mask(ale_entry, mask);
++	if ((mask & port_mask) == 0)
++		return; /* ports dont intersect, not interested */
++	mask &= ~port_mask;
++
++	/* free if only remaining port is host port */
++	if (mask)
 +		cpsw_ale_set_port_mask(ale_entry, mask,
 +				       ale->port_mask_bits);
- 	else
- 		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
- }
-@@ -273,7 +315,7 @@ static void cpsw_ale_flush_ucast(struct cpsw_ale *ale, u32 *ale_entry,
- {
- 	int port;
- 
--	port = cpsw_ale_get_port_num(ale_entry);
++	else
++		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
++}
++
++int cpsw_ale_flush_multicast(struct cpsw_ale *ale, int port_mask, int vid)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int ret, idx;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		cpsw_ale_read(ale, idx, ale_entry);
++		ret = cpsw_ale_get_entry_type(ale_entry);
++		if (ret != ALE_TYPE_ADDR && ret != ALE_TYPE_VLAN_ADDR)
++			continue;
++
++		/* if vid passed is -1 then remove all multicast entry from
++		 * the table irrespective of vlan id, if a valid vlan id is
++		 * passed then remove only multicast added to that vlan id.
++		 * if vlan id doesn't match then move on to next entry.
++		 */
++		if (vid != -1 && cpsw_ale_get_vlan_id(ale_entry) != vid)
++			continue;
++
++		if (cpsw_ale_get_mcast(ale_entry)) {
++			u8 addr[6];
++
++			cpsw_ale_get_addr(ale_entry, addr);
++			if (!is_broadcast_ether_addr(addr))
++				cpsw_ale_flush_mcast(ale, ale_entry, port_mask);
++		}
++
++		cpsw_ale_write(ale, idx, ale_entry);
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_flush_multicast);
++
++static void cpsw_ale_flush_ucast(struct cpsw_ale *ale, u32 *ale_entry,
++				 int port_mask)
++{
++	int port;
++
 +	port = cpsw_ale_get_port_num(ale_entry, ale->port_num_bits);
- 	if ((BIT(port) & port_mask) == 0)
- 		return; /* ports dont intersect, not interested */
- 	cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
-@@ -324,7 +366,7 @@ int cpsw_ale_add_ucast(struct cpsw_ale *ale, u8 *addr, int port,
- 	cpsw_ale_set_ucast_type(ale_entry, ALE_UCAST_PERSISTANT);
- 	cpsw_ale_set_secure(ale_entry, (flags & ALE_SECURE) ? 1 : 0);
- 	cpsw_ale_set_blocked(ale_entry, (flags & ALE_BLOCKED) ? 1 : 0);
--	cpsw_ale_set_port_num(ale_entry, port);
++	if ((BIT(port) & port_mask) == 0)
++		return; /* ports dont intersect, not interested */
++	cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
++}
++
++int cpsw_ale_flush(struct cpsw_ale *ale, int port_mask)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int ret, idx;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		cpsw_ale_read(ale, idx, ale_entry);
++		ret = cpsw_ale_get_entry_type(ale_entry);
++		if (ret != ALE_TYPE_ADDR && ret != ALE_TYPE_VLAN_ADDR)
++			continue;
++
++		if (cpsw_ale_get_mcast(ale_entry))
++			cpsw_ale_flush_mcast(ale, ale_entry, port_mask);
++		else
++			cpsw_ale_flush_ucast(ale, ale_entry, port_mask);
++
++		cpsw_ale_write(ale, idx, ale_entry);
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_flush);
++
++static inline void cpsw_ale_set_vlan_entry_type(u32 *ale_entry,
++						int flags, u16 vid)
++{
++	if (flags & ALE_VLAN) {
++		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_VLAN_ADDR);
++		cpsw_ale_set_vlan_id(ale_entry, vid);
++	} else {
++		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_ADDR);
++	}
++}
++
++int cpsw_ale_add_ucast(struct cpsw_ale *ale, u8 *addr, int port,
++		       int flags, u16 vid)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
++	int idx;
++
++	cpsw_ale_set_vlan_entry_type(ale_entry, flags, vid);
++
++	cpsw_ale_set_addr(ale_entry, addr);
++	cpsw_ale_set_ucast_type(ale_entry, ALE_UCAST_PERSISTANT);
++	cpsw_ale_set_secure(ale_entry, (flags & ALE_SECURE) ? 1 : 0);
++	cpsw_ale_set_blocked(ale_entry, (flags & ALE_BLOCKED) ? 1 : 0);
 +	cpsw_ale_set_port_num(ale_entry, port, ale->port_num_bits);
- 
- 	idx = cpsw_ale_match_addr(ale, addr, (flags & ALE_VLAN) ? vid : 0);
- 	if (idx < 0)
-@@ -371,9 +413,11 @@ int cpsw_ale_add_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
- 	cpsw_ale_set_super(ale_entry, (flags & ALE_BLOCKED) ? 1 : 0);
- 	cpsw_ale_set_mcast_state(ale_entry, mcast_state);
- 
--	mask = cpsw_ale_get_port_mask(ale_entry);
++
++	idx = cpsw_ale_match_addr(ale, addr, (flags & ALE_VLAN) ? vid : 0);
++	if (idx < 0)
++		idx = cpsw_ale_match_free(ale);
++	if (idx < 0)
++		idx = cpsw_ale_find_ageable(ale);
++	if (idx < 0)
++		return -ENOMEM;
++
++	cpsw_ale_write(ale, idx, ale_entry);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_add_ucast);
++
++int cpsw_ale_del_ucast(struct cpsw_ale *ale, u8 *addr, int port,
++		       int flags, u16 vid)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
++	int idx;
++
++	idx = cpsw_ale_match_addr(ale, addr, (flags & ALE_VLAN) ? vid : 0);
++	if (idx < 0)
++		return -ENOENT;
++
++	cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
++	cpsw_ale_write(ale, idx, ale_entry);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_del_ucast);
++
++int cpsw_ale_add_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
++		       int flags, u16 vid, int mcast_state)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
++	int idx, mask;
++
++	idx = cpsw_ale_match_addr(ale, addr, (flags & ALE_VLAN) ? vid : 0);
++	if (idx >= 0)
++		cpsw_ale_read(ale, idx, ale_entry);
++
++	cpsw_ale_set_vlan_entry_type(ale_entry, flags, vid);
++
++	cpsw_ale_set_addr(ale_entry, addr);
++	cpsw_ale_set_super(ale_entry, (flags & ALE_BLOCKED) ? 1 : 0);
++	cpsw_ale_set_mcast_state(ale_entry, mcast_state);
++
 +	mask = cpsw_ale_get_port_mask(ale_entry,
 +				      ale->port_mask_bits);
- 	port_mask |= mask;
--	cpsw_ale_set_port_mask(ale_entry, port_mask);
++	port_mask |= mask;
 +	cpsw_ale_set_port_mask(ale_entry, port_mask,
 +			       ale->port_mask_bits);
- 
- 	if (idx < 0)
- 		idx = cpsw_ale_match_free(ale);
-@@ -400,7 +444,8 @@ int cpsw_ale_del_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
- 	cpsw_ale_read(ale, idx, ale_entry);
- 
- 	if (port_mask)
--		cpsw_ale_set_port_mask(ale_entry, port_mask);
++
++	if (idx < 0)
++		idx = cpsw_ale_match_free(ale);
++	if (idx < 0)
++		idx = cpsw_ale_find_ageable(ale);
++	if (idx < 0)
++		return -ENOMEM;
++
++	cpsw_ale_write(ale, idx, ale_entry);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_add_mcast);
++
++int cpsw_ale_del_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
++		       int flags, u16 vid)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
++	int idx;
++
++	idx = cpsw_ale_match_addr(ale, addr, (flags & ALE_VLAN) ? vid : 0);
++	if (idx < 0)
++		return -EINVAL;
++
++	cpsw_ale_read(ale, idx, ale_entry);
++
++	if (port_mask)
 +		cpsw_ale_set_port_mask(ale_entry, port_mask,
 +				       ale->port_mask_bits);
- 	else
- 		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
- 
-@@ -409,6 +454,38 @@ int cpsw_ale_del_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
- }
- EXPORT_SYMBOL_GPL(cpsw_ale_del_mcast);
- 
++	else
++		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
++
++	cpsw_ale_write(ale, idx, ale_entry);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_del_mcast);
++
 +/* ALE Rev 1.4 specific vlan functions */
 +static void cpsw_ale_set_vlan_mcast(struct cpsw_ale *ale, u32 *ale_entry,
 +				    int reg_mcast, int unreg_mcast)
@@ -219,17 +529,19 @@ index 6e927b4..1bf1258 100644
 +				   ALE_VLAN_MASK_MUX(idx));
 +}
 +
- int cpsw_ale_add_vlan(struct cpsw_ale *ale, u16 vid, int port, int untag,
- 		      int reg_mcast, int unreg_mcast)
- {
-@@ -422,10 +499,16 @@ int cpsw_ale_add_vlan(struct cpsw_ale *ale, u16 vid, int port, int untag,
- 	cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_VLAN);
- 	cpsw_ale_set_vlan_id(ale_entry, vid);
- 
--	cpsw_ale_set_vlan_untag_force(ale_entry, untag);
--	cpsw_ale_set_vlan_reg_mcast(ale_entry, reg_mcast);
--	cpsw_ale_set_vlan_unreg_mcast(ale_entry, unreg_mcast);
--	cpsw_ale_set_vlan_member_list(ale_entry, port);
++int cpsw_ale_add_vlan(struct cpsw_ale *ale, u16 vid, int port, int untag,
++		      int reg_mcast, int unreg_mcast)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
++	int idx;
++
++	idx = cpsw_ale_match_vlan(ale, vid);
++	if (idx >= 0)
++		cpsw_ale_read(ale, idx, ale_entry);
++
++	cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_VLAN);
++	cpsw_ale_set_vlan_id(ale_entry, vid);
++
 +	cpsw_ale_set_vlan_untag_force(ale_entry, untag, ale->vlan_field_bits);
 +	if (ale->revision != ALE_VERSION_1R4) {
 +		cpsw_ale_set_vlan_reg_mcast(ale_entry, reg_mcast,
@@ -240,42 +552,81 @@ index 6e927b4..1bf1258 100644
 +		cpsw_ale_set_vlan_mcast(ale, ale_entry, reg_mcast, unreg_mcast);
 +	}
 +	cpsw_ale_set_vlan_member_list(ale_entry, port, ale->vlan_field_bits);
- 
- 	if (idx < 0)
- 		idx = cpsw_ale_match_free(ale);
-@@ -451,7 +534,8 @@ int cpsw_ale_del_vlan(struct cpsw_ale *ale, u16 vid, int port_mask)
- 	cpsw_ale_read(ale, idx, ale_entry);
- 
- 	if (port_mask)
--		cpsw_ale_set_vlan_member_list(ale_entry, port_mask);
++
++	if (idx < 0)
++		idx = cpsw_ale_match_free(ale);
++	if (idx < 0)
++		idx = cpsw_ale_find_ageable(ale);
++	if (idx < 0)
++		return -ENOMEM;
++
++	cpsw_ale_write(ale, idx, ale_entry);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_add_vlan);
++
++int cpsw_ale_del_vlan(struct cpsw_ale *ale, u16 vid, int port_mask)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
++	int idx;
++
++	idx = cpsw_ale_match_vlan(ale, vid);
++	if (idx < 0)
++		return -ENOENT;
++
++	cpsw_ale_read(ale, idx, ale_entry);
++
++	if (port_mask)
 +		cpsw_ale_set_vlan_member_list(ale_entry, port_mask,
 +					      ale->vlan_field_bits);
- 	else
- 		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
- 
-@@ -479,12 +563,15 @@ void cpsw_ale_set_allmulti(struct cpsw_ale *ale, int allmulti)
- 		if (type != ALE_TYPE_VLAN)
- 			continue;
- 
--		unreg_mcast = cpsw_ale_get_vlan_unreg_mcast(ale_entry);
++	else
++		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
++
++	cpsw_ale_write(ale, idx, ale_entry);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_del_vlan);
++
++void cpsw_ale_set_allmulti(struct cpsw_ale *ale, int allmulti)
++{
++	u32 ale_entry[ALE_ENTRY_WORDS];
++	int type, idx;
++	int unreg_mcast = 0;
++
++	/* Only bother doing the work if the setting is actually changing */
++	if (ale->allmulti == allmulti)
++		return;
++
++	/* Remember the new setting to check against next time */
++	ale->allmulti = allmulti;
++
++	for (idx = 0; idx < ale->params.ale_entries; idx++) {
++		cpsw_ale_read(ale, idx, ale_entry);
++		type = cpsw_ale_get_entry_type(ale_entry);
++		if (type != ALE_TYPE_VLAN)
++			continue;
++
 +		unreg_mcast =
 +			cpsw_ale_get_vlan_unreg_mcast(ale_entry,
 +						      ale->vlan_field_bits);
- 		if (allmulti)
- 			unreg_mcast |= 1;
- 		else
- 			unreg_mcast &= ~1;
--		cpsw_ale_set_vlan_unreg_mcast(ale_entry, unreg_mcast);
++		if (allmulti)
++			unreg_mcast |= 1;
++		else
++			unreg_mcast &= ~1;
 +		cpsw_ale_set_vlan_unreg_mcast(ale_entry, unreg_mcast,
 +					      ale->vlan_field_bits);
- 		cpsw_ale_write(ale, idx, ale_entry);
- 	}
- }
-@@ -497,7 +584,15 @@ struct ale_control_info {
- 	int		bits;
- };
- 
--static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
++		cpsw_ale_write(ale, idx, ale_entry);
++	}
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_set_allmulti);
++
++struct ale_control_info {
++	const char	*name;
++	int		offset, port_offset;
++	int		shift, port_shift;
++	int		bits;
++};
++
 +static struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
 +	[ALE_VERSION]		= {
 +		.name		= "version",
@@ -285,59 +636,188 @@ index 6e927b4..1bf1258 100644
 +		.port_shift	= 0,
 +		.bits		= 32,
 +	},
- 	[ALE_ENABLE]		= {
- 		.name		= "enable",
- 		.offset		= ALE_CONTROL,
-@@ -640,7 +735,7 @@ static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
- 		.port_offset	= 4,
- 		.shift		= 16,
- 		.port_shift	= 0,
--		.bits		= 8,
++	[ALE_ENABLE]		= {
++		.name		= "enable",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 31,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_CLEAR]		= {
++		.name		= "clear",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 30,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_AGEOUT]		= {
++		.name		= "ageout",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 29,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_P0_UNI_FLOOD]	= {
++		.name		= "port0_unicast_flood",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 8,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_VLAN_NOLEARN]	= {
++		.name		= "vlan_nolearn",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 7,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_NO_PORT_VLAN]	= {
++		.name		= "no_port_vlan",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 6,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_OUI_DENY]		= {
++		.name		= "oui_deny",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 5,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_BYPASS]		= {
++		.name		= "bypass",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 4,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_RATE_LIMIT_TX]	= {
++		.name		= "rate_limit_tx",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 3,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_VLAN_AWARE]	= {
++		.name		= "vlan_aware",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 2,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_AUTH_ENABLE]	= {
++		.name		= "auth_enable",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 1,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_RATE_LIMIT]	= {
++		.name		= "rate_limit",
++		.offset		= ALE_CONTROL,
++		.port_offset	= 0,
++		.shift		= 0,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_PORT_STATE]	= {
++		.name		= "port_state",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 0,
++		.port_shift	= 0,
++		.bits		= 2,
++	},
++	[ALE_PORT_DROP_UNTAGGED] = {
++		.name		= "drop_untagged",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 2,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_PORT_DROP_UNKNOWN_VLAN] = {
++		.name		= "drop_unknown",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 3,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_PORT_NOLEARN]	= {
++		.name		= "nolearn",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 4,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_PORT_NO_SA_UPDATE]	= {
++		.name		= "no_source_update",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 5,
++		.port_shift	= 0,
++		.bits		= 1,
++	},
++	[ALE_PORT_MCAST_LIMIT]	= {
++		.name		= "mcast_limit",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 16,
++		.port_shift	= 0,
 +		.bits		= ALE_PORTCTL_BCAST_BITS,
- 	},
- 	[ALE_PORT_BCAST_LIMIT]	= {
- 		.name		= "bcast_limit",
-@@ -648,7 +743,7 @@ static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
- 		.port_offset	= 4,
- 		.shift		= 24,
- 		.port_shift	= 0,
--		.bits		= 8,
++	},
++	[ALE_PORT_BCAST_LIMIT]	= {
++		.name		= "bcast_limit",
++		.offset		= ALE_PORTCTL,
++		.port_offset	= 4,
++		.shift		= 24,
++		.port_shift	= 0,
 +		.bits		= ALE_PORTCTL_BCAST_BITS,
- 	},
- 	[ALE_PORT_UNKNOWN_VLAN_MEMBER] = {
- 		.name		= "unknown_vlan_member",
-@@ -656,7 +751,7 @@ static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
- 		.port_offset	= 0,
- 		.shift		= 0,
- 		.port_shift	= 0,
--		.bits		= 6,
++	},
++	[ALE_PORT_UNKNOWN_VLAN_MEMBER] = {
++		.name		= "unknown_vlan_member",
++		.offset		= ALE_UNKNOWNVLAN,
++		.port_offset	= 0,
++		.shift		= 0,
++		.port_shift	= 0,
 +		.bits		= ALE_UNKNOWN_VLAN_FIELD_BITS,
- 	},
- 	[ALE_PORT_UNKNOWN_MCAST_FLOOD] = {
- 		.name		= "unknown_mcast_flood",
-@@ -664,7 +759,7 @@ static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
- 		.port_offset	= 0,
- 		.shift		= 8,
- 		.port_shift	= 0,
--		.bits		= 6,
++	},
++	[ALE_PORT_UNKNOWN_MCAST_FLOOD] = {
++		.name		= "unknown_mcast_flood",
++		.offset		= ALE_UNKNOWNVLAN,
++		.port_offset	= 0,
++		.shift		= 8,
++		.port_shift	= 0,
 +		.bits		= ALE_UNKNOWN_VLAN_FIELD_BITS,
- 	},
- 	[ALE_PORT_UNKNOWN_REG_MCAST_FLOOD] = {
- 		.name		= "unknown_reg_flood",
-@@ -672,7 +767,7 @@ static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
- 		.port_offset	= 0,
- 		.shift		= 16,
- 		.port_shift	= 0,
--		.bits		= 6,
++	},
++	[ALE_PORT_UNKNOWN_REG_MCAST_FLOOD] = {
++		.name		= "unknown_reg_flood",
++		.offset		= ALE_UNKNOWNVLAN,
++		.port_offset	= 0,
++		.shift		= 16,
++		.port_shift	= 0,
 +		.bits		= ALE_UNKNOWN_VLAN_FIELD_BITS,
- 	},
- 	[ALE_PORT_UNTAGGED_EGRESS] = {
- 		.name		= "untagged_egress",
-@@ -680,18 +775,54 @@ static const struct ale_control_info ale_controls[ALE_NUM_CONTROLS] = {
- 		.port_offset	= 0,
- 		.shift		= 24,
- 		.port_shift	= 0,
--		.bits		= 6,
++	},
++	[ALE_PORT_UNTAGGED_EGRESS] = {
++		.name		= "untagged_egress",
++		.offset		= ALE_UNKNOWNVLAN,
++		.port_offset	= 0,
++		.shift		= 24,
++		.port_shift	= 0,
 +		.bits		= ALE_UNKNOWN_VLAN_FIELD_BITS,
 +	},
 +	/* ALE Rev 1.4 specific ALE controls */
@@ -371,47 +851,73 @@ index 6e927b4..1bf1258 100644
 +		.port_offset	= 0,
 +		.shift		= 0,
 +		.port_shift	= 0,
- 	},
- };
- 
- int cpsw_ale_control_set(struct cpsw_ale *ale, int port, int control,
- 			 int value)
- {
++	},
++};
++
++int cpsw_ale_control_set(struct cpsw_ale *ale, int port, int control,
++			 int value)
++{
 +	int offset, shift, max_control = ALE_NUM_CONTROLS;
- 	const struct ale_control_info *info;
--	int offset, shift;
- 	u32 tmp, mask;
- 
--	if (control < 0 || control >= ARRAY_SIZE(ale_controls))
++	const struct ale_control_info *info;
++	u32 tmp, mask;
++
 +	/* ALE version 1.4 has 4 more controls */
 +	if (ale->revision != ALE_VERSION_1R4)
 +		max_control -= 4;
 +
 +	if (control < 0 || control >= max_control)
- 		return -EINVAL;
- 
- 	info = &ale_controls[control];
-@@ -719,10 +850,14 @@ EXPORT_SYMBOL_GPL(cpsw_ale_control_set);
- int cpsw_ale_control_get(struct cpsw_ale *ale, int port, int control)
- {
- 	const struct ale_control_info *info;
--	int offset, shift;
++		return -EINVAL;
++
++	info = &ale_controls[control];
++	if (info->port_offset == 0 && info->port_shift == 0)
++		port = 0; /* global, port is a dont care */
++
++	if (port < 0 || port > ale->params.ale_ports)
++		return -EINVAL;
++
++	mask = BITMASK(info->bits);
++	if (value & ~mask)
++		return -EINVAL;
++
++	offset = info->offset + (port * info->port_offset);
++	shift  = info->shift  + (port * info->port_shift);
++
++	tmp = __raw_readl(ale->params.ale_regs + offset);
++	tmp = (tmp & ~(mask << shift)) | (value << shift);
++	__raw_writel(tmp, ale->params.ale_regs + offset);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_control_set);
++
++int cpsw_ale_control_get(struct cpsw_ale *ale, int port, int control)
++{
++	const struct ale_control_info *info;
 +	int offset, shift, max_control = ALE_NUM_CONTROLS;
- 	u32 tmp;
- 
--	if (control < 0 || control >= ARRAY_SIZE(ale_controls))
++	u32 tmp;
++
 +	/* ALE version 1.4 has 4 more controls */
 +	if (ale->revision != ALE_VERSION_1R4)
 +		max_control -= 4;
 +
 +	if (control < 0 || control >= max_control)
- 		return -EINVAL;
- 
- 	info = &ale_controls[control];
-@@ -740,6 +875,766 @@ int cpsw_ale_control_get(struct cpsw_ale *ale, int port, int control)
- }
- EXPORT_SYMBOL_GPL(cpsw_ale_control_get);
- 
++		return -EINVAL;
++
++	info = &ale_controls[control];
++	if (info->port_offset == 0 && info->port_shift == 0)
++		port = 0; /* global, port is a dont care */
++
++	if (port < 0 || port > ale->params.ale_ports)
++		return -EINVAL;
++
++	offset = info->offset + (port * info->port_offset);
++	shift  = info->shift  + (port * info->port_shift);
++
++	tmp = __raw_readl(ale->params.ale_regs + offset) >> shift;
++	return tmp & BITMASK(info->bits);
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_control_get);
++
 +static int cpsw_ale_dump_mcast(struct cpsw_ale *ale, u32 *ale_entry, char *buf,
 +			       int len)
 +{
@@ -1172,23 +1678,42 @@ index 6e927b4..1bf1258 100644
 +DEVICE_ATTR(ale_table_raw, S_IRUGO | S_IWUSR,
 +	    cpsw_ale_table_raw_show, cpsw_ale_table_raw_store);
 +
- static void cpsw_ale_timer(unsigned long arg)
- {
- 	struct cpsw_ale *ale = (struct cpsw_ale *)arg;
-@@ -767,10 +1662,62 @@ EXPORT_SYMBOL_GPL(cpsw_ale_set_ageout);
- void cpsw_ale_start(struct cpsw_ale *ale)
- {
- 	u32 rev;
++static void cpsw_ale_timer(unsigned long arg)
++{
++	struct cpsw_ale *ale = (struct cpsw_ale *)arg;
++
++	cpsw_ale_control_set(ale, 0, ALE_AGEOUT, 1);
++
++	if (ale->ageout) {
++		ale->timer.expires = jiffies + ale->ageout;
++		add_timer(&ale->timer);
++	}
++}
++
++int cpsw_ale_set_ageout(struct cpsw_ale *ale, int ageout)
++{
++	del_timer_sync(&ale->timer);
++	ale->ageout = ageout * HZ;
++	if (ale->ageout) {
++		ale->timer.expires = jiffies + ale->ageout;
++		add_timer(&ale->timer);
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_set_ageout);
++
++void cpsw_ale_start(struct cpsw_ale *ale)
++{
++	u32 rev;
 +	int ret, i;
- 
- 	rev = __raw_readl(ale->params.ale_regs + ALE_IDVER);
++
++	rev = __raw_readl(ale->params.ale_regs + ALE_IDVER);
 +	if (!ale->params.major_ver_mask)
 +		ale->params.major_ver_mask = 0xff;
 +	ale->revision =
 +		(ALE_VERSION_MAJOR(rev, ale->params.major_ver_mask) << 8) |
 +		 ALE_VERSION_MINOR(rev);
- 	dev_dbg(ale->params.dev, "initialized cpsw ale revision %d.%d\n",
--		ALE_VERSION_MAJOR(rev), ALE_VERSION_MINOR(rev));
++	dev_dbg(ale->params.dev, "initialized cpsw ale revision %d.%d\n",
 +		ALE_VERSION_MAJOR(rev, ale->params.major_ver_mask),
 +		ALE_VERSION_MINOR(rev));
 +
@@ -1236,13 +1761,22 @@ index 6e927b4..1bf1258 100644
 +		ale->vlan_field_bits = ALE_ENTRY_VLAN_FIELD_BITS;
 +	}
 +
- 	cpsw_ale_control_set(ale, 0, ALE_ENABLE, 1);
- 	cpsw_ale_control_set(ale, 0, ALE_CLEAR, 1);
- 
-@@ -787,6 +1734,13 @@ EXPORT_SYMBOL_GPL(cpsw_ale_start);
- void cpsw_ale_stop(struct cpsw_ale *ale)
- {
- 	del_timer_sync(&ale->timer);
++	cpsw_ale_control_set(ale, 0, ALE_ENABLE, 1);
++	cpsw_ale_control_set(ale, 0, ALE_CLEAR, 1);
++
++	init_timer(&ale->timer);
++	ale->timer.data	    = (unsigned long)ale;
++	ale->timer.function = cpsw_ale_timer;
++	if (ale->ageout) {
++		ale->timer.expires = jiffies + ale->ageout;
++		add_timer(&ale->timer);
++	}
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_start);
++
++void cpsw_ale_stop(struct cpsw_ale *ale)
++{
++	del_timer_sync(&ale->timer);
 +	if ((ale->revision == ALE_VERSION_1R3) ||
 +	    (ale->revision == ALE_VERSION_1R4) ||
 +	    (ale->revision == ALE_VERSION_9R3)) {
@@ -1250,25 +1784,85 @@ index 6e927b4..1bf1258 100644
 +		device_remove_file(ale->params.dev, &ale->ale_control_attr);
 +		device_remove_file(ale->params.dev, &ale->ale_table_raw_attr);
 +	}
- }
- EXPORT_SYMBOL_GPL(cpsw_ale_stop);
- 
-diff --git a/drivers/net/ethernet/ti/cpsw_ale.h b/drivers/net/ethernet/ti/cpsw_ale.h
-index af1e7ec..e833434 100644
---- a/drivers/net/ethernet/ti/cpsw_ale.h
-+++ b/drivers/net/ethernet/ti/cpsw_ale.h
-@@ -21,6 +21,7 @@ struct cpsw_ale_params {
- 	unsigned long		ale_ageout;	/* in secs */
- 	unsigned long		ale_entries;
- 	unsigned long		ale_ports;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_stop);
++
++struct cpsw_ale *cpsw_ale_create(struct cpsw_ale_params *params)
++{
++	struct cpsw_ale *ale;
++
++	ale = kzalloc(sizeof(*ale), GFP_KERNEL);
++	if (!ale)
++		return NULL;
++
++	ale->params = *params;
++	ale->ageout = ale->params.ale_ageout * HZ;
++
++	return ale;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_create);
++
++int cpsw_ale_destroy(struct cpsw_ale *ale)
++{
++	if (!ale)
++		return -EINVAL;
++	cpsw_ale_control_set(ale, 0, ALE_ENABLE, 0);
++	kfree(ale);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_destroy);
++
++void cpsw_ale_dump(struct cpsw_ale *ale, u32 *data)
++{
++	int i;
++
++	for (i = 0; i < ale->params.ale_entries; i++) {
++		cpsw_ale_read(ale, i, data);
++		data += ALE_ENTRY_WORDS;
++	}
++}
++EXPORT_SYMBOL_GPL(cpsw_ale_dump);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("TI CPSW ALE driver");
++MODULE_AUTHOR("Texas Instruments");
+diff --git a/drivers/net/ethernet/ti/netcp_ale.h b/drivers/net/ethernet/ti/netcp_ale.h
+new file mode 100644
+index 0000000..e833434
+--- /dev/null
++++ b/drivers/net/ethernet/ti/netcp_ale.h
+@@ -0,0 +1,167 @@
++/*
++ * Texas Instruments 3-Port Ethernet Switch Address Lookup Engine APIs
++ *
++ * Copyright (C) 2012 Texas Instruments
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef __TI_CPSW_ALE_H__
++#define __TI_CPSW_ALE_H__
++
++struct cpsw_ale_params {
++	struct device		*dev;
++	void __iomem		*ale_regs;
++	unsigned long		ale_ageout;	/* in secs */
++	unsigned long		ale_entries;
++	unsigned long		ale_ports;
 +	u32			major_ver_mask;
- };
- 
- struct cpsw_ale {
-@@ -28,10 +29,26 @@ struct cpsw_ale {
- 	struct timer_list	timer;
- 	unsigned long		ageout;
- 	int			allmulti;
++};
++
++struct cpsw_ale {
++	struct cpsw_ale_params	params;
++	struct timer_list	timer;
++	unsigned long		ageout;
++	int			allmulti;
 +	struct device_attribute ale_control_attr;
 +#define control_attr_to_ale(attr)	\
 +	container_of(attr, struct cpsw_ale, ale_control_attr)
@@ -1284,30 +1878,95 @@ index af1e7ec..e833434 100644
 +	u32			port_mask_bits;
 +	u32			port_num_bits;
 +	u32			vlan_field_bits;
- };
- 
- enum cpsw_ale_control {
- 	/* global */
++};
++
++enum cpsw_ale_control {
++	/* global */
 +	ALE_VERSION,
- 	ALE_ENABLE,
- 	ALE_CLEAR,
- 	ALE_AGEOUT,
-@@ -56,6 +73,11 @@ enum cpsw_ale_control {
- 	ALE_PORT_UNTAGGED_EGRESS,
- 	ALE_PORT_BCAST_LIMIT,
- 	ALE_PORT_MCAST_LIMIT,
++	ALE_ENABLE,
++	ALE_CLEAR,
++	ALE_AGEOUT,
++	ALE_P0_UNI_FLOOD,
++	ALE_VLAN_NOLEARN,
++	ALE_NO_PORT_VLAN,
++	ALE_OUI_DENY,
++	ALE_BYPASS,
++	ALE_RATE_LIMIT_TX,
++	ALE_VLAN_AWARE,
++	ALE_AUTH_ENABLE,
++	ALE_RATE_LIMIT,
++	/* port controls */
++	ALE_PORT_STATE,
++	ALE_PORT_DROP_UNTAGGED,
++	ALE_PORT_DROP_UNKNOWN_VLAN,
++	ALE_PORT_NOLEARN,
++	ALE_PORT_NO_SA_UPDATE,
++	ALE_PORT_UNKNOWN_VLAN_MEMBER,
++	ALE_PORT_UNKNOWN_MCAST_FLOOD,
++	ALE_PORT_UNKNOWN_REG_MCAST_FLOOD,
++	ALE_PORT_UNTAGGED_EGRESS,
++	ALE_PORT_BCAST_LIMIT,
++	ALE_PORT_MCAST_LIMIT,
 +	/* ALE Rev 1.4 specific port controls */
 +	ALE_PORT_UNKNOWN_VLAN_MEMBER_1R4,
 +	ALE_PORT_UNKNOWN_MCAST_FLOOD_1R4,
 +	ALE_PORT_UNKNOWN_REG_MCAST_FLOOD_1R4,
 +	ALE_PORT_UNTAGGED_EGRESS_1R4,
- 	ALE_NUM_CONTROLS,
- };
- 
-@@ -111,4 +133,35 @@ int cpsw_ale_control_set(struct cpsw_ale *ale, int port,
- 			 int control, int value);
- void cpsw_ale_dump(struct cpsw_ale *ale, u32 *data);
- 
++	ALE_NUM_CONTROLS,
++};
++
++enum cpsw_ale_port_state {
++	ALE_PORT_STATE_DISABLE	= 0x00,
++	ALE_PORT_STATE_BLOCK	= 0x01,
++	ALE_PORT_STATE_LEARN	= 0x02,
++	ALE_PORT_STATE_FORWARD	= 0x03,
++};
++
++/* ALE unicast entry flags - passed into cpsw_ale_add_ucast() */
++#define ALE_SECURE			BIT(0)
++#define ALE_BLOCKED			BIT(1)
++#define ALE_SUPER			BIT(2)
++#define ALE_VLAN			BIT(3)
++
++#define ALE_PORT_HOST			BIT(0)
++#define ALE_PORT_1			BIT(1)
++#define ALE_PORT_2			BIT(2)
++
++#define ALE_MCAST_FWD			0
++#define ALE_MCAST_BLOCK_LEARN_FWD	1
++#define ALE_MCAST_FWD_LEARN		2
++#define ALE_MCAST_FWD_2			3
++
++#define ALE_ENTRY_BITS		68
++#define ALE_ENTRY_WORDS	DIV_ROUND_UP(ALE_ENTRY_BITS, 32)
++
++struct cpsw_ale *cpsw_ale_create(struct cpsw_ale_params *params);
++int cpsw_ale_destroy(struct cpsw_ale *ale);
++
++void cpsw_ale_start(struct cpsw_ale *ale);
++void cpsw_ale_stop(struct cpsw_ale *ale);
++
++int cpsw_ale_set_ageout(struct cpsw_ale *ale, int ageout);
++int cpsw_ale_flush(struct cpsw_ale *ale, int port_mask);
++int cpsw_ale_flush_multicast(struct cpsw_ale *ale, int port_mask, int vid);
++int cpsw_ale_add_ucast(struct cpsw_ale *ale, u8 *addr, int port,
++		       int flags, u16 vid);
++int cpsw_ale_del_ucast(struct cpsw_ale *ale, u8 *addr, int port,
++		       int flags, u16 vid);
++int cpsw_ale_add_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
++		       int flags, u16 vid, int mcast_state);
++int cpsw_ale_del_mcast(struct cpsw_ale *ale, u8 *addr, int port_mask,
++		       int flags, u16 vid);
++int cpsw_ale_add_vlan(struct cpsw_ale *ale, u16 vid, int port, int untag,
++			int reg_mcast, int unreg_mcast);
++int cpsw_ale_del_vlan(struct cpsw_ale *ale, u16 vid, int port);
++void cpsw_ale_set_allmulti(struct cpsw_ale *ale, int allmulti);
++
++int cpsw_ale_control_get(struct cpsw_ale *ale, int port, int control);
++int cpsw_ale_control_set(struct cpsw_ale *ale, int port,
++			 int control, int value);
++void cpsw_ale_dump(struct cpsw_ale *ale, u32 *data);
++
 +/* ALE Table store VLAN command param indices */
 +enum {
 +	ALE_VP_VID,
@@ -1339,7 +1998,20 @@ index af1e7ec..e833434 100644
 +	ALE_MP_NUM
 +};
 +
- #endif
++#endif
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index 26a9fda..389af4d 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -30,7 +30,7 @@
+ #include <linux/ethtool.h>
+ #include <linux/phy/phy.h>
+ 
+-#include "cpsw_ale.h"
++#include "netcp_ale.h"
+ #include "netcp.h"
+ #include "netcp_cpts.h"
+ 
 -- 
 1.9.1
 
