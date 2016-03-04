@@ -1,4 +1,4 @@
-PR_append = ".tisdk36"
+PR_append = ".tisdk37"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -27,3 +27,5 @@ SRC_URI_append = " \
     file://0005-net-netcp-add-sysfs-control-for-switch-configuration.patch \
     file://0006-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
 "
+
+RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
