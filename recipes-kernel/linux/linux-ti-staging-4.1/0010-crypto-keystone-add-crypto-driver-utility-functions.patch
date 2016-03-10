@@ -1,7 +1,7 @@
-From 038876070d88fbe349b77a2e1ffa0d0a5dc65716 Mon Sep 17 00:00:00 2001
+From ae57c1c79ab6773a7f9111decd0e970432f233de Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 1 Feb 2016 14:28:54 -0500
-Subject: [PATCH 10/15] crypto: keystone: add crypto driver utility functions
+Subject: [PATCH 10/23] crypto: keystone: add crypto driver utility functions
 
 This commit introduces the keystone-sa-utils.c file, which is the second
 part of the keystone sideband SA driver. The majority of it was also

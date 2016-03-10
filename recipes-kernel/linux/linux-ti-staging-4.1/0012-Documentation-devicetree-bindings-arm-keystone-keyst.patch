@@ -1,7 +1,7 @@
-From 95d185979471e412a00c87278e23c5ceef1b3889 Mon Sep 17 00:00:00 2001
+From 59baaeb6c223b96c432f256c044b04b2c704d63f Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 2 Feb 2016 10:22:39 -0500
-Subject: [PATCH 12/15] Documentation: devicetree: bindings: arm: keystone:
+Subject: [PATCH 12/23] Documentation: devicetree: bindings: arm: keystone:
  keystone-crypto.txt
 
 Added device tree bindings for the side-band Security Accelerator

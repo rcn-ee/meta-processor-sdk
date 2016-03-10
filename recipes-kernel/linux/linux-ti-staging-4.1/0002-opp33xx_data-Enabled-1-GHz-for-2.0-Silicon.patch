@@ -1,7 +1,7 @@
-From da2bab8956d1aa66ba72da88e54e6bbe65015280 Mon Sep 17 00:00:00 2001
+From deeb6ffae461fae2d0628c95501a6b5499df9e52 Mon Sep 17 00:00:00 2001
 From: "Franklin S. Cooper Jr" <fcooper@ti.com>
 Date: Wed, 14 Jan 2015 12:17:03 -0600
-Subject: [PATCH 02/15] opp33xx_data: Enabled 1 GHz for 2.0 Silicon
+Subject: [PATCH 02/23] opp33xx_data: Enabled 1 GHz for 2.0 Silicon
 
 * For AM335x, PG 2.0 silicon was a very short lived revision mainly used
   for internal board development and Beaglebone Black.

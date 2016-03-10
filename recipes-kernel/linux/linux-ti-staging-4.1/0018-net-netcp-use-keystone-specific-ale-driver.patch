@@ -1,7 +1,7 @@
-From 1fe774c7c477f15fb35b8d12589339b52cbaf04f Mon Sep 17 00:00:00 2001
+From b8a7c030747beb4dafc6bbeb7b9be6162a886961 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 24 Feb 2016 16:11:43 -0500
-Subject: [PATCH 1/6] net: netcp: use keystone specific ale driver
+Subject: [PATCH 18/23] net: netcp: use keystone specific ale driver
 
 As this is a temporary patch, use its own driver for keystone netcp ale.
 This patch is cpsw_ale.c + changes to support netcp ale h/w. systfs
@@ -9,7 +9,6 @@ controls are added to expose additional controls available on keystone
 and also update/dump ale table.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/Makefile      |    4 +
  drivers/net/ethernet/ti/netcp_ale.c   | 1785 +++++++++++++++++++++++++++++++++
@@ -2000,7 +1999,7 @@ index 0000000..e833434
 +
 +#endif
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 26a9fda..389af4d 100644
+index 9b4eed6..7c72797 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
 @@ -30,7 +30,7 @@

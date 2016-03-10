@@ -1,7 +1,7 @@
-From 0ed439316bd8ab5ba44be3ba6653de6392f46928 Mon Sep 17 00:00:00 2001
+From c182725c4b0af59d071f2d32bbe9885f065ed9f3 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Feb 2016 17:47:09 -0500
-Subject: [PATCH 4/6] net: netcp: ethss: move sysfs code to a separate file
+Subject: [PATCH 21/23] net: netcp: ethss: move sysfs code to a separate file
 
 For ease of maintenance and to reduce the size of ethss driver code
 move the sysfs related code from netcp_ethss.c to a separate file,
@@ -9,13 +9,12 @@ netcp_ethss_sysfs.c. This requires that common definitions are moved
 to a local header file netcp_ethss.h and included in both driver code.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/Makefile            |   3 +-
- drivers/net/ethernet/ti/netcp_ethss.c       | 538 +---------------------------
- drivers/net/ethernet/ti/netcp_ethss.h       | 155 ++++++++
+ drivers/net/ethernet/ti/netcp_ethss.c       | 539 +---------------------------
+ drivers/net/ethernet/ti/netcp_ethss.h       | 156 ++++++++
  drivers/net/ethernet/ti/netcp_ethss_sysfs.c | 444 +++++++++++++++++++++++
- 4 files changed, 602 insertions(+), 538 deletions(-)
+ 4 files changed, 603 insertions(+), 539 deletions(-)
  create mode 100644 drivers/net/ethernet/ti/netcp_ethss.h
  create mode 100644 drivers/net/ethernet/ti/netcp_ethss_sysfs.c
 
@@ -34,7 +33,7 @@ index 35bffd5..bbdf600 100644
  obj-$(CONFIG_TI_KEYSTONE_NETCP_PA) += keystone_netcp_pa.o
  keystone_netcp_pa-y := netcp_pa.o
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 856afd6..2e6dbdd 100644
+index 8d83a15..7c12544 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
 @@ -30,9 +30,7 @@
@@ -89,13 +88,14 @@ index 856afd6..2e6dbdd 100644
  struct gbe_port_regs {
  	u32	max_blks;
  	u32	blk_cnt;
-@@ -621,19 +600,6 @@ struct gbe_port_regs {
+@@ -621,20 +600,6 @@ struct gbe_port_regs {
  	u32	ts_ctl2;
  };
  
 -struct gbe_port_regs_ofs {
 -	u16	port_vlan;
 -	u16	tx_pri_map;
+-	u16     rx_pri_map;
 -	u16	sa_lo;
 -	u16	sa_hi;
 -	u16	ts_ctl;
@@ -109,7 +109,7 @@ index 856afd6..2e6dbdd 100644
  struct gbe_host_port_regs {
  	u32	src_id;
  	u32	port_vlan;
-@@ -641,12 +607,6 @@ struct gbe_host_port_regs {
+@@ -642,12 +607,6 @@ struct gbe_host_port_regs {
  	u32	rx_maxlen;
  };
  
@@ -122,7 +122,7 @@ index 856afd6..2e6dbdd 100644
  struct gbe_emac_regs {
  	u32	id_ver;
  	u32	mac_control;
-@@ -661,12 +621,6 @@ struct gbe_emac_regs {
+@@ -662,12 +621,6 @@ struct gbe_emac_regs {
  	u32	rsvd[6];
  };
  
@@ -135,7 +135,7 @@ index 856afd6..2e6dbdd 100644
  struct gbe_hw_stats {
  	u32	rx_good_frames;
  	u32	rx_broadcast_frames;
-@@ -705,16 +659,8 @@ struct gbe_hw_stats {
+@@ -706,16 +659,8 @@ struct gbe_hw_stats {
  	u32	rx_dma_overruns;
  };
  
@@ -152,7 +152,7 @@ index 856afd6..2e6dbdd 100644
  struct gbe_slave {
  	void __iomem			*port_regs;
  	void __iomem			*emac_regs;
-@@ -733,64 +679,6 @@ struct gbe_slave {
+@@ -734,64 +679,6 @@ struct gbe_slave {
  	struct list_head		slave_list;
  };
  
@@ -217,7 +217,7 @@ index 856afd6..2e6dbdd 100644
  struct gbe_intf {
  	struct net_device	*ndev;
  	struct device		*dev;
-@@ -1757,9 +1645,6 @@ static const struct netcp_ethtool_stat xgbe10_et_stats[] = {
+@@ -1758,9 +1645,6 @@ static const struct netcp_ethtool_stat xgbe10_et_stats[] = {
  	XGBE_STATS2_INFO(rx_dma_overruns),
  };
  
@@ -227,7 +227,7 @@ index 856afd6..2e6dbdd 100644
  #define for_each_sec_slave(slave, priv) \
  	list_for_each_entry((slave), &(priv)->secondary_slaves, slave_list)
  
-@@ -3034,422 +2919,6 @@ static int gbe_of_parse_cpts(struct gbe_priv *gbe_dev,
+@@ -3042,422 +2926,6 @@ static int gbe_of_parse_cpts(struct gbe_priv *gbe_dev,
  
  	return 0;
  }
@@ -650,7 +650,7 @@ index 856afd6..2e6dbdd 100644
  #else
  static void init_slave_ts_ctl(struct gbe_slave *slave)
  {
-@@ -3460,11 +2929,6 @@ static int gbe_of_parse_cpts(struct gbe_priv *gbe_dev,
+@@ -3468,11 +2936,6 @@ static int gbe_of_parse_cpts(struct gbe_priv *gbe_dev,
  {
  	return 0;
  }
@@ -664,10 +664,10 @@ index 856afd6..2e6dbdd 100644
  static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.h b/drivers/net/ethernet/ti/netcp_ethss.h
 new file mode 100644
-index 0000000..10453a7
+index 0000000..85133c3
 --- /dev/null
 +++ b/drivers/net/ethernet/ti/netcp_ethss.h
-@@ -0,0 +1,155 @@
+@@ -0,0 +1,156 @@
 +/*
 + * NetCP ethss header file
 + *
@@ -728,6 +728,7 @@ index 0000000..10453a7
 +struct gbe_port_regs_ofs {
 +	u16	port_vlan;
 +	u16	tx_pri_map;
++	u16	rx_pri_map;
 +	u16	sa_lo;
 +	u16	sa_hi;
 +	u16	ts_ctl;

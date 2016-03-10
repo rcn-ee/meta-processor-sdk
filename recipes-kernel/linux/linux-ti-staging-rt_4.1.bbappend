@@ -1,4 +1,4 @@
-PR_append = ".tisdk17"
+PR_append = ".tisdk18"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -18,14 +18,14 @@ SRC_URI_append = " \
     file://0013-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
     file://0014-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
     file://0015-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
-    file://0001-omap2plus_defconfig-Enable-USB_ACM-and-USB_SERIAL-as.patch \
-    file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
-    file://0001-net-netcp-use-keystone-specific-ale-driver.patch \
-    file://0002-net-netcp-set-proper-ale-revision-mask-for-major-ver.patch \
-    file://0003-net-netcp-pa-add-missing-of_node_put-on-bail-out.patch \
-    file://0004-net-netcp-ethss-move-sysfs-code-to-a-separate-file.patch \
-    file://0005-net-netcp-add-sysfs-control-for-switch-configuration.patch \
-    file://0006-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
+    file://0016-omap2plus_defconfig-Enable-USB_ACM-and-USB_SERIAL-as.patch \
+    file://0017-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
+    file://0018-net-netcp-use-keystone-specific-ale-driver.patch \
+    file://0019-net-netcp-set-proper-ale-revision-mask-for-major-ver.patch \
+    file://0020-net-netcp-pa-add-missing-of_node_put-on-bail-out.patch \
+    file://0021-net-netcp-ethss-move-sysfs-code-to-a-separate-file.patch \
+    file://0022-net-netcp-add-sysfs-control-for-switch-configuration.patch \
+    file://0023-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"

@@ -1,7 +1,7 @@
-From be3e53ad875a61f6c55069fde2a23f93be43fb3f Mon Sep 17 00:00:00 2001
+From b190e81bfe66dbc353038106f3f6a166ae2b0f18 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 Nov 2015 16:12:50 -0500
-Subject: [PATCH 05/15] ARM: keystone: dts: add gbe and 10gbe netcp cpts
+Subject: [PATCH 05/23] ARM: keystone: dts: add gbe and 10gbe netcp cpts
  bindings
 
 This patch adds the netcp cpts DT bindings for the

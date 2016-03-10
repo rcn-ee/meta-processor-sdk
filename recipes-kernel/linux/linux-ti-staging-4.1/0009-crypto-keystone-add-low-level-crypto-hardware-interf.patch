@@ -1,7 +1,7 @@
-From eb50bedd56a2656c18b624b339345968f8c895e3 Mon Sep 17 00:00:00 2001
+From c1301b5d39d9d29266c08f8ee0d74ccc4522066b Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Thu, 4 Feb 2016 12:36:29 -0500
-Subject: [PATCH 09/15] crypto: keystone: add low level crypto hardware
+Subject: [PATCH 09/23] crypto: keystone: add low level crypto hardware
  interface code
 
 This patch adds the driver support for keystone SA in sideband mode.

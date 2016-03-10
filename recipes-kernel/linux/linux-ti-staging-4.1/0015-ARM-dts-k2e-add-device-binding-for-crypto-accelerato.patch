@@ -1,7 +1,7 @@
-From 7d1f6d5237e20b141fc42cee86561bdb74594b75 Mon Sep 17 00:00:00 2001
+From 696a1a03ae0aa9b6f645e71836ace61ee31a9b27 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 4 Nov 2015 12:31:57 -0500
-Subject: [PATCH 15/15] ARM: dts: k2e: add device binding for crypto
+Subject: [PATCH 15/23] ARM: dts: k2e: add device binding for crypto
  accelerator
 
 This patch enables K2E HW crypto accelerator by adding device binding

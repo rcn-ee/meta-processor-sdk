@@ -1,7 +1,7 @@
-From b3bd70ad5ab9e619d4910a00bf01aea5b7513b2a Mon Sep 17 00:00:00 2001
+From db0704f0c49de5a5e270544088016323b17c8148 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 11 Nov 2015 13:31:05 -0500
-Subject: [PATCH 04/15] net: netcp: add support of cpts
+Subject: [PATCH 04/23] net: netcp: add support of cpts
 
 This patch adds support of the cpts device found in the
 gbe and 10gbe ethernet switches on the keystone platforms.
@@ -136,7 +136,7 @@ index 9ba29e9..b041d1e 100644
  	if (p_info.psdata_len) {
  		u32 *psdata = p_info.psdata;
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 62160ef..26a9fda 100644
+index 09b439e..9b4eed6 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
 @@ -25,11 +25,14 @@
@@ -260,7 +260,7 @@ index 62160ef..26a9fda 100644
  
  struct xgbe_ss_regs {
  	u32	id_ver;
-@@ -634,6 +708,13 @@ struct gbe_hw_stats {
+@@ -635,6 +709,13 @@ struct gbe_hw_stats {
  #define GBE_MAX_HW_STAT_MODS			9
  #define GBE_HW_STATS_REG_MAP_SZ			0x100
  
@@ -274,7 +274,7 @@ index 62160ef..26a9fda 100644
  struct gbe_slave {
  	void __iomem			*port_regs;
  	void __iomem			*emac_regs;
-@@ -648,6 +729,7 @@ struct gbe_slave {
+@@ -649,6 +730,7 @@ struct gbe_slave {
  	u32				mac_control;
  	u8				phy_port_t;
  	struct device_node		*phy_node;
@@ -282,7 +282,7 @@ index 62160ef..26a9fda 100644
  	struct list_head		slave_list;
  };
  
-@@ -699,6 +781,14 @@ struct gbe_priv {
+@@ -700,6 +782,14 @@ struct gbe_priv {
  	/*  Lock for updating the hwstats */
  	spinlock_t			hw_stats_lock;
  	struct phy			*serdes_phy[MAX_NUM_SERDES];
@@ -297,7 +297,7 @@ index 62160ef..26a9fda 100644
  };
  
  struct gbe_intf {
-@@ -1936,6 +2026,49 @@ static int keystone_set_settings(struct net_device *ndev,
+@@ -1937,6 +2027,49 @@ static int keystone_set_settings(struct net_device *ndev,
  	return phy_ethtool_sset(phy, cmd);
  }
  
@@ -347,7 +347,7 @@ index 62160ef..26a9fda 100644
  static const struct ethtool_ops keystone_ethtool_ops = {
  	.get_drvinfo		= keystone_get_drvinfo,
  	.get_link		= ethtool_op_get_link,
-@@ -1946,6 +2079,7 @@ static const struct ethtool_ops keystone_ethtool_ops = {
+@@ -1947,6 +2080,7 @@ static const struct ethtool_ops keystone_ethtool_ops = {
  	.get_ethtool_stats	= keystone_get_ethtool_stats,
  	.get_settings		= keystone_get_settings,
  	.set_settings		= keystone_set_settings,
@@ -355,7 +355,7 @@ index 62160ef..26a9fda 100644
  };
  
  #define mac_hi(mac)	(((mac)[0] << 0) | ((mac)[1] << 8) |	\
-@@ -2443,16 +2577,281 @@ static int gbe_del_vid(void *intf_priv, int vid)
+@@ -2451,16 +2585,281 @@ static int gbe_del_vid(void *intf_priv, int vid)
  	return 0;
  }
  
@@ -640,7 +640,7 @@ index 62160ef..26a9fda 100644
  }
  
  static void netcp_ethss_timer(unsigned long arg)
-@@ -2488,12 +2887,20 @@ static void netcp_ethss_timer(unsigned long arg)
+@@ -2496,12 +2895,20 @@ static void netcp_ethss_timer(unsigned long arg)
  	add_timer(&gbe_dev->timer);
  }
  
@@ -663,7 +663,7 @@ index 62160ef..26a9fda 100644
  }
  
  static int gbe_open(void *intf_priv, struct net_device *ndev)
-@@ -2543,11 +2950,14 @@ static int gbe_open(void *intf_priv, struct net_device *ndev)
+@@ -2551,11 +2958,14 @@ static int gbe_open(void *intf_priv, struct net_device *ndev)
  	if (ret)
  		goto fail;
  
@@ -680,7 +680,7 @@ index 62160ef..26a9fda 100644
  	return 0;
  
  fail:
-@@ -2559,16 +2969,504 @@ static int gbe_close(void *intf_priv, struct net_device *ndev)
+@@ -2567,16 +2977,504 @@ static int gbe_close(void *intf_priv, struct net_device *ndev)
  {
  	struct gbe_intf *gbe_intf = intf_priv;
  	struct netcp_intf *netcp = netdev_priv(ndev);
@@ -1187,7 +1187,7 @@ index 62160ef..26a9fda 100644
  static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
  		      struct device_node *node)
  {
-@@ -2683,6 +3581,8 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
+@@ -2692,6 +3590,8 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
  	}
  
  	atomic_set(&slave->link_state, NETCP_LINK_STATE_INVALID);
@@ -1196,7 +1196,7 @@ index 62160ef..26a9fda 100644
  	return 0;
  }
  
-@@ -2886,6 +3786,7 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
+@@ -2895,6 +3795,7 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
  			XGBE10_HW_STATS_OFFSET + (GBE_HW_STATS_REG_MAP_SZ * i);
  
  	gbe_dev->ale_reg = gbe_dev->switch_regs + XGBE10_ALE_OFFSET;
@@ -1204,7 +1204,7 @@ index 62160ef..26a9fda 100644
  	gbe_dev->ale_ports = gbe_dev->max_num_ports;
  	gbe_dev->host_port = XGBE10_HOST_PORT_NUM;
  	gbe_dev->ale_entries = XGBE10_NUM_ALE_ENTRIES;
-@@ -3049,6 +3950,7 @@ static int set_gbe_ethss14_priv(struct gbe_priv *gbe_dev,
+@@ -3058,6 +3959,7 @@ static int set_gbe_ethss14_priv(struct gbe_priv *gbe_dev,
  			(GBE_HW_STATS_REG_MAP_SZ * (i & 0x1));
  	}
  
@@ -1212,7 +1212,7 @@ index 62160ef..26a9fda 100644
  	gbe_dev->ale_reg = gbe_dev->switch_regs + GBE13_ALE_OFFSET;
  	gbe_dev->ale_ports = gbe_dev->max_num_ports;
  	gbe_dev->host_port = GBE13_HOST_PORT_NUM;
-@@ -3158,6 +4060,7 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
+@@ -3167,6 +4069,7 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
  		gbe_dev->hw_stats_regs[i] = gbe_dev->switch_regs +
  			GBENU_HW_STATS_OFFSET + (GBENU_HW_STATS_REG_MAP_SZ * i);
  
@@ -1220,7 +1220,7 @@ index 62160ef..26a9fda 100644
  	gbe_dev->ale_reg = gbe_dev->switch_regs + GBENU_ALE_OFFSET;
  	gbe_dev->ale_ports = gbe_dev->max_num_ports;
  	gbe_dev->host_port = GBENU_HOST_PORT_NUM;
-@@ -3192,6 +4095,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+@@ -3201,6 +4104,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
  {
  	struct device_node *interfaces, *interface;
  	struct device_node *secondary_ports;
@@ -1228,7 +1228,7 @@ index 62160ef..26a9fda 100644
  	struct cpsw_ale_params ale_params;
  	struct gbe_priv *gbe_dev;
  	struct phy *phy;
-@@ -3290,6 +4194,15 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+@@ -3299,6 +4203,15 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
  			goto exit_phys;
  	}
  
@@ -1244,7 +1244,7 @@ index 62160ef..26a9fda 100644
  	interfaces = of_get_child_by_name(node, "interfaces");
  	if (!interfaces)
  		dev_err(dev, "could not find interfaces\n");
-@@ -3363,6 +4276,10 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+@@ -3372,6 +4285,10 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
  	}
  	spin_unlock_bh(&gbe_dev->hw_stats_lock);
  

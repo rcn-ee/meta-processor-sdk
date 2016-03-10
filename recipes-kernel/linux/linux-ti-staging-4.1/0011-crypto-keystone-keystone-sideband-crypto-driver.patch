@@ -1,7 +1,7 @@
-From 8fe5a1de2db3c908e28c9d715e4109ff57142fcc Mon Sep 17 00:00:00 2001
+From 113d3ef801ab97f329ab7599d2e1a1a9d8182fab Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 1 Feb 2016 14:30:37 -0500
-Subject: [PATCH 11/15] crypto: keystone: keystone sideband crypto driver
+Subject: [PATCH 11/23] crypto: keystone: keystone sideband crypto driver
 
 This is the last part of the driver. It implements actual keystone crypto
 platform driver code.

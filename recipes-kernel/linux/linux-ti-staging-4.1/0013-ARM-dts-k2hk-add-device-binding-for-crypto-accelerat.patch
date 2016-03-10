@@ -1,7 +1,7 @@
-From 2ab6f63664ea601d6bf2e8606de920cf3ea268e0 Mon Sep 17 00:00:00 2001
+From 2476624ab8ae2ca405da350a4748ef9582ccf8f5 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 2 Feb 2016 10:16:34 -0500
-Subject: [PATCH 13/15] ARM: dts: k2hk: add device binding for crypto
+Subject: [PATCH 13/23] ARM: dts: k2hk: add device binding for crypto
  accelerator
 
 This patch enables HW crypto accelerator by adding device binding for it.

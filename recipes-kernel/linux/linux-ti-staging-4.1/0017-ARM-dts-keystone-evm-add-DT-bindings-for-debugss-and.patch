@@ -1,7 +1,8 @@
-From b31b14ba679064ed557e2784e437511d65f68e16 Mon Sep 17 00:00:00 2001
+From 1e77293ad1d7db7fd349bcf690c83f981bc89690 Mon Sep 17 00:00:00 2001
 From: Emulation Administrator <xgemuadm@ti.com>
 Date: Fri, 11 Dec 2015 09:56:15 -0600
-Subject: [PATCH] ARM: dts: keystone-evm: add DT bindings for debugss and srss
+Subject: [PATCH 17/23] ARM: dts: keystone-evm: add DT bindings for debugss and
+ srss
 
 ---
  .../devicetree/bindings/hwmon/keystone-srss.txt    | 26 ++++++++++++++++++

@@ -1,7 +1,7 @@
-From a7d02bf51ebb03981aa2f4bffe5d588c8fa694d3 Mon Sep 17 00:00:00 2001
+From 38c6cff7f61c536e95b9d23548a25cf53bd4430d Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 Nov 2015 16:12:48 -0500
-Subject: [PATCH 03/15] net: netcp: cpts: introduce keystone netcp cpts
+Subject: [PATCH 03/23] net: netcp: cpts: introduce keystone netcp cpts
  software module
 
 This patch introduces a cpts software module for
@@ -20,7 +20,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  create mode 100644 drivers/net/ethernet/ti/netcp_cpts.h
 
 diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-index 71daa03..61db9d2 100644
+index b3f1e59..33a0ccd 100644
 --- a/drivers/net/ethernet/ti/Kconfig
 +++ b/drivers/net/ethernet/ti/Kconfig
 @@ -85,6 +85,16 @@ config TI_CPTS
@@ -41,7 +41,7 @@ index 71daa03..61db9d2 100644
  	tristate "TI Keystone NETCP Core Support"
  	select TI_CPSW_ALE
 diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
-index 06d2e45..f5c06ba 100644
+index 883114c..d4f61ec 100644
 --- a/drivers/net/ethernet/ti/Makefile
 +++ b/drivers/net/ethernet/ti/Makefile
 @@ -15,10 +15,11 @@ obj-$(CONFIG_TI_CPSW_ALE) += cpsw_ale.o

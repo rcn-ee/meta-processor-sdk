@@ -1,7 +1,8 @@
-From 22cb3d4dc7e5aed3ea06fb556769f4268f0efaa4 Mon Sep 17 00:00:00 2001
+From ba0c4b19f8b371eabc0527855507412ae3d12150 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Wed, 10 Feb 2016 13:33:25 -0500
-Subject: [PATCH] omap2plus_defconfig: Enable USB_ACM and USB_SERIAL as modules
+Subject: [PATCH 16/23] omap2plus_defconfig: Enable USB_ACM and USB_SERIAL as
+ modules
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---

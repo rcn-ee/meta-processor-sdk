@@ -1,14 +1,13 @@
-From ff057d5326671439f60d7679cbbe3b0ff356ca0a Mon Sep 17 00:00:00 2001
+From b823bfbc12c919ec7796bd04c9c47a36d1ad345d Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Feb 2016 14:10:19 -0500
-Subject: [PATCH 3/6] net: netcp: pa: add missing of_node_put() on bail out
+Subject: [PATCH 20/23] net: netcp: pa: add missing of_node_put() on bail out
 
 for_each_child_of_node() calls of_node_put() only for previous node.
 So if we break from the loop, caller needs to call of_node_put() on
 the current child.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/netcp_pa_core.c | 1 +
  1 file changed, 1 insertion(+)

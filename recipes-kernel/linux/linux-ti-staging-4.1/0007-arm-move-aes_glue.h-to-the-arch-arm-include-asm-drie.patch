@@ -1,7 +1,7 @@
-From 8ca296d39d2501542aff158a67f2b4498816e38a Mon Sep 17 00:00:00 2001
+From 30cdc9f2f3754c8792bfd05c06b7c0f0c7ddec99 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 29 Jan 2016 15:20:38 -0500
-Subject: [PATCH 07/15] arm: move aes_glue.h to the arch/arm/include/asm
+Subject: [PATCH 07/23] arm: move aes_glue.h to the arch/arm/include/asm
  driectory
 
 The aes_glue.h defines function which might be used from drivers.

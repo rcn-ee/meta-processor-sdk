@@ -1,7 +1,7 @@
-From b4c81f8b7ed8e993c81fbacca322ce361d9dd32b Mon Sep 17 00:00:00 2001
+From a2c926225279c5976dce68bba8f03eb0587b7317 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 4 Feb 2016 18:48:21 -0500
-Subject: [PATCH 5/6] net: netcp: add sysfs control for switch configurations
+Subject: [PATCH 22/23] net: netcp: add sysfs control for switch configurations
 
 Add sysfs interface to allow update some of the switch configuration
 at run time. Some of these parameters are fields from control register,
@@ -12,7 +12,6 @@ To do so, some of the macros, defines etc are moved from netcp_ethss.c
 to netcp_ethss.h so that it can be used in netcp_ethss_sysfs.c
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/netcp_ethss.c       |   89 +-
  drivers/net/ethernet/ti/netcp_ethss.h       |   89 +-
@@ -20,7 +19,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 1463 insertions(+), 100 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 2e6dbdd..71b77b9 100644
+index 7c12544..db10151 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
 @@ -35,14 +35,8 @@
@@ -182,7 +181,7 @@ index 2e6dbdd..71b77b9 100644
  {
  	gbe_stats_mod_visible_ver14(gbe_dev, stats_mod);
  	gbe_reset_mod_stats(gbe_dev, stats_mod);
-@@ -3742,7 +3659,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+@@ -3750,7 +3667,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
  	}
  	spin_unlock_bh(&gbe_dev->hw_stats_lock);
  
@@ -192,7 +191,7 @@ index 2e6dbdd..71b77b9 100644
  		goto free_sec_ports;
  
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.h b/drivers/net/ethernet/ti/netcp_ethss.h
-index 10453a7..bf7727f 100644
+index 85133c3..f050d19 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.h
 +++ b/drivers/net/ethernet/ti/netcp_ethss.h
 @@ -23,6 +23,7 @@
@@ -203,7 +202,7 @@ index 10453a7..bf7727f 100644
  #include <linux/io.h>
  #include <linux/kobject.h>
  #include <linux/list.h>
-@@ -138,7 +139,11 @@ struct gbe_priv {
+@@ -139,7 +140,11 @@ struct gbe_priv {
  	spinlock_t			hw_stats_lock;
  	struct phy			*serdes_phy[MAX_NUM_SERDES];
  
@@ -215,7 +214,7 @@ index 10453a7..bf7727f 100644
  	u32				cpts_rftclk_sel;
  	u32				cpts_clock_mult;
  	u32				cpts_clock_shift;
-@@ -147,9 +152,91 @@ struct gbe_priv {
+@@ -148,9 +153,91 @@ struct gbe_priv {
  	struct cpts			cpts;
  };
  
