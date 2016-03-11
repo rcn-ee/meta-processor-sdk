@@ -1,0 +1,27 @@
+From a62e3bcd3aafe8118d9ee934e7b99b7066462f90 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Tue, 1 Mar 2016 08:22:40 -0500
+Subject: [PATCH 38/38] ti_config_fragments/connectivity.cfg: Enable QoS on
+ Keystone2
+
+Enables NETCP QoS on Keystone2 K2HK, K2E and K2L.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ ti_config_fragments/connectivity.cfg | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
+index e91d649..432e6a5 100644
+--- a/ti_config_fragments/connectivity.cfg
++++ b/ti_config_fragments/connectivity.cfg
+@@ -198,3 +198,6 @@ CONFIG_TI_KEYSTONE_NETCP_PA2=y
+ 
+ #K2 QSPI
+ CONFIG_SPI_CADENCE_QUADSPI=m
++
++#K2 NETCP QoS
++CONFIG_TI_KEYSTONE_NETCP_QOS=y
+-- 
+1.9.1
+

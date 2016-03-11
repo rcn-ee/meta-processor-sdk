@@ -1,4 +1,4 @@
-PR_append = ".tisdk38"
+PR_append = ".tisdk39"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -26,6 +26,21 @@ SRC_URI_append = " \
     file://0021-net-netcp-ethss-move-sysfs-code-to-a-separate-file.patch \
     file://0022-net-netcp-add-sysfs-control-for-switch-configuration.patch \
     file://0023-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
+    file://0024-soc-ti-qmss-fix-error-in-shared-access-of-QMSS-INTD-.patch \
+    file://0025-ARM-dts-keystone-use-syscon-regmap-to-enable-shared-.patch \
+    file://0026-soc-ti-fix-error-in-set_words-helper.patch \
+    file://0027-lib-ktree-add-generic-tree-implementation.patch \
+    file://0028-soc-ti-qmss-unmap-descriptors-without-knowing-descri.patch \
+    file://0029-net-netcp-support-of-multiple-subqueues-per-interfac.patch \
+    file://0030-soc-ti-qmss-add-support-of-queue-range-specific-push.patch \
+    file://0031-soc-ti-saving-qmss-clock-in-driver-storage.patch \
+    file://0032-ARM-dts-keystone-add-qmss-clock-name.patch \
+    file://0033-soc-qmss-support-of-loading-different-types-of-firmw.patch \
+    file://0034-soc-ti-add-support-of-loading-qos-firmware.patch \
+    file://0035-soc-ti-add-support-of-Quality-of-Service-PDSP.patch \
+    file://0036-net-netcp-Add-Keystone-NetCP-QoS-driver.patch \
+    file://0037-ARM-dts-keystone-add-qos-support.patch \
+    file://0038-ti_config_fragments-connectivity.cfg-Enable-QoS-on-K.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
