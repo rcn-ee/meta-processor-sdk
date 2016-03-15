@@ -1,4 +1,4 @@
-PR_append = ".tisdk19"
+PR_append = ".tisdk20"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
