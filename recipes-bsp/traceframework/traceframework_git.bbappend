@@ -1,4 +1,4 @@
-PV = "01.01.01.08A"
+PV = "01.01.01.08B"
 
-# Below commit ID corresponds to DEV.TFWK-01.01.01.08A
-TRACEFRAMEWORK_SRCREV = "aeefaa1b932742a7eebaac034c64f74b03d795bf"
+# Below commit ID corresponds to DEV.TFWK-01.01.01.08B
+TRACEFRAMEWORK_SRCREV = "e7a60a71a385337425547e3cac6716998c6a3528"
