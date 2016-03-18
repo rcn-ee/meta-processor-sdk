@@ -1,4 +1,4 @@
-PV = "3.3.0.2"
+PV = "3.3.0.2A"
 
-# commit ID corresponds to DEV.CSL_PROCESSOR-SDK.03.03.00.02
-CSL_SRCREV = "ac8c2f9938a1e7f7e420dec544fb84c8a9533bca"
+# commit ID corresponds to DEV.CSL_PROCESSOR-SDK.03.03.00.02A
+CSL_SRCREV = "e26dc44be132849d6bcf63b7e9eac744769577dc"
