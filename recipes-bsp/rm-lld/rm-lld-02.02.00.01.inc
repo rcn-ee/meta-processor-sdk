@@ -1,4 +1,0 @@
-PV = "02.02.00.01"
-
-# Below commit ID corresponds to DEV.RM_LLD.02.02.00.01
-RM_LLD_SRCREV = "841f2df9726f456d6c026c0aa03095699962d048"
