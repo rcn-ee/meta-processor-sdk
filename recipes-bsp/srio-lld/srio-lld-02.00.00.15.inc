@@ -1,0 +1,4 @@
+PV = "02.00.00.15"
+
+# commit ID corresponding to DEV.SRIO_LLD.02.00.00.15
+SRIO_LLD_SRCREV = "b773a7d08225c30737abc45ebc92a186bac08797"
