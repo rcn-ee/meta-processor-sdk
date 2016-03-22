@@ -1,5 +1,3 @@
-PR_append = ".tisdk11"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+PR_append = ".tisdk12"
 
 MAKEFILES_append_k2g-evm = " opencl-examples"
