@@ -1,0 +1,4 @@
+PV = "02.01.00.10"
+
+# Below commit ID corresponds to "DEV.NWAL.02.01.00.10"
+NWAL_LLD_SRCREV = "fc14159765777305a234e732b6170d025394250a"
