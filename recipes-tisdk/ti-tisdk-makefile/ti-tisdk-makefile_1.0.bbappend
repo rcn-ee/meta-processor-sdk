@@ -1,3 +1,5 @@
-PR_append = ".tisdk12"
+PR_append = ".tisdk13"
 
-MAKEFILES_append_k2g-evm = " opencl-examples"
+MAKEFILES_append_k2g-evm = " opencl-examples \
+                             openmpacc-examples \
+"
