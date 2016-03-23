@@ -1,4 +1,4 @@
-PR_append = "-tisdk12"
+PR_append = "-tisdk13"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -21,7 +21,9 @@ UTILS_append_dra7xx = " \
     elfutils-staticdev \
 "
 
-UTILS_append_k2g-evm = " opencl-staticdev"
+UTILS_append_k2g-evm = " opencl-staticdev \
+                         openmpacc-dev \
+"
 
 EXTRA_LIBS_append_k2hk-evm = " \
     aif2-lld-dev \
