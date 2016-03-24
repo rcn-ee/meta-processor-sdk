@@ -3,7 +3,7 @@ HOMEPAGE = "http://software-dl.ti.com/mctools/docs/opencl/intro.html"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://COPYING;md5=2827f94fc0a1adeff4d9702e97ce2979"
 
-SRCREV = "3fd4e67bac018511453db94e6fda2fbd0f159de2"
+SRCREV = "0db24f44b49ad673bcebce5d25a63ea41551ebec"
 SRC_URI = "git://git.ti.com/processor-sdk/gst-plugin-dsp66.git;protocol=git;branch=master"
 S = "${WORKDIR}/git"
 
@@ -11,7 +11,7 @@ COMPATIBLE_MACHINE = "dra7xx|keystone"
 
 DEPENDS = "gstreamer1.0 gstreamer1.0-plugins-base opencl ti-cgt6x-native clocl-native imglib-c66x vlib-c66x"
 inherit autotools-brokensep pkgconfig gettext
-PR = "r0"
+PR = "r1"
 
 RDEPENDS_${PN} += " opencl-runtime"
 RDEPENDS_${PN}-dev += " libgomp-dev"
