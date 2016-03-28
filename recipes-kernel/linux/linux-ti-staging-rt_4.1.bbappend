@@ -1,4 +1,4 @@
-PR_append = ".tisdk21"
+PR_append = ".tisdk22"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -42,6 +42,7 @@ SRC_URI_append = " \
     file://0037-ARM-dts-keystone-add-qos-support.patch \
     file://0038-ti_config_fragments-connectivity.cfg-Enable-QoS-on-K.patch \
     file://0039-ARM-dts-enable-all-dma-channels-for-user-space-LLD-d.patch \
+    file://0040-soc-ti-knav_qmss_queue-fix-Linking-RAM-0-Size-regist.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
