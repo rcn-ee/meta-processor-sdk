@@ -1,4 +1,6 @@
 # look for files in this layer first
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-PR_append = ".tisdk0"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+PR_append = ".tisdk1"
