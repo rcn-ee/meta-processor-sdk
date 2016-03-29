@@ -1,0 +1,5 @@
+# Default options and conf file for busybox udhcpd
+
+#DHCPD_ENABLED=no
+DHCPD_OPTS="-S"
+DHCPD_CONF="/etc/udhcpd_usb0.conf"
