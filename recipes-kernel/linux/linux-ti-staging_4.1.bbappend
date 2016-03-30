@@ -1,4 +1,4 @@
-PR_append = ".tisdk42"
+PR_append = ".tisdk43"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.1:${THISDIR}/files:"
 
@@ -43,6 +43,7 @@ SRC_URI_append = " \
     file://0038-ti_config_fragments-connectivity.cfg-Enable-QoS-on-K.patch \
     file://0039-ARM-dts-enable-all-dma-channels-for-user-space-LLD-d.patch \
     file://0040-soc-ti-knav_qmss_queue-fix-Linking-RAM-0-Size-regist.patch \
+    file://0041-ks2-crypto-fix-tx_dma_desc_cnt-bug.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
