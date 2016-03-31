@@ -1,7 +1,9 @@
-PR_append = "-tisdk27"
+PR_append = "-tisdk28"
 
 MATRIX_APPS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
+    matrix-gui-apps-dual-camera \
+    matrix-gui-apps-image-gallery \
 "
 
 MATRIX_COMMON_APPS_remove = " \
