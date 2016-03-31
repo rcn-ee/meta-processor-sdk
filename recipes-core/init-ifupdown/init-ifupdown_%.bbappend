@@ -3,4 +3,4 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
