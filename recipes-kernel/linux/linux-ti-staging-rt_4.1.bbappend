@@ -1,4 +1,4 @@
-PR_append = ".tisdk23"
+PR_append = ".tisdk24"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.1:${THISDIR}/files:"
 
@@ -44,6 +44,12 @@ SRC_URI_append = " \
     file://0039-ARM-dts-enable-all-dma-channels-for-user-space-LLD-d.patch \
     file://0040-soc-ti-knav_qmss_queue-fix-Linking-RAM-0-Size-regist.patch \
     file://0041-ks2-crypto-fix-tx_dma_desc_cnt-bug.patch \
+    file://0042-TEMP-net-prueth-Use-non-IO-safe-memcpy-for-OCMC-RAM-.patch \
+    file://0043-TEMP-net-prueth-Reduce-error-console-message-noise.patch \
+    file://0044-TEMP-net-prueth-Do-not-stop-kernel-TX-queue.patch \
+    file://0045-HACK-ARM-dts-am437x-idk-evm-Add-non-caching-OCMC-RAM.patch \
+    file://0046-ARM-dts-am437x-idk-evm-Add-PRUSS-Ethernet-ports.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
+RDEPENDS_kernel-base_append_am437x-evm = " prueth-fw"
