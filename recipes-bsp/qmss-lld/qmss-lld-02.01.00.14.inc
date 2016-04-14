@@ -1,2 +1,0 @@
-# commit ID corresponding to DEV.QMSS_LLD.02.01.00.14A
-QMSS_LLD_SRCREV = "8fc6a846e509d6ad8499e1de68abd912d7947069"
