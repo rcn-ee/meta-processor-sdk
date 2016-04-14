@@ -1,2 +1,0 @@
-# Below Commit ID corresponds to "DEV.CPPI_LLD.02.01.00.12A"
-CPPI_LLD_SRCREV = "6a1d2891b3de9891dea71a069a261c6368209413"
