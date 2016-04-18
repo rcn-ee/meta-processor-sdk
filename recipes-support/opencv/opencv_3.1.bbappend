@@ -1,9 +1,12 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 BRANCH = "tiopencvrelease_3.1"
 
 SRC_URI = "git://git.ti.com/opencv/tiopencv.git;protocol=git;branch=${BRANCH};name=opencv \
-           git://github.com/Itseez/opencv_contrib.git;destsuffix=contrib;name=contrib"
+           git://github.com/Itseez/opencv_contrib.git;destsuffix=contrib;name=contrib \
+           git://github.com/Itseez/opencv_3rdparty.git;branch=ippicv/master_20151201;destsuffix=party3;name=party3 \
+           file://0001-3rdparty-ippicv-Use-pre-downloaded-ipp.patch \
+           file://fixpkgconfig.patch"
 
 SRCREV_opencv = "38dc87122e43f025f7847edcc3224cd10162f870"
 
