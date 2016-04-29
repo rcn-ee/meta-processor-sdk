@@ -1,4 +1,4 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
 BRANCH = "tiopencvrelease_3.1"
 
@@ -31,3 +31,5 @@ do_install_append() {
     cp -f ${S}/titestsuite/* ${D}${datadir}/OpenCV/titestsuite/
     cp -f ${WORKDIR}/setupEnv.sh ${D}${datadir}/OpenCV/titestsuite/
 }
+
+ALLOW_EMPTY_${PN}-locale = "1"
