@@ -1,9 +1,13 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
 GST_1X_DEPS_append_dra7xx = " \
-    gstreamer1.0-plugins-dsp66 \
 "
 
+# Remove until ported to gstreamer 1.6
+#    gstreamer1.0-plugins-dsp66
+
 GST_1X_DEPS_append_keystone = " \
-    gstreamer1.0-plugins-dsp66 \
 "
+
+# Remove until ported to gstreamer 1.6
+#    gstreamer1.0-plugins-dsp66
