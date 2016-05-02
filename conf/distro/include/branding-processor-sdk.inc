@@ -12,7 +12,7 @@ MACHINE_FEATURES := "${@d.getVar('MACHINE_FEATURES', True).replace('sgx', '')}"
 #PREFERRED_VERSION_linux-processor-sdk = "4.1%"
 
 # Remove wayland from keystone DISTRO_FEATURES.
-DISTRO_FEATURES_remove_keystone = "wayland"
+DISTRO_FEATURES_remove_keystone = "wayland opengl"
 
 # CMEM reserved memory
 RESERVE_CMEM_dra7xx = "1"
