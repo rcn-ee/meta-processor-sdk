@@ -13,6 +13,7 @@ MACHINE_FEATURES := "${@d.getVar('MACHINE_FEATURES', True).replace('sgx', '')}"
 
 # Remove wayland from keystone DISTRO_FEATURES.
 DISTRO_FEATURES_remove_keystone = "wayland opengl"
+DISTRO_FEATURES_append = " sysvinit"
 
 # CMEM reserved memory
 RESERVE_CMEM_dra7xx = "1"
