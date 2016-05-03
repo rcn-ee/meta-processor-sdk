@@ -1,4 +1,4 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
 
 BRANCH = "tiopencvrelease_3.1"
 
@@ -15,6 +15,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI += "\
      file://setupEnv.sh \
 "
+
+DEPENDS_remove_keystone = "qtbase"
 
 PACKAGECONFIG_append_am57xx-evm= " opencl"
 PACKAGECONFIG_append_dra7xx-evm= " opencl"
