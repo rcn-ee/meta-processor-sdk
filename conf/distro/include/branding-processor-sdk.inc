@@ -1,9 +1,5 @@
 ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_KERNEL_SUFFIX}-image"
 
-# Temporarily disable "sgx" machine feature for all SOCs while building
-# latest 4.4 integration kernel, until DDK 1.14 issues are resolved
-MACHINE_FEATURES := "${@d.getVar('MACHINE_FEATURES', True).replace('sgx', '')}"
-
 #PREFERRED_PROVIDER_virtual/kernel = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
 #PREFERRED_PROVIDER_virtual/kernel_am335x-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
 #PREFERRED_PROVIDER_virtual/kernel_am437x-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
