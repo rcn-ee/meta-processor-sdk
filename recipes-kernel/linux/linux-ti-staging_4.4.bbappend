@@ -1,4 +1,4 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -21,4 +21,10 @@ SRC_URI_append = " \
     file://0016-ARM-dts-keystone-add-qos-support.patch \
     file://0017-ti_config_fragments-connectivity.cfg-Enable-QoS-on-K.patch \
     file://0018-soc-ti-qos-fix-error-in-misspelled-string-when-parsi.patch \
+    file://0019-net-netcp-cpts-introduce-keystone-netcp-cpts-softwar.patch \
+    file://0020-net-netcp-cpts-update-to-64bit-for-4.4.y.patch \
+    file://0021-net-netcp-add-support-of-cpts.patch \
+    file://0022-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
+    file://0023-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
+    file://0024-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
 "
