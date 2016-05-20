@@ -1,4 +1,4 @@
-From a718db92d6f2a1064f191a2ce3b9b773cc23b820 Mon Sep 17 00:00:00 2001
+From cf3847e86829d7fdae80fad2d7225a3a41418294 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Tue, 10 May 2016 12:59:29 -0400
 Subject: [PATCH 02/33] ti_config_fragments: connectivity: enable usb serial
@@ -13,10 +13,10 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index 0f02f0f..02ae30a 100644
+index 4cf750b..10a087a6 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
-@@ -193,6 +193,9 @@ CONFIG_USB_G_DBGP=m
+@@ -223,6 +223,9 @@ CONFIG_USB_G_DBGP=m
  CONFIG_USB_G_WEBCAM=m
  CONFIG_USB_GADGET_STORAGE_NUM_BUFFERS=32
  CONFIG_USB_ZERO=m

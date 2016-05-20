@@ -1,4 +1,4 @@
-From 32b0c409ce2e79f4663bd91de77902ae45254363 Mon Sep 17 00:00:00 2001
+From caf9f7d68c38415280944f20e49ca2ac77003e46 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 15 Apr 2016 13:20:27 -0400
 Subject: [PATCH 33/33] crypto: keystone: Add support for HW RNG

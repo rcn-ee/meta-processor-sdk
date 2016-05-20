@@ -1,4 +1,4 @@
-From 06b89884e06aae84c3101bc80e44ab2181ff5a8d Mon Sep 17 00:00:00 2001
+From bf001a193047ff02881ef25dcfc397d3048403ed Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 18 May 2016 10:58:36 -0400
 Subject: [PATCH 28/33] ARM: dts: k2hk: add device binding for crypto

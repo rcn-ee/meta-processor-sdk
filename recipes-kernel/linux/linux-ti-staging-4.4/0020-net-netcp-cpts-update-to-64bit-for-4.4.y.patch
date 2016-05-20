@@ -1,4 +1,4 @@
-From e0ff9cabae6977d1b8d65ba97d3ad51346a822a2 Mon Sep 17 00:00:00 2001
+From 1222e48fd155300a16376fbefb33fb2e338f5c79 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 2 May 2016 16:30:37 -0400
 Subject: [PATCH 20/33] net: netcp: cpts: update to 64bit for 4.4.y

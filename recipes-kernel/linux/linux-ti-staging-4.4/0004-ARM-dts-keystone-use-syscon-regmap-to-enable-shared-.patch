@@ -1,4 +1,4 @@
-From 785015ed6dc2a3ce3306b9966a93750385c3edf4 Mon Sep 17 00:00:00 2001
+From 990c9158c4ea2d0c16d9bf7b83821e87d08e1a6f Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 13 Jan 2016 08:20:51 -0500
 Subject: [PATCH 04/33] ARM: dts: keystone: use syscon regmap to enable shared

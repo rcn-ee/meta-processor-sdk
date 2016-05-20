@@ -1,4 +1,4 @@
-From 65636b738f7f39e40ae8852dd38a4ae706c8d591 Mon Sep 17 00:00:00 2001
+From dc65f40379d2a4ff4657806fbb5e33c6f90ab1bc Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 29 Apr 2016 16:07:36 -0400
 Subject: [PATCH 10/33] soc: ti: saving qmss clock in driver storage

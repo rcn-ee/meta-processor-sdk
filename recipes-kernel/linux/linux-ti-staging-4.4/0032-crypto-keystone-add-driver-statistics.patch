@@ -1,4 +1,4 @@
-From 9160a17c943d32641d905548eb9aea4fcffb1aec Mon Sep 17 00:00:00 2001
+From 3d8985716875e86031f8dab78d0e19e1ba4e2a6d Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 15 Apr 2016 12:57:31 -0400
 Subject: [PATCH 32/33] crypto: keystone: add driver statistics

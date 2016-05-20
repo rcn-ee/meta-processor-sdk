@@ -1,4 +1,4 @@
-From 7de96989b1c616337e646c0b8b81d782a097f170 Mon Sep 17 00:00:00 2001
+From 06fae41d8a68afd858895d623d2d94a1f7b4efb9 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Thu, 28 Apr 2016 10:19:31 -0400
 Subject: [PATCH 31/33] crypto: keystone: add KS2 SA crypto driver

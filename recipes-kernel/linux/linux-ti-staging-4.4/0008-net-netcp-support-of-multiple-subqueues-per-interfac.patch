@@ -1,4 +1,4 @@
-From 8ffd11f5c80f6791629de155fc06006af744a331 Mon Sep 17 00:00:00 2001
+From 63fb5eac9623f2a590c8916ec22eb741d28e9736 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 18:18:27 -0400
 Subject: [PATCH 08/33] net: netcp: support of multiple subqueues per interface

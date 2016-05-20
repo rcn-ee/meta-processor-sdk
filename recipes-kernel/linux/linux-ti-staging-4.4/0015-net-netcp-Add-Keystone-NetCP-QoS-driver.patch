@@ -1,4 +1,4 @@
-From d9e5d167d8138a9ee4059fef6843f114ad59c392 Mon Sep 17 00:00:00 2001
+From a7cd9c109b44eeeda8502237e2e7f5bb0b1a42d8 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 18 May 2016 08:22:14 -0400
 Subject: [PATCH 15/33] net: netcp: Add Keystone NetCP QoS driver

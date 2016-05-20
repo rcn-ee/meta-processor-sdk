@@ -1,4 +1,4 @@
-From 987d50b86463269b5f50c16417dc7eaf9b048f3d Mon Sep 17 00:00:00 2001
+From 58387f8e0dc9619d3bb8e4328655db9114487ad3 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 14:56:53 -0400
 Subject: [PATCH 14/33] soc: ti: add support of Quality of Service PDSP.

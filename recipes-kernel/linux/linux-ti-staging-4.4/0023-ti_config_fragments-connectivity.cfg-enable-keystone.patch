@@ -1,4 +1,4 @@
-From 51488a323a1e7899458a85c987875f0c019711fa Mon Sep 17 00:00:00 2001
+From 4b5704767c1dd8cbdffac9d1f70232aeac8c0967 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 18 May 2016 08:31:31 -0400
 Subject: [PATCH 23/33] ti_config_fragments/connectivity.cfg: enable keystone
@@ -13,17 +13,17 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index 4e57fe0..9f8eeca 100644
+index 70275a9..4a67171 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
-@@ -142,6 +142,7 @@ CONFIG_NET_CLS_IND=y
- CONFIG_NET_SCH_FIFO=y
+@@ -144,6 +144,7 @@ CONFIG_NET_SCH_FIFO=y
  CONFIG_IP_SCTP=m
  CONFIG_VLAN_8021Q=m
+ CONFIG_IP_MULTICAST=y
 +CONFIG_TI_KEYSTONE_NETCP_CPTS=y
  
  #Networking drivers
- CONFIG_KEYSTONE_NAVIGATOR_QMSS=y
+ CONFIG_NET_VENDOR_TI=y
 -- 
 1.9.1
 

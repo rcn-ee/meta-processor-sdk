@@ -1,4 +1,4 @@
-From 08468b02ed70f0a07fbce6e1a7e44e310201f449 Mon Sep 17 00:00:00 2001
+From 821ed32949e1802148662619294e668c8a98d646 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 14 Apr 2015 10:16:55 -0400
 Subject: [PATCH 06/33] lib/ktree: add generic tree implementation

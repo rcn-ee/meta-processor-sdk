@@ -1,4 +1,4 @@
-From 0b74dc64b32b95b708d2aaeb9417f6b4389608b0 Mon Sep 17 00:00:00 2001
+From 21d446ff19fe13a6c46a452739b7ae7664359be0 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 12:58:26 -0400
 Subject: [PATCH 16/33] ARM: dts: keystone: add qos support

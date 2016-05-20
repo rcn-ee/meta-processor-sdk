@@ -1,4 +1,4 @@
-From ef15eb625c470066c5bf2f96181078ca705d6ccb Mon Sep 17 00:00:00 2001
+From b9a28e1eadc16653352845af69a1399a6a70ee22 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 2 Feb 2016 10:22:39 -0500
 Subject: [PATCH 27/33] Documentation: devicetree: bindings: arm: keystone:
