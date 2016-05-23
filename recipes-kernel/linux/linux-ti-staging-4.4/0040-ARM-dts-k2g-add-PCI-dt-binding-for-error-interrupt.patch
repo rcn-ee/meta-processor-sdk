@@ -1,0 +1,28 @@
+From 7fdc0ea9cfc0c5d838fbc3c0c9ab96ea6b7190e5 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 20 May 2016 16:23:34 -0400
+Subject: [PATCH 40/40] ARM: dts: k2g: add PCI dt binding for error interrupt
+
+This patch update the PCI dt binding for error platform interrupt.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2g.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
+index d90a950..2a191ee 100644
+--- a/arch/arm/boot/dts/keystone-k2g.dtsi
++++ b/arch/arm/boot/dts/keystone-k2g.dtsi
+@@ -728,6 +728,8 @@
+ 			phys = <&pcie0_phy>;
+ 			dma-coherent;
+ 
++			/* error interrupt */
++			interrupts = <GIC_SPI 60 IRQ_TYPE_EDGE_RISING>;
+ 			#interrupt-cells = <1>;
+ 			interrupt-map-mask = <0 0 0 7>;
+ 			interrupt-map = <0 0 0 1 &pcie_intc0 0>, /* INT A */
+-- 
+1.9.1
+

@@ -1,4 +1,4 @@
-PR_append = ".tisdk6"
+PR_append = ".tisdk7"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -39,4 +39,8 @@ SRC_URI_append = " \
     file://0034-PCI-keystone-enable-mrrs-quirk-for-K2G-PCIe-device-i.patch \
     file://0035-ARM-dts-k2g-Add-DT-bindings-for-PCIe-controller-driv.patch \
     file://0036-ARM-dts-k2g-enable-DT-bindings-in-EVM-dts-file.patch \
+    file://0037-PCI-keystone-Add-error-IRQ-handler.patch \
+    file://0038-PCI-keystone-Remove-unnecessary-goto-statement.patch \
+    file://0039-ARM-dts-keystone-add-PCI-dt-binding-for-error-interr.patch \
+    file://0040-ARM-dts-k2g-add-PCI-dt-binding-for-error-interrupt.patch \
 "

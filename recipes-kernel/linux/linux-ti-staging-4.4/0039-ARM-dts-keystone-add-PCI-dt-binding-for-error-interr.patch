@@ -1,0 +1,44 @@
+From 3642c5966b6a787b2efb93101692f72b3063bd74 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 20 May 2016 15:53:31 -0400
+Subject: [PATCH 39/40] ARM: dts: keystone: add PCI dt binding for error
+ interrupt
+
+This patch update the PCI dt binding for error platform interrupt.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e.dtsi | 3 ++-
+ arch/arm/boot/dts/keystone.dtsi     | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/keystone-k2e.dtsi b/arch/arm/boot/dts/keystone-k2e.dtsi
+index aa749ec..9938a49f 100644
+--- a/arch/arm/boot/dts/keystone-k2e.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e.dtsi
+@@ -141,7 +141,8 @@
+ 			device_type = "pci";
+ 			num-lanes = <2>;
+ 			phys = <&pcie1_phy>;
+-
++			/* error interrupt */
++			interrupts = <GIC_SPI 385 IRQ_TYPE_EDGE_RISING>;
+ 			#interrupt-cells = <1>;
+ 			interrupt-map-mask = <0 0 0 7>;
+ 			interrupt-map = <0 0 0 1 &pcie_intc1 0>, /* INT A */
+diff --git a/arch/arm/boot/dts/keystone.dtsi b/arch/arm/boot/dts/keystone.dtsi
+index 72bdb45..68779a1 100644
+--- a/arch/arm/boot/dts/keystone.dtsi
++++ b/arch/arm/boot/dts/keystone.dtsi
+@@ -321,6 +321,8 @@
+ 			num-lanes = <2>;
+ 			phys = <&pcie0_phy>;
+ 
++			/* error irq */
++			interrupts = <GIC_SPI 38 IRQ_TYPE_EDGE_RISING>;
+ 			#interrupt-cells = <1>;
+ 			interrupt-map-mask = <0 0 0 7>;
+ 			interrupt-map = <0 0 0 1 &pcie_intc0 0>, /* INT A */
+-- 
+1.9.1
+
