@@ -1,4 +1,4 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -36,4 +36,7 @@ SRC_URI_append = " \
     file://0031-crypto-keystone-add-KS2-SA-crypto-driver.patch \
     file://0032-crypto-keystone-add-driver-statistics.patch \
     file://0033-crypto-keystone-Add-support-for-HW-RNG.patch \
+    file://0034-PCI-keystone-enable-mrrs-quirk-for-K2G-PCIe-device-i.patch \
+    file://0035-ARM-dts-k2g-Add-DT-bindings-for-PCIe-controller-driv.patch \
+    file://0036-ARM-dts-k2g-enable-DT-bindings-in-EVM-dts-file.patch \
 "
