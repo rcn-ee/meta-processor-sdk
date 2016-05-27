@@ -1,4 +1,4 @@
-PR_append = "-tisdk30"
+PR_append = "-tisdk31"
 
 MATRIX_APPS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -24,7 +24,3 @@ MATRIX_APPS_append_keystone += " \
 
 # Remove until ported to gstreamer 1.6
 #    matrix-multimedia-demo-dsp66imgproc
-
-MATRIX_APPS_append_k2g-evm = " matrix-opencl-demo-floatcompute \
-                               matrix-opencl-demo-vecadd \
-"
