@@ -1,7 +1,7 @@
-From bb37f796bb54dee4e0823743ac38ecb6265e0583 Mon Sep 17 00:00:00 2001
+From db7dc7b9a09861b312a2d57fdec36d4cadc511aa Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 17:38:52 -0400
-Subject: [PATCH 22/33] ARM: keystone: dts: add gbe and 10gbe netcp cpts
+Subject: [PATCH 4/6] ARM: keystone: dts: add gbe and 10gbe netcp cpts
  bindings
 
 This patch adds the netcp cpts DT bindings for the
@@ -9,13 +9,13 @@ gbe and 10gbe devices on the Keystone2 platforms.
 
 Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
 ---
- arch/arm/boot/dts/keystone-k2e-netcp.dtsi  | 28 +++++++++++++++++++++++++---
- arch/arm/boot/dts/keystone-k2hk-netcp.dtsi | 30 ++++++++++++++++++++++++++----
- arch/arm/boot/dts/keystone-k2l-netcp.dtsi  | 13 ++++++++++++-
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi  |   28 +++++++++++++++++++++++---
+ arch/arm/boot/dts/keystone-k2hk-netcp.dtsi |   30 ++++++++++++++++++++++++----
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi  |   13 +++++++++++-
  3 files changed, 63 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 3c91699..29831a1 100644
+index 3c91699..20a4bf6 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -299,7 +299,7 @@ netcp: netcp@24000000 {
@@ -52,7 +52,7 @@ index 3c91699..29831a1 100644
 -	clocks		= <&clkxge>;
 -	clock-names	= "xge_clk";
 +	clocks		= <&clkxge>, <&chipclk12>;
-+	clock-names	= "clk_xge", "cpts";
++	clock-names	= "xge_clk", "cpts";
  	dma-coherent;
  	/* big-endian; */
  
@@ -75,7 +75,7 @@ index 3c91699..29831a1 100644
  				xgbe0: interface-0 {
  					slave-port = <0>;
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 5885a3a..ce18d51 100644
+index 5885a3a..1aec876 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -280,8 +280,8 @@ netcp: netcp@2000000 {
@@ -114,7 +114,7 @@ index 5885a3a..ce18d51 100644
 -	clocks		= <&clkxge>;
 -	clock-names	= "xge_clk";
 +	clocks		= <&clkxge>, <&chipclk13>;
-+	clock-names	= "clk_xge", "cpts";
++	clock-names	= "xge_clk", "cpts";
  	dma-coherent;
  	/* big-endian; */
  
@@ -168,5 +168,5 @@ index df606b3..04ba9f3 100644
  				gbe0: interface-0 {
  					slave-port = <0>;
 -- 
-1.9.1
+1.7.9.5
 
