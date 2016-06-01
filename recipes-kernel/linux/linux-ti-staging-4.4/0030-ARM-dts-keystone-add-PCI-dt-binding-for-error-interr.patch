@@ -1,7 +1,7 @@
-From 3642c5966b6a787b2efb93101692f72b3063bd74 Mon Sep 17 00:00:00 2001
+From 342fae40a641e4221cbcc1d4fea3a211d06a742a Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 20 May 2016 15:53:31 -0400
-Subject: [PATCH 39/40] ARM: dts: keystone: add PCI dt binding for error
+Subject: [PATCH 30/47] ARM: dts: keystone: add PCI dt binding for error
  interrupt
 
 This patch update the PCI dt binding for error platform interrupt.

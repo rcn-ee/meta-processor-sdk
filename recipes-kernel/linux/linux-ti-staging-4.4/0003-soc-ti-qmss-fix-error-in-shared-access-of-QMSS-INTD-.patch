@@ -1,7 +1,7 @@
-From 547fc5ce986683abe67ba7eaabdb5d9610740ec9 Mon Sep 17 00:00:00 2001
+From 7678eea6e35f08710f399269a62d6e053df9196e Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:07:01 -0400
-Subject: [PATCH 03/33] soc: ti: qmss: fix error in shared access of QMSS INTD
+Subject: [PATCH 03/47] soc: ti: qmss: fix error in shared access of QMSS INTD
  by multiple pdsps
 
 Keystone Navigator QMSS has one INTD (interrupt distributor) shared by

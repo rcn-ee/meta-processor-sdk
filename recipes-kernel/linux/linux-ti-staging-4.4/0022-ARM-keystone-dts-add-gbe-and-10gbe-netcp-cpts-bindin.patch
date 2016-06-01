@@ -1,7 +1,7 @@
-From db7dc7b9a09861b312a2d57fdec36d4cadc511aa Mon Sep 17 00:00:00 2001
+From f75b98dee32c8f7820ff41dc8e45c72e1ba00337 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 17:38:52 -0400
-Subject: [PATCH 4/6] ARM: keystone: dts: add gbe and 10gbe netcp cpts
+Subject: [PATCH 22/47] ARM: keystone: dts: add gbe and 10gbe netcp cpts
  bindings
 
 This patch adds the netcp cpts DT bindings for the
@@ -9,9 +9,9 @@ gbe and 10gbe devices on the Keystone2 platforms.
 
 Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
 ---
- arch/arm/boot/dts/keystone-k2e-netcp.dtsi  |   28 +++++++++++++++++++++++---
- arch/arm/boot/dts/keystone-k2hk-netcp.dtsi |   30 ++++++++++++++++++++++++----
- arch/arm/boot/dts/keystone-k2l-netcp.dtsi  |   13 +++++++++++-
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi  | 28 +++++++++++++++++++++++++---
+ arch/arm/boot/dts/keystone-k2hk-netcp.dtsi | 30 ++++++++++++++++++++++++++----
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi  | 13 ++++++++++++-
  3 files changed, 63 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
@@ -168,5 +168,5 @@ index df606b3..04ba9f3 100644
  				gbe0: interface-0 {
  					slave-port = <0>;
 -- 
-1.7.9.5
+1.9.1
 

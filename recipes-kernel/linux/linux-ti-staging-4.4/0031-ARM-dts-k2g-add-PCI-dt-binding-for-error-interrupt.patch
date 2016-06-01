@@ -1,7 +1,7 @@
-From 7fdc0ea9cfc0c5d838fbc3c0c9ab96ea6b7190e5 Mon Sep 17 00:00:00 2001
+From b4a89ef31cc921c23cd758a1ad09da95a7e6c082 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 20 May 2016 16:23:34 -0400
-Subject: [PATCH 40/40] ARM: dts: k2g: add PCI dt binding for error interrupt
+Subject: [PATCH 31/47] ARM: dts: k2g: add PCI dt binding for error interrupt
 
 This patch update the PCI dt binding for error platform interrupt.
 

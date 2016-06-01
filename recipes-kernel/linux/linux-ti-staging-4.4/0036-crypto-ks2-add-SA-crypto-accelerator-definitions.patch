@@ -1,7 +1,7 @@
 From 55e69bef04bbcec9a6138fabc7c232598faa9156 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 31 May 2016 14:50:29 -0400
-Subject: [PATCH 05/16] crypto: ks2: add SA crypto accelerator definitions
+Subject: [PATCH 36/47] crypto: ks2: add SA crypto accelerator definitions
 
 This commit adds definitions that can be used to configure SA hardware
 module. The definitions are taken from TI low level driver code (LLD),

@@ -1,7 +1,7 @@
-From cf3847e86829d7fdae80fad2d7225a3a41418294 Mon Sep 17 00:00:00 2001
+From e4c330d2b43e0f823bec0c07aefe292adae3e704 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Tue, 10 May 2016 12:59:29 -0400
-Subject: [PATCH 02/33] ti_config_fragments: connectivity: enable usb serial
+Subject: [PATCH 02/47] ti_config_fragments: connectivity: enable usb serial
  options
 
 * Enable as modules USB_ACM, USB_SERIAL, and USB_SERIAL_FTDI_SIO so
@@ -13,7 +13,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index 4cf750b..10a087a6 100644
+index d74e41a..b9ed08d 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
 @@ -223,6 +223,9 @@ CONFIG_USB_G_DBGP=m

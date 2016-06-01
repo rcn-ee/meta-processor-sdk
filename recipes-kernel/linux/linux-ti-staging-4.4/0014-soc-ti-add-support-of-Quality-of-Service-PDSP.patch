@@ -1,7 +1,7 @@
-From 58387f8e0dc9619d3bb8e4328655db9114487ad3 Mon Sep 17 00:00:00 2001
+From 788c8b4d775f6c780e94e9a9c921827f7a3a3a1d Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 14:56:53 -0400
-Subject: [PATCH 14/33] soc: ti: add support of Quality of Service PDSP.
+Subject: [PATCH 14/47] soc: ti: add support of Quality of Service PDSP.
 
 The QoS PDSP is charged with the job of policing all packet flows
 in the system, and verifying that neither the peripherals nor the

@@ -1,7 +1,7 @@
-From cba7bcfd17253926284d45632b24541db84e4b66 Mon Sep 17 00:00:00 2001
+From 81a3d9f379dfc07cc689b3dd3c9542ca8b3719f5 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Mon, 7 Mar 2016 04:20:45 -0500
-Subject: [PATCH 09/33] soc: ti: qmss: add support of queue range specific push
+Subject: [PATCH 09/47] soc: ti: qmss: add support of queue range specific push
  pop methods
 
 When a range of hardware queues are monitored and

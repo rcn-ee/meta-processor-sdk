@@ -1,7 +1,7 @@
-From 821ed32949e1802148662619294e668c8a98d646 Mon Sep 17 00:00:00 2001
+From b53fc606aa6963c8e87fa8ca4e5d6e5d5ce36bce Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 14 Apr 2015 10:16:55 -0400
-Subject: [PATCH 06/33] lib/ktree: add generic tree implementation
+Subject: [PATCH 06/47] lib/ktree: add generic tree implementation
 
 This patch adds a generic tree implementation along
 the same principles as the existing klist implementation

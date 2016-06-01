@@ -1,7 +1,7 @@
-From 5f57ae225897828481ede51461d1ba3a55223597 Mon Sep 17 00:00:00 2001
+From 083d1df154cd208a3b2e197073a709ae3b1ea85e Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 16 May 2016 14:47:08 -0400
-Subject: [PATCH 35/40] ARM: dts: k2g: Add DT bindings for PCIe controller
+Subject: [PATCH 26/47] ARM: dts: k2g: Add DT bindings for PCIe controller
  driver
 
 This patch adds DT bindings to for PCIe controller on K2G. The K2G

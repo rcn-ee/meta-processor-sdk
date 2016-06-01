@@ -1,7 +1,7 @@
-From 4552ef10186068658d41f2ea776e1f1b372f06a0 Mon Sep 17 00:00:00 2001
+From 7bb7228459bb98ad01db892a72b51ee2311e9317 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 20 May 2016 15:48:33 -0400
-Subject: [PATCH 38/40] PCI: keystone: Remove unnecessary goto statement
+Subject: [PATCH 29/47] PCI: keystone: Remove unnecessary goto statement
 
 Fix the misuse of goto statement in ks_pcie_get_irq_controller_info() as
 simple return is more appropriate for this function.  While at it add an

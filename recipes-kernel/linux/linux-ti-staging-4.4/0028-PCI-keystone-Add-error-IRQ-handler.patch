@@ -1,7 +1,7 @@
-From 73484b50e35b0c3787ea9b65f97837fb90af29e2 Mon Sep 17 00:00:00 2001
+From d518b8309966044c2397e6a784e5ffb213f495bc Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 11 Apr 2016 10:50:30 -0400
-Subject: [PATCH 37/40] PCI: keystone: Add error IRQ handler
+Subject: [PATCH 28/47] PCI: keystone: Add error IRQ handler
 
 Keystone PCI hardware generates error interrupts at RC using a platform IRQ
 instead of a standard MSI or legacy IRQ.  Add a simple error handler that

@@ -1,7 +1,7 @@
-From f92f7affb757d585442783b7f48084034692e12b Mon Sep 17 00:00:00 2001
+From 0a9c116174bad35835ef48be4a205259493293c7 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 16 May 2016 10:56:03 -0400
-Subject: [PATCH 34/40] PCI: keystone: enable mrrs quirk for K2G PCIe device id
+Subject: [PATCH 25/47] PCI: keystone: enable mrrs quirk for K2G PCIe device id
 
 PCI driver has a quirk to set the mrrs specifically for keystone
 RC and requires the PCIe device ID for K2G added for the quirk to

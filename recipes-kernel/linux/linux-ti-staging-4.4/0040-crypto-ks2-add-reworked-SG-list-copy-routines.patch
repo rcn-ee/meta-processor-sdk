@@ -1,7 +1,7 @@
 From 64f1625de43f5e759200bebd61284298cf167361 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 31 May 2016 14:50:33 -0400
-Subject: [PATCH 09/16] crypto: ks2: add reworked SG list copy routines
+Subject: [PATCH 40/47] crypto: ks2: add reworked SG list copy routines
 
 This patch re-implements crypto scatterwalk functions to remove the cache
 maintenance overheads. Accordingly to Sandeep Nair, who is original author

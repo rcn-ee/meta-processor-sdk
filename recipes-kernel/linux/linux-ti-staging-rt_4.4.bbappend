@@ -1,4 +1,4 @@
-PR_append = ".tisdk9"
+PR_append = ".tisdk10"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -27,27 +27,27 @@ SRC_URI_append = " \
     file://0022-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
     file://0023-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
     file://0024-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
-    file://0034-PCI-keystone-enable-mrrs-quirk-for-K2G-PCIe-device-i.patch \
-    file://0035-ARM-dts-k2g-Add-DT-bindings-for-PCIe-controller-driv.patch \
-    file://0036-ARM-dts-k2g-enable-DT-bindings-in-EVM-dts-file.patch \
-    file://0037-PCI-keystone-Add-error-IRQ-handler.patch \
-    file://0038-PCI-keystone-Remove-unnecessary-goto-statement.patch \
-    file://0039-ARM-dts-keystone-add-PCI-dt-binding-for-error-interr.patch \
-    file://0040-ARM-dts-k2g-add-PCI-dt-binding-for-error-interrupt.patch \
-    file://0001-soc-ti-add-missing-include-to-knav_dma.h.patch \
-    file://0002-arm-move-aes_glue.h-to-the-arch-arm-include-asm-dire.patch \
-    file://0003-Documentation-devicetree-bindings-arm-keystone-keyst.patch \
-    file://0004-crypto-add-stub-keystone-crypto-accelerator-driver.patch \
-    file://0005-crypto-ks2-add-SA-crypto-accelerator-definitions.patch \
-    file://0006-crypto-ks2-read-driver-configuration-parameters-from.patch \
-    file://0007-crypto-ks2-add-dma-resources-allocation-code.patch \
-    file://0008-crypto-ks2-add-low-level-crypto-hardware-interface-c.patch \
-    file://0009-crypto-ks2-add-reworked-SG-list-copy-routines.patch \
-    file://0010-crypto-ks2-add-command-label-functions.patch \
-    file://0011-crypto-ks2-add-processing-functions-and-aead-algorit.patch \
-    file://0012-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
-    file://0013-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
-    file://0014-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
-    file://0015-crypto-keystone-add-driver-statistics.patch \
-    file://0016-crypto-keystone-Add-support-for-HW-RNG.patch \
+    file://0025-PCI-keystone-enable-mrrs-quirk-for-K2G-PCIe-device-i.patch \
+    file://0026-ARM-dts-k2g-Add-DT-bindings-for-PCIe-controller-driv.patch \
+    file://0027-ARM-dts-k2g-enable-DT-bindings-in-EVM-dts-file.patch \
+    file://0028-PCI-keystone-Add-error-IRQ-handler.patch \
+    file://0029-PCI-keystone-Remove-unnecessary-goto-statement.patch \
+    file://0030-ARM-dts-keystone-add-PCI-dt-binding-for-error-interr.patch \
+    file://0031-ARM-dts-k2g-add-PCI-dt-binding-for-error-interrupt.patch \
+    file://0032-soc-ti-add-missing-include-to-knav_dma.h.patch \
+    file://0033-arm-move-aes_glue.h-to-the-arch-arm-include-asm-dire.patch \
+    file://0034-Documentation-devicetree-bindings-arm-keystone-keyst.patch \
+    file://0035-crypto-add-stub-keystone-crypto-accelerator-driver.patch \
+    file://0036-crypto-ks2-add-SA-crypto-accelerator-definitions.patch \
+    file://0037-crypto-ks2-read-driver-configuration-parameters-from.patch \
+    file://0038-crypto-ks2-add-dma-resources-allocation-code.patch \
+    file://0039-crypto-ks2-add-low-level-crypto-hardware-interface-c.patch \
+    file://0040-crypto-ks2-add-reworked-SG-list-copy-routines.patch \
+    file://0041-crypto-ks2-add-command-label-functions.patch \
+    file://0042-crypto-ks2-add-processing-functions-and-aead-algorit.patch \
+    file://0043-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
+    file://0044-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
+    file://0045-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
+    file://0046-crypto-keystone-add-driver-statistics.patch \
+    file://0047-crypto-keystone-Add-support-for-HW-RNG.patch \
 "

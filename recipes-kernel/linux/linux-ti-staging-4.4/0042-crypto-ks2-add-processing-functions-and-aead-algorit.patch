@@ -1,7 +1,7 @@
 From 86abcc39311c1406b931da4170947079f88d557d Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 31 May 2016 14:50:35 -0400
-Subject: [PATCH 11/16] crypto: ks2: add processing functions and aead
+Subject: [PATCH 42/47] crypto: ks2: add processing functions and aead
  algorithms
 
 This commit adds security contexts and packet processing functions, which

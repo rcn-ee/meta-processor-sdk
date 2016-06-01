@@ -1,7 +1,7 @@
-From f56130c250f0ba9f830dd067a60e3caac3290241 Mon Sep 17 00:00:00 2001
+From f08cf319af10781c1b77362d83d476e95d3c3b2b Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 May 2016 15:45:15 -0400
-Subject: [PATCH 18/33] soc: ti: qos: fix error in misspelled string when
+Subject: [PATCH 18/47] soc: ti: qos: fix error in misspelled string when
  parsing dts binding
 
 The qmss qos clock ticks dts binding is "ticks-per-second".

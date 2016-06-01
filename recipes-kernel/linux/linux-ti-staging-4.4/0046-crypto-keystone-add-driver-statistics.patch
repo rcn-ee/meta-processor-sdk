@@ -1,7 +1,7 @@
 From 2cb5f7d8aed2dc16a6c4ec5dd49d270facc2e80a Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 31 May 2016 14:50:39 -0400
-Subject: [PATCH 15/16] crypto: keystone: add driver statistics
+Subject: [PATCH 46/47] crypto: keystone: add driver statistics
 
 This patch exposes packets statistics through sysfs interface
 

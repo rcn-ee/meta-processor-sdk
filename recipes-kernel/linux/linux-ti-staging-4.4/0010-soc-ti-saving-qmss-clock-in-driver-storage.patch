@@ -1,7 +1,7 @@
-From dc65f40379d2a4ff4657806fbb5e33c6f90ab1bc Mon Sep 17 00:00:00 2001
+From 04bd25534cfdccdfaa5360ed6af08282444a0837 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 29 Apr 2016 16:07:36 -0400
-Subject: [PATCH 10/33] soc: ti: saving qmss clock in driver storage
+Subject: [PATCH 10/47] soc: ti: saving qmss clock in driver storage
 
 Some QMSS drivers requires the knowledge of the
 clock rate at which the QMSS hardware subsystem

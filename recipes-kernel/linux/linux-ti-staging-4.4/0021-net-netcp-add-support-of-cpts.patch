@@ -1,7 +1,7 @@
-From d817e91001c99a780decded02fe40b43820e3157 Mon Sep 17 00:00:00 2001
+From 778f90fcb41c475af5c39cc60ba04a2f012cc1a1 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 12:29:01 -0400
-Subject: [PATCH 21/33] net: netcp: add support of cpts
+Subject: [PATCH 21/47] net: netcp: add support of cpts
 
 This patch adds support of the cpts device found in the
 gbe and 10gbe ethernet switches on the keystone platforms.

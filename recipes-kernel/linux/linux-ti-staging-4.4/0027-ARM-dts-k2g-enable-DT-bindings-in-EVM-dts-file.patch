@@ -1,7 +1,7 @@
-From 6501314d251743d4c8a090c45fda4373acfdfa50 Mon Sep 17 00:00:00 2001
+From 6183a149dfe7c96a07bb4fa4b262bef038fe1aae Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 16 May 2016 14:48:48 -0400
-Subject: [PATCH 36/40] ARM: dts: k2g: enable DT bindings in EVM dts file
+Subject: [PATCH 27/47] ARM: dts: k2g: enable DT bindings in EVM dts file
 
 Enable the PCIe in EVM dts file so that users can plug in a standard
 PCIe 1x card onto EVM PCIe slot and work with the device.
@@ -12,7 +12,7 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2g-evm.dts b/arch/arm/boot/dts/keystone-k2g-evm.dts
-index 035039e..9092035 100644
+index af457db..52ac6a6 100644
 --- a/arch/arm/boot/dts/keystone-k2g-evm.dts
 +++ b/arch/arm/boot/dts/keystone-k2g-evm.dts
 @@ -592,3 +592,11 @@

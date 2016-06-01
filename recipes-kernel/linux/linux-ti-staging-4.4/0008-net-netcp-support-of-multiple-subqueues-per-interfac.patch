@@ -1,7 +1,7 @@
-From 63fb5eac9623f2a590c8916ec22eb741d28e9736 Mon Sep 17 00:00:00 2001
+From 955c0fe946788b56d49213e3a80a0630bc9c0550 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 18:18:27 -0400
-Subject: [PATCH 08/33] net: netcp: support of multiple subqueues per interface
+Subject: [PATCH 08/47] net: netcp: support of multiple subqueues per interface
 
 This patch adds the support of multiple subqueues per interface.  This
 is particularly useful when support of NETCP QoS is enabled.  In that
