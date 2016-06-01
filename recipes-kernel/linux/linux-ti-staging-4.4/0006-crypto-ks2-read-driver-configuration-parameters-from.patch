@@ -1,0 +1,190 @@
+From 5a1b5ec71d7da317bb051a1ffb3e83c9ce9e9c8d Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Tue, 31 May 2016 14:50:30 -0400
+Subject: [PATCH 06/16] crypto: ks2: read driver configuration parameters from
+ dtb
+
+This commit adds configuration fields such tx and rx queue numbers,
+buffer sizes, etc. to the driver instance data structure.
+It also adds the function to read the corresponding parameters from dtb.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/crypto/keystone-sa-hlp.h | 43 ++++++++++++++++++++
+ drivers/crypto/keystone-sa.c     | 84 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 127 insertions(+)
+
+diff --git a/drivers/crypto/keystone-sa-hlp.h b/drivers/crypto/keystone-sa-hlp.h
+index a19539e..05fc79a 100644
+--- a/drivers/crypto/keystone-sa-hlp.h
++++ b/drivers/crypto/keystone-sa-hlp.h
+@@ -19,10 +19,53 @@
+ #ifndef _KEYSTONE_SA_HLP_
+ #define _KEYSTONE_SA_HLP_
+ 
++#include <linux/soc/ti/knav_dma.h>
++
++/* Memory map of the SA register set */
++struct sa_mmr_regs {
++	u32 PID;
++	u32 RES01;
++	u32 CMD_STATUS;
++	u32 RES02;
++	u32 PA_FLOWID;
++	u32 CDMA_FLOWID;
++	u32 PA_ENG_ID;
++	u32 CDMA_ENG_ID;
++	u8  RSVD0[224];
++	u32 CTXCACH_CTRL;
++	u32 CTXCACH_SC_PTR;
++	u32 CTXCACH_SC_ID;
++	u32 CTXCACH_MISSCNT;
++};
++
++struct sa_regs {
++	struct sa_mmr_regs mmr;
++};
++
+ /* Crypto driver instance data */
+ struct keystone_crypto_data {
+ 	struct platform_device	*pdev;
+ 	struct clk		*clk;
++	struct sa_regs		*regs;
++	u32		tx_submit_qid;
++	u32		tx_compl_qid;
++	u32		rx_compl_qid;
++	const char	*rx_chan_name;
++	const char	*tx_chan_name;
++	u32		tx_queue_depth;
++	u32		rx_queue_depths[KNAV_DMA_FDQ_PER_CHAN];
++	u32		rx_buffer_sizes[KNAV_DMA_FDQ_PER_CHAN];
++	u32		rx_pool_size;
++	u32		rx_pool_region_id;
++	u32		tx_pool_size;
++	u32		tx_pool_region_id;
++
++	/* Security context data */
++	u16		sc_id_start;
++	u16		sc_id_end;
++	u16		sc_id;
++	atomic_t	rx_dma_page_cnt; /* N buf from 2nd pool available */
++	atomic_t	tx_dma_desc_cnt; /* Tx DMA desc-s available */
+ };
+ 
+ extern struct device *sa_ks2_dev;
+diff --git a/drivers/crypto/keystone-sa.c b/drivers/crypto/keystone-sa.c
+index 7c6c3d9..c3e3510 100644
+--- a/drivers/crypto/keystone-sa.c
++++ b/drivers/crypto/keystone-sa.c
+@@ -24,10 +24,87 @@
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/soc/ti/knav_dma.h>
+ #include "keystone-sa-hlp.h"
+ 
++#define OF_PROP_READ(type, node, prop, var) \
++	do { \
++		ret = of_property_read_##type(node, prop, &var); \
++		if (ret < 0) { \
++			dev_err(dev, "missing \""prop"\" parameter\n"); \
++			return -EINVAL; \
++		} \
++	} while (0)
++
++#define OF_PROP_READ_U32_ARRAY(node, prop, array, size) \
++	do { \
++		ret = of_property_read_u32_array(node, prop, array, size); \
++		if (ret < 0) { \
++			dev_err(dev, "missing \""prop"\" parameter\n"); \
++			return -EINVAL; \
++		} \
++	} while (0)
++
+ struct device *sa_ks2_dev;
++static int sa_read_dtb(struct device_node *node,
++		       struct keystone_crypto_data *dev_data)
++{
++	int i, ret = 0;
++	struct device *dev = &dev_data->pdev->dev;
++	u32 temp[2];
++
++	OF_PROP_READ(string, node, "ti,tx-channel", dev_data->tx_chan_name);
++	OF_PROP_READ(u32, node, "ti,tx-queue-depth", dev_data->tx_queue_depth);
++	atomic_set(&dev_data->tx_dma_desc_cnt, dev_data->tx_queue_depth);
++	OF_PROP_READ(u32, node, "ti,tx-submit-queue", dev_data->tx_submit_qid);
++	OF_PROP_READ(u32, node, "ti,tx-completion-queue",
++		     dev_data->tx_compl_qid);
++	OF_PROP_READ(string, node, "ti,rx-channel", dev_data->rx_chan_name);
++
++	OF_PROP_READ_U32_ARRAY(node, "ti,rx-queue-depth",
++			       dev_data->rx_queue_depths,
++			       KNAV_DMA_FDQ_PER_CHAN);
++
++	for (i = 0; i < KNAV_DMA_FDQ_PER_CHAN; i++)
++		dev_dbg(dev, "rx-queue-depth[%d]= %u\n", i,
++			dev_data->rx_queue_depths[i]);
++
++	OF_PROP_READ_U32_ARRAY(node, "ti,rx-buffer-size",
++			       dev_data->rx_buffer_sizes,
++			       KNAV_DMA_FDQ_PER_CHAN);
++
++	for (i = 0; i < KNAV_DMA_FDQ_PER_CHAN; i++)
++		dev_dbg(dev, "rx-buffer-size[%d]= %u\n", i,
++			dev_data->rx_buffer_sizes[i]);
++
++	atomic_set(&dev_data->rx_dma_page_cnt, 0);
++
++	OF_PROP_READ(u32, node, "ti,rx-compl-queue", dev_data->rx_compl_qid);
++
++	OF_PROP_READ_U32_ARRAY(node, "ti,tx-pool", temp, 2);
++	dev_data->tx_pool_size = temp[0];
++	dev_data->tx_pool_region_id = temp[1];
++
++	OF_PROP_READ_U32_ARRAY(node, "ti,rx-pool", temp, 2);
++	dev_data->rx_pool_size = temp[0];
++	dev_data->rx_pool_region_id = temp[1];
++
++	OF_PROP_READ_U32_ARRAY(node, "ti,sc-id", temp, 2);
++	dev_data->sc_id_start = temp[0];
++	dev_data->sc_id_end = temp[1];
++	dev_data->sc_id = dev_data->sc_id_start;
++
++	dev_data->regs = of_iomap(node, 0);
++	if (!dev_data->regs) {
++		dev_err(dev, "failed to of_iomap\n");
++		return -ENOMEM;
++	}
++
++	return 0;
++}
+ 
+ static int keystone_crypto_remove(struct platform_device *pdev)
+ {
+@@ -44,6 +121,7 @@ static int keystone_crypto_remove(struct platform_device *pdev)
+ static int keystone_crypto_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	struct device_node *node = pdev->dev.of_node;
+ 	struct keystone_crypto_data *dev_data;
+ 	int ret;
+ 
+@@ -71,6 +149,12 @@ static int keystone_crypto_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
++	/* Read configuration from device tree */
++	ret = sa_read_dtb(node, dev_data);
++	if (ret) {
++		dev_err(dev, "Failed to get all relevant configurations from DTB...\n");
++		goto err;
++	}
+ 
+ 	dev_info(dev, "crypto accelerator enabled\n");
+ 	return 0;
+-- 
+1.9.1
+

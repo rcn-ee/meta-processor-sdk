@@ -1,7 +1,7 @@
-From 3d8985716875e86031f8dab78d0e19e1ba4e2a6d Mon Sep 17 00:00:00 2001
+From 2cb5f7d8aed2dc16a6c4ec5dd49d270facc2e80a Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
-Date: Fri, 15 Apr 2016 12:57:31 -0400
-Subject: [PATCH 32/33] crypto: keystone: add driver statistics
+Date: Tue, 31 May 2016 14:50:39 -0400
+Subject: [PATCH 15/16] crypto: keystone: add driver statistics
 
 This patch exposes packets statistics through sysfs interface
 
@@ -13,10 +13,10 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  3 files changed, 189 insertions(+)
 
 diff --git a/drivers/crypto/keystone-sa-hlp.h b/drivers/crypto/keystone-sa-hlp.h
-index e44a557..72885c5 100644
+index 8c9d9b9..a877acc 100644
 --- a/drivers/crypto/keystone-sa-hlp.h
 +++ b/drivers/crypto/keystone-sa-hlp.h
-@@ -90,6 +90,18 @@ struct sa_regs {
+@@ -76,6 +76,18 @@ struct sa_regs {
  	struct sa_mmr_regs mmr;
  };
  
@@ -35,7 +35,7 @@ index e44a557..72885c5 100644
  /* Crypto driver instance data */
  struct keystone_crypto_data {
  	struct platform_device	*pdev;
-@@ -123,6 +135,7 @@ struct keystone_crypto_data {
+@@ -109,6 +121,7 @@ struct keystone_crypto_data {
  
  	spinlock_t	scid_lock; /* lock for SC-ID allocation */
  
@@ -43,7 +43,7 @@ index e44a557..72885c5 100644
  	int		stats_fl;
  
  	/* Security context data */
-@@ -133,6 +146,9 @@ struct keystone_crypto_data {
+@@ -119,6 +132,9 @@ struct keystone_crypto_data {
  	/* Bitmap to keep track of Security context ID's */
  	unsigned long	ctx_bm[DIV_ROUND_UP(SA_MAX_NUM_CTX,
  				BITS_PER_LONG)];
@@ -54,10 +54,10 @@ index e44a557..72885c5 100644
  	atomic_t	tx_dma_desc_cnt; /* Tx DMA desc-s available */
  };
 diff --git a/drivers/crypto/keystone-sa-utils.c b/drivers/crypto/keystone-sa-utils.c
-index aaf1359..03d8d23 100644
+index 6224a70..ae5c0e6 100644
 --- a/drivers/crypto/keystone-sa-utils.c
 +++ b/drivers/crypto/keystone-sa-utils.c
-@@ -711,6 +711,7 @@ static int sa_tear_sc(struct sa_ctx_info *ctx,
+@@ -681,6 +681,7 @@ static int sa_tear_sc(struct sa_ctx_info *ctx,
  	return 0;
  
  err:
@@ -65,15 +65,15 @@ index aaf1359..03d8d23 100644
  	if (dma_ctx)
  		kmem_cache_free(pdata->dma_req_ctx_cache, dma_ctx);
  	return ret;
-@@ -1036,6 +1037,7 @@ void sa_tx_completion_process(struct keystone_crypto_data *dev_data)
+@@ -995,6 +996,7 @@ void sa_tx_completion_process(struct keystone_crypto_data *dev_data)
  			if (likely(ctx->pkt)) {
- 				atomic_add(ctx->sg_tbl.nents,
+ 				atomic_add(ctx->src_nents,
  					   &ctx->dev_data->tx_dma_desc_cnt);
 +				atomic_inc(&ctx->dev_data->stats.tx_pkts);
  			}
+ 		}
  
- 			if (likely(ctx->sg_tbl.sgl))
-@@ -1126,6 +1128,8 @@ aead_err:
+@@ -1082,6 +1084,8 @@ aead_err:
  			kfree((void *)hwdesc[j]->pad[0]);
  		}
  	}
@@ -83,10 +83,10 @@ index aaf1359..03d8d23 100644
  
  void sa_rx_completion_process(struct keystone_crypto_data *dev_data)
 diff --git a/drivers/crypto/keystone-sa.c b/drivers/crypto/keystone-sa.c
-index c8a4fb0..eb5b3f9 100644
+index aec9143..3eedf79 100644
 --- a/drivers/crypto/keystone-sa.c
 +++ b/drivers/crypto/keystone-sa.c
-@@ -50,6 +50,15 @@
+@@ -38,6 +38,15 @@
  #include "keystone-sa.h"
  #include "keystone-sa-hlp.h"
  
@@ -102,7 +102,7 @@ index c8a4fb0..eb5b3f9 100644
  #define OF_PROP_READ(type, node, prop, var) \
  	do { \
  		ret = of_property_read_##type(node, prop, &var); \
-@@ -460,6 +469,153 @@ fail:
+@@ -478,6 +487,153 @@ fail:
  	return error;
  }
  
@@ -253,10 +253,10 @@ index c8a4fb0..eb5b3f9 100644
 +		kobject_del(&crypto->stats_kobj);
 +}
 +
- /*	Driver registration functions			*/
  static int sa_read_dtb(struct device_node *node,
  		       struct keystone_crypto_data *dev_data)
-@@ -552,6 +708,8 @@ static int keystone_crypto_remove(struct platform_device *pdev)
+ {
+@@ -569,6 +725,8 @@ static int keystone_crypto_remove(struct platform_device *pdev)
  	/* un-register crypto algorithms */
  	sa_unregister_algos(&pdev->dev);
  
@@ -265,7 +265,7 @@ index c8a4fb0..eb5b3f9 100644
  	/* Release DMA resources */
  	sa_free_resources(dev_data);
  	/* Kill tasklets */
-@@ -637,6 +795,12 @@ static int keystone_crypto_probe(struct platform_device *pdev)
+@@ -653,6 +811,12 @@ static int keystone_crypto_probe(struct platform_device *pdev)
  
  	tasklet_init(&dev_data->tx_task, sa_tx_task, (unsigned long)dev_data);
  
@@ -276,9 +276,9 @@ index c8a4fb0..eb5b3f9 100644
 +	atomic_set(&dev_data->stats.rx_pkts, 0);
 +
  	/* Initialize memory pools used by the driver */
- 	if (sa_init_mem(dev_data)) {
+ 	if (ret = sa_init_mem(dev_data)) {
  		dev_err(dev, "Failed to create dma pool");
-@@ -654,6 +818,11 @@ static int keystone_crypto_probe(struct platform_device *pdev)
+@@ -668,6 +832,11 @@ static int keystone_crypto_probe(struct platform_device *pdev)
  	/* Initialize the SC-ID allocation lock */
  	spin_lock_init(&dev_data->scid_lock);
  

@@ -1,7 +1,7 @@
-From b9a28e1eadc16653352845af69a1399a6a70ee22 Mon Sep 17 00:00:00 2001
+From 7d678ee997267fc7cc8ee5eb68aca1cd63daf0ea Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
-Date: Tue, 2 Feb 2016 10:22:39 -0500
-Subject: [PATCH 27/33] Documentation: devicetree: bindings: arm: keystone:
+Date: Tue, 31 May 2016 14:50:27 -0400
+Subject: [PATCH 03/16] Documentation: devicetree: bindings: arm: keystone:
  keystone-crypto.txt
 
 Added device tree bindings for the side-band Security Accelerator
@@ -9,16 +9,16 @@ on keystone device.
 
 Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
 ---
- .../devicetree/bindings/soc/ti/keystone-crypto.txt | 68 ++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ .../devicetree/bindings/soc/ti/keystone-crypto.txt | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
 
 diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt b/Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
 new file mode 100644
-index 0000000..0194f0f
+index 0000000..e9ae820
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/soc/ti/keystone-crypto.txt
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,65 @@
 +Keystone Crypto Driver
 +
 +This document explains the device tree bindings for the side-band Security
@@ -26,8 +26,6 @@ index 0000000..0194f0f
 +
 +Required properties:
 + - compatible: should be "ti,netcp-sa-crypto".
-+
-+ - label: must be "crypto-gbe".
 +
 + - clock: phandle to clksa clock.
 +
@@ -66,7 +64,6 @@ index 0000000..0194f0f
 +
 +crypto@20c0000 {
 +	compatible = "ti,netcp-sa-crypto";
-+	label = "crypto-gbe";
 +	reg = <0x20c0000 0x40000>;
 +	clocks = <&clksa>;
 +

@@ -1,7 +1,7 @@
-From bf001a193047ff02881ef25dcfc397d3048403ed Mon Sep 17 00:00:00 2001
-From: Vitaly Andrianov <vitalya@ti.com>
-Date: Wed, 18 May 2016 10:58:36 -0400
-Subject: [PATCH 28/33] ARM: dts: k2hk: add device binding for crypto
+From 66e4a6b356e28f34857fa8b1d6e7d3cdf4e12e72 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Wed, 1 Jun 2016 08:46:19 -0400
+Subject: [PATCH 12/16] ARM: dts: k2hk: add device binding for crypto
  accelerator
 
 This patch enables HW crypto accelerator by adding device binding for it.
@@ -12,7 +12,7 @@ Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
  1 file changed, 25 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index ce18d51..ca479a5 100644
+index 1aec876..a8cc170 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -268,6 +268,31 @@ gbe_serdes: phy@232a000 {
