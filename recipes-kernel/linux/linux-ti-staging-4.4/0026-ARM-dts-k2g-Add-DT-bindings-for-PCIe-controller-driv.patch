@@ -1,4 +1,4 @@
-From 083d1df154cd208a3b2e197073a709ae3b1ea85e Mon Sep 17 00:00:00 2001
+From 6d1c691439dffd47079935beaa558fc046d40e51 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 16 May 2016 14:47:08 -0400
 Subject: [PATCH 26/47] ARM: dts: k2g: Add DT bindings for PCIe controller
@@ -11,14 +11,14 @@ default.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 ---
- arch/arm/boot/dts/keystone-k2g.dtsi | 61 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ arch/arm/boot/dts/keystone-k2g.dtsi | 60 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
-index e97d9d2..d90a950 100644
+index e97d9d2..a77cf34 100644
 --- a/arch/arm/boot/dts/keystone-k2g.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2g.dtsi
-@@ -698,5 +698,66 @@
+@@ -698,5 +698,65 @@
  			clock-names = "fck", "datack", "cfgck", "ock", "ick";
  			status = "disabled";
  		};
@@ -42,9 +42,8 @@ index e97d9d2..d90a950 100644
 +			#size-cells = <2>;
 +			reg =  <0x21801000 0x2000>, <0x21800000 0x1000>,
 +				<0x02620128 4>;
-+			ranges = <0x81000000 0 0 0x23250000 0 0x4000
-+				  0x82000000 0 0x70000000 0x70000000
-+				    0 0x10000000>;
++			ranges = <0x82000000 0 0x70000000 0x70000000
++				  0 0x10000000>;
 +
 +			status = "disabled";
 +			device_type = "pci";

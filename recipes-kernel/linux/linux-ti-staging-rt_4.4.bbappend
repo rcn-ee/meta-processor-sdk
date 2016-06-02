@@ -1,4 +1,4 @@
-PR_append = ".tisdk10"
+PR_append = ".tisdk11"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
