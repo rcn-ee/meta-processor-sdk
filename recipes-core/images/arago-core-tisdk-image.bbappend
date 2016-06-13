@@ -1,4 +1,4 @@
-PR_append = ".tisdk6"
+PR_append = ".tisdk7"
 
 DTB_FILTER_k2hk-evm = "k2hk"
 DTB_FILTER_k2e-evm = "k2e"
@@ -48,6 +48,18 @@ tisdk_image_build_append () {
         if [ -e $fw ]
         then
             cp $fw ${prebuilt_dir}/
+        fi
+    done
+}
+
+tisdk_image_cleanup() {
+    local cleanup_dirs="var etc lib run sbin usr"
+
+    for d in $cleanup_dirs
+    do
+        if [ -d ${IMAGE_ROOTFS}/$d ]
+        then
+            mv ${IMAGE_ROOTFS}/$d ${IMAGE_ROOTFS}/.$d
         fi
     done
 }
