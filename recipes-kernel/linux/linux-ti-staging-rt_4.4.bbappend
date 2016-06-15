@@ -1,4 +1,4 @@
-PR_append = ".tisdk11"
+PR_append = ".tisdk12"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -50,4 +50,5 @@ SRC_URI_append = " \
     file://0045-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
     file://0046-crypto-keystone-add-driver-statistics.patch \
     file://0047-crypto-keystone-Add-support-for-HW-RNG.patch \
+    file://0048-ti_config_fragments-baseport.cfg-disable-RT_GROUP_SC.patch \
 "

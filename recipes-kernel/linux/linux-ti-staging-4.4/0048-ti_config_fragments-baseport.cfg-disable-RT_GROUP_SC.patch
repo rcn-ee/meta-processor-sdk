@@ -1,0 +1,29 @@
+From d1cc079653fff5c0461d4230a6d9140229387471 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Wed, 15 Jun 2016 10:27:43 -0400
+Subject: [PATCH 48/48] ti_config_fragments/baseport.cfg: disable
+ RT_GROUP_SCHED
+
+* Disable based on upstream and systemd suggestions
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ ti_config_fragments/baseport.cfg | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ti_config_fragments/baseport.cfg b/ti_config_fragments/baseport.cfg
+index e8b34d2..9f9f576 100644
+--- a/ti_config_fragments/baseport.cfg
++++ b/ti_config_fragments/baseport.cfg
+@@ -38,7 +38,7 @@ CONFIG_CGROUP_PERF=y
+ CONFIG_CGROUP_SCHED=y
+ CONFIG_FAIR_GROUP_SCHED=y
+ CONFIG_CFS_BANDWIDTH=y
+-CONFIG_RT_GROUP_SCHED=y
++CONFIG_RT_GROUP_SCHED=n
+ CONFIG_BLK_CGROUP=y
+ CONFIG_DEBUG_BLK_CGROUP=n
+ CONFIG_CGROUP_WRITEBACK=y
+-- 
+1.9.1
+
