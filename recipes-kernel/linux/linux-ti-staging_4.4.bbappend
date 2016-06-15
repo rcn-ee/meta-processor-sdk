@@ -1,4 +1,4 @@
-PR_append = ".tisdk12"
+PR_append = ".tisdk13"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -52,3 +52,5 @@ SRC_URI_append = " \
     file://0047-crypto-keystone-Add-support-for-HW-RNG.patch \
     file://0048-ti_config_fragments-baseport.cfg-disable-RT_GROUP_SC.patch \
 "
+
+RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
