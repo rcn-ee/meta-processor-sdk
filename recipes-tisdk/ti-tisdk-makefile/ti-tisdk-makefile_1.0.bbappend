@@ -1,4 +1,6 @@
-PR_append = ".tisdk15"
+PR_append = ".tisdk16"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 MAKEFILES_append_k2g-evm = " opencl-examples \
                              openmpacc-examples \
