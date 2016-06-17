@@ -1,4 +1,4 @@
-PR_append = ".tisdk13"
+PR_append = ".tisdk14"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -51,6 +51,9 @@ SRC_URI_append = " \
     file://0046-crypto-keystone-add-driver-statistics.patch \
     file://0047-crypto-keystone-Add-support-for-HW-RNG.patch \
     file://0048-ti_config_fragments-baseport.cfg-disable-RT_GROUP_SC.patch \
+    file://0049-ARM-OMAP-DRA7-powerdomain-data-Set-L3init-and-L4per-.patch \
+    file://0050-ARM-OMAP-DRA7-powerdomain-data-Remove-unused-pwrsts_.patch \
+    file://0051-ARM-OMAP-DRA7-powerdomain-data-Remove-unused-pwrsts_.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
