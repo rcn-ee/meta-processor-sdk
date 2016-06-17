@@ -1,4 +1,4 @@
-PR_append = ".tisdk16"
+PR_append = ".tisdk17"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -88,6 +88,12 @@ SRC_URI_append = " \
     file://0083-rapidio-add-mport-char-device-driver.patch \
     file://0084-rapidio-fix-potential-NULL-pointer-dereference.patch \
     file://0085-rapidio-mport_cdev-fix-uapi-type-definitions.patch \
+    file://0086-soc-ti-add-queue-flush-helper-macro.patch \
+    file://0087-rapidio-keystone-add-support-of-rapidio.patch \
+    file://0088-rapidio-rionet-add-support-of-keystone-rapidio.patch \
+    file://0089-ARM-dts-keystone-k2hk-Add-devicetree-bindings-for-SR.patch \
+    file://0090-rapidio-keystone-move-RapidIO-kernel-configuration-i.patch \
+    file://0091-ti_config_fragments-connectivity.cfg-enable-rapidio-.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
