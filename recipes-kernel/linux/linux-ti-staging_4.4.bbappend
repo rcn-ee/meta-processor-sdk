@@ -1,4 +1,4 @@
-PR_append = ".tisdk14"
+PR_append = ".tisdk15"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -54,6 +54,7 @@ SRC_URI_append = " \
     file://0049-ARM-OMAP-DRA7-powerdomain-data-Set-L3init-and-L4per-.patch \
     file://0050-ARM-OMAP-DRA7-powerdomain-data-Remove-unused-pwrsts_.patch \
     file://0051-ARM-OMAP-DRA7-powerdomain-data-Remove-unused-pwrsts_.patch \
+    file://0052-soc-ti-opp-domain-Fix-wrong-scaling-of-VDD-regulator.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
