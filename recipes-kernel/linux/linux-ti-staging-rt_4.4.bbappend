@@ -1,4 +1,4 @@
-PR_append = ".tisdk15"
+PR_append = ".tisdk16"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -55,6 +55,39 @@ SRC_URI_append = " \
     file://0050-ARM-OMAP-DRA7-powerdomain-data-Remove-unused-pwrsts_.patch \
     file://0051-ARM-OMAP-DRA7-powerdomain-data-Remove-unused-pwrsts_.patch \
     file://0052-soc-ti-opp-domain-Fix-wrong-scaling-of-VDD-regulator.patch \
+    file://0053-rapidio-use-kobj_to_dev.patch \
+    file://0054-drivers-Initialize-resource-entry-to-zero.patch \
+    file://0055-rapidio-rionet-add-capability-to-change-MTU.patch \
+    file://0056-rapidio-tsi721-fix-hardcoded-MRRS-setting.patch \
+    file://0057-rapidio-tsi721-add-check-for-overlapped-IB-window-ma.patch \
+    file://0058-rapidio-tsi721-add-option-to-configure-direct-mappin.patch \
+    file://0059-rapidio-tsi721_dma-fix-pending-transaction-queue-han.patch \
+    file://0060-rapidio-add-query_mport-operation.patch \
+    file://0061-rapidio-tsi721-add-query_mport-callback.patch \
+    file://0062-rapidio-add-shutdown-notification-for-RapidIO-device.patch \
+    file://0063-rapidio-tsi721-add-shutdown-notification-callback.patch \
+    file://0064-rapidio-rionet-add-shutdown-event-handling.patch \
+    file://0065-rapidio-rework-common-RIO-device-add-delete-routines.patch \
+    file://0066-rapidio-move-net-allocation-into-core-code.patch \
+    file://0067-rapidio-add-core-mport-removal-support.patch \
+    file://0068-rapidio-tsi721-add-HW-specific-mport-removal.patch \
+    file://0069-powerpc-fsl_rio-changes-to-mport-registration.patch \
+    file://0070-rapidio-rionet-add-locking-into-add-remove-device.patch \
+    file://0071-rapidio-rionet-add-mport-removal-handling.patch \
+    file://0072-rapidio-add-lock-protection-for-doorbell-list.patch \
+    file://0073-rapidio-move-rio_local_set_device_id-function-to-the.patch \
+    file://0074-rapidio-move-rio_pw_enable-into-core-code.patch \
+    file://0075-rapidio-add-global-inbound-port-write-interfaces.patch \
+    file://0076-rapidio-tsi721-fix-locking-in-OB_MSG-processing.patch \
+    file://0077-rapidio-add-outbound-window-support.patch \
+    file://0078-rapidio-tsi721-add-outbound-windows-mapping-support.patch \
+    file://0079-rapidio-tsi721-add-filtered-debug-output.patch \
+    file://0080-rapidio-tsi721_dma-update-error-reporting-from-prep_.patch \
+    file://0081-rapidio-tsi721_dma-fix-synchronization-issues.patch \
+    file://0082-rapidio-tsi721_dma-fix-hardware-error-handling.patch \
+    file://0083-rapidio-add-mport-char-device-driver.patch \
+    file://0084-rapidio-fix-potential-NULL-pointer-dereference.patch \
+    file://0085-rapidio-mport_cdev-fix-uapi-type-definitions.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"

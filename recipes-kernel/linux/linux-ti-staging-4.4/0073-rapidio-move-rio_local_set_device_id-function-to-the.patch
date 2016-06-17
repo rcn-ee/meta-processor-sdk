@@ -1,0 +1,87 @@
+From 23bfb24a1c8744d1eee17c45b9bfcb4055f3f010 Mon Sep 17 00:00:00 2001
+From: Alexandre Bounine <alexandre.bounine@idt.com>
+Date: Tue, 22 Mar 2016 14:26:38 -0700
+Subject: [PATCH 73/91] rapidio: move rio_local_set_device_id function to the
+ common core
+
+commit 5024622f583eb242ed8040d0b9d1e0d2458d1db8 upstream.
+
+Make function rio_local_set_device_id() common for all components of
+RapidIO subsystem.
+
+Signed-off-by: Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: Matt Porter <mporter@kernel.crashing.org>
+Cc: Aurelien Jacquiot <a-jacquiot@ti.com>
+Cc: Andre van Herk <andre.van.herk@prodrive-technologies.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ drivers/rapidio/rio-scan.c | 13 -------------
+ drivers/rapidio/rio.c      | 14 ++++++++++++++
+ include/linux/rio_drv.h    |  1 +
+ 3 files changed, 15 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
+index 764dc5f..f730914 100644
+--- a/drivers/rapidio/rio-scan.c
++++ b/drivers/rapidio/rio-scan.c
+@@ -194,19 +194,6 @@ static void rio_set_device_id(struct rio_mport *port, u16 destid, u8 hopcount, u
+ }
+ 
+ /**
+- * rio_local_set_device_id - Set the base/extended device id for a port
+- * @port: RIO master port
+- * @did: Device ID value to be written
+- *
+- * Writes the base/extended device id from a device.
+- */
+-static void rio_local_set_device_id(struct rio_mport *port, u16 did)
+-{
+-	rio_local_write_config_32(port, RIO_DID_CSR, RIO_SET_DID(port->sys_size,
+-				did));
+-}
+-
+-/**
+  * rio_clear_locks- Release all host locks and signal enumeration complete
+  * @net: RIO network to run on
+  *
+diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
+index e42f97e..095801c 100644
+--- a/drivers/rapidio/rio.c
++++ b/drivers/rapidio/rio.c
+@@ -138,6 +138,20 @@ void rio_free_net(struct rio_net *net)
+ EXPORT_SYMBOL_GPL(rio_free_net);
+ 
+ /**
++ * rio_local_set_device_id - Set the base/extended device id for a port
++ * @port: RIO master port
++ * @did: Device ID value to be written
++ *
++ * Writes the base/extended device id from a device.
++ */
++void rio_local_set_device_id(struct rio_mport *port, u16 did)
++{
++	rio_local_write_config_32(port, RIO_DID_CSR,
++				  RIO_SET_DID(port->sys_size, did));
++}
++EXPORT_SYMBOL_GPL(rio_local_set_device_id);
++
++/**
+  * rio_add_device- Adds a RIO device to the device model
+  * @rdev: RIO device
+  *
+diff --git a/include/linux/rio_drv.h b/include/linux/rio_drv.h
+index 9fc2f21..341b3bf 100644
+--- a/include/linux/rio_drv.h
++++ b/include/linux/rio_drv.h
+@@ -435,6 +435,7 @@ static inline void rio_set_drvdata(struct rio_dev *rdev, void *data)
+ 
+ /* Misc driver helpers */
+ extern u16 rio_local_get_device_id(struct rio_mport *port);
++extern void rio_local_set_device_id(struct rio_mport *port, u16 did);
+ extern struct rio_dev *rio_get_device(u16 vid, u16 did, struct rio_dev *from);
+ extern struct rio_dev *rio_get_asm(u16 vid, u16 did, u16 asm_vid, u16 asm_did,
+ 				   struct rio_dev *from);
+-- 
+1.9.1
+

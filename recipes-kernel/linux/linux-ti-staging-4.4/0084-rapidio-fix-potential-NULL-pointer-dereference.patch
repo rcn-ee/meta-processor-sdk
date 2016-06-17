@@ -1,0 +1,38 @@
+From 1dbaedc03d11177a6998995248aa71c3529ea602 Mon Sep 17 00:00:00 2001
+From: Vladimir Zapolskiy <vz@mleia.com>
+Date: Thu, 28 Apr 2016 16:19:06 -0700
+Subject: [PATCH 84/91] rapidio: fix potential NULL pointer dereference
+
+commit 99f23c2cded85a377325aa9fd374ffa3d55d1088 upstream.
+
+The change fixes improper check for a returned error value by
+class_create() function, which on error returns ERR_PTR() value, thus the
+original check always results in a dead code on error path.
+
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Alexandre Bounine <alexandre.bounine@idt.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ drivers/rapidio/devices/rio_mport_cdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index 9607bc8..f143623 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -2669,9 +2669,9 @@ static int __init mport_init(void)
+ 
+ 	/* Create device class needed by udev */
+ 	dev_class = class_create(THIS_MODULE, DRV_NAME);
+-	if (!dev_class) {
++	if (IS_ERR(dev_class)) {
+ 		rmcd_error("Unable to create " DRV_NAME " class");
+-		return -EINVAL;
++		return PTR_ERR(dev_class);
+ 	}
+ 
+ 	ret = alloc_chrdev_region(&dev_number, 0, RIO_MAX_MPORTS, DRV_NAME);
+-- 
+1.9.1
+

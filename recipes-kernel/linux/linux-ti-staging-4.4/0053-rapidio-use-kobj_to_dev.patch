@@ -1,0 +1,44 @@
+From 929b215ec92a954fcbaf31599354cd5a745316a1 Mon Sep 17 00:00:00 2001
+From: Geliang Tang <geliangtang@163.com>
+Date: Wed, 20 Jan 2016 15:00:39 -0800
+Subject: [PATCH 53/91] rapidio: use kobj_to_dev()
+
+commit a253f1eee6c471d5418983ca9aa9c756e7db5db9 upstream.
+
+Use kobj_to_dev() instead of open-coding it.
+
+Signed-off-by: Geliang Tang <geliangtang@163.com>
+Acked-by: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ drivers/rapidio/rio-sysfs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rapidio/rio-sysfs.c b/drivers/rapidio/rio-sysfs.c
+index cdb005c..eda4156 100644
+--- a/drivers/rapidio/rio-sysfs.c
++++ b/drivers/rapidio/rio-sysfs.c
+@@ -125,8 +125,7 @@ rio_read_config(struct file *filp, struct kobject *kobj,
+ 		struct bin_attribute *bin_attr,
+ 		char *buf, loff_t off, size_t count)
+ {
+-	struct rio_dev *dev =
+-	    to_rio_dev(container_of(kobj, struct device, kobj));
++	struct rio_dev *dev = to_rio_dev(kobj_to_dev(kobj));
+ 	unsigned int size = 0x100;
+ 	loff_t init_off = off;
+ 	u8 *data = (u8 *) buf;
+@@ -197,8 +196,7 @@ rio_write_config(struct file *filp, struct kobject *kobj,
+ 		 struct bin_attribute *bin_attr,
+ 		 char *buf, loff_t off, size_t count)
+ {
+-	struct rio_dev *dev =
+-	    to_rio_dev(container_of(kobj, struct device, kobj));
++	struct rio_dev *dev = to_rio_dev(kobj_to_dev(kobj));
+ 	unsigned int size = count;
+ 	loff_t init_off = off;
+ 	u8 *data = (u8 *) buf;
+-- 
+1.9.1
+

@@ -1,0 +1,89 @@
+From a93a0ef8c8d8238c8a802ecae8bdfd02186b8238 Mon Sep 17 00:00:00 2001
+From: Aurelien Jacquiot <a-jacquiot@ti.com>
+Date: Tue, 22 Mar 2016 14:25:45 -0700
+Subject: [PATCH 55/91] rapidio/rionet: add capability to change MTU
+
+commit 92444bb366ab6ace213c67e7dfea20fabe14adff upstream.
+
+These patches are the result of extensive collaboration within the
+RapidIO.org Software Task Group between Texas Instruments, Freescale,
+Prodrive Technologies, Nokia Networks, BAE and IDT.  Additional input
+was received from other members of RapidIO.org.  The objective was to
+create a character mode driver interface which exposes the capabilities
+of RapidIO devices directly to applications, in a manner that allows the
+numerous and varied RapidIO implementations to interoperate.
+
+The Software Task Group has also developed fabric management, Remote
+Memory Access, and sockets applications which make use of these
+interfaces in user space.  Intensive testing with these applications
+prompted the RapidIO subsystem updates provided within this set of
+patches.
+
+This patch (of 29):
+
+Replace default Ethernet-specific routine by the custom one to allow
+setting of larger MTU supported by RapidIO messaging (max RIO packet
+size is 4096 bytes).
+
+Signed-off-by: Aurelien Jacquiot <a-jacquiot@ti.com>
+Signed-off-by: Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: Matt Porter <mporter@kernel.crashing.org>
+Cc: Andre van Herk <andre.van.herk@prodrive-technologies.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ drivers/net/rionet.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/rionet.c b/drivers/net/rionet.c
+index e7034c5..d3d6e35 100644
+--- a/drivers/net/rionet.c
++++ b/drivers/net/rionet.c
+@@ -48,6 +48,8 @@ MODULE_LICENSE("GPL");
+ #define RIONET_TX_RING_SIZE	CONFIG_RIONET_TX_SIZE
+ #define RIONET_RX_RING_SIZE	CONFIG_RIONET_RX_SIZE
+ #define RIONET_MAX_NETS		8
++#define RIONET_MSG_SIZE         RIO_MAX_MSG_SIZE
++#define RIONET_MAX_MTU          (RIONET_MSG_SIZE - ETH_HLEN)
+ 
+ struct rionet_private {
+ 	struct rio_mport *mport;
+@@ -443,6 +445,17 @@ static void rionet_set_msglevel(struct net_device *ndev, u32 value)
+ 	rnet->msg_enable = value;
+ }
+ 
++static int rionet_change_mtu(struct net_device *ndev, int new_mtu)
++{
++	if ((new_mtu < 68) || (new_mtu > RIONET_MAX_MTU)) {
++		printk(KERN_ERR "%s: Invalid MTU size %d\n",
++		       ndev->name, new_mtu);
++		return -EINVAL;
++	}
++	ndev->mtu = new_mtu;
++	return 0;
++}
++
+ static const struct ethtool_ops rionet_ethtool_ops = {
+ 	.get_drvinfo = rionet_get_drvinfo,
+ 	.get_msglevel = rionet_get_msglevel,
+@@ -454,7 +467,7 @@ static const struct net_device_ops rionet_netdev_ops = {
+ 	.ndo_open		= rionet_open,
+ 	.ndo_stop		= rionet_close,
+ 	.ndo_start_xmit		= rionet_start_xmit,
+-	.ndo_change_mtu		= eth_change_mtu,
++	.ndo_change_mtu		= rionet_change_mtu,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_set_mac_address	= eth_mac_addr,
+ };
+@@ -489,7 +502,7 @@ static int rionet_setup_netdev(struct rio_mport *mport, struct net_device *ndev)
+ 	ndev->dev_addr[5] = device_id & 0xff;
+ 
+ 	ndev->netdev_ops = &rionet_netdev_ops;
+-	ndev->mtu = RIO_MAX_MSG_SIZE - 14;
++	ndev->mtu = RIONET_MAX_MTU;
+ 	ndev->features = NETIF_F_LLTX;
+ 	SET_NETDEV_DEV(ndev, &mport->dev);
+ 	ndev->ethtool_ops = &rionet_ethtool_ops;
+-- 
+1.9.1
+

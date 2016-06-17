@@ -1,0 +1,67 @@
+From 5364847781a3aed38dc289b4ca77067b229befbd Mon Sep 17 00:00:00 2001
+From: Alexandre Bounine <alexandre.bounine@idt.com>
+Date: Tue, 22 Mar 2016 14:26:26 -0700
+Subject: [PATCH 69/91] powerpc/fsl_rio: changes to mport registration
+
+commit dd64f4fe6fe5e3924b36ec4bb4d4202af944a452 upstream.
+
+Change mport object initialization/registration sequence to match
+reworked version of rio_register_mport() in the core code.
+
+Signed-off-by: Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: Matt Porter <mporter@kernel.crashing.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Aurelien Jacquiot <a-jacquiot@ti.com>
+Cc: Andre van Herk <andre.van.herk@prodrive-technologies.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ arch/powerpc/sysdev/fsl_rio.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/arch/powerpc/sysdev/fsl_rio.c b/arch/powerpc/sysdev/fsl_rio.c
+index c1cd369..385371a 100644
+--- a/arch/powerpc/sysdev/fsl_rio.c
++++ b/arch/powerpc/sysdev/fsl_rio.c
+@@ -606,6 +606,12 @@ int fsl_rio_setup(struct platform_device *dev)
+ 		if (!port)
+ 			continue;
+ 
++		rc = rio_mport_initialize(port);
++		if (rc) {
++			kfree(port);
++			continue;
++		}
++
+ 		i = *port_index - 1;
+ 		port->index = (unsigned char)i;
+ 
+@@ -682,12 +688,6 @@ int fsl_rio_setup(struct platform_device *dev)
+ 		dev_info(&dev->dev, "RapidIO Common Transport System size: %d\n",
+ 				port->sys_size ? 65536 : 256);
+ 
+-		if (rio_register_mport(port)) {
+-			release_resource(&port->iores);
+-			kfree(priv);
+-			kfree(port);
+-			continue;
+-		}
+ 		if (port->host_deviceid >= 0)
+ 			out_be32(priv->regs_win + RIO_GCCSR, RIO_PORT_GEN_HOST |
+ 				RIO_PORT_GEN_MASTER | RIO_PORT_GEN_DISCOVERED);
+@@ -727,6 +727,12 @@ int fsl_rio_setup(struct platform_device *dev)
+ 
+ 		dbell->mport[i] = port;
+ 
++		if (rio_register_mport(port)) {
++			release_resource(&port->iores);
++			kfree(priv);
++			kfree(port);
++			continue;
++		}
+ 		active_ports++;
+ 	}
+ 
+-- 
+1.9.1
+
