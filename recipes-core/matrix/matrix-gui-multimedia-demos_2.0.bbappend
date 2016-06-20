@@ -1,6 +1,6 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
-SRCREV = "146420a964d93559524c3a7ee57b2104fd3b4fc3"
+SRCREV = "374e6c084542c460e2f29ec2b1b0a7558848a1f9"
 
 PACKAGES += "matrix-multimedia-demo-dsp66imgproc matrix-multimedia-demo-dsp66imgproc-f2f"
 
