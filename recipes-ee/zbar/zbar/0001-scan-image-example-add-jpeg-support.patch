@@ -1,0 +1,185 @@
+--- ./examples/scan_image.c
++++ ./examples/scan_image.c
+@@ -1,15 +1,21 @@
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
++#ifdef ENABLED_PNG
+ #include <png.h>
+-#include <zbar.h>
++#endif
++#include "zbar.h"
++#include <jpeglib.h>
++#include <jerror.h>
+ 
+ zbar_image_scanner_t *scanner = NULL;
+ 
++#ifdef ENABLED_PNG
+ /* to complete a runnable example, this abbreviated implementation of
+  * get_data() will use libpng to read an image file. refer to libpng
+  * documentation for details
+  */
+-static void get_data (const char *name,
++static void get_png_data (const char *name,
+                       int *width, int *height,
+                       void **raw)
+ {
+@@ -30,7 +36,7 @@
+     if(color & PNG_COLOR_TYPE_PALETTE)
+         png_set_palette_to_rgb(png);
+     if(color == PNG_COLOR_TYPE_GRAY && bits < 8)
+-        png_set_gray_1_2_4_to_8(png);
++        png_set_expand_gray_1_2_4_to_8(png);
+     if(bits == 16)
+         png_set_strip_16(png);
+     if(color & PNG_COLOR_MASK_ALPHA)
+@@ -47,9 +53,112 @@
+         rows[i] = *raw + (*width * i);
+     png_read_image(png, rows);
+ }
++#endif
+ 
++void print_jpeg_info(struct jpeg_decompress_struct *cinfo)
++{
++    printf("JPEG File Information: \n");
++    printf("Image width and height: %d pixels and %d pixels.\n", cinfo->image_width, cinfo->image_height);
++    printf("Color components per pixel: %d.\n", cinfo->num_components);
++    printf("Color space: %d.\n", cinfo->jpeg_color_space);
++    printf("Raw flag is: %d.\n", cinfo->raw_data_out);
++}
++
++static int get_jpeg_data (const char *filename,
++                      int *width, int *height,
++                      void **raw)
++{
++    struct jpeg_decompress_struct cinfo;
++	struct jpeg_error_mgr err;          //the error handler
++    /* More stuff */
++	int ret;
++    FILE * infile;      /* source file */
++    JSAMPARRAY buffer;      /* Output row buffer */
++	unsigned char * rowptr[1];  // pointer to an array
++    int row_stride;     /* physical row width in output buffer */
++    if ((infile = fopen(filename, "rb")) == NULL) {
++        fprintf(stderr, "can't open %s\n", filename);
++        return 0;
++    }
++
++    /* Step 1: allocate and initialize JPEG decompression object */
++
++    /* We set up the normal JPEG error routines, then override error_exit. */
++    cinfo.err = jpeg_std_error(&err);
++    /* Now we can initialize the JPEG decompression object. */
++
++    jpeg_create_decompress(&cinfo);
++	
++    /* Step 2: specify data source (eg, a file) */
++
++    jpeg_stdio_src(&cinfo, infile);
++
++    /* Step 3: read file parameters with jpeg_read_header() */
++
++    (void) jpeg_read_header(&cinfo, TRUE);
++    /* Step 4: set parameters for decompression */
++	cinfo.out_color_space = JCS_GRAYSCALE;
++	//cinfo.num_components = 1;
++
++	print_jpeg_info(&cinfo);
++	
++    /* Step 5: Start decompressor */
++
++    (void) jpeg_start_decompress(&cinfo);
++
++	*width = cinfo.image_width;
++    *height = cinfo.image_height;
++
++    row_stride = cinfo.output_width * cinfo.output_components;
++
++	*raw = (void *)malloc(cinfo.output_width * cinfo.output_height * 3);
++
++    long counter = 0;
++
++	//step 6, read the image line by line
++    unsigned bpl = cinfo.output_width * cinfo.output_components;
++    JSAMPROW buf = (void*)*raw;
++    JSAMPARRAY line = &buf;
++    for(; cinfo.output_scanline < cinfo.output_height; buf += bpl) {
++        jpeg_read_scanlines(&cinfo, line, 1);
++        /* FIXME pad out to dst->width */
++    }
++	/*
++    while (cinfo.output_scanline < cinfo.output_height) {
++		// Enable jpeg_read_scanlines() to fill our jdata array
++		rowptr[0] = (unsigned char *)(*raw) +  // secret to method
++			3* cinfo.output_width * cinfo.output_scanline; 
++
++		jpeg_read_scanlines(&cinfo, rowptr, 1);
++
++    }*/
++
++	/* Step 7: Finish decompression */
++
++    (void) jpeg_finish_decompress(&cinfo);
++    /* Step 8: Release JPEG decompression object */
++
++    /* This is an important step since it will release a good deal of memory. */
++    jpeg_destroy_decompress(&cinfo);
++
++    fclose(infile);
++    /* And we're done! */
++    return 1;
++}
++/*******************************************/
++char *get_extension (char *filename)
++{
++  char *ext = strrchr(filename, '.');
++  if (!ext) {
++    /* no extension */
++  } else {
++    return ext + 1;
++  }
++}
++/*******************************************/
+ int main (int argc, char **argv)
+ {
++    char *p, file_ext[80];
+     if(argc < 2) return(1);
+ 
+     /* create a reader */
+@@ -61,7 +170,22 @@
+     /* obtain image data */
+     int width = 0, height = 0;
+     void *raw = NULL;
+-    get_data(argv[1], &width, &height, &raw);
++
++    /* Decide type of decoding based on file extension */
++    printf("load %s\n", argv[1]);
++    strncpy (file_ext, get_extension(argv[1]), 80);
++    for (p = file_ext ; *p; ++p) *p = tolower(*p);
++    if((strcmp(file_ext, "jpg") == 0) || (strcmp(file_ext, "jpeg") == 0))
++    {
++      get_jpeg_data(argv[1], &width, &height, &raw);
++    } else if(strcmp(file_ext, "png") == 0)
++    {
++      get_png_data(argv[1], &width, &height, &raw);
++    } else {
++      printf ("\nFile extension '%s' not supported. Only jpg or jpeg, and png\n", file_ext);
++      exit(0);
++    }
++    printf("load %s done\n", argv[1]);
+ 
+     /* wrap image data */
+     zbar_image_t *image = zbar_image_create();
+@@ -69,6 +193,7 @@
+     zbar_image_set_size(image, width, height);
+     zbar_image_set_data(image, raw, width * height, zbar_image_free_data);
+ 
++    printf("starting to scan\n");
+     /* scan the image for barcodes */
+     int n = zbar_scan_image(scanner, image);
+ 
+@@ -88,3 +213,4 @@
+ 
+     return(0);
+ }
++
