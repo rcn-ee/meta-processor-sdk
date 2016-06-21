@@ -1,4 +1,4 @@
-PR_append = ".tisdk0"
+PV = "2.0.1.2"
 
-# This commit corresponds to tag DEV.MPM-TRANSPORT-02.00.00.01A
-SRCREV = "1268e249a612cec8b0540bfaeaad177c1f42cd5c"
+# This commit corresponds to tag DEV.MPM-TRANSPORT-02.00.01.02
+SRCREV = "5c1f177b8d5802227dfe7e86fc026620e1e10189"
