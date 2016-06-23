@@ -1,0 +1,4 @@
+PV = "0.8"
+SRCREV = "40cf516139b5b61e30d9403a48db23d8f915f52c"
+
+DEPENDS = "libusb1 udev"
