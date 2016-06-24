@@ -1,0 +1,57 @@
+From bdc4887134325fc6c83815005d5f36edbc577255 Mon Sep 17 00:00:00 2001
+From: Karthik Ramanan <a0393906@ti.com>
+Date: Mon, 20 Jun 2016 17:39:03 +0530
+Subject: [PATCH] soc-perf config: Update config to have generic names
+
+Signed-off-by: Karthik Ramanan <a0393906@ti.com>
+---
+ cpuload-plugins/scripts/soc_performance_monitor.cfg | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/cpuload-plugins/scripts/soc_performance_monitor.cfg b/cpuload-plugins/scripts/soc_performance_monitor.cfg
+index 40cb155..a567893 100644
+--- a/cpuload-plugins/scripts/soc_performance_monitor.cfg
++++ b/cpuload-plugins/scripts/soc_performance_monitor.cfg
+@@ -11,7 +11,7 @@ MLO_ENTRY
+ MLO_EXIT
+ KERNEL_ENTRY
+ USERSPACE_ENTRY
+-TITLE=DRA7XX BOOT TIME,UNIT=msec
++TITLE=BOOT TIME,UNIT=msec
+ 
+ [TEMPERATURE]
+ MPU
+@@ -19,7 +19,7 @@ CORE
+ IVA
+ GPU
+ DSPEVE
+-TITLE=DRA7xx TEMPERATURE,UNIT=C
++TITLE=TEMPERATURE,UNIT=C
+ 
+ [VOLTAGE]
+ VDD_MPU
+@@ -27,7 +27,7 @@ VDD_CORE
+ VDD_IVA
+ VDD_GPU
+ VDD_DSPEVE
+-TITLE=DRA7xx VOLTAGE,UNIT=Volt
++TITLE=VOLTAGE,UNIT=Volt
+ 
+ [FREQUENCY]
+ FREQ_MPU
+@@ -37,9 +37,11 @@ FREQ_DSP1
+ FREQ_DSP2
+ FREQ_IVA
+ FREQ_GPU
+-TITLE=DRA7xx FREQUENCY,UNIT=MHz
++TITLE=FREQUENCY,UNIT=MHz
+ 
+ [CPU_LOAD]
+ MPU
+ GPU
++IPU2
++DSP1
+ CPU BAR GRAPH
+-- 
+1.9.1
+
