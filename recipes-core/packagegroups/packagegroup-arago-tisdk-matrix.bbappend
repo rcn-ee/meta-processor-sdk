@@ -1,6 +1,6 @@
-PR_append = "-tisdk32"
+PR_append = "-tisdk33"
 
-MATRIX_APPS_remove_omap-a15 = " \
+MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
 "
 
