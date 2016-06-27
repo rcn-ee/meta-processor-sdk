@@ -1,5 +1,4 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
-SRCREV = "3af51eb8fe10f73c4bb64c4cc31e44ab4676081f"
-
+SRCREV = "4cdbb6b192fc5cac53695faca3c3f8be16ca871d"
 FILES_${PN}-plugins += " ${libdir}/libPVRScopeServices.so"
