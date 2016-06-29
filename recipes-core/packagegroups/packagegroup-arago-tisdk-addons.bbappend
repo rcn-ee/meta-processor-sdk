@@ -1,11 +1,11 @@
-PR_append = "-tisdk26"
+PR_append = "-tisdk27"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
 EXTRA_PACKAGES_append_omap-a15 = " opencv"
 EXTRA_PACKAGES_append_keystone = " opencv"
 
-EXTRA_PACKAGES_append = " zbar"
+EXTRA_PACKAGES_append = " zbar hidapi"
 
 UTILS_append_omap-a15 = " \
     uio-test-pruss \
