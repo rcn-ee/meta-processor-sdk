@@ -27,7 +27,7 @@ KERNEL_MODULE_AUTOLOAD += "${KERNEL_MODULE_AUTOLOAD_EXTRAS}"
 
 # Auto-configure g_multi module for AM3 devices
 module_autoload_g_multi_ti33x = "g_multi_def"
-module_conf_g_multi_ti33x = "install g_multi_def /sbin/modprobe g_multi file=/dev/mmcblk0p1 host_addr=`/usr/bin/hexdump -v -e '5/1 "%02X:" 1/1 "%02X"' /proc/device-tree/ocp/ethernet@4a100000/slave@4a100300/mac-address`"
+module_conf_g_multi_ti33x = "install g_multi_def /bin/sleep 20; /sbin/modprobe g_multi file=/dev/mmcblk0p1 host_addr=`/usr/bin/hexdump -v -e '5/1 "%02X:" 1/1 "%02X"' /proc/device-tree/ocp/ethernet@4a100000/slave@4a100300/mac-address`"
 KERNEL_MODULE_AUTOLOAD_append_ti33x = " g_multi"
 KERNEL_MODULE_PROBECONF_append_ti33x = " g_multi"
 
