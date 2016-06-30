@@ -1,9 +1,9 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
-GST_1X_DEPS_append_dra7xx = " \
+GSTREAMER_DEPS_append_dra7xx = " \
     gstreamer1.0-plugins-dsp66-dev \
 "
 
-GST_1X_DEPS_append_keystone = " \
+GSTREAMER_DEPS_append_keystone = " \
     gstreamer1.0-plugins-dsp66-dev \
 "
