@@ -3,11 +3,11 @@ HOMEPAGE = "https://gitorious.org/matrix-gui-v2/matrix-gui-v2-apps"
 
 require recipes-core/matrix/matrix-gui-apps-git.inc
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
 inherit allarch
 
-SRCREV = "d7ddec8330553686a1d26bfeb898e391aa867931"
+SRCREV = "a51c0d791e5b15452196f6903ef077401738e631"
 
 S = "${WORKDIR}/git/machinevision_apps"
 
