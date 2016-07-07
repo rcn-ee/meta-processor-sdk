@@ -1,3 +1,3 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
-CONNECTIVITY_RDEPENDS_append_ti33x = " busybox-udhcpd"
+CONNECTIVITY_RDEPENDS_append_ti33x = " gadget-init"
