@@ -25,11 +25,6 @@ KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
 KERNEL_MODULE_AUTOLOAD += "${KERNEL_MODULE_AUTOLOAD_EXTRAS}"
 
-# Auto-configure g_multi module for AM3 devices
-module_autoload_g_multi_ti33x = "g_multi_def"
-module_conf_g_multi_ti33x = "install g_multi_def /bin/sleep 20; /sbin/modprobe g_multi file=/dev/mmcblk0p1 host_addr=`/usr/bin/hexdump -v -e '5/1 "%02X:" 1/1 "%02X"' /proc/device-tree/ocp/ethernet@4a100000/slave@4a100300/mac-address`"
-KERNEL_MODULE_AUTOLOAD_append_ti33x = " g_multi"
-KERNEL_MODULE_PROBECONF_append_ti33x = " g_multi"
 
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
