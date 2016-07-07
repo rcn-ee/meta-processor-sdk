@@ -75,11 +75,11 @@ S = "${WORKDIR}/git"
 
 BRANCH = "processor-sdk-linux-03.00.00"
 
-SRCREV = "45399bea994649c33cf723088ed66c6e458b20b8"
+SRCREV = "4abe94ed6a8f0588be520ce61a84cb0c579c8dcb"
 PV = "4.4.12+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
-MACHINE_KERNEL_PR_append = "b"
+MACHINE_KERNEL_PR_append = "c"
 PR = "${MACHINE_KERNEL_PR}"
 
 KERNEL_CONFIG_DIR = "${S}/ti_config_fragments"
