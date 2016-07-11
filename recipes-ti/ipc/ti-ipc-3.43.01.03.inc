@@ -1,3 +1,0 @@
-PV = "3.43.01.03"
-
-TI_IPC_SRCREV = "eb4e543f60cccf427d47900014bcf9a5ae413cd6"
