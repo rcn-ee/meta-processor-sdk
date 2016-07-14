@@ -1,4 +1,4 @@
-From 678de15a51b9517e7f16811c503f994af1c1e07f Mon Sep 17 00:00:00 2001
+From f6acaac962e9dd9fad90a01e124045e3f3d211f9 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Sat, 5 Mar 2016 10:23:30 -0500
 Subject: [PATCH 12/47] soc: qmss: support of loading different types of

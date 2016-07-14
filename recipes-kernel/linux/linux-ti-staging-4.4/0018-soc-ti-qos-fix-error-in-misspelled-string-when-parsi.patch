@@ -1,4 +1,4 @@
-From f08cf319af10781c1b77362d83d476e95d3c3b2b Mon Sep 17 00:00:00 2001
+From 5c398967c9d165ba50ece1fa0c2d27334cf81e10 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 12 May 2016 15:45:15 -0400
 Subject: [PATCH 18/47] soc: ti: qos: fix error in misspelled string when

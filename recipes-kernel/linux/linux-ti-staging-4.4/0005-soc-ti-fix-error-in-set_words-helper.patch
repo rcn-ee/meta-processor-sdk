@@ -1,4 +1,4 @@
-From 45bdb3a307563fa43242ec40c2960b9fd6229e72 Mon Sep 17 00:00:00 2001
+From d504e22210f61b9732ab98978af3b331c43377f4 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:22:54 -0400
 Subject: [PATCH 05/47] soc: ti: fix error in set_words helper

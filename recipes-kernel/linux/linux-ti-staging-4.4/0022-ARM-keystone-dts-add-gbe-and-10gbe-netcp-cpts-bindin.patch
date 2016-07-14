@@ -1,4 +1,4 @@
-From f75b98dee32c8f7820ff41dc8e45c72e1ba00337 Mon Sep 17 00:00:00 2001
+From 22e0efcc93d62838951e9598b90eb44de3dbc711 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 17:38:52 -0400
 Subject: [PATCH 22/47] ARM: keystone: dts: add gbe and 10gbe netcp cpts
@@ -15,7 +15,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  3 files changed, 63 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 3c91699..20a4bf6 100644
+index da58f4c..4051720 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -299,7 +299,7 @@ netcp: netcp@24000000 {
@@ -75,7 +75,7 @@ index 3c91699..20a4bf6 100644
  				xgbe0: interface-0 {
  					slave-port = <0>;
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 5885a3a..1aec876 100644
+index 8f5e8b6..a37624f 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -280,8 +280,8 @@ netcp: netcp@2000000 {

@@ -1,4 +1,4 @@
-From 6ac36143155b875349bbd72fd8b0d55211eefb13 Mon Sep 17 00:00:00 2001
+From 7d8f2ca7252d6e1d4f45695b1b159f27616d8bca Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:34:00 -0400
 Subject: [PATCH 07/47] soc: ti: qmss: unmap descriptors without knowing

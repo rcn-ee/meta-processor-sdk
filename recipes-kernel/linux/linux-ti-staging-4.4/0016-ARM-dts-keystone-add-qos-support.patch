@@ -1,4 +1,4 @@
-From cd26b61301692e1916f3a2ee617434410ba0894f Mon Sep 17 00:00:00 2001
+From 4a01a5193a7ceaebabf84699ceefb9ed62d5bd47 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 12:58:26 -0400
 Subject: [PATCH 16/47] ARM: dts: keystone: add qos support
@@ -16,7 +16,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  create mode 100644 arch/arm/boot/dts/keystone-qostree.dtsi
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 860864f..3c91699 100644
+index f695323..da58f4c 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -8,6 +8,16 @@
@@ -200,7 +200,7 @@ index 860864f..3c91699 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index f57717a..5885a3a 100644
+index 14cfbd8..8f5e8b6 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -8,6 +8,16 @@

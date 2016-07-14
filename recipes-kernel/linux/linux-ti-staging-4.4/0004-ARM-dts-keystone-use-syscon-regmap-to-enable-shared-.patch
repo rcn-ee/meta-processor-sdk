@@ -1,4 +1,4 @@
-From 3ce4ce9ba0c2c7e5e74c560aa9e394764e818be5 Mon Sep 17 00:00:00 2001
+From 2e7d921d02e3b45d11d5cdba2efa2edc129ac6ca Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 13 Jan 2016 08:20:51 -0500
 Subject: [PATCH 04/47] ARM: dts: keystone: use syscon regmap to enable shared
@@ -15,7 +15,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  3 files changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 9fd0b06..7ae7ca0 100644
+index 3b503d9..a6827be 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -8,6 +8,11 @@
@@ -42,7 +42,7 @@ index 9fd0b06..7ae7ca0 100644
  			id = <0>;
  		};
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index d9c9b35..67b84da 100644
+index 640bb76..5bc984e 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -8,6 +8,11 @@

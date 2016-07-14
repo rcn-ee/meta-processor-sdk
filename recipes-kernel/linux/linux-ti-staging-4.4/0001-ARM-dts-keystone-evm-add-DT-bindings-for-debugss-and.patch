@@ -1,4 +1,4 @@
-From 98b84862ca2c1640bb92bf9166616d0be2126e4c Mon Sep 17 00:00:00 2001
+From b0db0dd33e2802b533c3be7d8ae0cec606311d2a Mon Sep 17 00:00:00 2001
 From: Mark Garrett <m-garrett@ti.com>
 Date: Thu, 5 May 2016 13:42:30 -0500
 Subject: [PATCH 01/47] ARM: dts: keystone-evm: add DT bindings for debugss and
@@ -86,10 +86,10 @@ index 0000000..9b5d62b
 +        clock-names = "mainpllclock", "armpllclock", "debugssclock", "gemtraceclock", "tetbclock";
 +};
 diff --git a/arch/arm/boot/dts/keystone-k2e.dtsi b/arch/arm/boot/dts/keystone-k2e.dtsi
-index 5ea9d5b..aa749ec 100644
+index d02a202..3d2e051 100644
 --- a/arch/arm/boot/dts/keystone-k2e.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e.dtsi
-@@ -184,6 +184,12 @@
+@@ -186,6 +186,12 @@
  			clock-names = "fck";
  			bus_freq	= <2500000>;
  		};
@@ -120,10 +120,10 @@ index 0ccf2df..b1124d0 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone-k2l.dtsi b/arch/arm/boot/dts/keystone-k2l.dtsi
-index 7f5432b..1468a7c 100644
+index e166125..1143642 100644
 --- a/arch/arm/boot/dts/keystone-k2l.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l.dtsi
-@@ -336,6 +336,12 @@
+@@ -380,6 +380,12 @@
  			clock-names = "fck";
  			bus_freq	= <2500000>;
  		};
@@ -137,10 +137,10 @@ index 7f5432b..1468a7c 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone.dtsi b/arch/arm/boot/dts/keystone.dtsi
-index 8ed8a2d..72bdb45 100644
+index 9c7fe6a..971e8e8 100644
 --- a/arch/arm/boot/dts/keystone.dtsi
 +++ b/arch/arm/boot/dts/keystone.dtsi
-@@ -360,5 +360,12 @@
+@@ -362,5 +362,12 @@
  			interrupt-parent = <&gic>;
  			status = "disabled";
  		};

@@ -1,4 +1,4 @@
-From 778f90fcb41c475af5c39cc60ba04a2f012cc1a1 Mon Sep 17 00:00:00 2001
+From 5893f38b7e182023a4b1cff881550cff56bb87a0 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 12:29:01 -0400
 Subject: [PATCH 21/47] net: netcp: add support of cpts

@@ -1,4 +1,4 @@
-From 5e03b36558bb10fb5778611e710d24f30aa17870 Mon Sep 17 00:00:00 2001
+From af0838751b83c980dfd487149cafea18a9e94344 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 18 Feb 2016 10:11:19 -0500
 Subject: [PATCH 24/47] net: netcp: cpts: disable cpts time stamping using DT

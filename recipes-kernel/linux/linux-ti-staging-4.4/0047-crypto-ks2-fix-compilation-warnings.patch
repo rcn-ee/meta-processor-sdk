@@ -1,0 +1,43 @@
+From 0a27cf5e8066c71ae3b2aa2badfe10c2bfdf26b6 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Thu, 30 Jun 2016 15:22:03 -0400
+Subject: [PATCH 47/47] crypto: ks2: fix compilation warnings
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/crypto/keystone-sa.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/keystone-sa.c b/drivers/crypto/keystone-sa.c
+index e93a94e..cb60c38 100644
+--- a/drivers/crypto/keystone-sa.c
++++ b/drivers/crypto/keystone-sa.c
+@@ -851,7 +851,6 @@ static void sa_free_mem(struct keystone_crypto_data *dev_data)
+ static int keystone_crypto_remove(struct platform_device *pdev)
+ {
+ 	struct keystone_crypto_data *dev_data = platform_get_drvdata(pdev);
+-	struct device *dev = &pdev->dev;
+ 
+ 	/* un-register crypto algorithms */
+ 	sa_unregister_algos(&pdev->dev);
+@@ -952,13 +951,15 @@ static int keystone_crypto_probe(struct platform_device *pdev)
+ 	atomic_set(&dev_data->stats.rx_pkts, 0);
+ 
+ 	/* Initialize memory pools used by the driver */
+-	if (ret = sa_init_mem(dev_data)) {
++	ret = sa_init_mem(dev_data);
++	if (ret) {
+ 		dev_err(dev, "Failed to create dma pool");
+ 		goto err;
+ 	}
+ 
+ 	/* Setup DMA channels */
+-	if (ret = sa_setup_dma(dev_data)) {
++	ret = sa_setup_dma(dev_data);
++	if (ret) {
+ 		dev_err(dev, "Failed to set DMA channels");
+ 		goto err;
+ 	}
+-- 
+1.9.1
+
