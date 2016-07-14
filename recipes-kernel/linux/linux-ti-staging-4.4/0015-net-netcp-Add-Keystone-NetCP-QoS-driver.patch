@@ -1,7 +1,7 @@
 From 92f81489e730449d70f13b6c503555b3e9eb2adb Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 18 May 2016 08:22:14 -0400
-Subject: [PATCH 15/47] net: netcp: Add Keystone NetCP QoS driver
+Subject: [PATCH 15/30] net: netcp: Add Keystone NetCP QoS driver
 
 This patch adds a netcp qos driver. This driver
 sets up the hooks (txpipes) to the QMSS QoS

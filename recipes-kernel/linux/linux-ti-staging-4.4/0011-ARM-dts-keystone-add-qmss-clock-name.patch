@@ -1,7 +1,7 @@
 From 905bf5eeb9051940ed9666cd372487c318bdbacf Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 10 Mar 2016 18:25:45 -0500
-Subject: [PATCH 11/47] ARM: dts: keystone: add qmss clock name
+Subject: [PATCH 11/30] ARM: dts: keystone: add qmss clock name
 
 This patch adds the QMSS subsystem clock name
 for Keystone platforms.

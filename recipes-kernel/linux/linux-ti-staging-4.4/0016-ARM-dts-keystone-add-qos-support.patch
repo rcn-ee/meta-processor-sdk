@@ -1,7 +1,7 @@
 From 4a01a5193a7ceaebabf84699ceefb9ed62d5bd47 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 12:58:26 -0400
-Subject: [PATCH 16/47] ARM: dts: keystone: add qos support
+Subject: [PATCH 16/30] ARM: dts: keystone: add qos support
 
 This patch adds the dts bindings that enable the support
 of QMSS QoS.

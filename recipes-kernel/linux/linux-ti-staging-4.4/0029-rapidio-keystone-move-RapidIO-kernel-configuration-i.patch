@@ -1,7 +1,7 @@
-From 5c367f1658aea8b99b204bfffd10c6b9797c1561 Mon Sep 17 00:00:00 2001
+From 486146b35abb029553c0b8bb91230d22d26ead50 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Fri, 17 Jun 2016 09:21:08 -0400
-Subject: [PATCH 45/47] rapidio: keystone: move RapidIO kernel configuration
+Subject: [PATCH 29/30] rapidio: keystone: move RapidIO kernel configuration
  into ARM bus section
 
 This patch moves RapidIO kernel configuration into

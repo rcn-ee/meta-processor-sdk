@@ -1,7 +1,7 @@
-From 850eeae8f459bb93948904999a5b9d964a68985a Mon Sep 17 00:00:00 2001
+From e7d3ccc782d0c331d3eb2c51aa6b8025ccd8bbec Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 10 Jun 2016 14:56:27 -0400
-Subject: [PATCH 43/47] rapidio: rionet: add support of keystone rapidio
+Subject: [PATCH 27/30] rapidio: rionet: add support of keystone rapidio
 
 rionet uses some proprietary defines of doorbell
 info which is not supported by the rapidio on

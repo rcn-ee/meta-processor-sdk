@@ -1,7 +1,7 @@
-From adf198e63bdbfb24b3ae8c2f9814d593e1ba68cd Mon Sep 17 00:00:00 2001
+From 3027c99d90213920ca7a0efff3fb5da7497c25c7 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Fri, 17 Jun 2016 09:19:42 -0400
-Subject: [PATCH 44/47] ARM: dts: keystone: k2hk: Add devicetree bindings for
+Subject: [PATCH 28/30] ARM: dts: keystone: k2hk: Add devicetree bindings for
  SRIO driver
 
 Signed-off-by: Aurelien Jacquiot <a-jacquiot@ti.com>
@@ -36,7 +36,7 @@ index 0c334b2..7b1ae82 100644
  		#clock-cells = <0>;
  		compatible = "ti,keystone,psc-clock";
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 7cea028..a04ae4b 100644
+index a37624f..145ae47 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -146,6 +146,10 @@ qmss: qmss@2a40000 {

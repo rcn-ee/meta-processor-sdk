@@ -1,7 +1,7 @@
-From f57739b380507eec3bdd21cb63ae054879c8c8d4 Mon Sep 17 00:00:00 2001
+From b8f6a49661d130a16b241e36d989785a2d90cf36 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 10 Jun 2016 20:37:48 -0400
-Subject: [PATCH 46/47] ti_config_fragments/connectivity.cfg: enable rapidio on
+Subject: [PATCH 30/30] ti_config_fragments/connectivity.cfg: enable rapidio on
  k2hk
 
 This patch enables support of RapidIO on Keystone2 K2HK

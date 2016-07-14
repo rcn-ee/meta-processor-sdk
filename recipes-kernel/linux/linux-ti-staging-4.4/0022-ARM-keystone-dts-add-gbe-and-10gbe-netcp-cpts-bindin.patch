@@ -1,7 +1,7 @@
 From 22e0efcc93d62838951e9598b90eb44de3dbc711 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 17:38:52 -0400
-Subject: [PATCH 22/47] ARM: keystone: dts: add gbe and 10gbe netcp cpts
+Subject: [PATCH 22/30] ARM: keystone: dts: add gbe and 10gbe netcp cpts
  bindings
 
 This patch adds the netcp cpts DT bindings for the
