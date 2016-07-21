@@ -1,10 +1,9 @@
-PR_append = ".tisdk19"
+PR_append = ".tisdk20"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
 SRC_URI_append = " \
     file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
-    file://0002-ti_config_fragments-connectivity-enable-usb-serial-o.patch \
     file://0003-soc-ti-qmss-fix-error-in-shared-access-of-QMSS-INTD-.patch \
     file://0004-ARM-dts-keystone-use-syscon-regmap-to-enable-shared-.patch \
     file://0005-soc-ti-fix-error-in-set_words-helper.patch \
