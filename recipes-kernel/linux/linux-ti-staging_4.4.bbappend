@@ -1,42 +1,44 @@
-PR_append = ".tisdk21"
+PR_append = ".tisdk22"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
+SRCREV = "cbe129432c2af06741be9e4d1f9d50c32b0d4699"
+
 SRC_URI_append = " \
     file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
-    file://0003-soc-ti-qmss-fix-error-in-shared-access-of-QMSS-INTD-.patch \
-    file://0004-ARM-dts-keystone-use-syscon-regmap-to-enable-shared-.patch \
-    file://0005-soc-ti-fix-error-in-set_words-helper.patch \
-    file://0006-lib-ktree-add-generic-tree-implementation.patch \
-    file://0007-soc-ti-qmss-unmap-descriptors-without-knowing-descri.patch \
-    file://0008-net-netcp-support-of-multiple-subqueues-per-interfac.patch \
-    file://0009-soc-ti-qmss-add-support-of-queue-range-specific-push.patch \
-    file://0010-soc-ti-saving-qmss-clock-in-driver-storage.patch \
-    file://0011-ARM-dts-keystone-add-qmss-clock-name.patch \
-    file://0012-soc-qmss-support-of-loading-different-types-of-firmw.patch \
-    file://0013-soc-ti-add-support-of-loading-qos-firmware.patch \
-    file://0014-soc-ti-add-support-of-Quality-of-Service-PDSP.patch \
-    file://0015-net-netcp-Add-Keystone-NetCP-QoS-driver.patch \
-    file://0016-ARM-dts-keystone-add-qos-support.patch \
-    file://0017-ti_config_fragments-connectivity.cfg-Enable-QoS-on-K.patch \
-    file://0018-soc-ti-qos-fix-error-in-misspelled-string-when-parsi.patch \
-    file://0019-net-netcp-cpts-introduce-keystone-netcp-cpts-softwar.patch \
-    file://0020-net-netcp-cpts-update-to-64bit-for-4.4.y.patch \
-    file://0021-net-netcp-add-support-of-cpts.patch \
-    file://0022-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
-    file://0023-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
-    file://0024-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
-    file://0025-soc-ti-add-queue-flush-helper-macro.patch \
-    file://0026-rapidio-keystone-add-support-of-rapidio.patch \
-    file://0027-rapidio-rionet-add-support-of-keystone-rapidio.patch \
-    file://0028-ARM-dts-keystone-k2hk-Add-devicetree-bindings-for-SR.patch \
-    file://0029-rapidio-keystone-move-RapidIO-kernel-configuration-i.patch \
-    file://0030-ti_config_fragments-connectivity.cfg-enable-rapidio-.patch \
-    file://0001-Documentation-dt-rng-add-bindings-doc-for-Keystone-S.patch \
-    file://0004-ARM-dts-k2l-add-dts-node-for-k2l-hw_rng-driver.patch \
-    file://0003-ARM-dts-k2hk-add-dts-node-for-k2hk-hw_rng-driver.patch \
-    file://0002-hw_random-keystone2-add-hw_random-driver.patch \
-    file://0005-ARM-dts-k2e-add-dts-node-for-k2e-hw_rng-driver.patch \
+    file://0002-soc-ti-qmss-fix-error-in-shared-access-of-QMSS-INTD-.patch \
+    file://0003-ARM-dts-keystone-use-syscon-regmap-to-enable-shared-.patch \
+    file://0004-soc-ti-fix-error-in-set_words-helper.patch \
+    file://0005-lib-ktree-add-generic-tree-implementation.patch \
+    file://0006-soc-ti-qmss-unmap-descriptors-without-knowing-descri.patch \
+    file://0007-net-netcp-support-of-multiple-subqueues-per-interfac.patch \
+    file://0008-soc-ti-qmss-add-support-of-queue-range-specific-push.patch \
+    file://0009-soc-ti-saving-qmss-clock-in-driver-storage.patch \
+    file://0010-ARM-dts-keystone-add-qmss-clock-name.patch \
+    file://0011-soc-qmss-support-of-loading-different-types-of-firmw.patch \
+    file://0012-soc-ti-add-support-of-loading-qos-firmware.patch \
+    file://0013-soc-ti-add-support-of-Quality-of-Service-PDSP.patch \
+    file://0014-net-netcp-Add-Keystone-NetCP-QoS-driver.patch \
+    file://0015-ARM-dts-keystone-add-qos-support.patch \
+    file://0016-ti_config_fragments-connectivity.cfg-Enable-QoS-on-K.patch \
+    file://0017-soc-ti-qos-fix-error-in-misspelled-string-when-parsi.patch \
+    file://0018-net-netcp-cpts-introduce-keystone-netcp-cpts-softwar.patch \
+    file://0019-net-netcp-cpts-update-to-64bit-for-4.4.y.patch \
+    file://0020-net-netcp-add-support-of-cpts.patch \
+    file://0021-ARM-keystone-dts-add-gbe-and-10gbe-netcp-cpts-bindin.patch \
+    file://0022-ti_config_fragments-connectivity.cfg-enable-keystone.patch \
+    file://0023-net-netcp-cpts-disable-cpts-time-stamping-using-DT-p.patch \
+    file://0024-soc-ti-add-queue-flush-helper-macro.patch \
+    file://0025-rapidio-keystone-add-support-of-rapidio.patch \
+    file://0026-rapidio-rionet-add-support-of-keystone-rapidio.patch \
+    file://0027-ARM-dts-keystone-k2hk-Add-devicetree-bindings-for-SR.patch \
+    file://0028-rapidio-keystone-move-RapidIO-kernel-configuration-i.patch \
+    file://0029-ti_config_fragments-connectivity.cfg-enable-rapidio-.patch \
+    file://0030-Documentation-dt-rng-add-bindings-doc-for-Keystone-S.patch \
+    file://0031-hw_random-keystone2-add-hw_random-driver.patch \
+    file://0032-ARM-dts-k2hk-add-dts-node-for-k2hk-hw_rng-driver.patch \
+    file://0033-ARM-dts-k2l-add-dts-node-for-k2l-hw_rng-driver.patch \
+    file://0034-ARM-dts-k2e-add-dts-node-for-k2e-hw_rng-driver.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"

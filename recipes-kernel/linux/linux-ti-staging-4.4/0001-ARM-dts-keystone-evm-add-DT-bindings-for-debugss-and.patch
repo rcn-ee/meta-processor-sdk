@@ -1,7 +1,7 @@
-From b0db0dd33e2802b533c3be7d8ae0cec606311d2a Mon Sep 17 00:00:00 2001
+From 07a45c554fe5709ab871a68740f8641afff852ce Mon Sep 17 00:00:00 2001
 From: Mark Garrett <m-garrett@ti.com>
 Date: Thu, 5 May 2016 13:42:30 -0500
-Subject: [PATCH 01/30] ARM: dts: keystone-evm: add DT bindings for debugss and
+Subject: [PATCH 01/34] ARM: dts: keystone-evm: add DT bindings for debugss and
  srss
 
 ---
