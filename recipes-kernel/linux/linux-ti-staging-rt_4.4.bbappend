@@ -1,4 +1,4 @@
-PR_append = ".tisdk22"
+PR_append = ".tisdk23"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -34,11 +34,6 @@ SRC_URI_append = " \
     file://0027-ARM-dts-keystone-k2hk-Add-devicetree-bindings-for-SR.patch \
     file://0028-rapidio-keystone-move-RapidIO-kernel-configuration-i.patch \
     file://0029-ti_config_fragments-connectivity.cfg-enable-rapidio-.patch \
-    file://0030-Documentation-dt-rng-add-bindings-doc-for-Keystone-S.patch \
-    file://0031-hw_random-keystone2-add-hw_random-driver.patch \
-    file://0032-ARM-dts-k2hk-add-dts-node-for-k2hk-hw_rng-driver.patch \
-    file://0033-ARM-dts-k2l-add-dts-node-for-k2l-hw_rng-driver.patch \
-    file://0034-ARM-dts-k2e-add-dts-node-for-k2e-hw_rng-driver.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
