@@ -1,7 +1,8 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 MULTIMEDIA_append_keystone = " \
     amsdk-av-files \
+    hevc-arm-decoder \
 "
 
 MULTIMEDIA_append_omap-a15 = " \
