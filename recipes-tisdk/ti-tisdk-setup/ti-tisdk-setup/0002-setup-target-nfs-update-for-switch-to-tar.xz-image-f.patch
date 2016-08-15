@@ -1,0 +1,32 @@
+From 8a1064444326f5fe7dfa35b818df4223722987d4 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Mon, 15 Aug 2016 12:32:01 -0400
+Subject: [PATCH 2/2] setup-target-nfs: update for switch to tar.xz image
+ formats
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-targetfs-nfs.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/setup-targetfs-nfs.sh b/setup-targetfs-nfs.sh
+index b27f7c4..4531a6c 100644
+--- a/setup-targetfs-nfs.sh
++++ b/setup-targetfs-nfs.sh
+@@ -56,11 +56,11 @@ echo "on your host."
+ read -p "Press return to continue" REPLY
+ 
+ extract_fs() {
+-    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz`
++    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.xz`
+     me=`whoami`
+     sudo mkdir -p $1
+     check_status
+-    for i in $fstar; do sudo tar xzf $i -C $1;done
++    for i in $fstar; do sudo tar xJf $i -C $1;done
+     check_status
+     sudo chown $me:$me $1
+     check_status
+-- 
+1.9.1
+

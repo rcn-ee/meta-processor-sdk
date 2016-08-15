@@ -1,0 +1,155 @@
+From b3965b768cb24b1f4fae1423911263a17ddaf681 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Mon, 15 Aug 2016 12:31:26 -0400
+Subject: [PATCH 1/2] create-sdcard: update for switch to tar.xz image formats
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ create-sdcard.sh | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index edf57b0..7ada332 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -87,8 +87,8 @@ untar_progress ()
+ {
+     TARBALL=$1;
+     DIRECTPATH=$2;
+-    BLOCKING_FACTOR=$(($(gzip --list ${TARBALL} | sed -n -e "s/.*[[:space:]]\+[0-9]\+[[:space:]]\+\([0-9]\+\)[[:space:]].*$/\1/p") / 51200 + 1));
+-    tar --blocking-factor=${BLOCKING_FACTOR} --checkpoint=1 --checkpoint-action='ttyout=Written %u%  \r' -zxf ${TARBALL} -C ${DIRECTPATH}
++    BLOCKING_FACTOR=$(($(xz --robot --list ${TARBALL} | grep 'totals' | awk '{print $5}') / 51200 + 1));
++    tar --blocking-factor=${BLOCKING_FACTOR} --checkpoint=1 --checkpoint-action='ttyout=Written %u%  \r' -Jxf ${TARBALL} -C ${DIRECTPATH}
+ }
+ 
+ #copy/paste programs
+@@ -150,26 +150,26 @@ populate_3_partitions() {
+             continue
+ 		fi
+         # Check that tarballs were found
+-        if [ ! -e "$TARBALLPATH""/boot_partition.tar.gz" ]
++        if [ ! -e "$TARBALLPATH""/boot_partition.tar.xz" ]
+         then
+-            echo "Could not find boot_partition.tar.gz as expected.  Please"
+-            echo "point to the directory containing the boot_partition.tar.gz"
++            echo "Could not find boot_partition.tar.xz as expected.  Please"
++            echo "point to the directory containing the boot_partition.tar.xz"
+             ENTERCORRECTLY=0
+             continue
+         fi
+ 
+-        if [ ! -e "$TARBALLPATH""/rootfs_partition.tar.gz" ]
++        if [ ! -e "$TARBALLPATH""/rootfs_partition.tar.xz" ]
+         then
+-            echo "Could not find rootfs_partition.tar.gz as expected.  Please"
+-            echo "point to the directory containing the rootfs_partition.tar.gz"
++            echo "Could not find rootfs_partition.tar.xz as expected.  Please"
++            echo "point to the directory containing the rootfs_partition.tar.xz"
+             ENTERCORRECTLY=0
+             continue
+         fi
+ 
+-        if [ ! -e "$TARBALLPATH""/start_here_partition.tar.gz" ]
++        if [ ! -e "$TARBALLPATH""/start_here_partition.tar.xz" ]
+         then
+-            echo "Could not find start_here_partition.tar.gz as expected.  Please"
+-            echo "point to the directory containing the start_here_partition.tar.gz"
++            echo "Could not find start_here_partition.tar.xz as expected.  Please"
++            echo "point to the directory containing the start_here_partition.tar.xz"
+             ENTERCORRECTLY=0
+             continue
+         fi
+@@ -199,7 +199,7 @@ cat << EOM
+ 
+ ################################################################################
+ EOM
+-        untar_progress $TARBALLPATH/boot_partition.tar.gz tmp/
++        untar_progress $TARBALLPATH/boot_partition.tar.xz tmp/
+         if [ -e "./tmp/MLO" ]
+         then
+             cp ./tmp/MLO boot/
+@@ -213,7 +213,7 @@ cat << EOM
+ 
+ ################################################################################
+ EOM
+-        untar_progress $TARBALLPATH/rootfs_partition.tar.gz rootfs/
++        untar_progress $TARBALLPATH/rootfs_partition.tar.xz rootfs/
+ 
+ cat << EOM
+ 
+@@ -223,7 +223,7 @@ cat << EOM
+ ################################################################################
+ EOM
+         rm -rf tmp/*
+-        untar_progress $TARBALLPATH/start_here_partition.tar.gz tmp/
++        untar_progress $TARBALLPATH/start_here_partition.tar.xz tmp/
+ 
+ cat << EOM
+ 
+@@ -752,7 +752,7 @@ if [ $FILEPATHOPTION -eq 1 ] ; then
+ 	#ROOTFSTAR=`ls  $ROOTFILEPARTH | grep tisdk.*rootfs | awk {'print $1'}`
+ 
+ 	#Make sure there is only 1 tar
+-	CHECKNUMOFTAR=`ls $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.gz' | grep -n '' | grep '2:' | awk {'print $1'}`
++	CHECKNUMOFTAR=`ls $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | grep '2:' | awk {'print $1'}`
+ 	if [ -n "$CHECKNUMOFTAR" ]
+ 	then
+ cat << EOM
+@@ -764,15 +764,15 @@ cat << EOM
+ ################################################################################
+ 
+ EOM
+-		ls $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.gz' | grep -n '' | awk {'print "	" , $1'}
++		ls $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | awk {'print "	" , $1'}
+ 		echo ""
+ 		read -p "Enter Number of rootfs Tarball: " TARNUMBER
+ 		echo " "
+-		FOUNDTARFILENAME=`ls $ROOTFILEPARTH | grep "rootfs" | grep 'tar.gz' | grep -n '' | grep "${TARNUMBER}:" | cut -c3- | awk {'print$1'}`
++		FOUNDTARFILENAME=`ls $ROOTFILEPARTH | grep "rootfs" | grep 'tar.xz' | grep -n '' | grep "${TARNUMBER}:" | cut -c3- | awk {'print$1'}`
+ 		ROOTFSTAR=$FOUNDTARFILENAME
+ 
+ 	else
+-		ROOTFSTAR=`ls  $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.gz' | awk {'print $1'}`
++		ROOTFSTAR=`ls  $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | awk {'print $1'}`
+ 	fi
+ 
+ 	ROOTFSUSERFILEPATH=$ROOTFILEPARTH/$ROOTFSTAR
+@@ -786,7 +786,7 @@ cat << EOM
+   For U-boot and MLO
+ 
+   If files are located in Tarball write complete path including the file name.
+-      e.x. $:  /home/user/MyCustomTars/boot.tar.gz
++      e.x. $:  /home/user/MyCustomTars/boot.tar.xz
+ 
+   If files are located in a directory write the directory path
+       e.x. $: /ti-sdk/board-support/prebuilt-images/
+@@ -919,7 +919,7 @@ cat << EOM
+    For Rootfs partition
+ 
+    If files are located in Tarball write complete path including the file name.
+-      e.x. $:  /home/user/MyCustomTars/rootfs.tar.gz
++      e.x. $:  /home/user/MyCustomTars/rootfs.tar.xz
+ 
+   If files are located in a directory write the directory path
+       e.x. $: /ti-sdk/targetNFS/
+@@ -959,7 +959,7 @@ EOM
+ 
+ 
+ 	# Check if user entered a tar or not for Boot
+-	ISBOOTTAR=`ls $BOOTUSERFILEPATH | grep .tar.gz | awk {'print $1'}`
++	ISBOOTTAR=`ls $BOOTUSERFILEPATH | grep .tar.xz | awk {'print $1'}`
+ 	if [ -n "$ISBOOTTAR" ]
+ 	then
+ 		BOOTPATHOPTION=2
+@@ -981,7 +981,7 @@ EOM
+ 
+ 
+ 	#Check if user entered a tar or not for Rootfs
+-	ISROOTFSTAR=`ls $ROOTFSUSERFILEPATH | grep .tar.gz | awk {'print $1'}`
++	ISROOTFSTAR=`ls $ROOTFSUSERFILEPATH | grep .tar.xz | awk {'print $1'}`
+ 	if [ -n "$ISROOTFSTAR" ]
+ 	then
+ 		ROOTFSPATHOPTION=2
+-- 
+1.9.1
+
