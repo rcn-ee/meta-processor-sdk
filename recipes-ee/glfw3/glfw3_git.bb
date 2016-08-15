@@ -2,23 +2,23 @@ SUMMARY = "GLFW cross platform graphics framework"
 DESCRIPTION = "A multi-platform library for OpenGL and OpenGLES, window and input"
 HOMEPAGE = "http://glfw.org/"
 LICENSE = "Zlib & Libpng"
-LIC_FILES_CHKSUM = "file://COPYING.txt;md5=f543d41f3829a608a406b713e4e72731"
+LIC_FILES_CHKSUM = "file://COPYING.txt;md5=352912f8ce21ff7d8b592a4edbe48f50"
 
-PV = "3.1.2"
+PV = "3.2"
 PR = "r0"
 
 BRANCH = "master"
 SRC_URI = "git://github.com/glfw/glfw.git;branch=${BRANCH}"
-SRCREV = "30306e54705c3adae9fe082c816a3be71963485c"
+SRCREV = "f6ec835599123c3c970d34534ed7ddc69a1fc6af"
 
-SRC_URI += "file://0001_xkb_unicode.patch"
+SRC_URI += "file://0001-add-PKG_CONFIG_SYSROOT_DIR-prefix-for-WaylandProtocols_PKGDATADIR.patch"
 
-DEPENDS = "glib-2.0 virtual/libgles2 virtual/egl weston wayland wayland-native"
+DEPENDS = "extra-cmake-modules glib-2.0 virtual/libgles2 virtual/egl weston wayland wayland-native wayland-protocols"
 
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
 
-EXTRA_OECMAKE += "-DGLFW_USE_WAYLAND=ON -DGLFW_CLIENT_LIBRARY=glesv2 -DGLFW_BUILD_EXAMPLES=ON -DGFLW_BUILD_TESTS=ON"
+EXTRA_OECMAKE += "-DGLFW_USE_WAYLAND=ON -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF"
 
 FILES_${PN} += "/usr/lib/cmake/*"
