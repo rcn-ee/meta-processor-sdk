@@ -1,4 +1,4 @@
-PR_append = ".tisdk24"
+PR_append = ".tisdk25"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -38,6 +38,10 @@ SRC_URI_append = " \
     file://0031-ARM-dts-k2l-e-disable-pre-classification-feature.patch \
     file://0032-net-netcp-pa2-add-pre-classification-support-in-PA-f.patch \
     file://0033-ARM-dts-k2l-k2e-enable-pre-classify-feature.patch \
+    file://0034-net-netcp-sa-add-support-for-inflow-crypto-accelerat.patch \
+    file://0035-arm-dts-k2hk-add-dts-node-for-netcp-sa-driver.patch \
+    file://0036-arm-dts-k2l-add-dts-node-for-netcp-sa-driver.patch \
+    file://0037-arm-dts-k2e-add-dts-node-for-netcp-sa-driver.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
