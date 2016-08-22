@@ -1,4 +1,4 @@
-From 25a732fc237cec34f7814b0eb1169133e425049e Mon Sep 17 00:00:00 2001
+From 763b97df3bb4d8421840498827256aea3e78d0e8 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 15 Aug 2016 12:26:06 -0400
 Subject: [PATCH 37/37] arm: dts: k2e: add dts node for netcp-sa driver

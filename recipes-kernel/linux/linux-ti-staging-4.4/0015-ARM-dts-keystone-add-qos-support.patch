@@ -1,7 +1,7 @@
-From fd85a9e2b8a0aa272b651337000865641353c917 Mon Sep 17 00:00:00 2001
+From 7f4e7153af921f9b08a092c5c80b6e77703c147d Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 12:58:26 -0400
-Subject: [PATCH 15/34] ARM: dts: keystone: add qos support
+Subject: [PATCH 15/37] ARM: dts: keystone: add qos support
 
 This patch adds the dts bindings that enable the support
 of QMSS QoS.
@@ -16,7 +16,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  create mode 100644 arch/arm/boot/dts/keystone-qostree.dtsi
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index f695323..da58f4c 100644
+index 2174d33..d44abce 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -8,6 +8,16 @@
@@ -200,7 +200,7 @@ index f695323..da58f4c 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 14cfbd8..8f5e8b6 100644
+index a64d206..b9f9a67 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -8,6 +8,16 @@
@@ -374,7 +374,7 @@ index 14cfbd8..8f5e8b6 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index b0a6cc2..df606b3 100644
+index fa801df..1b46933 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -8,6 +8,16 @@

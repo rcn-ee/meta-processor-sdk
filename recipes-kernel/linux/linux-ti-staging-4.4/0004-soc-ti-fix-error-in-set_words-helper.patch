@@ -1,7 +1,7 @@
-From f33aa49abf639d095629a6c4fd53bb2eed5d0e1e Mon Sep 17 00:00:00 2001
+From 3a79a69ee938ea25c482cb2a1634704113005088 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:22:54 -0400
-Subject: [PATCH 04/34] soc: ti: fix error in set_words helper
+Subject: [PATCH 04/37] soc: ti: fix error in set_words helper
 
 Prior to this patch, knav_dma_set_words would overwrite the source before
 it is copied to destination if the destination buffer head overlaps with

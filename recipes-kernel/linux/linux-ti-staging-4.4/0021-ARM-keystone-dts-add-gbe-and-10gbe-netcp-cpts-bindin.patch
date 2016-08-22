@@ -1,7 +1,7 @@
-From 1c311e7bffc0fff79baaa85c7e86941e8ce88e85 Mon Sep 17 00:00:00 2001
+From 64c6093b2c77896a876e5e2bd2dce22479d81eb1 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 3 May 2016 17:38:52 -0400
-Subject: [PATCH 21/34] ARM: keystone: dts: add gbe and 10gbe netcp cpts
+Subject: [PATCH 21/37] ARM: keystone: dts: add gbe and 10gbe netcp cpts
  bindings
 
 This patch adds the netcp cpts DT bindings for the
@@ -15,7 +15,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  3 files changed, 63 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index da58f4c..4051720 100644
+index d44abce..dddb2d3 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -299,7 +299,7 @@ netcp: netcp@24000000 {
@@ -75,7 +75,7 @@ index da58f4c..4051720 100644
  				xgbe0: interface-0 {
  					slave-port = <0>;
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 8f5e8b6..a37624f 100644
+index b9f9a67..6ffd639 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -280,8 +280,8 @@ netcp: netcp@2000000 {
@@ -137,7 +137,7 @@ index 8f5e8b6..a37624f 100644
  				xgbe0: interface-0 {
  					slave-port = <0>;
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index df606b3..04ba9f3 100644
+index 1b46933..799d214 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -284,7 +284,7 @@ netcp: netcp@26000000 {

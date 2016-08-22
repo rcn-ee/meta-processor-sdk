@@ -1,7 +1,7 @@
-From 335d69ca51c5fac2fd28c8e5f046a202e9b96498 Mon Sep 17 00:00:00 2001
+From c80fa9787f85e865906b529e394cae2babb2cce4 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 18 Feb 2016 10:11:19 -0500
-Subject: [PATCH 23/34] net: netcp: cpts: disable cpts time stamping using DT
+Subject: [PATCH 23/37] net: netcp: cpts: disable cpts time stamping using DT
  property
 
 Provide a DT property to disable hw time stamp feature in CPTS. Typically

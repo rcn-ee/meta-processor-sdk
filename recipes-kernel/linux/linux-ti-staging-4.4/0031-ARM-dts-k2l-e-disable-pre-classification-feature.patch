@@ -1,7 +1,7 @@
-From 3ae1ff778f473a70e5638a6da491710f35f7aa4d Mon Sep 17 00:00:00 2001
+From 65ad5315baaec10cb695d78e767cdb08765f1e23 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 1 Aug 2016 11:42:05 -0400
-Subject: [PATCH 31/33] ARM: dts: k2l/e: disable pre-classification feature
+Subject: [PATCH 31/37] ARM: dts: k2l/e: disable pre-classification feature
 
 Currently pre-classify BC & MC feature is available only K2HK. So disable
 this by default on these platforms.

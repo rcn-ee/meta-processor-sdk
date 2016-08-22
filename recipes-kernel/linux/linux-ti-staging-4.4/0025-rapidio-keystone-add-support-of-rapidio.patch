@@ -1,7 +1,7 @@
-From 708f78473d1570c83c97ea19741855824d43c858 Mon Sep 17 00:00:00 2001
+From 36bf516e7118674d078d88cd8a34153eac36919e Mon Sep 17 00:00:00 2001
 From: Aurelien Jacquiot <a-jacquiot@ti.com>
 Date: Fri, 10 Jun 2016 20:09:12 -0400
-Subject: [PATCH 25/34] rapidio: keystone: add support of rapidio
+Subject: [PATCH 25/37] rapidio: keystone: add support of rapidio
 
 This patch adds platform specific support of rapidio on
 TI's Keystone2 (Kepler) platform.

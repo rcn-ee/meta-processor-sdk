@@ -1,7 +1,7 @@
-From 2cdffa61ed0d772a55ea23fbcc32fc113262ef92 Mon Sep 17 00:00:00 2001
+From b24f65f04eb33c330fb0fdb0147357a8bb779977 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 29 Jul 2016 11:02:16 -0400
-Subject: [PATCH 30/33] net: netcp: pa: enable pre-classification support in PA
+Subject: [PATCH 30/37] net: netcp: pa: enable pre-classification support in PA
  firmware
 
 Currently Linux PA driver adds specific rules to forward BC and MC
@@ -292,10 +292,10 @@ index 1be40c8..6344dce 100644
  	.get_streaming_switch = pa_get_streaming_switch,
  	.cleanup = pa_tstamp_purge_pending,
 diff --git a/drivers/net/ethernet/ti/netcp_pa_core.c b/drivers/net/ethernet/ti/netcp_pa_core.c
-index fe552c2..a8d0d3f 100644
+index 00bafc0..43e0be9 100644
 --- a/drivers/net/ethernet/ti/netcp_pa_core.c
 +++ b/drivers/net/ethernet/ti/netcp_pa_core.c
-@@ -236,6 +236,17 @@ static int pa_core_get_dt_bindings(struct pa_core_device *core_dev,
+@@ -233,6 +233,17 @@ static int pa_core_get_dt_bindings(struct pa_core_device *core_dev,
  		}
  	}
  
@@ -313,7 +313,7 @@ index fe552c2..a8d0d3f 100644
  	ret = pa_core_parse_lut_range(core_dev, node, true);
  	if (ret)
  		return ret;
-@@ -1000,6 +1011,7 @@ int pa_core_close(void *intf_priv,
+@@ -978,6 +989,7 @@ int pa_core_close(void *intf_priv,
  	struct pa_core_device *core_dev = pa_intf->core_dev;
  	struct netcp_intf *netcp_priv = netdev_priv(ndev);
  	struct pa_hw *hw = core_dev->hw;
@@ -321,7 +321,7 @@ index fe552c2..a8d0d3f 100644
  
  	netcp_unregister_txhook(netcp_priv, PA_TXHOOK_ORDER,
  				pa_core_tx_hook, pa_intf);
-@@ -1009,8 +1021,15 @@ int pa_core_close(void *intf_priv,
+@@ -987,8 +999,15 @@ int pa_core_close(void *intf_priv,
  		netcp_unregister_rxhook(netcp_priv, PA_RXHOOK_ORDER,
  					pa_core_rx_hook, pa_intf);
  
@@ -338,7 +338,7 @@ index fe552c2..a8d0d3f 100644
  	hw->set_streaming_switch(core_dev,
  				 pa_intf->eth_port,
  				 pa_intf->saved_ss_state);
-@@ -1023,6 +1042,13 @@ int pa_core_close(void *intf_priv,
+@@ -1001,6 +1020,13 @@ int pa_core_close(void *intf_priv,
  			pa_del_ip_proto(core_dev, IPPROTO_TCP);
  			pa_del_ip_proto(core_dev, IPPROTO_UDP);
  		}
@@ -352,7 +352,7 @@ index fe552c2..a8d0d3f 100644
  		if (hw->cleanup)
  			hw->cleanup(core_dev);
  	}
-@@ -1069,6 +1095,16 @@ int pa_core_open(void *intf_priv,
+@@ -1047,6 +1073,16 @@ int pa_core_open(void *intf_priv,
  						 PA_INVALID_PORT);
  			}
  
@@ -369,7 +369,7 @@ index fe552c2..a8d0d3f 100644
  			/* make IP LUT entries invalid */
  			for (i = 0; i < core_dev->ip_lut_size; i++) {
  				if (!core_dev->ip_lut[i].valid)
-@@ -1088,6 +1124,16 @@ int pa_core_open(void *intf_priv,
+@@ -1066,6 +1102,16 @@ int pa_core_open(void *intf_priv,
  		}
  	}
  
@@ -386,7 +386,7 @@ index fe552c2..a8d0d3f 100644
  	pa_intf->saved_ss_state =
  		hw->get_streaming_switch(core_dev, pa_intf->eth_port);
  	dev_dbg(core_dev->dev, "saved_ss_state for port %d is %d\n",
-@@ -1205,6 +1251,16 @@ static void *pa_core_init(struct netcp_device *netcp_device,
+@@ -1135,6 +1181,16 @@ static void *pa_core_init(struct netcp_device *netcp_device,
  	if (*error < 0)
  		goto cleanup;
  
@@ -403,7 +403,7 @@ index fe552c2..a8d0d3f 100644
  	*error = hw->map_resources(core_dev, node);
  	if (*error < 0)
  		goto cleanup;
-@@ -1476,7 +1532,7 @@ static void pa_core_load_firmware(void __iomem *dest,
+@@ -1406,7 +1462,7 @@ static void pa_core_load_firmware(void __iomem *dest,
  #define PA_CORE_MAX_LUT_ENTRY		3
  static inline int pa_lut_entry_count(enum netcp_addr_type type)
  {
@@ -412,7 +412,7 @@ index fe552c2..a8d0d3f 100644
  		PA_CORE_MAX_LUT_ENTRY : 1;
  }
  
-@@ -1495,6 +1551,19 @@ int pa_core_add_addr(void *intf_priv, struct netcp_addr *naddr)
+@@ -1425,6 +1481,19 @@ int pa_core_add_addr(void *intf_priv, struct netcp_addr *naddr)
  	if (!core_dev->inuse_if_count)
  		return -ENXIO;
  
@@ -433,7 +433,7 @@ index fe552c2..a8d0d3f 100644
  	for (idx = 0; idx < count; idx++) {
  		entries[idx] = pa_core_lut_alloc(core_dev, PA_LUT_MAC,
 diff --git a/drivers/net/ethernet/ti/netcp_pa_core.h b/drivers/net/ethernet/ti/netcp_pa_core.h
-index b423fb8..b87b028 100644
+index 271ebb3..74ba48f 100644
 --- a/drivers/net/ethernet/ti/netcp_pa_core.h
 +++ b/drivers/net/ethernet/ti/netcp_pa_core.h
 @@ -114,6 +114,10 @@ struct pa_hw {
@@ -447,7 +447,7 @@ index b423fb8..b87b028 100644
  	u32	(*set_streaming_switch)(struct pa_core_device *core_dev,
  					int port, u32 new_value);
  	u32	(*get_streaming_switch)(struct pa_core_device *core_dev,
-@@ -188,6 +192,7 @@ struct pa_core_device {
+@@ -179,6 +183,7 @@ struct pa_core_device {
  	const struct firmware **fw;
  	struct pa_hw *hw;
  	netdev_features_t netif_features;

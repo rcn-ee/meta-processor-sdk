@@ -1,7 +1,7 @@
-From cabbdd7d0c77118391f1f2df0adf1d75e31f4807 Mon Sep 17 00:00:00 2001
+From bca097fbdd4a5b42b3764f8d2b97be1f6801150b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 2 May 2016 16:20:05 -0400
-Subject: [PATCH 18/34] net: netcp: cpts: introduce keystone netcp cpts
+Subject: [PATCH 18/37] net: netcp: cpts: introduce keystone netcp cpts
  software module
 
 This patch introduces a cpts software module for

@@ -1,7 +1,7 @@
-From f1481aca5877241e83b724fdff31df0a8a416d4f Mon Sep 17 00:00:00 2001
+From 53789d2b55a7bc963efcd0c5812b2f5ea29947ef Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 13 Jan 2016 08:20:51 -0500
-Subject: [PATCH 03/34] ARM: dts: keystone: use syscon regmap to enable shared
+Subject: [PATCH 03/37] ARM: dts: keystone: use syscon regmap to enable shared
  access of QMSS INTD
 
 This patch adds syscon regmap entry for QMSS INTD (interrupt distributor)
@@ -15,7 +15,7 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
  3 files changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 3b503d9..a6827be 100644
+index fdad650..5d4682c 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -8,6 +8,11 @@
@@ -42,7 +42,7 @@ index 3b503d9..a6827be 100644
  			id = <0>;
  		};
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 640bb76..5bc984e 100644
+index bc6f6c7..50ab829 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -8,6 +8,11 @@
@@ -69,7 +69,7 @@ index 640bb76..5bc984e 100644
  			id = <0>;
  		};
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 8a54126..6b3d552 100644
+index d393480..b21d3f8 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -8,6 +8,11 @@

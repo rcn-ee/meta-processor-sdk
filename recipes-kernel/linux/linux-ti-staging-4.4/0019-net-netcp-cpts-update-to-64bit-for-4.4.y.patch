@@ -1,7 +1,7 @@
-From 82d23f1f7193641b287983a9f879e60b41954916 Mon Sep 17 00:00:00 2001
+From 896fc94dab7e34a4a116eaacbfa8c000c59a4e8f Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 2 May 2016 16:30:37 -0400
-Subject: [PATCH 19/34] net: netcp: cpts: update to 64bit for 4.4.y
+Subject: [PATCH 19/37] net: netcp: cpts: update to 64bit for 4.4.y
 
 The 4.4.y kernel has changed the 32bit variables to 64bit that
 requires API change from ns_to_timespec() to ns_to_timespec64().

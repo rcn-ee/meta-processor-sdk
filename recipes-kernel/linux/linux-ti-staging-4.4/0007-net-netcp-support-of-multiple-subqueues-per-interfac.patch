@@ -1,7 +1,7 @@
-From d15407f7a4b6cd10806e882566942d2d6b6670ed Mon Sep 17 00:00:00 2001
+From 287285ae336673b54a6969dd33fa6535f7b20e2a Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 18:18:27 -0400
-Subject: [PATCH 07/34] net: netcp: support of multiple subqueues per interface
+Subject: [PATCH 07/37] net: netcp: support of multiple subqueues per interface
 
 This patch adds the support of multiple subqueues per interface.  This
 is particularly useful when support of NETCP QoS is enabled.  In that
@@ -61,10 +61,10 @@ index e5e76ed..86a8a17 100644
  			rx-buffer-size = <1536 4096 0 0>;
  			rx-queue = <532>;
 diff --git a/drivers/net/ethernet/ti/netcp.h b/drivers/net/ethernet/ti/netcp.h
-index ac91c54..c71be05 100644
+index d40374b..7bf3788 100644
 --- a/drivers/net/ethernet/ti/netcp.h
 +++ b/drivers/net/ethernet/ti/netcp.h
-@@ -41,6 +41,8 @@
+@@ -39,6 +39,8 @@
  #define XGMII_LINK_MAC_PHY		10
  #define XGMII_LINK_MAC_MAC_FORCED	11
  
@@ -73,7 +73,7 @@ index ac91c54..c71be05 100644
  struct netcp_device;
  
  struct netcp_tx_pipe {
-@@ -88,19 +90,27 @@ struct netcp_stats {
+@@ -86,18 +88,26 @@ struct netcp_stats {
  	u32                     tx_dropped;
  };
  
@@ -90,7 +90,6 @@ index ac91c54..c71be05 100644
  	struct device		*ndev_dev;
  	struct net_device	*ndev;
  	bool			big_endian;
- 	bool			bridged;
 +
 +	u32			tx_subqueues;
  	unsigned int		tx_compl_qid;
@@ -105,7 +104,7 @@ index ac91c54..c71be05 100644
  	void			*rx_queue;
  	void			*rx_pool;
  	struct list_head	rxhook_list_head;
-@@ -122,8 +132,6 @@ struct netcp_intf {
+@@ -119,8 +129,6 @@ struct netcp_intf {
  	const char		*dma_chan_name;
  	u32			rx_pool_size;
  	u32			rx_pool_region_id;
@@ -114,7 +113,7 @@ index ac91c54..c71be05 100644
  	struct list_head	module_head;
  	struct list_head	interface_list;
  	struct list_head	addr_list;
-@@ -137,8 +145,12 @@ struct netcp_intf {
+@@ -134,8 +142,12 @@ struct netcp_intf {
  
  	/* DMA configuration data */
  	u32			msg_enable;
@@ -128,7 +127,7 @@ index ac91c54..c71be05 100644
  struct netcp_packet {
  	struct sk_buff		*skb;
 diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index 2bf8b4f..9c9b7b7 100644
+index 753247f..32094e0 100644
 --- a/drivers/net/ethernet/ti/netcp_core.c
 +++ b/drivers/net/ethernet/ti/netcp_core.c
 @@ -65,6 +65,8 @@
@@ -281,7 +280,7 @@ index 2bf8b4f..9c9b7b7 100644
  {
  	struct netcp_tx_pipe *tx_pipe = NULL;
  	struct netcp_hook_list *tx_hook;
-@@ -1090,11 +1097,12 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
+@@ -1094,11 +1101,12 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
  
  	/* update descriptor */
  	if (p_info.psdata_len) {
@@ -295,7 +294,7 @@ index 2bf8b4f..9c9b7b7 100644
  		tmp |= (p_info.psdata_len & KNAV_DMA_DESC_PSLEN_MASK) <<
  			KNAV_DMA_DESC_PSLEN_SHIFT;
  	}
-@@ -1110,6 +1118,7 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
+@@ -1114,6 +1122,7 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
  
  	knav_dma_set_words(&tmp, 1, &desc->packet_info);
  	knav_dma_set_words((u32 *)&skb, 1, &desc->pad[0]);
@@ -303,7 +302,7 @@ index 2bf8b4f..9c9b7b7 100644
  
  	if (tx_pipe->flags & SWITCH_TO_PORT_IN_TAGINFO) {
  		tmp = tx_pipe->switch_to_port;
-@@ -1117,27 +1126,27 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
+@@ -1121,27 +1130,27 @@ static int netcp_tx_submit_skb(struct netcp_intf *netcp,
  	}
  
  	/* submit packet descriptor */
@@ -337,7 +336,7 @@ index 2bf8b4f..9c9b7b7 100644
  	int desc_count, ret = 0;
  
  	if (unlikely(skb->len <= 0)) {
-@@ -1157,14 +1166,22 @@ static int netcp_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+@@ -1161,22 +1170,30 @@ static int netcp_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
  		skb->len = NETCP_MIN_PACKET_SIZE;
  	}
  
@@ -359,10 +358,9 @@ index 2bf8b4f..9c9b7b7 100644
  
 -	ret = netcp_tx_submit_skb(netcp, skb, desc);
 +	ret = netcp_tx_submit_skb(netcp, skb, desc, pi);
- 	if (ret) {
- 		ret = (ret < 0) ? ret : NETDEV_TX_OK;
+ 	if (ret)
  		goto drop;
-@@ -1173,8 +1190,8 @@ static int netcp_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 
  	ndev->trans_start = jiffies;
  
  	/* Check Tx pool count & stop subqueue if needed */
@@ -373,16 +371,16 @@ index 2bf8b4f..9c9b7b7 100644
  		dev_dbg(netcp->ndev_dev, "pausing tx, count(%d)\n", desc_count);
  		netif_stop_subqueue(ndev, subqueue);
  	}
-@@ -1184,7 +1201,7 @@ drop:
- 	if (ret != NETDEV_TX_OK)
- 		tx_stats->tx_dropped++;
+@@ -1185,7 +1202,7 @@ static int netcp_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ drop:
+ 	tx_stats->tx_dropped++;
  	if (desc)
 -		netcp_free_tx_desc_chain(netcp, desc, sizeof(*desc));
 +		netcp_free_tx_desc_chain(netcp, pi->pool, desc, sizeof(*desc));
  	dev_kfree_skb(skb);
  	return ret;
  }
-@@ -1429,9 +1446,11 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
+@@ -1430,9 +1447,11 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
  		netcp->tx_compl_q = NULL;
  	}
  
@@ -397,7 +395,7 @@ index 2bf8b4f..9c9b7b7 100644
  	}
  }
  
-@@ -1455,13 +1474,18 @@ static int netcp_setup_navigator_resources(struct net_device *ndev)
+@@ -1456,13 +1475,18 @@ static int netcp_setup_navigator_resources(struct net_device *ndev)
  		goto fail;
  	}
  
@@ -423,7 +421,7 @@ index 2bf8b4f..9c9b7b7 100644
  	}
  
  	/* open Tx completion queue */
-@@ -1625,11 +1649,7 @@ static int netcp_ndo_stop(struct net_device *ndev)
+@@ -1626,11 +1650,7 @@ static int netcp_ndo_stop(struct net_device *ndev)
  	netcp_empty_rx_queue(netcp);
  
  	/* Recycle Tx descriptors from completion queue */
@@ -436,7 +434,7 @@ index 2bf8b4f..9c9b7b7 100644
  
  	netcp_free_navigator_resources(netcp);
  	dev_dbg(netcp->ndev_dev, "netcp device %s stopped\n", ndev->name);
-@@ -1683,10 +1703,10 @@ static int netcp_ndo_change_mtu(struct net_device *ndev, int new_mtu)
+@@ -1684,10 +1704,10 @@ static int netcp_ndo_change_mtu(struct net_device *ndev, int new_mtu)
  static void netcp_ndo_tx_timeout(struct net_device *ndev)
  {
  	struct netcp_intf *netcp = netdev_priv(ndev);
@@ -450,7 +448,7 @@ index 2bf8b4f..9c9b7b7 100644
  	ndev->trans_start = jiffies;
  	netif_tx_wake_all_queues(ndev);
  }
-@@ -1838,10 +1858,44 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+@@ -1839,10 +1859,44 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
  	u32 efuse_mac = 0;
  	const void *mac_addr;
  	u8 efuse_mac_addr[6];
@@ -498,7 +496,7 @@ index 2bf8b4f..9c9b7b7 100644
  	if (!ndev) {
  		dev_err(dev, "Error allocating netdev\n");
  		return -ENOMEM;
-@@ -1865,8 +1919,6 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+@@ -1866,8 +1920,6 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
  	netcp->ndev = ndev;
  	netcp->ndev_dev  = &ndev->dev;
  	netcp->msg_enable = netif_msg_init(netcp_debug_level, NETCP_DEBUG);
@@ -507,7 +505,7 @@ index 2bf8b4f..9c9b7b7 100644
  	netcp->node_interface = node_interface;
  
  	ret = of_property_read_u32(node_interface, "efuse-mac", &efuse_mac);
-@@ -1932,30 +1984,43 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
+@@ -1933,30 +1985,43 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
  		netcp->rx_queue_depths[0] = 128;
  	}
  
