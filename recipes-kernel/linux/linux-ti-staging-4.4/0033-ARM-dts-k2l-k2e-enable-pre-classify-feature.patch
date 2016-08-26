@@ -1,7 +1,7 @@
-From f634f99cbbd1b7852595618027c651c38b097f4b Mon Sep 17 00:00:00 2001
+From 85d746d23d841c428ce00f64bb6bcaebb426637e Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Aug 2016 11:40:40 -0400
-Subject: [PATCH 33/37] ARM: dts: k2l/k2e: enable pre-classify feature
+Subject: [PATCH 33/43] ARM: dts: k2l/k2e: enable pre-classify feature
 
 This patch add pre-classify support in PA2 firmware. Also add cluster5
 node since the commands to enable this feature is send to post processing
