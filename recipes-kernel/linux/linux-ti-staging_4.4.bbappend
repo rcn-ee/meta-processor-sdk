@@ -1,4 +1,4 @@
-PR_append = ".tisdk28"
+PR_append = ".tisdk29"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -40,6 +40,7 @@ SRC_URI_append = " \
     file://0035-arm-dts-k2hk-add-dts-node-for-netcp-sa-driver.patch \
     file://0036-arm-dts-k2l-add-dts-node-for-netcp-sa-driver.patch \
     file://0037-arm-dts-k2e-add-dts-node-for-netcp-sa-driver.patch \
+    file://0038-ARM-dts-am57-evm-add-bindings-for-debugss.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
