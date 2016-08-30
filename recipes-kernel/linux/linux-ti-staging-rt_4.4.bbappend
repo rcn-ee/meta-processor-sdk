@@ -1,4 +1,4 @@
-PR_append = ".tisdk29"
+PR_append = ".tisdk30"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -41,6 +41,11 @@ SRC_URI_append = " \
     file://0036-arm-dts-k2l-add-dts-node-for-netcp-sa-driver.patch \
     file://0037-arm-dts-k2e-add-dts-node-for-netcp-sa-driver.patch \
     file://0038-ARM-dts-am57-evm-add-bindings-for-debugss.patch \
+    file://0039-phy-core-add-API-to-support-phy-reset.patch \
+    file://0040-phy-keystone-updates-to-10gbe-gbe-pcie-serdes-config.patch \
+    file://0041-net-netcp-ethss-add-10gbe-serdes-lane-receive-recove.patch \
+    file://0042-PCI-keystone-remove-the-invoke-of-serdes-phy-init.patch \
+    file://0043-ARM-dts-keystone-update-SerDes-bindings-for-one-PHY-.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"

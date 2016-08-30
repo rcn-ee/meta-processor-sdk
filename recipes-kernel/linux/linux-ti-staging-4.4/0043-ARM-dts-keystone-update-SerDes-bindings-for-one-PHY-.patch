@@ -1,0 +1,693 @@
+From de206d83d1092518425e0f45a2886d436c775a37 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Fri, 26 Aug 2016 09:38:54 -0400
+Subject: [PATCH 43/43] ARM: dts: keystone: update SerDes bindings for one PHY
+ per lane
+
+This patch updates the Keystone devicetree SerDes bindings such
+that each SerDes lane is modelled as one PHY device.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+[j-stiffler@ti.com: rebased against recent changes]
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi  | 193 ++++++++++++++++++-----------
+ arch/arm/boot/dts/keystone-k2e.dtsi        |   1 -
+ arch/arm/boot/dts/keystone-k2g.dtsi        |   1 -
+ arch/arm/boot/dts/keystone-k2hk-netcp.dtsi | 116 ++++++++++-------
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi  |  93 +++++++-------
+ arch/arm/boot/dts/keystone.dtsi            |   1 -
+ 6 files changed, 237 insertions(+), 168 deletions(-)
+
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index f3d461b..49dd715 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -226,65 +226,105 @@ gbe_subsys: subsys@24200000 {
+ 
+ gbe_serdes0: phy@232a000 {
+ 	status			= "disabled";
+-	#phy-cells		= <0>;
+ 	compatible		= "ti,keystone-serdes-gbe";
+ 	reg			= <0x0232a000 0x2000>;
+ 	link-rate-kbps		= <1250000>;
+ 	num-lanes		= <4>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	serdes0_lane0: lane@0 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <0>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes0_lane1: lane@1 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <1>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes0_lane2: lane@2 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <2>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes0_lane3: lane@3 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <3>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+ gbe_serdes1: phy@2324000 {
+ 	status			= "disabled";
+-	#phy-cells		= <0>;
+ 	compatible		= "ti,keystone-serdes-gbe";
+ 	reg			= <0x02324000 0x2000>;
+ 	link-rate-kbps		= <1250000>;
+ 	num-lanes		= <4>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	serdes1_lane0: lane@0 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <0>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes1_lane1: lane@1 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <1>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes1_lane2: lane@2 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <2>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes1_lane3: lane@3 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <3>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+@@ -357,7 +397,6 @@ netcp: netcp@24000000 {
+ 			/* enable-ale; */
+ 			tx-queue = <896>;
+ 			tx-channel = "nettx";
+-			phys = <&gbe_serdes0>, <&gbe_serdes1>;
+ 
+ 			cpts {
+ 				status = "ok";
+@@ -372,12 +411,14 @@ netcp: netcp@24000000 {
+ 
+ 			interfaces {
+ 				gbe0: interface-0 {
+-					slave-port = <0>;
++					phys		= <&serdes0_lane0>;
++					slave-port	= <0>;
+ 					link-interface	= <1>;
+ 					phy-handle	= <&ethphy0>;
+ 				};
+ 				gbe1: interface-1 {
+-					slave-port = <1>;
++					phys		= <&serdes0_lane1>;
++					slave-port	= <1>;
+ 					link-interface	= <1>;
+ 					phy-handle	= <&ethphy1>;
+ 				};
+@@ -385,26 +426,32 @@ netcp: netcp@24000000 {
+ 
+ 			secondary-slave-ports {
+ 				port-2 {
++					phys = <&serdes0_lane2>;
+ 					slave-port = <2>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-3 {
++					phys = <&serdes0_lane3>;
+ 					slave-port = <3>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-4 {
++					phys = <&serdes1_lane0>;
+ 					slave-port = <4>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-5 {
++					phys = <&serdes1_lane1>;
+ 					slave-port = <5>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-6 {
++					phys = <&serdes1_lane2>;
+ 					slave-port = <6>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-7 {
++					phys = <&serdes1_lane3>;
+ 					slave-port = <7>;
+ 					link-interface	= <2>;
+ 				};
+@@ -589,31 +636,32 @@ xgbe_serdes: phy@231e000 {
+ 	syscon-peripheral	= <&xgbe_subsys>;
+ 	syscon-link		= <&xgbe_pcsr>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <0>; /* full */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <2 0 0 12 4>;
+-				/* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <0>; /* full */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <2 0 0 12 4>;
+-				/* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	xserdes_lane0: lane@0 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <0>;
++		control-rate	= <0>; /* full */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <2 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	xserdes_lane1: lane@1 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <1>;
++		control-rate	= <0>; /* full */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <2 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+-netcpx: netcpx@2f00000 {
++netcpx: netcp@2f00000 {
+ 	status		= "disabled";
+ 	compatible	= "ti,netcp-1.0";
+ 	#address-cells	= <1>;
+@@ -643,7 +691,6 @@ netcpx: netcpx@2f00000 {
+ 			/* enable-ale; */
+ 			tx-queue = <692>;
+ 			tx-channel = "xnettx";
+-			phys = <&xgbe_serdes>;
+ 
+ 			cpts {
+ 				status = "ok";
+@@ -658,11 +705,13 @@ netcpx: netcpx@2f00000 {
+ 
+ 			interfaces {
+ 				xgbe0: interface-0 {
+-					slave-port = <0>;
++					phys		= <&xserdes_lane0>;
++					slave-port	= <0>;
+ 					link-interface	= <11>; /* MAC_MAC */
+ 				};
+ 				xgbe1: interface-1 {
+-					slave-port = <1>;
++					phys		= <&xserdes_lane1>;
++					slave-port	= <1>;
+ 					link-interface	= <11>;
+ 				};
+ 			};
+diff --git a/arch/arm/boot/dts/keystone-k2e.dtsi b/arch/arm/boot/dts/keystone-k2e.dtsi
+index 3d2e051..1b1fc3f 100644
+--- a/arch/arm/boot/dts/keystone-k2e.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e.dtsi
+@@ -140,7 +140,6 @@
+ 			status = "disabled";
+ 			device_type = "pci";
+ 			num-lanes = <2>;
+-			phys = <&pcie1_phy>;
+ 
+ 			/* error interrupt */
+ 			interrupts = <GIC_SPI 385 IRQ_TYPE_EDGE_RISING>;
+diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
+index 09504b1..2052434 100644
+--- a/arch/arm/boot/dts/keystone-k2g.dtsi
++++ b/arch/arm/boot/dts/keystone-k2g.dtsi
+@@ -871,7 +871,6 @@
+ 			status = "disabled";
+ 			device_type = "pci";
+ 			num-lanes = <1>;
+-			phys = <&pcie0_phy>;
+ 			dma-coherent;
+ 
+ 			/* error interrupt */
+diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
+index 8ee793d..1a6abeb 100644
+--- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
+@@ -259,33 +259,53 @@ gbe_subsys: subsys@2090000 {
+ 
+ gbe_serdes: phy@232a000 {
+ 	status			= "disabled";
+-	#phy-cells		= <0>;
+ 	compatible		= "ti,keystone-serdes-gbe";
+ 	reg			= <0x0232a000 0x2000>;
+ 	link-rate-kbps		= <1250000>;
+ 	num-lanes		= <4>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	serdes_lane0: lane@0 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <0>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes_lane1: lane@1 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <1>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes_lane2: lane@2 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <2>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes_lane3: lane@3 {
++		status		= "disabled";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <3>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+@@ -342,7 +362,6 @@ netcp: netcp@2000000 {
+ 			/* enable-ale; */
+ 			tx-queue = <648>;
+ 			tx-channel = "nettx";
+-			phys = <&gbe_serdes>;
+ 
+ 			cpts {
+ 				status = "ok";
+@@ -357,11 +376,13 @@ netcp: netcp@2000000 {
+ 
+ 			interfaces {
+ 				gbe0: interface-0 {
++					phys = <&serdes_lane0>;
+ 					slave-port = <0>;
+ 					link-interface = <1>;
+ 					phy-handle = <&ethphy0>;
+ 				};
+ 				gbe1: interface-1 {
++					phys = <&serdes_lane1>;
+ 					slave-port = <1>;
+ 					link-interface = <1>;
+ 					phy-handle = <&ethphy1>;
+@@ -370,10 +391,12 @@ netcp: netcp@2000000 {
+ 
+ 			secondary-slave-ports {
+ 				port-2 {
++					phys = <&serdes_lane2>;
+ 					slave-port = <2>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-3 {
++					phys = <&serdes_lane3>;
+ 					slave-port = <3>;
+ 					link-interface	= <2>;
+ 				};
+@@ -548,7 +571,6 @@ xgbe_pcsr: pcsr@2f00600 {
+ 
+ xgbe_serdes: phy@231e000 {
+ 	status			= "disabled";
+-	#phy-cells		= <0>;
+ 	compatible		= "ti,keystone-serdes-xgbe";
+ 	reg			= <0x0231e000 0x2000>;
+ 	link-rate-kbps		= <10312500>;
+@@ -556,27 +578,28 @@ xgbe_serdes: phy@231e000 {
+ 	syscon-peripheral	= <&xgbe_subsys>;
+ 	syscon-link		= <&xgbe_pcsr>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <0>; /* full */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <2 0 0 12 4>;
+-				/* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <0>; /* full */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <2 0 0 12 4>;
+-				/* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	xserdes_lane0: lane@0 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <0>;
++		control-rate	= <0>; /* full */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <2 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	xserdes_lane1: lane@1 {
++		status		= "ok";
++		/*loopback;*/
++		#phy-cells	= <0>;
++		reg		= <1>;
++		control-rate	= <0>; /* full */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <2 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+@@ -610,7 +633,6 @@ netcpx: netcp@2f00000 {
+ 			/* enable-ale; */
+ 			tx-queue = <8752>;
+ 			tx-channel = "xnettx";
+-			phys = <&xgbe_serdes>;
+ 
+ 			cpts {
+ 				status = "ok";
+@@ -625,10 +647,12 @@ netcpx: netcp@2f00000 {
+ 
+ 			interfaces {
+ 				xgbe0: interface-0 {
++					phys = <&xserdes_lane0>;
+ 					slave-port = <0>;
+ 					link-interface	= <11>; /* MAC_MAC */
+ 				};
+ 				xgbe1: interface-1 {
++					phys = <&xserdes_lane1>;
+ 					slave-port = <1>;
+ 					link-interface	= <11>;
+ 				};
+diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+index 3d035fe..9cc4be4 100644
+--- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+@@ -211,65 +211,61 @@ gbe_subsys: subsys@26200000 {
+ 
+ gbe_serdes0: phy@232a000 {
+ 	status			= "disabled";
+-	#phy-cells		= <0>;
+ 	compatible		= "ti,keystone-serdes-gbe";
+ 	reg			= <0x0232a000 0x2000>;
+ 	link-rate-kbps		= <1250000>;
+ 	num-lanes		= <2>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	serdes0_lane0: lane@0 {
++		status		= "ok";
++		/*loopback;*/
++		reg		= <0>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes0_lane1: lane@1 {
++		status		= "ok";
++		/*loopback;*/
++		reg		= <1>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+ gbe_serdes1: phy@2320000 {
+ 	status			= "disabled";
+-	#phy-cells		= <0>;
+ 	compatible		= "ti,keystone-serdes-gbe";
+ 	reg			= <0x02320000 0x2000>;
+ 	link-rate-kbps		= <1250000>;
+ 	num-lanes		= <2>;
+ 	/*rx-force-enable;*/
+-	lanes {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		lane@0 {
+-			/*loopback;*/
+-			reg		= <0>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
+-		lane@1 {
+-			/*loopback;*/
+-			reg		= <1>;
+-			control-rate	= <2>; /* quart */
+-			rx-start	= <7 5>;
+-			rx-force	= <1 1>;
+-			tx-coeff	= <0 0 0 12 4>;
+-			       /* c1 c2 cm att vreg */
+-		};
++	#address-cells	= <1>;
++	#size-cells	= <0>;
++
++	serdes1_lane0: lane@0 {
++		status		= "disabled";
++		/*loopback;*/
++		reg		= <0>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
++	};
++	serdes1_lane1: lane@1 {
++		status		= "disabled";
++		/*loopback;*/
++		reg		= <1>;
++		control-rate	= <2>; /* quart */
++		rx-start	= <7 5>;
++		rx-force	= <1 1>;
++		tx-coeff	= <0 0 0 12 4>; /* c1 c2 cm att vreg */
+ 	};
+ };
+ 
+@@ -341,7 +337,6 @@ netcp: netcp@26000000 {
+ 			/* enable-ale; */
+ 			tx-queue = <896>;
+ 			tx-channel = "nettx";
+-			phys = <&gbe_serdes0>, <&gbe_serdes1>;
+ 
+ 			cpts {
+ 				status = "ok";
+@@ -356,12 +351,14 @@ netcp: netcp@26000000 {
+ 
+ 			interfaces {
+ 				gbe0: interface-0 {
+-					slave-port = <0>;
++					phys		= <&serdes0_lane0>;
++					slave-port	= <0>;
+ 					link-interface	= <1>;
+ 					phy-handle	= <&ethphy0>;
+ 				};
+ 				gbe1: interface-1 {
+-					slave-port = <1>;
++					phys		= <&serdes0_lane1>;
++					slave-port	= <1>;
+ 					link-interface	= <1>;
+ 					phy-handle	= <&ethphy1>;
+ 				};
+@@ -369,10 +366,12 @@ netcp: netcp@26000000 {
+ 
+ 			secondary-slave-ports {
+ 				port-2 {
++					phys = <&serdes1_lane0>;
+ 					slave-port = <2>;
+ 					link-interface	= <2>;
+ 				};
+ 				port-3 {
++					phys = <&serdes1_lane1>;
+ 					slave-port = <3>;
+ 					link-interface	= <2>;
+ 				};
+diff --git a/arch/arm/boot/dts/keystone.dtsi b/arch/arm/boot/dts/keystone.dtsi
+index 971e8e8..11dc370 100644
+--- a/arch/arm/boot/dts/keystone.dtsi
++++ b/arch/arm/boot/dts/keystone.dtsi
+@@ -319,7 +319,6 @@
+ 			status = "disabled";
+ 			device_type = "pci";
+ 			num-lanes = <2>;
+-			phys = <&pcie0_phy>;
+ 
+ 			/* error interrupt */
+ 			interrupts = <GIC_SPI 38 IRQ_TYPE_EDGE_RISING>;
+-- 
+1.9.1
+
