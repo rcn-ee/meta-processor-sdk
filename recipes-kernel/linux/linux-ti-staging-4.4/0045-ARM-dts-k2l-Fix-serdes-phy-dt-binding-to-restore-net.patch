@@ -1,0 +1,57 @@
+From 50174d5fb17fa7808099c4a960b7822e3daaf33c Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 2 Sep 2016 14:25:12 -0400
+Subject: [PATCH 45/45] ARM: dts: k2l: Fix serdes phy dt binding to restore
+ network driver function
+
+#phy-cells was missing in the DT bindings for netcp serdes devices that
+causes netcp driver to be dysfunctional on K2L SoC. This patch fixes the
+DT binding to restore the network driver function.
+
+Fixes: 762fc5d069b8 ("ARM: dts: keystone: update SerDes bindings for one PHY per lan")
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+index 0f9f1ba..7acb50d 100644
+--- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+@@ -225,6 +225,7 @@ gbe_serdes0: phy@232a000 {
+ 		status		= "ok";
+ 		/*loopback;*/
+ 		reg		= <0>;
++		#phy-cells	= <0>;
+ 		control-rate	= <2>; /* quart */
+ 		rx-start	= <7 5>;
+ 		rx-force	= <1 1>;
+@@ -234,6 +235,7 @@ gbe_serdes0: phy@232a000 {
+ 		status		= "ok";
+ 		/*loopback;*/
+ 		reg		= <1>;
++		#phy-cells	= <0>;
+ 		control-rate	= <2>; /* quart */
+ 		rx-start	= <7 5>;
+ 		rx-force	= <1 1>;
+@@ -256,6 +258,7 @@ gbe_serdes1: phy@2320000 {
+ 	serdes1_lane0: lane@0 {
+ 		status		= "disabled";
+ 		/*loopback;*/
++		#phy-cells	= <0>;
+ 		reg		= <0>;
+ 		control-rate	= <2>; /* quart */
+ 		rx-start	= <7 5>;
+@@ -266,6 +269,7 @@ gbe_serdes1: phy@2320000 {
+ 		status		= "disabled";
+ 		/*loopback;*/
+ 		reg		= <1>;
++		#phy-cells	= <0>;
+ 		control-rate	= <2>; /* quart */
+ 		rx-start	= <7 5>;
+ 		rx-force	= <1 1>;
+-- 
+1.9.1
+

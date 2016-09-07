@@ -1,4 +1,4 @@
-PR_append = ".tisdk30"
+PR_append = ".tisdk31"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -46,6 +46,8 @@ SRC_URI_append = " \
     file://0041-net-netcp-ethss-add-10gbe-serdes-lane-receive-recove.patch \
     file://0042-PCI-keystone-remove-the-invoke-of-serdes-phy-init.patch \
     file://0043-ARM-dts-keystone-update-SerDes-bindings-for-one-PHY-.patch \
+    file://0044-phy-keystone-fix-async-abort-during-probe-on-k2g-soc.patch \
+    file://0045-ARM-dts-k2l-Fix-serdes-phy-dt-binding-to-restore-net.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
