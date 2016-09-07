@@ -1,4 +1,4 @@
-PR_append = ".tisdk31"
+PR_append = ".tisdk32"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -48,6 +48,7 @@ SRC_URI_append = " \
     file://0043-ARM-dts-keystone-update-SerDes-bindings-for-one-PHY-.patch \
     file://0044-phy-keystone-fix-async-abort-during-probe-on-k2g-soc.patch \
     file://0045-ARM-dts-k2l-Fix-serdes-phy-dt-binding-to-restore-net.patch \
+    file://0046-ARM-dts-k2g-disable-dma-coherency-for-PCIe.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
