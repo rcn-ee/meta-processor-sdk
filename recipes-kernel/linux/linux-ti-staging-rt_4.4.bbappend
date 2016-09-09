@@ -1,4 +1,4 @@
-PR_append = ".tisdk32"
+PR_append = ".tisdk33"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -51,4 +51,4 @@ SRC_URI_append = " \
     file://0046-ARM-dts-k2g-disable-dma-coherency-for-PCIe.patch \
 "
 
-RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
+RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
