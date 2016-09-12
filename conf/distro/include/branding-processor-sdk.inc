@@ -26,6 +26,16 @@ KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
 KERNEL_MODULE_AUTOLOAD += "${KERNEL_MODULE_AUTOLOAD_EXTRAS}"
 
 
+# Override MKUBIFS_ARGS when our image size exceeds upstream limits
+MKUBIFS_ARGS_am335x-evm     = "-F -m 2048 -e 126976 -c 6000"
+MKUBIFS_ARGS_am437x-evm     = "-F -m 4096 -e 253952 -c 3000"
+MKUBIFS_ARGS_am437x-hs-evm  = "-F -m 4096 -e 253952 -c 3000"
+MKUBIFS_ARGS_am57xx-evm     = "-F -m 2048 -e 126976 -c 12288"
+MKUBIFS_ARGS_am57xx-hs-evm  = "-F -m 2048 -e 126976 -c 12288"
+MKUBIFS_ARGS_dra7xx-evm     = "-F -m 2048 -e 126976 -c 12288"
+MKUBIFS_ARGS_dra7xx-hs-evm  = "-F -m 2048 -e 126976 -c 12288"
+
+
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
 
