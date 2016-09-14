@@ -1,4 +1,4 @@
-PR_append = ".tisdk34"
+PR_append = ".tisdk35"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -49,6 +49,10 @@ SRC_URI_append = " \
     file://0044-phy-keystone-fix-async-abort-during-probe-on-k2g-soc.patch \
     file://0045-ARM-dts-k2l-Fix-serdes-phy-dt-binding-to-restore-net.patch \
     file://0046-ARM-dts-k2g-disable-dma-coherency-for-PCIe.patch \
+    file://0047-ARM-dts-keystone-Disable-10gbe-SerDes-lane-nodes-by-.patch \
+    file://0048-phy-keystone-add-support-10gbe-mcu-firmware.patch \
+    file://0049-ARM-dts-keystone-Add-bindings-for-10gbe-MCU-firmware.patch \
+    file://0050-net-netcp-ethss-Do-not-read-10gbe-pcsr-reg-if-no-ser.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
