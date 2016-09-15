@@ -1,10 +1,10 @@
 ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_KERNEL_SUFFIX}-image"
 
-#PREFERRED_PROVIDER_virtual/kernel = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
-#PREFERRED_PROVIDER_virtual/kernel_am335x-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
-#PREFERRED_PROVIDER_virtual/kernel_am437x-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
-#PREFERRED_PROVIDER_virtual/kernel_am57xx-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
-#PREFERRED_PROVIDER_virtual/kernel_keystone = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
+PREFERRED_PROVIDER_virtual/kernel = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
+PREFERRED_PROVIDER_virtual/kernel_am335x-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
+PREFERRED_PROVIDER_virtual/kernel_am437x-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
+PREFERRED_PROVIDER_virtual/kernel_am57xx-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
+PREFERRED_PROVIDER_virtual/kernel_keystone = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
 PREFERRED_VERSION_linux-processor-sdk = "4.4%"
 
 # Remove wayland from keystone DISTRO_FEATURES.
