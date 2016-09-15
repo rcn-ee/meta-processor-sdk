@@ -1,0 +1,4 @@
+PR_append = ".tisdk0"
+
+LLVM_GIT_SRCREV = "798386e2513c812ab4b01df5b57c88b225e756bb"
+CLANG_GIT_SRCREV = "5d6b4dfcaf29619cffbb2013a1e0a02e70e0154e"
