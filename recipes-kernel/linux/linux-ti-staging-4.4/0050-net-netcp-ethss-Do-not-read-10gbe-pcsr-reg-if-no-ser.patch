@@ -1,6 +1,6 @@
-From 16124bd885240d34b9b4d87f1db0fe436b201cc7 Mon Sep 17 00:00:00 2001
+From d2173d89654c200e3c31d45f65d8763ca136138b Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
-Date: Wed, 14 Sep 2016 10:05:12 -0400
+Date: Thu, 15 Sep 2016 12:45:13 -0400
 Subject: [PATCH 50/50] net: netcp: ethss: Do not read 10gbe pcsr reg if no
  serdes phy defined
 
@@ -11,6 +11,7 @@ when 10gbe MCU firmware is used in configuring the 10gbe
 SerDes. This patch implements the above mentioned changes.
 
 Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Michael Scherban <m-scherban@ti.com>
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/netcp_ethss.c | 23 ++++++++++++++---------

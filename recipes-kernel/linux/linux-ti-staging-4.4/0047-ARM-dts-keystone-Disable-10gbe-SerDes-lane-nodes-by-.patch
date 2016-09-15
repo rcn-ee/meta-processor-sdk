@@ -1,4 +1,4 @@
-From e2fa4a534a133f2e7d5c40423d579ea76a5a0ae1 Mon Sep 17 00:00:00 2001
+From 8553975e66fa8095bfcf20eaf832130b692ff8ab Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 26 Aug 2016 15:36:13 -0400
 Subject: [PATCH 47/50] ARM: dts: keystone: Disable 10gbe SerDes lane nodes by
@@ -9,6 +9,7 @@ SerDes lane nodes should be enabled explicitly together with
 the SerDes node itself.
 
 Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Michael Scherban <m-scherban@ti.com>
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  arch/arm/boot/dts/keystone-k2e-netcp.dtsi  | 4 ++--

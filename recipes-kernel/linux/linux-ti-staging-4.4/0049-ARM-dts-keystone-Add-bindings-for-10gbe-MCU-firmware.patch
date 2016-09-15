@@ -1,4 +1,4 @@
-From c9fdd977810efe270f3c5b26d3262e6761678bfc Mon Sep 17 00:00:00 2001
+From d1ebb4f609748d4f2f328ca73222fbd8300f6580 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 13 Sep 2016 14:45:56 -0400
 Subject: [PATCH 49/50] ARM: dts: keystone: Add bindings for 10gbe MCU firmware
@@ -9,6 +9,7 @@ When 10gbe MCU firmware is used for configuring the
 10gbe SerDes, these bindings need to be explicitly enabled.
 
 Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Michael Scherban <m-scherban@ti.com>
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  arch/arm/boot/dts/keystone-k2e-netcp.dtsi  | 26 ++++++++++++++++++++++++++
