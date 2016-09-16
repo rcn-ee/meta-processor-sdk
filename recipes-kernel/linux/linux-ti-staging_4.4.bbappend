@@ -1,4 +1,4 @@
-PR_append = ".tisdk36"
+PR_append = ".tisdk37"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -53,6 +53,8 @@ SRC_URI_append = " \
     file://0048-phy-keystone-add-support-10gbe-mcu-firmware.patch \
     file://0049-ARM-dts-keystone-Add-bindings-for-10gbe-MCU-firmware.patch \
     file://0050-net-netcp-ethss-Do-not-read-10gbe-pcsr-reg-if-no-ser.patch \
+    file://0001-export-dmac_flush_range-symbol.patch \
+    file://0001-ARM-dts-am57xx-evm-enable-bb2d.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
