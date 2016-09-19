@@ -1,9 +1,9 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 BRANCH = "master"
-SRCREV = "0a8505e0b1dcb0e6fd5cef4ae13c17ffb63ce3d8"
+SRCREV = "5e250641bfbc8a1a90e5b98527d2012729d54c09"
 
 SRC_URI_remove = "file://dual_camera_qt5_omap-a15.sh \
                   file://0001-dual-camera-demo-Enhance-to-support-both-AM4-AM5.patch"
