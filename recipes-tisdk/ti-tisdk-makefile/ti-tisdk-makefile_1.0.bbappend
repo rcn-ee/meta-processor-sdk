@@ -1,4 +1,4 @@
-PR_append = ".tisdk19"
+PR_append = ".tisdk20"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -16,7 +16,7 @@ MAKEFILES_append_k2g-evm = " opencl-examples \
 MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               image-gallery \
                               uio-module-drv \
-                              ti-gc320-driver \
+                              ${@base_conditional('PREFERRED_PROVIDER_virtual/kernel', 'linux-processor-sdk-rt', '', 'ti-gc320-driver', d)} \
                               ti-ipc \
 "
 
