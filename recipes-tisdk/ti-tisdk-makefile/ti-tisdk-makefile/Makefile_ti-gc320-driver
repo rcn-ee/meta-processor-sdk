@@ -5,7 +5,7 @@ ti-gc320-driver: linux
 	@echo ================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "ti-gc320-driver*" -type d`; \
-	make -f Kbuild AQROOT=`pwd` KERNEL_DIR=${LINUXKERNEL_INSTALL_DIR} ARCH_TYPE=arm CROSS_COMPILE=${CROSS_COMPILE_PREFIX}
+	make -f Kbuild AQROOT=`pwd` KERNEL_DIR=${LINUXKERNEL_INSTALL_DIR} ARCH_TYPE=arm
 
 ti-gc320-driver_clean:
 	@echo ================================
@@ -13,7 +13,7 @@ ti-gc320-driver_clean:
 	@echo ================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "ti-gc320-driver*" -type d`; \
-	make -f Kbuild AQROOT=`pwd` KERNEL_DIR=${LINUXKERNEL_INSTALL_DIR} ARCH_TYPE=arm CROSS_COMPILE=${CROSS_COMPILE_PREFIX} clean
+	make -f Kbuild AQROOT=`pwd` KERNEL_DIR=${LINUXKERNEL_INSTALL_DIR} ARCH_TYPE=arm clean
 
 ti-gc320-driver_install:
 	@echo ================================
