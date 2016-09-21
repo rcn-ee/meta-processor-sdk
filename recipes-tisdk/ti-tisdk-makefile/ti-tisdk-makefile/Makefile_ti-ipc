@@ -70,13 +70,12 @@ ti-ipc-linux-config: ti-ipc-rtos-path-check
 	@echo =================================
 	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	. $(ENV_SETUP); \
-	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH} -f ipc-linux.mak \
+	cd $${IPC_INSTALL_PATH}; \
+        ./configure $${CONFIGURE_FLAGS} \
+		CC=$${CC} \
+		--prefix=/usr \
 		PLATFORM=$${IPC_PLATFORM} \
-		KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-		DESTDIR=$(DESTDIR) \
-		TOOLCHAIN_LONGNAME=$${TOOLCHAIN_SYS} \
-		TOOLCHAIN_INSTALL_DIR=$${SDK_PATH_NATIVE}/usr \
-		TOOLCHAIN_PREFIX=$(CROSS_COMPILE)
+		KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
 
 ti-ipc-linux: ti-ipc-rtos-path-check linux ti-ipc-linux-config
@@ -106,7 +105,7 @@ ti-ipc-linux_install: ti-ipc-rtos-path-check ti-ipc-linux
 	fi
 	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
-	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH} install
+	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH} install DESTDIR=$(DESTDIR)
 
 ti-ipc-linux-examples: ti-ipc-rtos-path-check
 	@echo =================================
@@ -137,7 +136,7 @@ ti-ipc-linux-examples_install: ti-ipc-rtos-path-check ti-ipc-linux-examples
 	fi
 	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
-	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}/examples install\
+	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}/examples install \
 		HOSTOS="linux" \
 		PLATFORM="$${IPC_PLATFORM}" \
 		EXEC_DIR="$(EXEC_DIR)"
