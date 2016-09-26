@@ -25,6 +25,8 @@ KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
 KERNEL_MODULE_AUTOLOAD += "${KERNEL_MODULE_AUTOLOAD_EXTRAS}"
 
+PACKAGECONFIG_pn-weston = "kms launch"
+PACKAGECONFIG_append_pn-weston = "${@base_contains('MACHINE_FEATURES', 'sgx', ' egl', ' fbdev', d)}"
 
 # Override MKUBIFS_ARGS when our image size exceeds upstream limits
 MKUBIFS_ARGS_am335x-evm     = "-F -m 2048 -e 126976 -c 6000"
