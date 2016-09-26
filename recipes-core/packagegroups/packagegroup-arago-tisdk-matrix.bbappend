@@ -1,4 +1,4 @@
-PR_append = "-tisdk39"
+PR_append = "-tisdk40"
 
 MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -23,7 +23,7 @@ MATRIX_APPS_append_ti43x = " \
 "
 
 MATRIX_TOUCH_APPS = " \
-    matrix-gui-touch-demos \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', 'matrix-gui-touch-demos', '', d)} \
 "
 
 MATRIX_TOUCH_APPS_keystone = ""
