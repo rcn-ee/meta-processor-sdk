@@ -1,4 +1,4 @@
-PR_append = ".tisdk22"
+PR_append = ".tisdk23"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -21,6 +21,9 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
 "
 
 MAKEFILES_append_dra7xx = " linalg-examples"
+
+MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
+MAKEFILES_remove_ti43x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 
 IPC_TOOLS_PATHS_A15 = "gnu.targets.arm.A15="\$\${TOOLCHAIN_PATH_A15}" gnu.targets.arm.A15F="\$\${TOOLCHAIN_PATH_A15}""
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\${C6X_GEN_INSTALL_PATH}""
