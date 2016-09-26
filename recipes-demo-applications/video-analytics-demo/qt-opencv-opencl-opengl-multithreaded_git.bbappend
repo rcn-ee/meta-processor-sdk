@@ -1,5 +1,5 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 CXXFLAGS_append = " -DOCV_NATIVE "
 
-SRCREV = "87078a0b9b72baefeaa10f6f2ab47893197e0350"
+SRCREV = "a5dad4fbb470e526f6058095cf08a01f51abb02d"
