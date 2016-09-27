@@ -1,10 +1,11 @@
-PR_append = ".tisdk23"
+PR_append = ".tisdk24"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = "\
     file://Makefile_ti-gc320-driver \
     file://Makefile_ti-ipc \
+    file://Makefile_barcode-roi \
 "
 
 MAKEFILES_append_keystone = " ti-ipc"
@@ -18,9 +19,14 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               uio-module-drv \
                               ${@base_conditional('PREFERRED_PROVIDER_virtual/kernel', 'linux-processor-sdk-rt', '', 'ti-gc320-driver', d)} \
                               ti-ipc \
+                              barcode-roi \
 "
 
 MAKEFILES_append_dra7xx = " linalg-examples"
+
+MAKEFILES_append_keystone = " barcode-roi"
+MAKEFILES_append_ti33x = " barcode-roi"
+MAKEFILES_append_ti43x = " barcode-roi"
 
 MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
