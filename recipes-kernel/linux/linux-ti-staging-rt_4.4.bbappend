@@ -1,4 +1,4 @@
-PR_append = ".tisdk37"
+PR_append = ".tisdk38"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -55,6 +55,20 @@ SRC_URI_append = " \
     file://0050-net-netcp-ethss-Do-not-read-10gbe-pcsr-reg-if-no-ser.patch \
     file://0001-export-dmac_flush_range-symbol.patch \
     file://0001-ARM-dts-am57xx-evm-enable-bb2d.patch \
+    file://0051-soc-ti-add-missing-include-to-knav_dma.h.patch \
+    file://0052-arm-move-aes_glue.h-to-the-arch-arm-include-asm-dire.patch \
+    file://0053-Documentation-devicetree-bindings-arm-keystone-keyst.patch \
+    file://0054-crypto-add-stub-keystone-crypto-accelerator-driver.patch \
+    file://0055-crypto-ks2-add-SA-crypto-accelerator-definitions.patch \
+    file://0056-crypto-ks2-read-driver-configuration-parameters-from.patch \
+    file://0057-crypto-ks2-add-dma-resources-allocation-code.patch \
+    file://0058-crypto-ks2-add-low-level-crypto-hardware-interface-c.patch \
+    file://0059-crypto-ks2-add-command-label-functions.patch \
+    file://0060-crypto-ks2-add-processing-functions-and-aead-algorit.patch \
+    file://0061-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
+    file://0062-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
+    file://0063-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
+    file://0064-crypto-keystone-add-driver-statistics.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
