@@ -1,0 +1,28 @@
+From 3433313421ea9af62f549d44b9b01c497cb599e7 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Fri, 30 Sep 2016 13:15:30 -0400
+Subject: [PATCH 66/68] crypto: keystone: save device data to dev struct
+
+We need to save dev data to get access to it later
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ drivers/crypto/keystone-sa.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/crypto/keystone-sa.c b/drivers/crypto/keystone-sa.c
+index afdde89..dfd4cf1 100644
+--- a/drivers/crypto/keystone-sa.c
++++ b/drivers/crypto/keystone-sa.c
+@@ -776,6 +776,7 @@ static int keystone_crypto_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	dev_data->pdev = pdev;
++	dev_set_drvdata(dev, dev_data);
+ 
+ 	pm_runtime_enable(dev);
+ 	ret = pm_runtime_get_sync(dev);
+-- 
+1.9.1
+

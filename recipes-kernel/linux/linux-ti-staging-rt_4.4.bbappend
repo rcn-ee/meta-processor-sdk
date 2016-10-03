@@ -1,4 +1,4 @@
-PR_append = ".tisdk39"
+PR_append = ".tisdk40"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -69,6 +69,10 @@ SRC_URI_append = " \
     file://0062-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
     file://0063-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
     file://0064-crypto-keystone-add-driver-statistics.patch \
+    file://0065-ti_config_fragments-keystone-disable-crypto-tests.patch \
+    file://0066-crypto-keystone-save-device-data-to-dev-struct.patch \
+    file://0067-crypto-keystone-make-tx-submission-queue-sharable.patch \
+    file://0068-arm-dts-k2-set-dma-coherent-for-sa-subsystem.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
