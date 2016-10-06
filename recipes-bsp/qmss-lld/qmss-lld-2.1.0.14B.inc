@@ -1,6 +1,0 @@
-PV = "02.01.00.14B"
-
-INC_PR = "r0"
-
-# commit ID corresponding to "DEV.QMSS_LLD.02.01.00.14B"
-QMSS_LLD_SRCREV = "04095405680f4ec92eeef9312ba04f7808b1c813"
