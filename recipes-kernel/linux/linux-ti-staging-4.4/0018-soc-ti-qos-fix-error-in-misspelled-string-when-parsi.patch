@@ -1,0 +1,34 @@
+From b05b232880c1f6e7c02d05c943f6258044397563 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Thu, 12 May 2016 15:45:15 -0400
+Subject: [PATCH 18/65] soc: ti: qos: fix error in misspelled string when
+ parsing dts binding
+
+The qmss qos clock ticks dts binding is "ticks-per-second".
+But the code that parses this binding is wrongly looking for
+"tick-per-second".  This results in always using the default
+value which happens to be the one supposed to be passed in
+from sample devicetrees.  This patch fixes the error.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ drivers/soc/ti/knav_qmss_qos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/ti/knav_qmss_qos.c b/drivers/soc/ti/knav_qmss_qos.c
+index ff5dcf1..8ad4fc4 100644
+--- a/drivers/soc/ti/knav_qmss_qos.c
++++ b/drivers/soc/ti/knav_qmss_qos.c
+@@ -3997,7 +3997,7 @@ int knav_init_qos_range(struct knav_device *kdev, struct device_node *node,
+ 	info->drop_cfg.seed[1]	  = temp[5];
+ 	info->drop_cfg.seed[2]	  = temp[6];
+ 
+-	error = of_property_read_u32(node, "tick-per-sec",
++	error = of_property_read_u32(node, "ticks-per-sec",
+ 				     &info->ticks_per_sec);
+ 	if (error < 0)
+ 		info->ticks_per_sec = 10000;
+-- 
+1.9.1
+

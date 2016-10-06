@@ -1,0 +1,44 @@
+From 3a83ff68996efce3d74b3b817055fa6252febe86 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 1 Aug 2016 11:42:05 -0400
+Subject: [PATCH 32/65] ARM: dts: k2l/e: disable pre-classification feature
+
+Currently pre-classify BC & MC feature is available only K2HK. So disable
+this by default on these platforms.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi | 2 +-
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index 9f7da28..8c11306 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -487,7 +487,7 @@ netcp: netcp@24000000 {
+ 			rx-cmd-rsp-chan		= "pa-cmd-rsp";
+ 			rx-cmd-rsp-queue-depth	= <128 32 0 0>;
+ 			rx-cmd-rsp-buffer-size	= <128 512 0 0>;
+-
++			disable-pre-classify;
+ 			/* rx channels get overridden for the interface
+ 			 * when PA is enabled
+ 			 */
+diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+index 29660a7..a6c7156 100644
+--- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+@@ -415,7 +415,7 @@ netcp: netcp@26000000 {
+ 			rx-cmd-rsp-chan		= "pa-cmd-rsp";
+ 			rx-cmd-rsp-queue-depth	= <128 32 0 0>;
+ 			rx-cmd-rsp-buffer-size	= <128 512 0 0>;
+-
++			disable-pre-classify;
+ 			/* rx channels get overridden for the interface
+ 			 * when PA is enabled
+ 			 */
+-- 
+1.9.1
+
