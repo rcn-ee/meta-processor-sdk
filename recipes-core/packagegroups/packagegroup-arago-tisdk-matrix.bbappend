@@ -1,4 +1,4 @@
-PR_append = "-tisdk41"
+PR_append = "-tisdk42"
 
 MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -24,20 +24,10 @@ MATRIX_APPS_append_ti43x = " \
     matrix-machinevision-demo-barcoderoi \
 "
 
-MATRIX_TOUCH_APPS = " \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', 'matrix-gui-touch-demos', '', d)} \
-"
-
-MATRIX_TOUCH_APPS_keystone = ""
-
 MATRIX_APPS_append_ti33x += " \
     matrix-machinevision-demo-barcoderoi \
 "
 
 MATRIX_APPS_append_keystone += " \
     matrix-machinevision-demo-barcoderoi-f2f \
-"
-
-RDEPENDS_${PN} += " \
-    ${MATRIX_TOUCH_APPS} \
 "
