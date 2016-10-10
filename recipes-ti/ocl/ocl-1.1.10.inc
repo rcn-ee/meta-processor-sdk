@@ -1,3 +1,0 @@
-PV = "1.1.10.3"
-
-OCL_SRCREV = "108ff29cd27e9af39c1f0b4945cb5dd1be7fed41"
