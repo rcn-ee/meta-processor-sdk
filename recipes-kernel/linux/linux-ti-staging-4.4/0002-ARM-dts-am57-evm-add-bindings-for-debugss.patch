@@ -1,7 +1,7 @@
-From 5a70ebc321c79078098153afab93fd8ae1c18968 Mon Sep 17 00:00:00 2001
+From 29512b19e49412f00f82c7b100ff6b1be61a495f Mon Sep 17 00:00:00 2001
 From: Mark Garrett <m-garrett@ti.com>
 Date: Tue, 16 Aug 2016 08:53:15 -0500
-Subject: [PATCH 02/65] ARM: dts: am57-evm: add bindings for debugss
+Subject: [PATCH 02/58] ARM: dts: am57-evm: add bindings for debugss
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---

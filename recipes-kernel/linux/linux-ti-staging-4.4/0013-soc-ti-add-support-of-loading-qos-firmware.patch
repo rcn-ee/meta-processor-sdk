@@ -1,7 +1,7 @@
-From c0c3340e61fd9a502766d42b74ce26336572953b Mon Sep 17 00:00:00 2001
+From 64a82ca9702098db858169bc31941d7041925d2e Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 10 Mar 2016 18:40:40 -0500
-Subject: [PATCH 13/65] soc: ti: add support of loading qos firmware
+Subject: [PATCH 13/58] soc: ti: add support of loading qos firmware
 
 This patch adds the support of loading QoS firmware
 to a QMSS PDSP when the firmware_type specified in

@@ -1,7 +1,7 @@
-From 8c91b8bc29d6fbb85b855ecddb806e7aea928d3f Mon Sep 17 00:00:00 2001
+From c3283a3e78efcd1ca8c3f8c8f34600b287be2cfd Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:34:00 -0400
-Subject: [PATCH 07/65] soc: ti: qmss: unmap descriptors without knowing
+Subject: [PATCH 07/58] soc: ti: qmss: unmap descriptors without knowing
  descriptor pool
 
 Prior to this patch, it is always assumed that the descriptor pool from

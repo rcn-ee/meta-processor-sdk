@@ -1,7 +1,7 @@
-From 615ce4238c1a7b7e6136b979d6e0b6c12da077cf Mon Sep 17 00:00:00 2001
+From f0c249eb5f03597cb48650c5efff27c469afd7ae Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Sat, 5 Mar 2016 10:23:30 -0500
-Subject: [PATCH 12/65] soc: qmss: support of loading different types of
+Subject: [PATCH 12/58] soc: qmss: support of loading different types of
  firmware to pdsp
 
 Prior to this patch, it only supports the loading of accumulator

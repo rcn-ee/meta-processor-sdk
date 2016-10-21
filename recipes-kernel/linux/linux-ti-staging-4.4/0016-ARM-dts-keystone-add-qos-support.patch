@@ -1,7 +1,7 @@
-From d47af33d216bc7e2e926a479ea66831b05f47cf3 Mon Sep 17 00:00:00 2001
+From 96065318b5775e09ac77c07d9381573312e02414 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 12:58:26 -0400
-Subject: [PATCH 16/65] ARM: dts: keystone: add qos support
+Subject: [PATCH 16/58] ARM: dts: keystone: add qos support
 
 This patch adds the dts bindings that enable the support
 of QMSS QoS.
@@ -17,7 +17,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  create mode 100644 arch/arm/boot/dts/keystone-qostree.dtsi
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index dc89385..9be1601 100644
+index 01354e8..65bff64 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -8,6 +8,16 @@
@@ -128,7 +128,7 @@ index dc89385..9be1601 100644
  		gbe@200000 { /* ETHSS */
  			label = "netcp-gbe";
  			compatible = "ti,netcp-gbe-9";
-@@ -444,34 +515,67 @@ netcp: netcp@24000000 {
+@@ -446,34 +517,67 @@ netcp: netcp@24000000 {
  				};
  			};
  		};
@@ -201,7 +201,7 @@ index dc89385..9be1601 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 969fb57..6a63a67 100644
+index 823c841..01b94ad 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -8,6 +8,16 @@
@@ -303,7 +303,7 @@ index 969fb57..6a63a67 100644
  	dma_gbe: dma_gbe@0 {
  		reg = <0x2004000 0x100>,
  			  <0x2004400 0x120>,
-@@ -369,34 +440,67 @@ netcp: netcp@2000000 {
+@@ -370,34 +441,67 @@ netcp: netcp@2000000 {
  				};
  			};
  		};
@@ -375,7 +375,7 @@ index 969fb57..6a63a67 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 4824204..109c505 100644
+index 0849368..54d0d16 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -8,6 +8,16 @@
@@ -478,7 +478,7 @@ index 4824204..109c505 100644
  	};
  
  }; /* qmss */
-@@ -373,34 +443,67 @@ netcp: netcp@26000000 {
+@@ -374,34 +444,67 @@ netcp: netcp@26000000 {
  				};
  			};
  		};

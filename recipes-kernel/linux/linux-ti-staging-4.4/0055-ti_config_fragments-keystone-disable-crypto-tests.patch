@@ -1,0 +1,26 @@
+From cda75a18078269b7e822767c7d3ce83e15124c73 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Mon, 3 Oct 2016 15:44:46 -0400
+Subject: [PATCH 55/58] ti_config_fragments: keystone: disable crypto tests
+
+The crypto manager tests conflict with the k2 sideband crypto driver.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ ti_config_fragments/keystone.cfg | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ti_config_fragments/keystone.cfg b/ti_config_fragments/keystone.cfg
+index 12567ff..8e795ae 100644
+--- a/ti_config_fragments/keystone.cfg
++++ b/ti_config_fragments/keystone.cfg
+@@ -30,3 +30,6 @@ CONFIG_KEXEC=y
+ CONFIG_KEXEC_CORE=y
+ 
+ CONFIG_HIGHMEM=y
++
++# Disable crypto tests
++CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y
+-- 
+1.9.1
+

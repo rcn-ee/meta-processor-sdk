@@ -1,7 +1,7 @@
-From 1cf527f062dbc6e8a71bec1807385b30d9ddac76 Mon Sep 17 00:00:00 2001
+From 69fcec8ffd0af061cfcb753a07a545327d791340 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 10 Mar 2016 18:25:45 -0500
-Subject: [PATCH 11/65] ARM: dts: keystone: add qmss clock name
+Subject: [PATCH 11/58] ARM: dts: keystone: add qmss clock name
 
 This patch adds the QMSS subsystem clock name
 for Keystone platforms.
@@ -15,7 +15,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 3 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 0c0c344..dc89385 100644
+index 22029ac..01354e8 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -19,6 +19,7 @@ qmss: qmss@2a40000 {
@@ -27,7 +27,7 @@ index 0c0c344..dc89385 100644
  	queue-range	= <0 0x2000>;
  	linkram0	= <0x100000 0x4000>;
 diff --git a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
-index 9bc5460..969fb57 100644
+index 419ecfe..823c841 100644
 --- a/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2hk-netcp.dtsi
 @@ -19,6 +19,7 @@ qmss: qmss@2a40000 {
@@ -39,7 +39,7 @@ index 9bc5460..969fb57 100644
  	queue-range	= <0 0x4000>;
  	linkram0	= <0x100000 0x8000>;
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 31ef460..4824204 100644
+index 509ab69..0849368 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -19,6 +19,7 @@ qmss: qmss@2a40000 {

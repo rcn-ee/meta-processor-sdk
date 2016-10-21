@@ -1,0 +1,69 @@
+From d732011e6f5725fab45210961841455a5ac40a8c Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 3 Aug 2016 11:40:40 -0400
+Subject: [PATCH 28/58] ARM: dts: k2l/k2e: enable pre-classify feature
+
+This patch add pre-classify support in PA2 firmware. Also add cluster5
+node since the commands to enable this feature is send to post processing
+cluster which is cluster5.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi | 7 ++++++-
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi | 7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index 36bd6a0..73eeaba 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -478,7 +478,6 @@ netcp: netcp@24000000 {
+ 			rx-cmd-rsp-chan		= "pa-cmd-rsp";
+ 			rx-cmd-rsp-queue-depth	= <128 32 0 0>;
+ 			rx-cmd-rsp-buffer-size	= <128 512 0 0>;
+-			disable-pre-classify;
+ 			/* rx channels get overridden for the interface
+ 			 * when PA is enabled
+ 			 */
+@@ -510,6 +509,12 @@ netcp: netcp@24000000 {
+ 					tx-channel = "pa-cl1";
+ 				};
+ 
++				cluster@5 {
++					reg = <5>;
++					tx-queue = <909>;
++					tx-channel = "pa-cl5";
++				};
++
+ 				cluster@6 {
+ 					reg = <6>;
+ 					tx-queue = <910>;
+diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+index 6adb03a..a84b2db 100644
+--- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+@@ -405,7 +405,6 @@ netcp: netcp@26000000 {
+ 			rx-cmd-rsp-chan		= "pa-cmd-rsp";
+ 			rx-cmd-rsp-queue-depth	= <128 32 0 0>;
+ 			rx-cmd-rsp-buffer-size	= <128 512 0 0>;
+-			disable-pre-classify;
+ 			/* rx channels get overridden for the interface
+ 			 * when PA is enabled
+ 			 */
+@@ -437,6 +436,12 @@ netcp: netcp@26000000 {
+ 					tx-channel = "pa-cl1";
+ 				};
+ 
++				cluster@5 {
++					reg = <5>;
++					tx-queue = <909>;
++					tx-channel = "pa-cl5";
++				};
++
+ 				cluster@6 {
+ 					reg = <6>;
+ 					tx-queue = <910>;
+-- 
+1.9.1
+
