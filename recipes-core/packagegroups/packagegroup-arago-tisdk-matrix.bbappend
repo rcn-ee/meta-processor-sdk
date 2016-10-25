@@ -1,4 +1,4 @@
-PR_append = "-tisdk42"
+PR_append = "-tisdk43"
 
 MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -6,10 +6,6 @@ MATRIX_SGX_DEMOS_remove_omap-a15 = " \
 
 MATRIX_COMMON_APPS_remove = " \
     matrix-gui-oprofile-demos \
-"
-
-MATRIX_COMMON_APPS_append = " \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'matrix-gui-weston-terminal-demo', '', d)} \
 "
 
 MATRIX_APPS_append_omap-a15 += " \
