@@ -1,4 +1,4 @@
-From 4698464fea6200e0a0730db399b782633f388ac1 Mon Sep 17 00:00:00 2001
+From da2b2993002800102ac557d0f8faae46dd7897f9 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Oct 2015 11:06:00 -0400
 Subject: [PATCH 41/58] soc: ti: add missing include to knav_dma.h

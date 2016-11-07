@@ -1,4 +1,4 @@
-From 937791d59cc8ce63af06b745146a93caefed693b Mon Sep 17 00:00:00 2001
+From b25bdc159f6bbc4c46df2c52af0a16c349751019 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Sep 2016 13:18:59 -0400
 Subject: [PATCH 57/58] crypto: keystone: make tx submission queue sharable

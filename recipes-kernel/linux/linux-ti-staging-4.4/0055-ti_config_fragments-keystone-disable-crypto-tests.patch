@@ -1,4 +1,4 @@
-From cda75a18078269b7e822767c7d3ce83e15124c73 Mon Sep 17 00:00:00 2001
+From 7e131644d9ddacaa6f829b0fbcfec0b66d4643b7 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Mon, 3 Oct 2016 15:44:46 -0400
 Subject: [PATCH 55/58] ti_config_fragments: keystone: disable crypto tests

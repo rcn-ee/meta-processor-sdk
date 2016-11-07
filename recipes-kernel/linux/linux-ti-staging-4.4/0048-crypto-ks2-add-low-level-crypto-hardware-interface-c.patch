@@ -1,4 +1,4 @@
-From 25559361b31f57ff9ff8929cae76a3f0ba325c63 Mon Sep 17 00:00:00 2001
+From 395f35b90911732b861e51e3b2368b5b3ad63616 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 6 Jul 2016 15:40:20 -0400
 Subject: [PATCH 48/58] crypto: ks2: add low level crypto hardware interface

@@ -1,4 +1,4 @@
-From 78d94fb7e545bb1ee1970d591c777d4f5d29adb8 Mon Sep 17 00:00:00 2001
+From e7e0c82fe6570a902f0dbdbfc0d9ea788233be46 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Mon, 7 Mar 2016 04:20:45 -0500
 Subject: [PATCH 09/58] soc: ti: qmss: add support of queue range specific push

@@ -1,4 +1,4 @@
-From e58de265536d662cfcd4fd06b2cc1412d45c51ef Mon Sep 17 00:00:00 2001
+From 370ee1d3a43f7603b5f098a9855830bdbeb7c889 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 1 Sep 2016 13:25:47 -0400
 Subject: [PATCH 34/58] ARM: dts: k2g: disable dma-coherency for PCIe

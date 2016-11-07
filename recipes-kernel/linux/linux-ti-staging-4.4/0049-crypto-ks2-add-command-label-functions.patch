@@ -1,4 +1,4 @@
-From b3e984be0d82beb965640f8edd3362e5809066f2 Mon Sep 17 00:00:00 2001
+From e69f7b789e1db51cf0f2861506905b01cb6de84d Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Jul 2016 14:13:36 -0400
 Subject: [PATCH 49/58] crypto: ks2: add command label functions

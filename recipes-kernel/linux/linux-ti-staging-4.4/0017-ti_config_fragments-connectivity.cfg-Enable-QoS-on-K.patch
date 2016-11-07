@@ -1,4 +1,4 @@
-From 65cdf159b00612786e7c49a8430c402d4143ed37 Mon Sep 17 00:00:00 2001
+From c1d5cd287649f3c190f052f31ea8df92ece8a71b Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 18 May 2016 08:26:58 -0400
 Subject: [PATCH 17/58] ti_config_fragments/connectivity.cfg: Enable QoS on
@@ -13,7 +13,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index a4e31fc..43a9b12 100644
+index 959c223..53f284f 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
 @@ -171,6 +171,7 @@ CONFIG_TI_KEYSTONE_NETCP_ETHSS=y

@@ -1,4 +1,4 @@
-From 569004b99502fd0b96115361d722d31113efea76 Mon Sep 17 00:00:00 2001
+From e7609a497c01225fe77c2849067e30e226953a5e Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Jul 2016 14:17:24 -0400
 Subject: [PATCH 50/58] crypto: ks2: add processing functions and aead

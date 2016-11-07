@@ -1,4 +1,4 @@
-From 62dde7a6087e6bf0409ab86c4bbb235bf4fab37a Mon Sep 17 00:00:00 2001
+From 176ba5b82520ec501c8080865063c93a5fe683a4 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 27 Sep 2016 15:59:29 -0400
 Subject: [PATCH 53/58] ARM: dts: k2e: add device binding for crypto

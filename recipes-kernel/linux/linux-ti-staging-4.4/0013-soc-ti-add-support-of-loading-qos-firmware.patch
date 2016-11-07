@@ -1,4 +1,4 @@
-From 64a82ca9702098db858169bc31941d7041925d2e Mon Sep 17 00:00:00 2001
+From 666866cc02e106b43903d0d2f9d6d51485a6d0f0 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 10 Mar 2016 18:40:40 -0500
 Subject: [PATCH 13/58] soc: ti: add support of loading qos firmware

@@ -1,4 +1,4 @@
-From dbf34b82f3ccce7d1bf8179ac03e9fbc1e1d4bb9 Mon Sep 17 00:00:00 2001
+From 4d140f861550dd341cb881316971da8cb5120bc6 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:07:01 -0400
 Subject: [PATCH 03/58] soc: ti: qmss: fix error in shared access of QMSS INTD

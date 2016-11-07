@@ -1,4 +1,4 @@
-From c4cf2d6b7284e4d15761f5b810d08e8fd4c439c7 Mon Sep 17 00:00:00 2001
+From 39406293e7f674eff52f693b942ba4cba0c38e2b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Aug 2016 11:38:10 -0400
 Subject: [PATCH 27/58] net: netcp: pa2: add pre-classification support in PA
@@ -513,7 +513,7 @@ index a8d0d3f..b4c4fc07 100644
  	*error = pa_core_init_common_rx_resources(core_dev);
  	if (*error)
 diff --git a/drivers/net/ethernet/ti/netcp_pa_core.h b/drivers/net/ethernet/ti/netcp_pa_core.h
-index b87b028..3c6f31df 100644
+index b87b028..3c6f31d 100644
 --- a/drivers/net/ethernet/ti/netcp_pa_core.h
 +++ b/drivers/net/ethernet/ti/netcp_pa_core.h
 @@ -132,6 +132,7 @@ struct pa_hw {

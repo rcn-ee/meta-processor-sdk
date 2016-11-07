@@ -1,4 +1,4 @@
-From 9f7539806f7c6d696d6b5df82d509460658947fd Mon Sep 17 00:00:00 2001
+From b6a790a71d314a54df1f20a2e38bae43e3306201 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 15 Apr 2016 08:26:32 -0400
 Subject: [PATCH 42/58] arm: move aes_glue.h to the arch/arm/include/asm

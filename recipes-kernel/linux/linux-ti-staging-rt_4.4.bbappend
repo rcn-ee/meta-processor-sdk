@@ -1,8 +1,6 @@
-PR_append = ".tisdk42"
+PR_append = ".tisdk43"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
-
-SRCREV = "d93b2d545bc135c6b8f02546c030c254a5e916c9"
 
 SRC_URI_append = " \
     file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \

@@ -1,4 +1,4 @@
-From 07542a624fc6723bb1ea9648345d156fa7a3b076 Mon Sep 17 00:00:00 2001
+From 14c33ad1b6190e14f71e0eb8dc8e06a382a874a2 Mon Sep 17 00:00:00 2001
 From: Eric Ruei <e-ruei1@ti.com>
 Date: Fri, 16 Sep 2016 14:35:25 -0400
 Subject: [PATCH 40/58] ARM: dts: am57xx evm: enable bb2d

@@ -1,4 +1,4 @@
-From faa0a4f7396baa5853fd46d83ce8d0adaf11d6f0 Mon Sep 17 00:00:00 2001
+From f6db2db75d10e07c35b6e65aa15633b896447f57 Mon Sep 17 00:00:00 2001
 From: Aurelien Jacquiot <a-jacquiot@ti.com>
 Date: Fri, 17 Jun 2016 09:19:42 -0400
 Subject: [PATCH 22/58] ARM: dts: keystone: k2hk: Add devicetree bindings for

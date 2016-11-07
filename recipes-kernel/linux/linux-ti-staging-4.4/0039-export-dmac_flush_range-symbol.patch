@@ -1,4 +1,4 @@
-From 41e89815e6760e13e46de654ac8df73d5bbf9e61 Mon Sep 17 00:00:00 2001
+From 0484db4d270ab89fd0dbca2ba043de6d5863a50e Mon Sep 17 00:00:00 2001
 From: Gowtham Tammana <g-tammana@ti.com>
 Date: Wed, 15 Jun 2016 16:04:52 -0500
 Subject: [PATCH 39/58] export dmac_flush_range symbol

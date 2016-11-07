@@ -1,4 +1,4 @@
-From df43a9baa56f47b3c74ccfa265c774593f335653 Mon Sep 17 00:00:00 2001
+From e4b327eba76119b5feb894dbc070649f45674fa0 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 27 Sep 2016 15:56:50 -0400
 Subject: [PATCH 52/58] ARM: dts: k2l: add device binding for crypto
@@ -14,7 +14,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 23 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 75b4d77..1474e6d 100644
+index 6d8f659..6216bea 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -554,4 +554,27 @@ sa_subsys: subsys@26080000 {

@@ -1,4 +1,4 @@
-From e26cead606fc3f860f073765615b8ca08ed8b346 Mon Sep 17 00:00:00 2001
+From 166dfbabb23bd3375b85b4f14a89785245f623ed Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 26 Aug 2016 15:36:13 -0400
 Subject: [PATCH 35/58] ARM: dts: keystone: Disable 10gbe SerDes lane nodes by

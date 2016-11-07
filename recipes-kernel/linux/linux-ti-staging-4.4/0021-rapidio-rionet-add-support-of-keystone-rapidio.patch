@@ -1,4 +1,4 @@
-From aa572da7e3b7a0551452e74ac57ae17c9605312f Mon Sep 17 00:00:00 2001
+From e69a71d80150d0e922da84a8c5e1c8508909a86a Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 10 Jun 2016 14:56:27 -0400
 Subject: [PATCH 21/58] rapidio: rionet: add support of keystone rapidio

@@ -1,4 +1,4 @@
-From 86d315743b19cf686dcb5ae4151b6e312804eadf Mon Sep 17 00:00:00 2001
+From 0697e4ab796c22ad9d17467c04860e0f15b55bbb Mon Sep 17 00:00:00 2001
 From: Aurelien Jacquiot <a-jacquiot@ti.com>
 Date: Fri, 17 Jun 2016 09:21:08 -0400
 Subject: [PATCH 23/58] rapidio: keystone: move RapidIO kernel configuration

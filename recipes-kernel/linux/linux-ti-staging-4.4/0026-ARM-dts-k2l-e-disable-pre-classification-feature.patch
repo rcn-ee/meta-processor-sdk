@@ -1,4 +1,4 @@
-From 2880c892f767f62a787ff7b8d67aaab53b363a43 Mon Sep 17 00:00:00 2001
+From 081acb5cb0a63688dd8c27db73064b8ad329d3b7 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 1 Aug 2016 11:42:05 -0400
 Subject: [PATCH 26/58] ARM: dts: k2l/e: disable pre-classification feature
@@ -27,7 +27,7 @@ index 65bff64..36bd6a0 100644
  			 * when PA is enabled
  			 */
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 54d0d16..6adb03a 100644
+index 117cede..d07917a 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -405,7 +405,7 @@ netcp: netcp@26000000 {

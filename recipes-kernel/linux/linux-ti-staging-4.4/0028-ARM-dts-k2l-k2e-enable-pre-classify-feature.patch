@@ -1,4 +1,4 @@
-From d732011e6f5725fab45210961841455a5ac40a8c Mon Sep 17 00:00:00 2001
+From 8c0f817d47f98c288501f9611910ff00158854de Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Aug 2016 11:40:40 -0400
 Subject: [PATCH 28/58] ARM: dts: k2l/k2e: enable pre-classify feature
@@ -40,7 +40,7 @@ index 36bd6a0..73eeaba 100644
  					reg = <6>;
  					tx-queue = <910>;
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 6adb03a..a84b2db 100644
+index d07917a..cb76105 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -405,7 +405,6 @@ netcp: netcp@26000000 {

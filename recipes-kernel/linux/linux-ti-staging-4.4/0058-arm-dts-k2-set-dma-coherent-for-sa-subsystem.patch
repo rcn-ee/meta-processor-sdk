@@ -1,4 +1,4 @@
-From 7a85b63bdd07b0de180fee52747c394246266407 Mon Sep 17 00:00:00 2001
+From add9437569edad2642bbe3a50e5150adaf889a50 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Sep 2016 13:26:28 -0400
 Subject: [PATCH 58/58] arm: dts: k2: set dma-coherent for sa subsystem
@@ -41,7 +41,7 @@ index dee2e17..f51d20b 100644
  	sa_config: subsys@0 {
  		compatible      = "syscon";
 diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
-index 1474e6d..9bf683b 100644
+index 6216bea..0991bef 100644
 --- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
 @@ -541,6 +541,8 @@ sa_subsys: subsys@26080000 {

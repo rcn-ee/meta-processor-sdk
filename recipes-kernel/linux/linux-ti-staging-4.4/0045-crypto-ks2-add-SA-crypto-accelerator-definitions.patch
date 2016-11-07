@@ -1,4 +1,4 @@
-From da235b707bd31f84242feec5cb5ae59267a18194 Mon Sep 17 00:00:00 2001
+From ce67f64d933f873fc14386c9aa6dce38f3f905cd Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 14 Jun 2016 09:02:05 -0400
 Subject: [PATCH 45/58] crypto: ks2: add SA crypto accelerator definitions

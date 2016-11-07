@@ -1,4 +1,4 @@
-From 50d77ba703423d32a5699a4c58a29fa0b2f0062a Mon Sep 17 00:00:00 2001
+From 1afbb93c6960c4b2848faacfde7f7f03fae35535 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Thu, 25 Aug 2016 10:07:42 -0400
 Subject: [PATCH 29/58] net: netcp: sa: add support for inflow crypto

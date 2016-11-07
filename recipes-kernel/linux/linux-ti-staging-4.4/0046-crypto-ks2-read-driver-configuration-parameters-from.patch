@@ -1,4 +1,4 @@
-From 78d6608f6a3ff2770ad3c8bfc469b59596dad608 Mon Sep 17 00:00:00 2001
+From fb2f4c65d06caf42a26c811fe33af9868c11f4f7 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Thu, 7 Jul 2016 13:06:43 -0400
 Subject: [PATCH 46/58] crypto: ks2: read driver configuration parameters from

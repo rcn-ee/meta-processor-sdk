@@ -1,4 +1,4 @@
-From 22c8750b0f2f41764b6f8c759adc95df0fc71bf8 Mon Sep 17 00:00:00 2001
+From 034ba1dbe3bdcf78c677cf6c238d62444244b0a7 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 6 Jul 2016 14:07:13 -0400
 Subject: [PATCH 47/58] crypto: ks2: add dma resources allocation code
