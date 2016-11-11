@@ -1,4 +1,4 @@
-PR_append = ".tisdk43"
+PR_append = ".tisdk44"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -61,6 +61,7 @@ SRC_URI_append = " \
     file://0056-crypto-keystone-save-device-data-to-dev-struct.patch \
     file://0057-crypto-keystone-make-tx-submission-queue-sharable.patch \
     file://0058-arm-dts-k2-set-dma-coherent-for-sa-subsystem.patch \
+    file://0059-rapidio-keystone-fix-10gbe-link-drop-problem-when-ot.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
