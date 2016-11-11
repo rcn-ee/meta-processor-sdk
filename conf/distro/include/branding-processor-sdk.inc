@@ -30,6 +30,7 @@ PACKAGECONFIG_append_pn-weston = "${@base_contains('MACHINE_FEATURES', 'sgx', ' 
 
 # Override MKUBIFS_ARGS when our image size exceeds upstream limits
 MKUBIFS_ARGS_am335x-evm     = "-F -m 2048 -e 126976 -c 6000"
+MKUBIFS_ARGS_am335x-hs-evm  = "-F -m 2048 -e 126976 -c 6000"
 MKUBIFS_ARGS_am437x-evm     = "-F -m 4096 -e 253952 -c 3000"
 MKUBIFS_ARGS_am437x-hs-evm  = "-F -m 4096 -e 253952 -c 3000"
 MKUBIFS_ARGS_am57xx-evm     = "-F -m 2048 -e 126976 -c 12288"
