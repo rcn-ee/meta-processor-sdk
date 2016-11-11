@@ -1,4 +1,4 @@
-PR_append = ".tisdk44"
+PR_append = ".tisdk45"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -62,6 +62,9 @@ SRC_URI_append = " \
     file://0057-crypto-keystone-make-tx-submission-queue-sharable.patch \
     file://0058-arm-dts-k2-set-dma-coherent-for-sa-subsystem.patch \
     file://0059-rapidio-keystone-fix-10gbe-link-drop-problem-when-ot.patch \
+    file://0060-net-ethernet-ti-cpts-drop-excessive-writes-to-CTRL-a.patch \
+    file://0061-net-ethernet-ti-cpts-add-ptp-pps-support.patch \
+    file://0062-ARM-dts-keystone-k2e-l-g-enable-cpts-ts_comp.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"

@@ -1,0 +1,59 @@
+From 73c849fa927557029527c75e54cf72f6c2961778 Mon Sep 17 00:00:00 2001
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Date: Mon, 31 Oct 2016 17:42:04 -0500
+Subject: [PATCH 62/62] ARM: dts: keystone: k2e/l/g: enable cpts ts_comp
+
+CPTS module of 1G Ethernet (GbE) Switch Subsystem on Keystone SoCs
+66AK2Exx/66AK2Lxx/66AK2Gxx supports time stamp comparison event and TS_COMP
+signal output generation when CPTS counter reaches a value written to the
+TS_COMP_VAL register.
+
+Hence, enable corresponding feature in DT.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi | 1 +
+ arch/arm/boot/dts/keystone-k2g-netcp.dtsi | 1 +
+ arch/arm/boot/dts/keystone-k2l-netcp.dtsi | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index 393d65e..6f94774 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -403,6 +403,7 @@ netcp: netcp@24000000 {
+ 			tx-channel = "nettx";
+ 			cpts-rftclk-sel = <0>;
+ 			cpts-ext-ts-inputs = <6>;
++			cpts-ts-comp-length;
+ 
+ 			interfaces {
+ 				gbe0: interface-0 {
+diff --git a/arch/arm/boot/dts/keystone-k2g-netcp.dtsi b/arch/arm/boot/dts/keystone-k2g-netcp.dtsi
+index e2e2452..3475da3 100644
+--- a/arch/arm/boot/dts/keystone-k2g-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2g-netcp.dtsi
+@@ -134,6 +134,7 @@ netcp: netcp@4000000 {
+ 			tx-channel = "nettx";
+ 			cpts-rftclk-sel = <0>;
+ 			cpts-ext-ts-inputs = <8>;
++			cpts-ts-comp-length = <3>;
+ 
+ 			interfaces {
+ 				gbe0: interface-0 {
+diff --git a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+index 0991bef..537d126 100644
+--- a/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2l-netcp.dtsi
+@@ -346,6 +346,7 @@ netcp: netcp@26000000 {
+ 			tx-queue = <896>;
+ 			tx-channel = "nettx";
+ 			cpts-rftclk-sel = <0>;
++			cpts-ts-comp-length;
+ 
+ 			interfaces {
+ 				gbe0: interface-0 {
+-- 
+1.9.1
+
