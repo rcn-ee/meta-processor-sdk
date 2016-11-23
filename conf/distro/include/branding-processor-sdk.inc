@@ -12,10 +12,7 @@ DISTRO_FEATURES_remove_keystone = "wayland opengl"
 
 # CMEM reserved memory
 RESERVE_CMEM_dra7xx = "1"
-RESERVE_CMEM_k2hk-evm = "1"
-RESERVE_CMEM_k2e-evm = "1"
-RESERVE_CMEM_k2l-evm = "1"
-RESERVE_CMEM_k2g-evm = "1"
+RESERVE_CMEM_keystone = "1"
 
 # Enable TI UIO devices
 ENABLE_TI_UIO_DEVICES = "1"
