@@ -1,0 +1,28 @@
+From d5b9c0242d59bc85b472a247a40f5ab6ec23afae Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Thu, 17 Nov 2016 14:30:50 -0500
+Subject: [PATCH] Add support of hsr v1
+
+This is a hack to just pick this change so that iproute2 works with
+corresponding kernel change to support hsr v1
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ include/linux/if_link.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/if_link.h b/include/linux/if_link.h
+index 5d206c7..b66aab5 100644
+--- a/include/linux/if_link.h
++++ b/include/linux/if_link.h
+@@ -714,6 +714,7 @@ enum {
+ 	IFLA_HSR_SLAVE1,
+ 	IFLA_HSR_SLAVE2,
+ 	IFLA_HSR_MULTICAST_SPEC,	/* Last byte of supervision addr */
++	IFLA_HSR_VERSION,               /* HSR version */
+ 	IFLA_HSR_SUPERVISION_ADDR,	/* Supervision frame multicast addr */
+ 	IFLA_HSR_SEQ_NR,
+ 	__IFLA_HSR_MAX,
+-- 
+1.9.1
+
