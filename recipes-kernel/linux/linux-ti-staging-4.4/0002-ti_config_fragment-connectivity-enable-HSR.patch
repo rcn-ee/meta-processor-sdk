@@ -1,0 +1,25 @@
+From 48b91a67a849d2e390c526191df196c2ffa840c4 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 24 Oct 2016 13:06:17 -0400
+Subject: [PATCH 2/2] ti_config_fragment: connectivity: enable HSR
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ ti_config_fragments/connectivity.cfg | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
+index e485330..3267006 100644
+--- a/ti_config_fragments/connectivity.cfg
++++ b/ti_config_fragments/connectivity.cfg
+@@ -45,6 +45,7 @@ CONFIG_MTD_NAND_OMAP_BCH_BUILD=y
+ CONFIG_OMAP_GPMC=y
+ 
+ # Networking
++CONFIG_HSR=y
+ CONFIG_NF_CONNTRACK=m
+ CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_IP_NF_IPTABLES=m
+-- 
+1.9.1
+

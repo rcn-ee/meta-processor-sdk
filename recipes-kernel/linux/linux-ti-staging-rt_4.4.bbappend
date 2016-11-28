@@ -1,4 +1,4 @@
-PR_append = ".tisdk45"
+PR_append = ".tisdk46"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -65,6 +65,8 @@ SRC_URI_append = " \
     file://0060-net-ethernet-ti-cpts-drop-excessive-writes-to-CTRL-a.patch \
     file://0061-net-ethernet-ti-cpts-add-ptp-pps-support.patch \
     file://0062-ARM-dts-keystone-k2e-l-g-enable-cpts-ts_comp.patch \
+    file://0001-net-hsr-Added-support-for-HSR-v1.patch \
+    file://0002-ti_config_fragment-connectivity-enable-HSR.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
