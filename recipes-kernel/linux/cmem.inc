@@ -24,6 +24,12 @@ CMEM_DEVICETREE_dra74x = "dra7-evm.dtb dra7-evm-lcd-lg.dtb dra7-evm-lcd-osd.dtb 
 # Flag to enable CMEM injection
 RESERVE_CMEM ?= "0"
 
+# Need to patch main keystone dtsi files sram entry
+SRC_URI_append_keystone = "${@base_conditional("RESERVE_CMEM", "1", " file://0001-TEMP-ARM-dts-keystone-k2hk-Split-sram-nodes-to-allow.patch", "", d)}"
+SRC_URI_append_keystone = "${@base_conditional("RESERVE_CMEM", "1", " file://0002-TEMP-ARM-dts-keystone-k2e-Split-sram-nodes-to-allow-.patch", "", d)}"
+SRC_URI_append_keystone = "${@base_conditional("RESERVE_CMEM", "1", " file://0003-TEMP-ARM-dts-keystone-k2g-Split-sram-nodes-to-allow-.patch", "", d)}"
+SRC_URI_append_keystone = "${@base_conditional("RESERVE_CMEM", "1", " file://0004-TEMP-ARM-dts-keystone-k2l-Split-sram-nodes-to-allow-.patch", "", d)}"
+
 # Add correct cmem.dtsi to SRC_URI for each variant for a given machine
 python() {
     old_overrides = d.getVar('OVERRIDES', False)
