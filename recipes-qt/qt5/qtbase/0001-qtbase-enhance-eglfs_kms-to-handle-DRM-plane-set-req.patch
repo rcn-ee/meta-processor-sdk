@@ -1,0 +1,828 @@
+From 10894cbdf0e51a08f74a7b6fe30a733605469a28 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Tue, 29 Nov 2016 18:36:27 -0500
+Subject: [PATCH] qtbase: enhance eglfs_kms to handle DRM plane set request
+ from application
+
+To take the full advantage of the hardware overlay features provided by
+the advanced DSS IP, the eglfs_kms QPA is modified to use DRM atomic
+mode set functions and handle the DRM plane set requests from the
+applications to synchronize the DRM page flip events.
+In this mode of operation, the QT still owns the primary (CRTC) DRM plane
+and the application may own the DRM overlay planes optionally.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ .../eglfs_kms/qeglfskmsdevice.cpp                  | 350 ++++++++++++++++++++-
+ .../deviceintegration/eglfs_kms/qeglfskmsdevice.h  |  55 ++++
+ .../eglfs_kms/qeglfskmsintegration.cpp             |  22 ++
+ .../eglfs_kms/qeglfskmsintegration.h               |   3 +-
+ .../eglfs_kms/qeglfskmsscreen.cpp                  |  63 +++-
+ .../deviceintegration/eglfs_kms/qeglfskmsscreen.h  |   2 +
+ src/plugins/platforms/eglfs/eglfs_device_lib.pro   |   3 +-
+ .../platforms/eglfs/qeglfsdeviceintegration.cpp    |  16 +
+ .../platforms/eglfs/qeglfsdeviceintegration.h      |   2 +
+ src/plugins/platforms/eglfs/qeglfsintegration.cpp  |  21 +-
+ 10 files changed, 522 insertions(+), 15 deletions(-)
+
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
+index 8ba0a5c..1a73baf 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
+@@ -45,8 +45,12 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
++#include <sys/time.h>
++
+ Q_DECLARE_LOGGING_CATEGORY(qLcEglfsKmsDebug)
+ 
++QMutex QEglFSKmsDevice::m_pageFlipQueueMutex;
++
+ enum OutputConfiguration {
+     OutputConfigOff,
+     OutputConfigPreferred,
+@@ -152,6 +156,118 @@ static bool parseModeline(const QByteArray &text, drmModeModeInfoPtr mode)
+     return true;
+ }
+ 
++int eglfskms_get_drm_prop_val(int fd, drmModeObjectPropertiesPtr props,
++							  const char *name, unsigned int *p_val)
++{
++	drmModePropertyPtr p;
++	unsigned int i, prop_id = 0; /* Property ID should always be > 0 */
++
++	for (i = 0; !prop_id && i < props->count_props; i++) {
++		p = drmModeGetProperty(fd, props->props[i]);
++		if (!strcmp(p->name, name)){
++			prop_id = p->prop_id;
++			break;
++		}
++		drmModeFreeProperty(p);
++	}
++	if (!prop_id) {
++		qWarning("Could not find %s property\n", name);
++		drmModeFreeObjectProperties(props);
++		return(-1);
++	}
++
++	drmModeFreeProperty(p);
++	*p_val = props->prop_values[i];
++	return 0;
++}
++
++int eglfskms_find_drm_prop_id(int fd, drmModeObjectPropertiesPtr props,
++							  const char *name, unsigned int *p_prop_id)
++{
++	drmModePropertyPtr p;
++	unsigned int i, prop_id = 0; /* Property ID should always be > 0 */
++
++	for (i = 0; !prop_id && i < props->count_props; i++) {
++		p = drmModeGetProperty(fd, props->props[i]);
++		if (!strcmp(p->name, name)){
++			prop_id = p->prop_id;
++			break;
++		}
++		drmModeFreeProperty(p);
++	}
++	if (!prop_id) {
++		qWarning("Could not find %s property\n", name);
++		drmModeFreeObjectProperties(props);
++		return(-1);
++	}
++
++    *p_prop_id = prop_id;
++	return 0;
++}
++
++
++int drm_get_primary_plane_id(int fd, uint32_t crtc_id, unsigned int *p_plane_id, unsigned int *p_fbid)
++{
++	unsigned int i;
++	drmModeObjectProperties *props;
++	drmModePlaneRes *res = drmModeGetPlaneResources(fd);
++	if(res == NULL){
++		qWarning("plane resources not found\n");
++        return -1;
++	}
++
++	for (i = 0; i < res->count_planes; i++) {
++		uint32_t plane_id = res->planes[i];
++		unsigned int type_val;
++
++		drmModePlane *plane = drmModeGetPlane(fd, plane_id);
++		if(plane == NULL){
++			qWarning("plane not found\n");
++            goto error_exit;
++		}
++
++		props = drmModeObjectGetProperties(fd, plane->plane_id, DRM_MODE_OBJECT_PLANE);
++
++		if(props == NULL){
++			qWarning("plane (%d) properties not found\n",  plane->plane_id);
++            drmModeFreePlane(plane);
++            goto error_exit;
++		}
++
++		if(eglfskms_get_drm_prop_val(fd, props, "type",  &type_val) < 0)
++        {
++			qWarning("plane (%d) type value not found\n",  plane->plane_id);
++		    drmModeFreeObjectProperties(props);
++		    drmModeFreePlane(plane);
++            goto error_exit;
++        }
++
++		if(eglfskms_find_drm_prop_id(fd, props, "FB_ID",  p_fbid) < 0)
++        {
++			qWarning("plane (%d) FB ID not found\n",  plane->plane_id);
++		    drmModeFreeObjectProperties(props);
++		    drmModeFreePlane(plane);
++            goto error_exit;
++        }
++
++		drmModeFreeObjectProperties(props);
++		drmModeFreePlane(plane);
++
++		if((type_val == DRM_PLANE_TYPE_PRIMARY) &&
++           (plane->crtc_id == crtc_id)){
++			*p_plane_id = plane_id;
++			drmModeFreePlaneResources(res);
++			return 0;
++		}
++	}
++
++	qWarning("primary plane for crtc %d not found", crtc_id);
++error_exit:
++    drmModeFreePlaneResources(res);
++	return -1;
++}
++
++
+ QEglFSKmsScreen *QEglFSKmsDevice::screenForConnector(drmModeResPtr resources, drmModeConnectorPtr connector, QPoint pos)
+ {
+     const QByteArray connectorName = nameForConnector(connector);
+@@ -165,6 +281,7 @@ QEglFSKmsScreen *QEglFSKmsDevice::screenForConnector(drmModeResPtr resources, dr
+     OutputConfiguration configuration;
+     QSize configurationSize;
+     drmModeModeInfo configurationModeline;
++    unsigned int plane_id, plane_fbid;
+ 
+     const QByteArray mode = m_integration->outputSettings().value(QString::fromUtf8(connectorName))
+             .value(QStringLiteral("mode"), QStringLiteral("preferred")).toByteArray().toLower();
+@@ -281,6 +398,11 @@ QEglFSKmsScreen *QEglFSKmsDevice::screenForConnector(drmModeResPtr resources, dr
+                                   << '@' << refresh << "hz for output" << connectorName;
+     }
+ 
++    if(drm_get_primary_plane_id(m_dri_fd, crtc_id, &plane_id, &plane_fbid) < 0)
++    {
++        return Q_NULLPTR;
++    }
++
+     QEglFSKmsOutput output = {
+         QString::fromUtf8(connectorName),
+         connector->connector_id,
+@@ -291,7 +413,9 @@ QEglFSKmsScreen *QEglFSKmsDevice::screenForConnector(drmModeResPtr resources, dr
+         drmModeGetCrtc(m_dri_fd, crtc_id),
+         modes,
+         connector->subpixel,
+-        connectorProperty(connector, QByteArrayLiteral("DPMS"))
++        connectorProperty(connector, QByteArrayLiteral("DPMS")),
++        plane_id,
++        plane_fbid
+     };
+ 
+     m_crtc_allocator |= (1 << output.crtc_id);
+@@ -323,10 +447,44 @@ void QEglFSKmsDevice::pageFlipHandler(int fd, unsigned int sequence, unsigned in
+     Q_UNUSED(tv_sec);
+     Q_UNUSED(tv_usec);
+ 
+-    QEglFSKmsScreen *screen = static_cast<QEglFSKmsScreen *>(user_data);
+-    screen->flipFinished();
++    if(user_data == Q_NULLPTR)
++    {
++        // TBD: Error Handling
++        qWarning() << "pageFlipHandler() is called with  user_data = NULL";
++        return;
++    }
++
++    QEglFSKmsDevice *eglFSKmsDevice = (QEglFSKmsDevice *)user_data;
++
++    QQueue<drmPageFlipEvent_t*> *pageFlipEventQueue = eglFSKmsDevice->pageFlipEventQueue();
++
++    if(pageFlipEventQueue == Q_NULLPTR)
++    {
++        qWarning() << "pageFlipHandler(): there is no pageFlipEventQueue";
++        return;
++    }
++
++    while(!pageFlipEventQueue->isEmpty())
++    {
++        drmPageFlipEvent_t *pageFlipEvent = pageFlipEventQueue->dequeue();
++
++        if(pageFlipEvent->handler)
++            pageFlipEvent->handler(fd, sequence, tv_sec, tv_usec, pageFlipEvent->user_data);
++        else if (pageFlipEvent->user_data)
++        {
++            QEglFSKmsScreen *screen = static_cast<QEglFSKmsScreen *>(pageFlipEvent->user_data);
++            screen->flipFinished();
++        }
++        delete pageFlipEvent;
++    }
++
++    delete pageFlipEventQueue;
++
++    eglFSKmsDevice->pageFlipped(true);
++
+ }
+ 
++
+ QEglFSKmsDevice::QEglFSKmsDevice(QEglFSKmsIntegration *integration, const QString &path)
+     : m_integration(integration)
+     , m_path(path)
+@@ -335,7 +493,11 @@ QEglFSKmsDevice::QEglFSKmsDevice(QEglFSKmsIntegration *integration, const QStrin
+     , m_crtc_allocator(0)
+     , m_connector_allocator(0)
+     , m_globalCursor(Q_NULLPTR)
++    , m_pageFlipped(true)
+ {
++
++    m_thread = new QEglFSKmsThread((void *) this);
++    m_pageFlipQueue = new QQueue<drmPageFlipReq_t*>;
+ }
+ 
+ bool QEglFSKmsDevice::open()
+@@ -349,7 +511,6 @@ bool QEglFSKmsDevice::open()
+         qErrnoWarning("Could not open DRM device %s", qPrintable(m_path));
+         return false;
+     }
+-
+     qCDebug(qLcEglfsKmsDebug) << "Creating GBM device for file descriptor" << m_dri_fd
+                               << "obtained from" << m_path;
+     m_gbm_device = gbm_create_device(m_dri_fd);
+@@ -360,6 +521,11 @@ bool QEglFSKmsDevice::open()
+         return false;
+     }
+ 
++	drmSetClientCap(m_dri_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
++	drmSetClientCap(m_dri_fd, DRM_CLIENT_CAP_ATOMIC, 1);
++
++    m_thread->start();
++
+     return true;
+ }
+ 
+@@ -371,6 +537,8 @@ void QEglFSKmsDevice::close()
+     }
+ 
+     if (m_dri_fd != -1) {
++	    drmSetClientCap(m_dri_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 0);
++	    drmSetClientCap(m_dri_fd, DRM_CLIENT_CAP_ATOMIC, 0);
+         qt_safe_close(m_dri_fd);
+         m_dri_fd = -1;
+     }
+@@ -437,8 +605,48 @@ QPlatformCursor *QEglFSKmsDevice::globalCursor() const
+     return m_globalCursor;
+ }
+ 
++void QEglFSKmsDevice::pageFlipped(bool value)
++{
++    m_pageFlipped = value;
++}
++
++QQueue<drmPageFlipEvent_t*> *QEglFSKmsDevice::pageFlipEventQueue() const
++{
++    return m_pageFlipEventQueue;
++}
++
++
++int QEglFSKmsDevice::sendPageFlipRequest(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, page_flip_handler handler, void* user_data)
++{
++
++    drmPageFlipReq_t *pageFlipReq = new drmPageFlipReq_t;
++
++    if(!pageFlipReq)
++    {
++        return -1;
++    }
++
++    pageFlipReq->plane_id = plane_id;
++    pageFlipReq->prop_fbid = prop_fbid;
++    pageFlipReq->buffer_id = buffer_id;
++    pageFlipReq->event.user_data = user_data;
++    pageFlipReq->event.handler = handler;
++
++
++    //TBD: Need to add mutex protection
++    m_pageFlipQueueMutex.lock();
++    m_pageFlipQueue->enqueue(pageFlipReq);
++    m_pageFlipQueueMutex.unlock();
++
++    return 0;
++}
++
++
+ void QEglFSKmsDevice::handleDrmEvent()
+ {
++
++#if 0
++
+     drmEventContext drmEvent = {
+         DRM_EVENT_CONTEXT_VERSION,
+         Q_NULLPTR,      // vblank handler
+@@ -446,6 +654,140 @@ void QEglFSKmsDevice::handleDrmEvent()
+     };
+ 
+     drmHandleEvent(m_dri_fd, &drmEvent);
++
++    /* hack */
++    if(g_eglFsKmsScreen)
++    {
++        pageFlipHandler(m_dri_fd, 0, 0, 0, g_eglFsKmsScreen);
++    }
++
++#endif
++}
++
++void QEglFSKmsDevice::waitForEvent()
++{
++    drmEventContext event = {
++        DRM_EVENT_CONTEXT_VERSION,
++        Q_NULLPTR,      // vblank handler
++        pageFlipHandler // page flip handler
++    };
++
++    struct timeval timeout;
++
++	fd_set fds;
++	int res;
++
++    // TBD: check pageFlipped sould be false
++    m_pageFlipped = false;
++    timeout.tv_sec = 0;
++    timeout.tv_usec = 500 * 1000;
++
++	while (!m_pageFlipped)
++	{
++
++		FD_ZERO(&fds);
++		FD_SET(m_dri_fd, &fds);
++
++		res = select(m_dri_fd + 1, &fds, NULL, NULL, &timeout);
++		switch (res)
++		{
++			case 0:
++				qErrnoWarning("%s: Timeout waiting for flip event, call drmHandleEvent() manually", __func__);
++				drmHandleEvent(m_dri_fd, &event);
++				if(m_pageFlipped)
++				{
++					qErrnoWarning("%s: drmEvent does not occur, call pageFlipHandler() manually", __func__);
++					pageFlipHandler(m_dri_fd, 0, 0, 0, (void *) this);
++				}
++				return;
++			case -1:
++				if (errno != EINTR)
++				{
++					qErrnoWarning("%s: Select failed waiting for flip event", __func__);
++					return;
++				}
++				break;
++			default:
++				drmHandleEvent(m_dri_fd, &event);
++				break;
++		}
++
++	}
++}
++
++void QEglFSKmsDevice::procPageFlipReq(void)
++{
++    bool err = false;
++
++    m_pageFlipQueueMutex.lock();
++    if(m_pageFlipQueue->isEmpty())
++    {
++        m_pageFlipQueueMutex.unlock();
++        return;
++    }
++
++	drmModeAtomicReqPtr req = drmModeAtomicAlloc();
++
++    m_pageFlipEventQueue = new QQueue<drmPageFlipEvent_t*>;
++
++    //Mutex protection may be rquired
++    while(!m_pageFlipQueue->isEmpty())
++    {
++        drmPageFlipReq_t* pageFlipReq = m_pageFlipQueue->dequeue();
++        drmPageFlipEvent_t *pageFlipEvent = new drmPageFlipEvent_t;
++
++        drmModeAtomicAddProperty(req, pageFlipReq->plane_id,
++                                 pageFlipReq->prop_fbid, pageFlipReq->buffer_id);
++
++        // Construct page flip callback
++        pageFlipEvent->handler = pageFlipReq->event.handler;
++        pageFlipEvent->user_data = pageFlipReq->event.user_data;
++        m_pageFlipEventQueue->enqueue(pageFlipEvent);
++
++        delete pageFlipReq;
++    }
++    m_pageFlipQueueMutex.unlock();
++
++	int ret = drmModeAtomicCommit(m_dri_fd, req,
++		  DRM_MODE_ATOMIC_TEST_ONLY, 0);
++
++	if(!ret){
++	    drmModeAtomicCommit(m_dri_fd, req,
++		    DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK, (void *)this);
++	}
++    else {
++		qErrnoWarning("procPageFlipReq(): failed to add crtc atomically");
++
++        // cleanup the event queue
++        while(!m_pageFlipEventQueue->isEmpty())
++        {
++            drmPageFlipEvent_t *pageFlipEvent = m_pageFlipEventQueue->dequeue();
++            delete pageFlipEvent;
++        }
++        delete m_pageFlipEventQueue;
++        err = true;
++	}
++
++	drmModeAtomicFree(req);
++
++    if(!err)
++        waitForEvent();
++
++}
++
++QEglFSKmsThread:: QEglFSKmsThread(void* owner)
++    : m_owner(owner)
++{
++}
++
++void QEglFSKmsThread::run() {
++
++    QEglFSKmsDevice *eglKmsDevice = (QEglFSKmsDevice *)m_owner;
++
++	while(true) {
++        eglKmsDevice->procPageFlipReq();
++		msleep(2);
++	}
+ }
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.h
+index 411f9a7..334c8c0 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.h
+@@ -38,10 +38,50 @@
+ #include "qeglfskmscursor.h"
+ #include "qeglfskmsintegration.h"
+ 
++#include <QtCore>
++#include <QQueue>
++
+ #include <xf86drm.h>
+ #include <xf86drmMode.h>
+ #include <gbm.h>
+ 
++class QEglFSKmsThread : public QThread
++{
++
++public:
++    QEglFSKmsThread(void* owner);
++
++private:
++    void* m_owner;
++    void run();
++};
++
++typedef	void (*page_flip_handler)(int fd,
++				                  unsigned int sequence,
++				                  unsigned int tv_sec,
++				                  unsigned int tv_usec,
++				                  void *user_data);
++
++typedef struct drmPageFlipEvent_s
++{
++    void*    user_data;
++    page_flip_handler   handler;
++
++} drmPageFlipEvent_t;
++
++typedef struct drmPageFlipReq_s
++{
++    //Plane page filp parameters
++    uint32_t plane_id;
++    uint32_t prop_fbid;
++    uint32_t buffer_id;
++
++    //Page Flip Event parameters
++    drmPageFlipEvent_t event;
++
++} drmPageFlipReq_t;
++
++
+ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSKmsScreen;
+@@ -63,6 +103,14 @@ public:
+ 
+     void handleDrmEvent();
+ 
++    int  sendPageFlipRequest(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, page_flip_handler handler, void* user_data);
++
++    void procPageFlipReq(void);
++
++    void pageFlipped(bool);
++
++    QQueue<drmPageFlipEvent_t*> *pageFlipEventQueue() const;
++
+ private:
+     Q_DISABLE_COPY(QEglFSKmsDevice)
+ 
+@@ -75,6 +123,11 @@ private:
+     quint32 m_connector_allocator;
+ 
+     QEglFSKmsCursor *m_globalCursor;
++    bool m_pageFlipped;
++    QEglFSKmsThread *m_thread;
++    QQueue<drmPageFlipReq_t*> *m_pageFlipQueue;
++    QQueue<drmPageFlipEvent_t*> *m_pageFlipEventQueue;
++    static QMutex m_pageFlipQueueMutex;
+ 
+     int crtcForConnector(drmModeResPtr resources, drmModeConnectorPtr connector);
+     QEglFSKmsScreen *screenForConnector(drmModeResPtr resources, drmModeConnectorPtr connector, QPoint pos);
+@@ -85,6 +138,8 @@ private:
+                                 unsigned int tv_sec,
+                                 unsigned int tv_usec,
+                                 void *user_data);
++
++    void waitForEvent(void);
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
+index d1814fb..bba5e58 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
+@@ -200,6 +200,28 @@ bool QEglFSKmsIntegration::supportsPBuffers() const
+     return m_pbuffers;
+ }
+ 
++int QEglFSKmsIntegration::drmFd() const
++{
++    if(m_device)
++    {
++        return m_device->fd();
++    }
++    else
++    {
++        return 0;
++    }
++}
++
++int  QEglFSKmsIntegration::sendPlaneSetRequest(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, void* handler, void* user_data)
++{
++    if(m_device)
++    {
++        return(m_device->sendPageFlipRequest(plane_id, prop_fbid, buffer_id, (page_flip_handler)handler, user_data));
++    }
++
++    return -1;
++}
++
+ bool QEglFSKmsIntegration::hwCursor() const
+ {
+     return m_hwCursor;
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
+index edb6906..e958864 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
+@@ -64,7 +64,8 @@ public:
+     void waitForVSync(QPlatformSurface *surface) const Q_DECL_OVERRIDE;
+     void presentBuffer(QPlatformSurface *surface) Q_DECL_OVERRIDE;
+     bool supportsPBuffers() const Q_DECL_OVERRIDE;
+-
++    int  drmFd() const Q_DECL_OVERRIDE;
++    int  sendPlaneSetRequest(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, void* handler, void* user_data) Q_DECL_OVERRIDE;
+     bool hwCursor() const;
+     bool separateScreens() const;
+     QMap<QString, QVariantMap> outputSettings() const;
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
+index 048f543..1ba3d0f 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
+@@ -244,8 +244,31 @@ void QEglFSKmsScreen::waitForFlip()
+         m_device->handleDrmEvent();
+ }
+ 
++extern int eglfskms_find_drm_prop_id(int fd, drmModeObjectPropertiesPtr props,
++							         const char *name, unsigned int *p_prop_id);
++
++
++void eglfskms_add_property(int fd, drmModeAtomicReqPtr req,
++				           drmModeObjectPropertiesPtr props,
++				           unsigned int plane_id,
++				           const char *name, int value)
++{
++	unsigned int prop_id;
++    int ret;
++    if(!eglfskms_find_drm_prop_id(fd, props, name, &prop_id))
++    {
++	    if((ret = drmModeAtomicAddProperty(req, plane_id, prop_id, value)) < 0){
++		    qWarning("failed to add property with error code = %d\n", ret);
++	    }
++    }
++}
++
++
+ void QEglFSKmsScreen::flip()
+ {
++
++	drmModeObjectProperties *props;
++
+     if (!m_gbm_surface) {
+         qWarning("Cannot sync before platform init!");
+         return;
+@@ -268,27 +291,53 @@ void QEglFSKmsScreen::flip()
+                                  &m_output.modes[m_output.mode]);
+ 
+         if (ret) {
+-            qErrnoWarning("Could not set DRM mode!");
++            qErrnoWarning("Could not set DRM CRTC mode!");
+         } else {
++            // Plane setting
++            int ret;
++
++            drmModeAtomicReqPtr req = drmModeAtomicAlloc();
++	        props = drmModeObjectGetProperties(m_device->fd(), m_output.primary_plane_id,
++		            DRM_MODE_OBJECT_PLANE);
++
++            eglfskms_add_property(m_device->fd(), req, props, m_output.primary_plane_id, "FB_ID", fb->fb);
++            eglfskms_add_property(m_device->fd(), req, props, m_output.primary_plane_id, "CRTC_ID", m_output.crtc_id);
++
++	        ret = drmModeAtomicCommit(m_device->fd(), req,
++		        DRM_MODE_ATOMIC_TEST_ONLY, 0);
++
++	        if(!ret){
++		        drmModeAtomicCommit(m_device->fd(), req, 0, 0);
++	        }
++            else {
++		        qErrnoWarning("Failed to add PLANE (%d) parameters crtc_id = %d, fb_id = %d with err =%d:",
++                               m_output.primary_plane_id,  m_output.crtc_id, fb->fb, ret);
++
++                //TBD: Error Handling
++	        }
++
++            drmModeFreeObjectProperties(props);
++	        drmModeAtomicFree(req);
++
+             m_output.mode_set = true;
+             setPowerState(PowerStateOn);
+         }
+     }
+ 
+-    int ret = drmModePageFlip(m_device->fd(),
+-                              m_output.crtc_id,
+-                              fb->fb,
+-                              DRM_MODE_PAGE_FLIP_EVENT,
+-                              this);
+-    if (ret) {
++    if(m_device->sendPageFlipRequest(m_output.primary_plane_id,  m_output.plane_prop_fbid,
++                                     fb->fb, Q_NULLPTR, this))
++    {
++        /* Error messgae */
+         qErrnoWarning("Could not queue DRM page flip!");
+         gbm_surface_release_buffer(m_gbm_surface, m_gbm_bo_next);
+         m_gbm_bo_next = Q_NULLPTR;
+     }
++
+ }
+ 
+ void QEglFSKmsScreen::flipFinished()
+ {
++
+     if (m_gbm_bo_current)
+         gbm_surface_release_buffer(m_gbm_surface,
+                                    m_gbm_bo_current);
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.h
+index 7fd6cca..7813249 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.h
+@@ -62,6 +62,8 @@ struct QEglFSKmsOutput
+     QList<drmModeModeInfo> modes;
+     int subpixel;
+     drmModePropertyPtr dpms_prop;
++    uint32_t primary_plane_id;
++    uint32_t plane_prop_fbid;
+ };
+ 
+ class QEglFSKmsScreen : public QEglFSScreen
+diff --git a/src/plugins/platforms/eglfs/eglfs_device_lib.pro b/src/plugins/platforms/eglfs/eglfs_device_lib.pro
+index f784020..032d504 100644
+--- a/src/plugins/platforms/eglfs/eglfs_device_lib.pro
++++ b/src/plugins/platforms/eglfs/eglfs_device_lib.pro
+@@ -4,7 +4,8 @@
+ # Hence this header-less, private-only module.
+ 
+ TARGET = QtEglDeviceIntegration
+-CONFIG += no_module_headers internal_module
++CONFIG += no_module_headers internal_module link_pkgconfig
++PKGCONFIG += libdrm gbm
+ 
+ QT += core-private gui-private platformsupport-private
+ LIBS += $$QMAKE_LIBS_DYNLOAD
+diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
+index 1fb6020..4a6ba0d 100644
+--- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
+@@ -347,4 +347,20 @@ void *QEGLDeviceIntegration::wlDisplay() const
+     return Q_NULLPTR;
+ }
+ 
++int QEGLDeviceIntegration::drmFd() const
++{
++    return 0;
++}
++
++int QEGLDeviceIntegration::sendPlaneSetRequest(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, void* handler, void* user_data)
++{
++    Q_UNUSED(plane_id);
++    Q_UNUSED(prop_fbid);
++    Q_UNUSED(buffer_id);
++    Q_UNUSED(handler);
++    Q_UNUSED(user_data);
++
++    return -1;
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
+index 5ec98b3..2cbb832 100644
+--- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
++++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
+@@ -100,6 +100,8 @@ public:
+     virtual bool supportsSurfacelessContexts() const;
+ 
+     virtual void *wlDisplay() const;
++    virtual int drmFd() const;
++    virtual int sendPlaneSetRequest(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, void* handler, void* user_data);
+ };
+ 
+ class Q_EGLFS_EXPORT QEGLDeviceIntegrationPlugin : public QObject
+diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
+index 35b27cb..b27401f 100644
+--- a/src/plugins/platforms/eglfs/qeglfsintegration.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
+@@ -242,6 +242,12 @@ QPlatformNativeInterface *QEglFSIntegration::nativeInterface() const
+     return const_cast<QEglFSIntegration *>(this);
+ }
+ 
++
++static int qt_egl_device_send_drm_plane_set_req(uint32_t plane_id, uint32_t prop_fbid, uint32_t buffer_id, void* handler, void* user_data)
++{
++    return(qt_egl_device_integration()->sendPlaneSetRequest(plane_id, prop_fbid, buffer_id, handler, user_data));
++}
++
+ enum ResourceType {
+     EglDisplay,
+     EglWindow,
+@@ -249,7 +255,9 @@ enum ResourceType {
+     EglConfig,
+     NativeDisplay,
+     XlibDisplay,
+-    WaylandDisplay
++    WaylandDisplay,
++    DrmFd,
++    DrmPlaneSetReq
+ };
+ 
+ static int resourceType(const QByteArray &key)
+@@ -261,7 +269,9 @@ static int resourceType(const QByteArray &key)
+         QByteArrayLiteral("eglconfig"),
+         QByteArrayLiteral("nativedisplay"),
+         QByteArrayLiteral("display"),
+-        QByteArrayLiteral("server_wl_display")
++        QByteArrayLiteral("server_wl_display"),
++        QByteArrayLiteral("drm_fd"),
++        QByteArrayLiteral("drm_plane_set_req"),
+     };
+     const QByteArray *end = names + sizeof(names) / sizeof(names[0]);
+     const QByteArray *result = std::find(names, end, key);
+@@ -284,6 +294,13 @@ void *QEglFSIntegration::nativeResourceForIntegration(const QByteArray &resource
+     case WaylandDisplay:
+         result = qt_egl_device_integration()->wlDisplay();
+         break;
++    case DrmFd:
++        result = reinterpret_cast<void*>(qt_egl_device_integration()->drmFd());
++        break;
++    case DrmPlaneSetReq:
++        result = reinterpret_cast<void*>(qt_egl_device_send_drm_plane_set_req);
++        break;
++
+     default:
+         break;
+     }
+-- 
+1.9.1
+

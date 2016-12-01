@@ -1,6 +1,10 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 GLES_EXTRA_DEPS = "libdrm ${@base_contains('MACHINE_FEATURES', 'sgx', 'wayland', '', d)}"
+
+PACKAGECONFIG += "kms"
 
 QT_NOSGX_PATCHES = "\
     file://0001-calculator-Add-exit-button-for-non-window-environmen.patch \
@@ -9,6 +13,7 @@ QT_NOSGX_PATCHES = "\
 "
 
 SRC_URI += "\
+    file://0001-qtbase-enhance-eglfs_kms-to-handle-DRM-plane-set-req.patch \
     ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', "${QT_NOSGX_PATCHES}", d)}\
 "
 
