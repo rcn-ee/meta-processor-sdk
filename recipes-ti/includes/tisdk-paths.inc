@@ -1,1 +1,1 @@
-require recipes-ti/includes/ti-paths.inc
+require recipes-ti/includes/arago-paths.inc
