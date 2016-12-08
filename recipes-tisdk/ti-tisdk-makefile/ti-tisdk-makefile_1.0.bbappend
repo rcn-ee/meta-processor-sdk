@@ -1,4 +1,4 @@
-PR_append = ".tisdk26"
+PR_append = ".tisdk27"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -30,6 +30,8 @@ MAKEFILES_append_ti43x = " barcode-roi"
 
 MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
+
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"
 
 IPC_TOOLS_PATHS_A15 = "gnu.targets.arm.A15="\$\${TOOLCHAIN_PATH_A15}" gnu.targets.arm.A15F="\$\${TOOLCHAIN_PATH_A15}""
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\${C6X_GEN_INSTALL_PATH}""
