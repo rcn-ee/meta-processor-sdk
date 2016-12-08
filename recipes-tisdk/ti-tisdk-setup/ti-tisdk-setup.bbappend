@@ -1,4 +1,4 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -6,6 +6,14 @@ SRC_URI_append = " \
     file://0001-setup-uboot-env-am335x-am437x-am57xx-update-for-late.patch \
     file://0002-setup-uboot-env-k2g-evm.sh-update-for-latest-default.patch \
     file://0001-create-sdcard-fit-create-SD-card-for-secure-platform.patch \
+    file://0001-setup-uboot-env-keystone.sh-add-prompt_feedback-func.patch \
+    file://0002-setup-uboot-env-keystone.sh-enhance-do_expect-functi.patch \
+    file://0003-setup-uboot-env-keystone.sh-add-detection-of-BMC-por.patch \
+    file://0004-setup-uboot-env-keystone.sh-make-updating-ubifs-an-i.patch \
+    file://0005-setup-uboot-env-keystone.sh-create-minicom-script-to.patch \
+    file://0006-add-to-group-require-user-to-logout-for-group-change.patch \
+    file://0007-setup-package-install-Add-screen-and-lrzsz-packages.patch \
+    file://0008-setup-uboot-env-keystone-use-UART-boot-to-boot-lates.patch \
 "
 
 SDCARD_SCRIPT_am335x-hs-evm = " create-sdcard-fit.sh"

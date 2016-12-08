@@ -1,0 +1,28 @@
+From ec9a10f249679af19ebffea7974068856c92e4e2 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Tue, 1 Nov 2016 08:55:46 -0400
+Subject: [PATCH 6/8] add-to-group: require user to logout for group change
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ add-to-group.sh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/add-to-group.sh b/add-to-group.sh
+index 6fa66e7..1bedd3e 100644
+--- a/add-to-group.sh
++++ b/add-to-group.sh
+@@ -90,8 +90,10 @@ if [ "$host_upper" -gt "$min_ver_upper" -o "$host_upper" -eq "$min_ver_upper" ];
+             fi
+ 
+             echo "Until then you will be required to use sudo when accessing a serial device."
++            echo "Please logout now and log back in so that the group changes are in effect."
+             echo
+             read -p "Press return to continue" REPLY
++            exit 0
+ 
+         else
+             echo "User '$username' is already apart of the 'dialout' group"
+-- 
+1.9.1
+

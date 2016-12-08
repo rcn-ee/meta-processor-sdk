@@ -1,0 +1,30 @@
+From 9946bee33e395e183134bc794254e4319ee4498d Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Tue, 1 Nov 2016 08:57:39 -0400
+Subject: [PATCH 7/8] setup-package-install: Add screen and lrzsz packages
+
+* screen is used by these scripts to background processes which
+  require a terminal connection (e.g. minicom).
+* lrzsz provides an XMODEM implmentation which is used for UART boot.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ setup-package-install.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup-package-install.sh b/setup-package-install.sh
+index ddddecd..1ef94f9 100644
+--- a/setup-package-install.sh
++++ b/setup-package-install.sh
+@@ -56,7 +56,7 @@ cwd=`dirname $0`
+ 
+ entry_header
+ 
+-packages_to_install="xinetd tftpd nfs-kernel-server minicom build-essential libncurses5-dev autoconf automake dos2unix"
++packages_to_install="xinetd tftpd nfs-kernel-server minicom build-essential libncurses5-dev autoconf automake dos2unix screen lrzsz"
+ 
+ get_host_type host
+ 
+-- 
+1.9.1
+
