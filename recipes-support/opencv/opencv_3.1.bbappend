@@ -1,4 +1,4 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 BRANCH = "tiopencvrelease_3.1"
 
@@ -8,7 +8,7 @@ SRC_URI = "git://git.ti.com/opencv/tiopencv.git;protocol=git;branch=${BRANCH};na
            file://0001-3rdparty-ippicv-Use-pre-downloaded-ipp.patch \
            file://fixpkgconfig.patch"
 
-SRCREV_opencv = "f7f004f6237670c23cf424721753d90eaf478841"
+SRCREV_opencv = "6a87a76b9f1752fcf0f7132f8757bee3a178e167"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
