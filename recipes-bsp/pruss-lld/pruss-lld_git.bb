@@ -4,6 +4,8 @@ DEPENDS="common-csl-ip osal"
 
 include pruss-lld.inc
 
+CLEANBROKEN = "1"
+
 PR = "${INC_PR}.1"
 
 S = "${WORKDIR}/${PRUSS_LLD_GIT_DESTSUFFIX}"
