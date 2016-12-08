@@ -1,4 +1,4 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -14,12 +14,26 @@ SRC_URI_append = " \
     file://0006-add-to-group-require-user-to-logout-for-group-change.patch \
     file://0007-setup-package-install-Add-screen-and-lrzsz-packages.patch \
     file://0008-setup-uboot-env-keystone-use-UART-boot-to-boot-lates.patch \
+    file://0001-setup-add-support-for-HS-EVMs.patch \
 "
 
 SDCARD_SCRIPT_am335x-hs-evm = " create-sdcard-fit.sh"
 SDCARD_SCRIPT_am437x-hs-evm = " create-sdcard-fit.sh"
 SDCARD_SCRIPT_am57xx-hs-evm = " create-sdcard-fit.sh"
 SDCARD_SCRIPT_dra7xx-hs-evm = " create-sdcard-fit.sh"
+
+SETUP_SCRIPTS_remove = "setup-tftp.sh"
+
+SETUP_TFTP = "setup-tftp.sh"
+SETUP_TFTP_am335x-hs-evm = "setup-tftp-fit.sh"
+SETUP_TFTP_am437x-hs-evm = "setup-tftp-fit.sh"
+SETUP_TFTP_am57xx-hs-evm = "setup-tftp-fit.sh"
+SETUP_TFTP_k2e-hs-evm = "setup-tftp-fit.sh"
+
+UBOOT_ENV_am335x-hs-evm = "setup-uboot-env-am335x-hs.sh"
+UBOOT_ENV_am437x-hs-evm = "setup-uboot-env-am43x-hs.sh"
+UBOOT_ENV_am57xx-hs-evm = "setup-uboot-env-am57xx-hs-evm.sh"
+UBOOT_ENV_k2e-hs-evm = "setup-uboot-env-keystone-hs.sh"
 
 do_install_append() {
     if [ -n "${SDCARD_SCRIPT}" ]
@@ -32,4 +46,6 @@ do_install_append() {
             mv "${D}/bin/${script}" "${D}/bin/create-sdcard.sh"
         fi
     fi
+
+    install -m 0755 ${S}/${SETUP_TFTP} ${D}/bin/setup-tftp.sh
 }
