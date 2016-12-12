@@ -1,4 +1,4 @@
-PR_append = ".tisdk9"
+PR_append = ".tisdk10"
 
 DTB_FILTER_k2hk-evm = "k2hk"
 DTB_FILTER_k2e-evm = "k2e"
@@ -17,6 +17,9 @@ FITIMAGE_INITRAMFS_ITS_SYMLINK ?= "fitImage-its-${INITRAMFS_IMAGE}-${MACHINE}.${
 FITIMAGE_INITRAMFS_ITB_SYMLINK ?= "fitImage-${INITRAMFS_IMAGE}-${MACHINE}.${FITIMAGE_ITB_SUFFIX}"
 
 DEPLOY_FITIMAGE_NAMES ?= "${FITIMAGE_INITRAMFS_ITS_SYMLINK} ${FITIMAGE_INITRAMFS_ITB_SYMLINK}"
+
+# U-Boot HS_MLO filename
+DEPLOY_HS_MLO_NAME ?= "u-boot_HS_MLO-${MACHINE}"
 
 SW_MANIFEST_QT5_FOOTER = "Any Qt package referenced in this manifest that has LGPL 2.1 or LGPL 3 as a licensing option is only being used and distributed by TI under LGPL 2.1. The choice of having both, as reflected in the manifest table, comes from the licensing line the corresponding recipe. TI has opted to only use LGPL 2.1."
 
@@ -64,6 +67,15 @@ tisdk_image_build_append () {
             cp $fw ${prebuilt_dir}/
         fi
     done
+
+    if [ "${DEPLOY_HS_MLO_NAME}" != "" ]
+    then
+        # Copy the HS_MLO image if it exists
+        if [ -e ${DEPLOY_DIR_IMAGE}/${DEPLOY_HS_MLO_NAME} ]
+        then
+            cp ${DEPLOY_DIR_IMAGE}/${DEPLOY_HS_MLO_NAME} ${prebuilt_dir}/
+        fi
+    fi
 
     if echo ${KERNEL_IMAGETYPES} | grep -wq "fitImage"
     then
