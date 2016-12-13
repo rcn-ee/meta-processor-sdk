@@ -1,0 +1,141 @@
+From 4382df9bd57e6a8d3eb4e855f47a63c43e640342 Mon Sep 17 00:00:00 2001
+From: Djordje Senicic <d-senicic1@ti.com>
+Date: Mon, 12 Dec 2016 10:41:20 -0500
+Subject: [PATCH] Add command line option for non-interactive operation in
+ SimplePeopleTracking
+
+Signed-off-by: Djordje Senicic <d-senicic1@ti.com>
+---
+ Demos/Horus.cpp                | 20 +++++++++++---------
+ Demos/SimplePeopleTracking.cpp | 32 +++++++++++++++++++++-----------
+ Demos/TOFApp.cpp               | 12 +++++++-----
+ 3 files changed, 39 insertions(+), 25 deletions(-)
+
+diff --git a/Demos/Horus.cpp b/Demos/Horus.cpp
+index 79d2615..e0181af 100644
+--- a/Demos/Horus.cpp
++++ b/Demos/Horus.cpp
+@@ -23,6 +23,8 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
++extern int skipped_frames;
++
+ Horus::Horus(int w, int h) : TOFApp(w, h)
+ {
+    _setBackground = false;
+@@ -181,16 +183,16 @@ void Horus::update(Frame *frame)
+          }
+       }
+       putText(drawing, "Cnt="+to_string(peopleCount), cv::Point(40, 30), FONT_HERSHEY_PLAIN, 1, Scalar(255, 0, 0));
+-#ifdef TOF_INTERACTIVE
+-      imshow("Draw", drawing);
+-#else
+-      if((draw_throttle % 30) == 0) {
+-        char file_name[80];
+-        sprintf (file_name, "draw%03d.png", draw_throttle / 30);
+-        imwrite (file_name, drawing);
++      if(skipped_frames == 0) {
++        imshow("Draw", drawing);
++      } else {
++        if((draw_throttle % skipped_frames) == 0) {
++          char file_name[80];
++          sprintf (file_name, "draw%03d.png", draw_throttle / skipped_frames);
++          imwrite (file_name, drawing);
++        }
++        draw_throttle ++;
+       }
+-      draw_throttle ++;
+-#endif
+    }
+ }
+ 
+diff --git a/Demos/SimplePeopleTracking.cpp b/Demos/SimplePeopleTracking.cpp
+index 59fea07..4f6544c 100644
+--- a/Demos/SimplePeopleTracking.cpp
++++ b/Demos/SimplePeopleTracking.cpp
+@@ -1,5 +1,7 @@
+ #include "Horus.h"
+ 
++int skipped_frames = 0;
++
+ int getkey() {
+     int character;
+     struct termios orig_term_attr;
+@@ -31,6 +33,13 @@ int ii = 0;
+    int key;
+    bool done = false;
+    Mat bImg;
++
++   if(argc > 1) skipped_frames = atoi(argv[1]);
++   else {
++     printf ("\nIf you want to run demo without keyboard, provide 'skipped_frames' as argument (e.g. SimplePeopleTracking 30)!");
++     printf ("\nImages with the result of processing are saved in PNG files. This test always stops after 15 seconds\n");
++   }
++
+    //Horus eye(320, 240);
+    Horus eye(160, 120);
+    //Horus eye(80, 60);
+@@ -41,17 +50,18 @@ int ii = 0;
+    }
+    eye.start();
+    while (!done) {
+-#ifdef TOF_INTERACTIVE
+-      char key = getkey();
+-      if (key == 'q') 
+-         done = true;
+-      else if (key == 'b') 
+-         eye.resetBackground();
+-#else      
+-      usleep(100000);
+-      ii ++;
+-      if(ii == 150) done = true;
+-#endif
++     if(skipped_frames == 0)
++     {
++       char key = getkey();
++       if (key == 'q') 
++          done = true;
++       else if (key == 'b') 
++          eye.resetBackground();
++     } else {    
++       usleep(100000);
++       ii ++;
++       if(ii == 150) done = true;
++     }
+    }
+ 
+ err_exit:
+diff --git a/Demos/TOFApp.cpp b/Demos/TOFApp.cpp
+index 8b8a249..1c9c0cd 100644
+--- a/Demos/TOFApp.cpp
++++ b/Demos/TOFApp.cpp
+@@ -21,6 +21,8 @@
+ 
+ #define FRAME_QUEUE_SZ		3
+ 
++extern int skipped_frames;
++
+ // Frame callback
+ static deque<Voxel::Frame *> qFrame; 
+ static pthread_mutex_t gmtx;
+@@ -164,11 +166,11 @@ void *TOFApp::eventLoop(void *p)
+       }
+ 
+       done = !app->_isRunning;   
+-#ifdef TOF_INTERACTIVE
+-      waitKey(app->_loopDelay);
+-#else
+-      usleep(10000);
+-#endif
++      if(skipped_frames == 0) {
++        waitKey(app->_loopDelay);
++      } else {
++        usleep(10000);
++      }
+    }
+    
+    app->disconnect();
+-- 
+1.9.1
+

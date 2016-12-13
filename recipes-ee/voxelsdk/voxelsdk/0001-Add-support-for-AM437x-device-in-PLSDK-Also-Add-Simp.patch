@@ -1,0 +1,884 @@
+From f40fe0eb5aaba2466e7298e85d3dbfa4f06750d4 Mon Sep 17 00:00:00 2001
+From: Djordje Senicic <d-senicic1@ti.com>
+Date: Fri, 9 Dec 2016 12:48:03 -0500
+Subject: [PATCH] Add support for AM437x device in PLSDK; Also Add
+ SimplePeopleTracking demo to voxelsdk
+
+---
+ CMakeLists.txt                 |  13 +-
+ Demos/CMakeLists.txt           |  21 +++
+ Demos/Horus.cpp                | 198 ++++++++++++++++++++++++++
+ Demos/Horus.h                  |  50 +++++++
+ Demos/README.md                |   2 +
+ Demos/SimplePeopleTracking.cpp |  59 ++++++++
+ Demos/TOFApp.cpp               | 305 +++++++++++++++++++++++++++++++++++++++++
+ Demos/TOFApp.h                 |  89 ++++++++++++
+ TI3DToF/CMakeLists.txt         |   2 +-
+ Test/CMakeLists.txt            |   2 +-
+ Voxel/CMakeLists.txt           |   4 +-
+ 11 files changed, 737 insertions(+), 8 deletions(-)
+ create mode 100644 Demos/CMakeLists.txt
+ create mode 100644 Demos/Horus.cpp
+ create mode 100644 Demos/Horus.h
+ create mode 100644 Demos/README.md
+ create mode 100644 Demos/SimplePeopleTracking.cpp
+ create mode 100644 Demos/TOFApp.cpp
+ create mode 100644 Demos/TOFApp.h
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0be74ab..7ba110c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -22,7 +22,9 @@ set(ARCH ${CMAKE_SYSTEM_PROCESSOR})
+ 
+ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+   SET(LINUX 1)
+-  add_definitions(-msse2 -pthread -std=c++11 -fPIC -ffast-math)
++#  Intel specific:
++#  add_definitions(-msse2 -pthread -std=c++11 -fPIC -ffast-math)
++  add_definitions(-pthread -std=c++11 -fPIC -ffast-math)
+   ADD_DEFINITIONS(-DLINUX)  
+ 
+   set(COMMON_LIBS ${COMMON_LIBS} usb-1.0 dl)
+@@ -80,10 +82,10 @@ endif()
+ include_directories(
+   Voxel
+   TI3DToF
+-  VoxelPCL
++#  VoxelPCL
+   ${PROJECT_BINARY_DIR}/Voxel
+   ${PROJECT_BINARY_DIR}/TI3DToF
+-  ${PROJECT_BINARY_DIR}/VoxelPCL
++#  ${PROJECT_BINARY_DIR}/VoxelPCL
+   ${COMMON_INCLUDE}
+ )
+ 
+@@ -135,11 +137,12 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Voxel library package. Contains the main
+ set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
+ 
+ add_subdirectory(Voxel)
+-add_subdirectory(VoxelPCL)
++#add_subdirectory(VoxelPCL)
+ add_subdirectory(TI3DToF)
+ add_subdirectory(Test)
+-add_subdirectory(App)
++#add_subdirectory(App)
+ add_subdirectory(Util)
++add_subdirectory(Demos)
+ 
+ 
+ IF(WINDOWS)
+diff --git a/Demos/CMakeLists.txt b/Demos/CMakeLists.txt
+new file mode 100644
+index 0000000..16f5bff
+--- /dev/null
++++ b/Demos/CMakeLists.txt
+@@ -0,0 +1,21 @@
++cmake_minimum_required(VERSION 2.8)
++SET(VOXEL_DEMO_VERSION ${VOXEL_VERSION})
++find_package(OpenCV REQUIRED)
++
++add_definitions(-pthread -std=c++11 -fPIC -ffast-math)
++add_executable(SimplePeopleTracking SimplePeopleTracking.cpp Horus.cpp TOFApp.cpp)
++target_link_libraries(SimplePeopleTracking voxel ${OpenCV_LIBS} )
++
++install(TARGETS
++  SimplePeopleTracking
++  RUNTIME
++  DESTINATION bin
++  COMPONENT demos
++)
++
++IF(LINUX)
++  set(CPACK_COMPONENTS_ALL Demos)
++  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Voxel sample applications")
++  set(CPACK_DEBIAN_PACKAGE_DEPENDS "libvoxel (>= ${VOXEL_VERSION})")
++  create_cpack_config(libvoxel-demos ${VOXEL_DEMO_VERSION})
++ENDIF()
+diff --git a/Demos/Horus.cpp b/Demos/Horus.cpp
+new file mode 100644
+index 0000000..79d2615
+--- /dev/null
++++ b/Demos/Horus.cpp
+@@ -0,0 +1,198 @@
++/*! 
++ * ============================================================================
++ *
++ * @addtogroup		Horus	
++ * @{
++ *
++ * @file		Horus.cpp
++ * @version		1.0
++ * @date		1/7/2016
++ *
++ * @note		People tracking class
++ * 
++ * Copyright(c) 20015-2016 Texas Instruments Corporation, All Rights Reserved.q
++ * TI makes NO WARRANTY as to software products, which are supplied "AS-IS"
++ *
++ * ============================================================================
++ */
++#define __HORUS_CPP__
++#include "Horus.h"
++#include <climits>
++#include <algorithm>
++
++#include <stdio.h>
++#include <stdlib.h>
++
++Horus::Horus(int w, int h) : TOFApp(w, h)
++{
++   _setBackground = false;
++   initDisplay();
++}
++
++void Horus::initDisplay()
++{
++   namedWindow( "Draw", WINDOW_NORMAL );
++
++   _ampGain = 100;
++   _ampThresh = 3;
++   _depthThresh = 2;
++   _minContourArea = 100;
++   _aspectRatio = 100;
++}
++
++
++void Horus::clipBackground(Mat &dMat, Mat &iMat, float dThr, float iThr)
++{
++   for (int i = 0; i < dMat.rows; i++) {
++      for (int j = 0; j < dMat.cols; j++) {
++         float val = (iMat.at<float>(i,j) > iThr && dMat.at<float>(i,j) > dThr) ? 255.0 : 0.0;
++         dMat.at<float>(i,j) = val;
++      }
++   }
++}
++
++void Horus::resetBackground()
++{
++   _setBackground = false;
++}
++
++
++void Horus::getPCA(const vector<cv::Point> &contour, float &center, float &angle)
++{
++    //Construct a buffer used by the pca analysis
++    int sz = static_cast<int>(contour.size());
++    Mat data_pts = Mat(sz, 2, CV_32FC1);
++    for (int i = 0; i < data_pts.rows; ++i) {
++        data_pts.at<float>(i, 0) = contour[i].x;
++        data_pts.at<float>(i, 1) = contour[i].y;
++    }
++
++    //Perform PCA analysis
++    PCA pca_analysis(data_pts, Mat(), CV_PCA_DATA_AS_ROW);
++
++    //Store the center of the object
++    cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<float>(0, 0)),
++                               static_cast<int>(pca_analysis.mean.at<float>(0, 1)));
++
++    //Store the eigenvalues and eigenvectors
++    vector<cv::Point2d> eigen_vecs(2);
++    vector<float> eigen_val(2);
++    for (int i = 0; i < 2; ++i) {
++        eigen_vecs[i] = Point2d(pca_analysis.eigenvectors.at<float>(i, 0), 
++                                pca_analysis.eigenvectors.at<float>(i, 1));
++        eigen_val[i] = pca_analysis.eigenvalues.at<float>(0, i);
++    }
++
++    angle = atan2(eigen_vecs[0].y, eigen_vecs[0].x); // orientation in radians
++}
++
++
++// A contour is a person if:
++// Aspect ration is largely vertical
++// All points are within the same depth interval
++// 
++bool Horus::isPerson(vector<cv::Point> &contour, Mat dMat)
++{
++   bool rc = false;
++   int area = 0;
++   long sumX=0, sumY=0;
++   int minX=INT_MAX, minY=INT_MAX;
++   int maxX=0, maxY=0;
++   int dx, dy;
++
++   // Find biometric statistics
++   for (int i=0; i< contour.size(); i++) {
++      minX = std::min(minX, contour[i].x);
++      minY = std::min(minY, contour[i].y);
++      maxX = std::max(maxX, contour[i].x);
++      maxY = std::max(maxY, contour[i].y);
++      sumX += contour[i].x; 
++      sumY += contour[i].y;
++   }
++   dx = maxX - minX;
++   dy = maxY - minY;
++
++   if (contourArea(contour) > _minContourArea) {
++      if (dx > 0) {
++         float ratio = (float)dy/(float)dx;
++         if (ratio > (float)_aspectRatio/100.0) {
++            rc = true;
++         }
++      }
++   } 
++   
++   return rc;
++}
++
++static int draw_throttle = 0;
++
++void Horus::update(Frame *frame)
++{
++   vector< vector<cv::Point> > contours;
++   vector<Vec4i> hierarchy;
++   RNG rng(12345);
++   if (getFrameType() == DepthCamera::FRAME_XYZI_POINT_CLOUD_FRAME) 
++   {
++      // Create amplitude and depth Mat
++      vector<float> zMap, iMap;
++      XYZIPointCloudFrame *frm = dynamic_cast<XYZIPointCloudFrame *>(frame);
++      for (int i=0; i< frm->points.size(); i++) {
++         zMap.push_back(frm->points[i].z);
++         iMap.push_back(frm->points[i].i);
++      }
++      _iMat = Mat(getDim().height, getDim().width, CV_32FC1, iMap.data());
++      _dMat = Mat(getDim().height, getDim().width, CV_32FC1, zMap.data()); 
++
++      // Apply amplitude gain
++      _iMat = (float)_ampGain*_iMat;
++
++      // Update background as required
++      if (!_setBackground) {
++         _dMat.copyTo(_bkgndMat);
++         _setBackground = true;
++         cout << endl << "Updated background" << endl;
++      }
++
++      // Find foreground by subtraction 
++      Mat fMat = _bkgndMat-_dMat;
++
++      // Convert to binary image based on amplitude and depth thresholds
++      clipBackground(fMat, _iMat, (float)_depthThresh/100.0, (float)_ampThresh/100.0);
++      fMat.convertTo(_bMat, CV_8U, 255.0);
++
++      // Apply morphological open to clean up image
++      Mat morphMat = _bMat.clone();
++      Mat element = getStructuringElement( 0, Size(3,3), cv::Point(1,1) );
++      morphologyEx(_bMat, morphMat, 2, element);
++
++      // Find all contours
++      findContours(morphMat, contours, hierarchy, CV_RETR_TREE, 
++                             CV_CHAIN_APPROX_SIMPLE, cv::Point(0,0));
++
++      // Draw contours that meet a "person" requirement
++      Mat drawing = Mat::zeros(_iMat.size(), CV_8UC3);
++      cvtColor(_iMat, drawing, CV_GRAY2RGB);
++      
++      int peopleCount = 0;
++      for ( int i = 0; i < contours.size(); i++ ) { 
++         if (isPerson(contours[i], _dMat)) {  
++            peopleCount++;
++            drawContours( drawing, contours, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, cv::Point() ); 
++         }
++      }
++      putText(drawing, "Cnt="+to_string(peopleCount), cv::Point(40, 30), FONT_HERSHEY_PLAIN, 1, Scalar(255, 0, 0));
++#ifdef TOF_INTERACTIVE
++      imshow("Draw", drawing);
++#else
++      if((draw_throttle % 30) == 0) {
++        char file_name[80];
++        sprintf (file_name, "draw%03d.png", draw_throttle / 30);
++        imwrite (file_name, drawing);
++      }
++      draw_throttle ++;
++#endif
++   }
++}
++
++#undef __HORUS_CPP__
++/*! @} */
+diff --git a/Demos/Horus.h b/Demos/Horus.h
+new file mode 100644
+index 0000000..805ff84
+--- /dev/null
++++ b/Demos/Horus.h
+@@ -0,0 +1,50 @@
++/*! 
++ * ============================================================================
++ *
++ * @addtogroup		Horus
++ * @{
++ *
++ * @file		Horus.h
++ * @version		1.0
++ * @date		12/14/2015
++ *
++ * @note		People tracking class
++ * 
++ * Copyright(c) 2007-2012 Texas Instruments Corporation, All Rights Reserved.
++ * TI makes NO WARRANTY as to software products, which are supplied "AS-IS"
++ *
++ * ============================================================================
++ */
++#include "TOFApp.h"
++#include <math.h>
++
++#ifndef __HORUS_H__
++#define __HORUS_H__
++
++class Horus : public TOFApp
++{
++public:
++   Horus(int w, int h);
++   void update(Frame *frm);
++   void resetBackground();
++   void initDisplay();
++
++private:
++   Mat _dMat, _iMat, _bMat, _bkgndMat;
++   bool _setBackground;
++   int _depthThresh;
++   int _ampGain;
++   int _ampThresh;
++   int _minContourArea;
++   int _aspectRatio;
++   HOGDescriptor hog;
++
++private:
++   bool isPerson(vector<cv::Point> &contour, Mat dMat);
++   void clipBackground(Mat &dMat, Mat &iMat, float dThr, float iThr);
++   void getPCA(const vector<cv::Point> &contour, float &center, float &angle);
++};
++
++#endif // __HORUS_H__
++/*! @} */
++
+diff --git a/Demos/README.md b/Demos/README.md
+new file mode 100644
+index 0000000..b095009
+--- /dev/null
++++ b/Demos/README.md
+@@ -0,0 +1,2 @@
++Demo running on PLSDK (AM437x GP EVM) using Voxel SDK
++that shows simple people tracking using blob and contour analysis
+diff --git a/Demos/SimplePeopleTracking.cpp b/Demos/SimplePeopleTracking.cpp
+new file mode 100644
+index 0000000..59fea07
+--- /dev/null
++++ b/Demos/SimplePeopleTracking.cpp
+@@ -0,0 +1,59 @@
++#include "Horus.h"
++
++int getkey() {
++    int character;
++    struct termios orig_term_attr;
++    struct termios new_term_attr;
++
++    /* set the terminal to raw mode */
++    tcgetattr(fileno(stdin), &orig_term_attr);
++    memcpy(&new_term_attr, &orig_term_attr, sizeof(struct termios));
++    new_term_attr.c_lflag &= ~(ECHO|ICANON);
++    new_term_attr.c_cc[VTIME] = 0;
++    new_term_attr.c_cc[VMIN] = 0;
++    tcsetattr(fileno(stdin), TCSANOW, &new_term_attr);
++
++    /* read a character from the stdin stream without blocking */
++    /*   returns EOF (-1) if no character is available */
++    character = fgetc(stdin);
++
++    /* restore the original terminal attributes */
++    tcsetattr(fileno(stdin), TCSANOW, &orig_term_attr);
++
++    return character;
++}
++
++#define TOF_FRAME_TYPE		DepthCamera::FRAME_XYZI_POINT_CLOUD_FRAME
++
++int main(int argc, char *argv[])
++{
++int ii = 0;
++   int key;
++   bool done = false;
++   Mat bImg;
++   //Horus eye(320, 240);
++   Horus eye(160, 120);
++   //Horus eye(80, 60);
++   
++   if (!eye.connect(TOF_FRAME_TYPE)) {
++      cout << "Cannot connect" << endl;
++      return -1;
++   }
++   eye.start();
++   while (!done) {
++#ifdef TOF_INTERACTIVE
++      char key = getkey();
++      if (key == 'q') 
++         done = true;
++      else if (key == 'b') 
++         eye.resetBackground();
++#else      
++      usleep(100000);
++      ii ++;
++      if(ii == 150) done = true;
++#endif
++   }
++
++err_exit:
++   eye.stop();
++}
+diff --git a/Demos/TOFApp.cpp b/Demos/TOFApp.cpp
+new file mode 100644
+index 0000000..8b8a249
+--- /dev/null
++++ b/Demos/TOFApp.cpp
+@@ -0,0 +1,305 @@
++/*! 
++ * ============================================================================
++ *
++ * @addtogroup		TOFApp
++ * @{
++ *
++ * @file		TOFApp.cpp
++ * @version		1.0
++ * @date		12/14/2015
++ *
++ * @note		Generalized TOF Application class
++ * 
++ * Copyright(c) 2007-2012 Texas Instruments Corporation, All Rights Reserved.
++ * TI makes NO WARRANTY as to software products, which are supplied "AS-IS"
++ *
++ * ============================================================================
++ */
++#define __TOFAPP_CPP__
++
++#include "TOFApp.h"
++
++#define FRAME_QUEUE_SZ		3
++
++// Frame callback
++static deque<Voxel::Frame *> qFrame; 
++static pthread_mutex_t gmtx;
++
++static void frameCallback(DepthCamera &dc, const Frame &frame, DepthCamera::FrameType c)
++{
++   pthread_mutex_lock(&gmtx);
++   if (qFrame.size() < FRAME_QUEUE_SZ) {
++      if (c == DepthCamera::FRAME_DEPTH_FRAME) {
++         const Voxel::DepthFrame *f = dynamic_cast<const Voxel::DepthFrame *>(&frame);
++         Voxel::Frame *nf = dynamic_cast<Voxel::Frame *>(new Voxel::DepthFrame(*f));                    
++         qFrame.push_back(nf);
++      }
++      else if (c == DepthCamera::FRAME_XYZI_POINT_CLOUD_FRAME) {
++	 const Voxel::XYZIPointCloudFrame *f = dynamic_cast<const Voxel::XYZIPointCloudFrame *>(&frame);
++         Voxel::Frame *nf = dynamic_cast<Voxel::Frame *>(new Voxel::XYZIPointCloudFrame(*f));                    
++         qFrame.push_back(nf);
++      }
++   }
++   pthread_mutex_unlock(&gmtx);
++}
++
++
++// Accessors
++void TOFApp::setIllumPower(int power) 
++{ 
++   _illum_power = power; 
++}
++
++void TOFApp::setExposure(int exposure) 
++{
++   _intg = exposure;
++}
++
++void TOFApp::setDim(int w, int h) 
++{
++   _dimen.width=w; 
++   _dimen.height=h;
++}
++
++DepthCameraPtr TOFApp::getDepthCamera() 
++{
++   return _depthCamera;
++}
++
++FrameSize &TOFApp::getDim() 
++{
++   return _dimen;
++}
++
++void TOFApp::setLoopDelay(int delay) 
++{
++   _loopDelay = delay;
++}
++
++int TOFApp::getLoopDelay() 
++{
++   return _loopDelay;
++}
++
++int TOFApp::getIllumPower() 
++{ 
++   return _illum_power; 
++}
++
++int TOFApp::getExposure() 
++{ 
++   return _intg; 
++}
++
++bool TOFApp::setProfile(Voxel::String name)
++{
++   bool rc = false;
++   const Map<int, Voxel::String> &profiles = _depthCamera->getCameraProfileNames();
++   for (auto &p: profiles) {
++      if (p.second == name) {
++         int profile_id = p.first;
++         ConfigurationFile *c = _depthCamera->configFile.getCameraProfile(p.first);
++         if (c && c->getLocation() == ConfigurationFile::IN_CAMERA) {
++            if (_depthCamera->setCameraProfile(profile_id)) {
++              rc = true;
++              break;
++            }
++         }
++      }
++   }
++   return rc;
++}
++
++Voxel::String TOFApp::getProfile()
++{
++   return _profile;
++}
++
++
++DepthCamera::FrameType TOFApp::getFrameType()
++{
++   return _frameType;
++}
++
++bool TOFApp::isRunning() 
++{
++   return _isRunning;
++}
++
++bool TOFApp::isConnected() 
++{
++   return _isConnected;
++}
++
++
++void *TOFApp::eventLoop(void *p)
++{
++   bool done = false;
++   bool empty;
++   TOFApp *app = (TOFApp *)p;
++   logger.setDefaultLogLevel(LOG_INFO);   
++
++   if (!app->isConnected()) 
++      goto err_exit;
++
++   app->_isRunning = true;
++   while (!done) {
++
++      pthread_mutex_lock(&gmtx);
++      empty = qFrame.empty();      
++      pthread_mutex_unlock(&gmtx);
++ 
++      if (!empty) {
++
++         pthread_mutex_lock(&gmtx);
++         Voxel::Frame *frm = qFrame.front(); 
++         pthread_mutex_unlock(&gmtx);
++    
++         app->update(frm);
++         delete frm;
++
++         pthread_mutex_lock(&gmtx);
++         qFrame.pop_front();
++         pthread_mutex_unlock(&gmtx);
++      }
++
++      done = !app->_isRunning;   
++#ifdef TOF_INTERACTIVE
++      waitKey(app->_loopDelay);
++#else
++      usleep(10000);
++#endif
++   }
++   
++   app->disconnect();
++
++err_exit:
++   pthread_exit(NULL);
++}
++
++
++TOFApp::TOFApp()
++{
++   Init(TOF_WIDTH, TOF_HEIGHT);
++}
++
++TOFApp::TOFApp(int w, int h)
++{
++   Init(w, h);
++}
++
++void TOFApp::Init(int w, int h)
++{
++   _isRunning = false;
++   _isConnected = false;
++   _dimen.width = w;
++   _dimen.height = h;
++   _frate.numerator = 30;
++   _frate.denominator = 1;
++   _loopDelay = 66;
++   _illum_power = 60;
++   _intg = 20;
++   _profile = "MetrilusLongRange";
++   //_profile = "LongRangeHW";
++}
++
++
++bool TOFApp::connect(DepthCamera::FrameType frmType)
++{
++   const vector<DevicePtr> &devices = _sys.scan();
++   if (devices.size() > 0) {
++      _depthCamera = _sys.connect(devices[0]);
++      if (!_depthCamera) 
++         return false; 
++      if (!_depthCamera->isInitialized()) 
++         return false;
++   }
++   else 
++      return false;
++
++   #if 0   //Enable this to list all the profiles that are supported by the camera
++   cout << "List of Profiles:" << endl;
++   auto &names = _depthCamera->configFile.getCameraProfileNames();
++  
++   for(auto &n: names)
++   {
++      cout << n.first << " -> " << n.second;
++
++      auto c = _depthCamera->configFile.getCameraProfile(n.first);
++      if(c->getLocation() == ConfigurationFile::IN_CAMERA)
++      cout << " (HW)";
++    
++      if(n.first == _depthCamera->configFile.getDefaultCameraProfileIDInCamera() || 
++         n.first == _depthCamera->configFile.getDefaultCameraProfileIDInHost())
++         cout << " (DEFAULT)";
++    
++      if(n.first == _depthCamera->getCurrentCameraProfileID())
++         cout << " (ACTIVE)";
++    
++      cout << endl;
++   }
++   #endif
++              
++   if (setProfile(_profile)) 
++      cout << "Profile " << _profile << " found." << endl;
++   else 
++      cout << "Profile " << _profile << "not found." << endl;
++   updateRegisters();
++
++   _frameType = frmType;
++   _depthCamera->registerCallback(_frameType, frameCallback);
++   _depthCamera->setFrameSize(_dimen);
++   _depthCamera->setFrameRate(_frate);
++
++   VideoMode m;
++  
++   if(_depthCamera->getFrameSize(m.frameSize) && _depthCamera->getFrameRate(m.frameRate))
++   {
++      cout << "Current video mode: " << m.frameSize.width << "X" << m.frameSize.height << "@" << m.getFrameRate() << "fps\n";
++   }
++
++   _depthCamera->start();
++   _isConnected = true;
++
++   return true;
++}
++
++
++void TOFApp::start()
++{
++   if (!_isRunning) 
++      pthread_create(&_thread, NULL, &TOFApp::eventLoop, this);
++}
++
++void TOFApp::stop()
++{      
++   if (_isRunning) {
++      _isRunning = false;
++      pthread_join(_thread, NULL);
++   }
++}
++
++void TOFApp::updateRegisters()
++{
++   _depthCamera->set("illum_power_percentage", (uint)_illum_power);
++   _depthCamera->set("intg_duty_cycle", (uint)_intg);
++}
++
++void TOFApp::disconnect()
++{
++   _depthCamera->stop();
++}
++
++void TOFApp::lock()
++{
++   pthread_mutex_lock(&_mtx);
++}
++
++void TOFApp::unlock()
++{
++   pthread_mutex_unlock(&_mtx);
++}
++
++
++#undef __JIVE_CPP__
++/*! @} */
+diff --git a/Demos/TOFApp.h b/Demos/TOFApp.h
+new file mode 100644
+index 0000000..907eb45
+--- /dev/null
++++ b/Demos/TOFApp.h
+@@ -0,0 +1,89 @@
++/*! 
++ * ============================================================================
++ *
++ * @addtogroup		TOFApp
++ * @{
++ *
++ * @file		TOFApp.h
++ * @version		1.0
++ * @date		12/14/2015
++ *
++ * @note		Generalized TOF Application class
++ * 
++ * Copyright(c) 2007-2012 Texas Instruments Corporation, All Rights Reserved.
++ * TI makes NO WARRANTY as to software products, which are supplied "AS-IS"
++ *
++ * ============================================================================
++ */
++#include <deque>
++#include <string>
++#include <CameraSystem.h>
++#include <Common.h>
++#include <unistd.h>
++#include <termio.h>
++#include <pthread.h>
++#include <opencv2/core/core.hpp>
++//#include <opencv2/contrib/contrib.hpp>
++#include <opencv2/highgui/highgui.hpp>
++#include <opencv2/imgproc/imgproc.hpp>
++#include <opencv2/objdetect/objdetect.hpp>
++
++#ifndef __TOFAPP_H__
++#define __TOFAPP_H__
++
++using namespace std;
++using namespace Voxel;
++using namespace cv;
++
++#define TOF_WIDTH		320
++#define TOF_HEIGHT		240
++
++class TOFApp
++{
++public:
++   TOFApp();
++   TOFApp(int w, int h);
++   void Init(int w, int h);
++   void setDim(int w, int h);
++   DepthCameraPtr getDepthCamera();
++   FrameSize &getDim();
++   void setLoopDelay(int delay);
++   int getLoopDelay();
++   int getIllumPower();
++   int getExposure();
++   void setIllumPower(int power);
++   void setExposure(int exposure);
++   bool setProfile(Voxel::String name);
++   Voxel::String getProfile();
++   DepthCamera::FrameType getFrameType();
++   bool isRunning();
++   bool isConnected();
++   void start();
++   void stop();   
++   bool connect(DepthCamera::FrameType frmType=DepthCamera::FRAME_XYZI_POINT_CLOUD_FRAME);
++   void disconnect();
++   void updateRegisters();
++   void lock();
++   void unlock();
++   static void *eventLoop(void *app);
++   virtual void update(Frame *frm) {}
++
++private:
++   pthread_t _thread;
++   pthread_mutex_t _mtx;
++   bool _isRunning;
++   bool _isConnected;
++   CameraSystem _sys;
++   DepthCameraPtr _depthCamera;
++   FrameSize _dimen;
++   FrameRate _frate;
++   int _illum_power;
++   int _intg;
++   int _loopDelay;
++   Voxel::String _profile;
++   DepthCamera::FrameType _frameType;
++};
++
++#endif // __AIRMOUSE_H__
++/*! @} */
++
+diff --git a/TI3DToF/CMakeLists.txt b/TI3DToF/CMakeLists.txt
+index f7732e5..6c1f98a 100644
+--- a/TI3DToF/CMakeLists.txt
++++ b/TI3DToF/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-find_package(Voxel ${VOXEL_VERSION} REQUIRED)
++#find_package(Voxel ${VOXEL_VERSION} REQUIRED)
+ 
+ add_library(ti3dtof SHARED
+   VoxelProgrammerBase.cpp
+diff --git a/Test/CMakeLists.txt b/Test/CMakeLists.txt
+index 8846460..0adf225 100644
+--- a/Test/CMakeLists.txt
++++ b/Test/CMakeLists.txt
+@@ -25,7 +25,7 @@ add_executable(DMLParseTest DMLParseTest.cpp)
+ target_link_libraries(DMLParseTest voxel)
+ 
+ add_executable(Voxel14RegisterTest Voxel14RegisterTest.cpp)
+-target_link_libraries(Voxel14RegisterTest ti3dtof)
++target_link_libraries(Voxel14RegisterTest voxel ti3dtof)
+ 
+ add_executable(Data2DCodecTest Data2DCodecTest.cpp)
+ target_link_libraries(Data2DCodecTest voxel)
+diff --git a/Voxel/CMakeLists.txt b/Voxel/CMakeLists.txt
+index 953478b..ae98e81 100644
+--- a/Voxel/CMakeLists.txt
++++ b/Voxel/CMakeLists.txt
+@@ -64,6 +64,8 @@ generate_export_header(voxel
+ target_link_libraries(voxel
+   LINK_PUBLIC ${COMMON_LIBS}
+   LINK_PRIVATE ${COMMON_LIBS_PRIVATE}
++  usb
++  udev
+ )
+ 
+ set_target_properties(voxel PROPERTIES 
+@@ -147,7 +149,7 @@ install(FILES
+   COMPONENT voxel_dev
+ )
+ 
+-add_subdirectory(SWIG)
++#add_subdirectory(SWIG)
+ 
+ IF(LINUX)
+   set(CPACK_COMPONENTS_ALL voxel)
+-- 
+1.9.1
+
