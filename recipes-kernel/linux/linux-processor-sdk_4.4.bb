@@ -84,11 +84,11 @@ S = "${WORKDIR}/git"
 
 BRANCH = "processor-sdk-linux-03.02.00"
 
-SRCREV = "c3c038f2d7ad4a165999148440278e1568d213b0"
+SRCREV = "adde2ca9f86797071f6e7b2b9e779fa5e4a8f3cd"
 PV = "4.4.32+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
-MACHINE_KERNEL_PR_append = "b"
+MACHINE_KERNEL_PR_append = "c"
 PR = "${MACHINE_KERNEL_PR}"
 
 KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"

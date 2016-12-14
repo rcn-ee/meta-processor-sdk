@@ -6,4 +6,4 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:"
 
 BRANCH = "processor-sdk-linux-rt-03.02.00"
 
-SRCREV = "ae60622d10e8572d4f1b57c59e7f6246e1f4add2"
+SRCREV = "e26c84b0ac60c5268f4ca9ae400f2adb843099a5"
