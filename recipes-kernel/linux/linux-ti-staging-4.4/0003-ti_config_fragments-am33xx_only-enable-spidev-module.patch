@@ -1,0 +1,27 @@
+From 4e491ccafbf845f147ab09040c4bbed2b1bcda16 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Thu, 8 Dec 2016 09:52:02 -0500
+Subject: [PATCH 3/4] ti_config_fragments: am33xx_only: enable spidev module
+
+* The spidev module is to be used to manage the spi0 interface in the
+  am335x-boneblack-iot-cape device tree.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ ti_config_fragments/am33xx_only.cfg | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ti_config_fragments/am33xx_only.cfg b/ti_config_fragments/am33xx_only.cfg
+index 2c66204..0524a91 100644
+--- a/ti_config_fragments/am33xx_only.cfg
++++ b/ti_config_fragments/am33xx_only.cfg
+@@ -17,3 +17,6 @@ CONFIG_CPUSETS=n
+ 
+ # Increase CMA for HDMI
+ CONFIG_CMA_SIZE_MBYTES=48
++
++# Enable spidev module
++CONFIG_SPI_SPIDEV=m
+-- 
+1.9.1
+

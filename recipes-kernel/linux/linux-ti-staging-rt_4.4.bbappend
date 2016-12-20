@@ -1,4 +1,4 @@
-PR_append = ".tisdk46"
+PR_append = ".tisdk47"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:${THISDIR}/files:"
 
@@ -67,6 +67,11 @@ SRC_URI_append = " \
     file://0062-ARM-dts-keystone-k2e-l-g-enable-cpts-ts_comp.patch \
     file://0001-net-hsr-Added-support-for-HSR-v1.patch \
     file://0002-ti_config_fragment-connectivity-enable-HSR.patch \
+    file://0001-ARM-dts-am335x-boneblack-spi0-add-spi0-configuration.patch \
+    file://0002-ARM-dts-am335x-boneblack-iot-cape-add-custom-device-.patch \
+    file://0003-ti_config_fragments-am33xx_only-enable-spidev-module.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
+
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-lprf.dtb"
