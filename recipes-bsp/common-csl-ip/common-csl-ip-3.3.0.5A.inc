@@ -1,6 +1,0 @@
-PV = "03.03.00.05A"
-
-INC_PR = "r0"
-
-# Below commit ID corresponds to "DEV.CSL_PROCESSOR-SDK.03.03.00.05A"
-CSL_SRCREV = "811646f507d985dac04544c60c965cadf5e26a4f"
