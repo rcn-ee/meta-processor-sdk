@@ -1,0 +1,29 @@
+From 1fb1d0d656c6e7c6ab4ab25c316e6d6862331327 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Wed, 14 Dec 2016 14:47:21 -0500
+Subject: [PATCH] arm: dts: k2e: fix typo at sa_subsys node
+
+This commit fixes typo at sa_subsys node
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index 6f94774..4aba07d 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -762,7 +762,7 @@ netcpx: netcp@2f00000 {
+ sa_subsys: subsys@24080000 {
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+-	ranges = <0 24080000 0x40000>;
++	ranges = <0 0x24080000 0x40000>;
+ 	compatible = "simple-bus";
+ 	dma-coherent;
+ 	dma-ranges;
+-- 
+1.9.1
+
