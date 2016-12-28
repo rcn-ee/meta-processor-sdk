@@ -74,4 +74,4 @@ SRC_URI_append = " \
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
 
-KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-lprf.dtb"
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"
