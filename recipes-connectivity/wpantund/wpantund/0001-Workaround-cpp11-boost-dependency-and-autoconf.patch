@@ -1,0 +1,34 @@
+From 2430e362dce5890a4a86fdd453219b6c6eb8e4f8 Mon Sep 17 00:00:00 2001
+From: Djordje Senicic <d-senicic1@ti.com>
+Date: Tue, 17 Jan 2017 17:54:54 -0500
+Subject: [PATCH] Workaround c++11 boost dependency and autoconf
+
+Signed-off-by: Djordje Senicic <d-senicic1@ti.com>
+---
+ m4/nl.m4 | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/m4/nl.m4 b/m4/nl.m4
+index 455d680..5b0414f 100644
+--- a/m4/nl.m4
++++ b/m4/nl.m4
+@@ -77,11 +77,11 @@ AC_DEFUN([NL_CHECK_BOOST_SIGNALS2], [
+ 		AC_CHECK_HEADERS([boost/signals2/signal.hpp], [$1],[
+ 
+ 			# Sometimes boost explicitly needs this flag to work.
+-			AX_CHECK_COMPILE_FLAG([-std=c++11], [
+-				CXXFLAGS="$CXXFLAGS -std=c++11"
+-				CPPFLAGS="$CPPFLAGS -std=c++11"
+-				BOOST_CXXFLAGS="$BOOST_CXXFLAGS -std=c++11"
+-			], [$2])
++			#AX_CHECK_COMPILE_FLAG([-std=c++11], [
++			#	CXXFLAGS="$CXXFLAGS -std=c++11"
++			#	CPPFLAGS="$CPPFLAGS -std=c++11"
++			#	BOOST_CXXFLAGS="$BOOST_CXXFLAGS -std=c++11"
++			#], [$2])
+ 
+ 			## Clear the cache entry we that we try again
+ 			unset ac_cv_header_boost_signals2_signal_hpp
+-- 
+1.9.1
+
