@@ -5,12 +5,12 @@ LIC_FILES_CHKSUM = "file://detect_barcode.cpp;beginline=1;endline=25;md5=babab64
 DEPENDS += "opencv"
 
 PV = "01.00.00"
-PR = "r0"
+PR = "r1"
 
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/apps/barcode-roi-detection.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "8c7356c4c110efe09e2cbe999d24d09568652982"
+SRCREV = "50fa051f66012ebaa10eba1cb289287c4c5e7432"
 
 S = "${WORKDIR}/git"
 
