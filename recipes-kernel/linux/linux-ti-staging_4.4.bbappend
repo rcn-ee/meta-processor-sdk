@@ -1,6 +1,6 @@
-PR_append = ".tisdk49"
+PR_append = ".tisdk50"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:"
 
 SRC_URI_append = " \
     file://0001-ARM-dts-keystone-evm-add-DT-bindings-for-debugss-and.patch \
