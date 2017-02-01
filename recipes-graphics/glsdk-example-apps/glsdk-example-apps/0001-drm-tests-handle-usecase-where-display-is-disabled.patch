@@ -1,0 +1,297 @@
+From 4f7be53a6953d4ac8aa2f13d5291884196b8cb53 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Wed, 1 Feb 2017 11:28:32 -0500
+Subject: [PATCH] drm-tests: handle usecase where display is disabled
+
+In some usecases DRM connector is connected but is disabled by default.
+In such scenario, connector->encoder_id and encoder->crtc_id may be 0.
+This patch iterates over all possible encoders and CRTCs to find and
+store the encoder and CRTC accordingly.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drm-tests/drm_clone.c    | 95 +++++++++++++++++++++++++++++++++++++-----------
+ drm-tests/drm_extended.c | 95 +++++++++++++++++++++++++++++++++++++-----------
+ drm-tests/drm_z_alpha.c  | 30 ++++++++++++---
+ 3 files changed, 173 insertions(+), 47 deletions(-)
+
+diff --git a/drm-tests/drm_clone.c b/drm-tests/drm_clone.c
+index 8b1766c..1788eec 100644
+--- a/drm-tests/drm_clone.c
++++ b/drm-tests/drm_clone.c
+@@ -151,36 +151,89 @@ static void get_drm_connector(struct device *dev)
+ */
+ static void get_drm_encoder(struct device *dev)
+ {
+-	uint32_t i;
+-	drmModeEncoder *enc;		
+-
+-	for (i = 0; i < dev->res->count_encoders; ++i) {
+-		enc = drmModeGetEncoder(dev->fd, dev->res->encoders[i]);
++	uint32_t i, j;
++	drmModeConnector *con;
++	drmModeEncoder *enc;
++
++	/* find the encoder and crtc for LCD connector */
++	con = dev->lcd_con;
++	for (i = 0; i < con->count_encoders; ++i) {
++		enc = drmModeGetEncoder(dev->fd, con->encoders[i]);
+ 		if (!enc)
+ 			continue;
+ 
+-		if (enc->encoder_id == dev->lcd_con->encoder_id) {
++		/* Take the fisrt one, if none is assigned */
++		if (!con->encoder_id)
++			con->encoder_id = enc->encoder_id;
++
++		if (enc->encoder_id == con->encoder_id) {
+ 			dev->lcd_enc = enc;
+-			printf("lcd encoder id = %d\n",
+-				dev->lcd_enc->encoder_id);
+-			if(dev->hdmi_enc)
+-				break;
+-			else
+-				continue;
+-		} else if (enc->encoder_id == dev->hdmi_con->encoder_id) {
++			printf("lcd encoder id = %d\n", con->encoder_id);
++
++			/* find the first valid CRTC if not assigned */
++			if (!enc->crtc_id) {
++				for (j = 0; j < dev->res->count_crtcs; ++j) {
++					/* check whether this CRTC works with the encoder */
++					if (!(enc->possible_crtcs & (1 << j)))
++						continue;
++
++					enc->crtc_id = dev->res->crtcs[j];
++					break;
++				}
++
++				if ( j  == dev->res->count_crtcs) {
++					error("No active lcd crtc found!\n");
++					exit(0);
++				}
++			}
++			break;
++		}
++		drmModeFreeEncoder(enc);
++	}
++
++	if (i == con->count_encoders) {
++		error("No active lcd encoder found!\n");
++		exit(0);
++	}
++
++	/* find the encoder and crtc for HDMI connector */
++	con = dev->hdmi_con;
++	for (i = 0; i < con->count_encoders; ++i) {
++		enc = drmModeGetEncoder(dev->fd, con->encoders[i]);
++		if (!enc)
++			continue;
++
++		/* Take the fisrt one, if none is assigned */
++		if (!con->encoder_id)
++			con->encoder_id = enc->encoder_id;
++
++		if (enc->encoder_id == con->encoder_id) {
+ 			dev->hdmi_enc = enc;
+-			printf("hdmi encoder id = %d\n",
+-				dev->hdmi_enc->encoder_id);
+-			if(dev->lcd_enc)
+-				break;
+-			else
+-				continue;
++			printf("hdmi encoder id = %d\n", con->encoder_id);
++
++			/* find the first valid CRTC if not assigned */
++			if (!enc->crtc_id) {
++				for (j = 0; j < dev->res->count_crtcs; ++j) {
++					/* check whether this CRTC works with the encoder */
++					if (!(enc->possible_crtcs & (1 << j)))
++						continue;
++
++					enc->crtc_id = dev->res->crtcs[j];
++					break;
++				}
++
++				if ( j  == dev->res->count_crtcs) {
++					error("No active hdmi crtc found!\n");
++					exit(0);
++				}
++			}
++			break;
+ 		}
+ 		drmModeFreeEncoder(enc);
+ 	}
+ 
+-	if (i == dev->res->count_encoders) {
+-		error("No active lcd or hdmi encoder found!\n");
++	if (i == con->count_encoders) {
++		error("No active hdmi encoder found!\n");
+ 		exit(0);
+ 	}
+ }
+diff --git a/drm-tests/drm_extended.c b/drm-tests/drm_extended.c
+index 527ee4a..459f623 100644
+--- a/drm-tests/drm_extended.c
++++ b/drm-tests/drm_extended.c
+@@ -153,36 +153,89 @@ static void get_drm_connector(struct device *dev)
+ */
+ static void get_drm_encoder(struct device *dev)
+ {
+-	uint32_t i;
+-	drmModeEncoder *enc;		
+-
+-	for (i = 0; i < dev->res->count_encoders; ++i) {
+-		enc = drmModeGetEncoder(dev->fd, dev->res->encoders[i]);
++	uint32_t i, j;
++	drmModeConnector *con;
++	drmModeEncoder *enc;
++
++	/* find the encoder and crtc for LCD connector */
++	con = dev->lcd_con;
++	for (i = 0; i < con->count_encoders; ++i) {
++		enc = drmModeGetEncoder(dev->fd, con->encoders[i]);
+ 		if (!enc)
+ 			continue;
+ 
+-		if (enc->encoder_id == dev->lcd_con->encoder_id) {
++		/* Take the fisrt one, if none is assigned */
++		if (!con->encoder_id)
++			con->encoder_id = enc->encoder_id;
++
++		if (enc->encoder_id == con->encoder_id) {
+ 			dev->lcd_enc = enc;
+-			printf("lcd encoder id = %d\n",
+-				dev->lcd_enc->encoder_id);
+-			if(dev->hdmi_enc)
+-				break;
+-			else
+-				continue;
+-		} else if (enc->encoder_id == dev->hdmi_con->encoder_id) {
++			printf("lcd encoder id = %d\n", con->encoder_id);
++
++			/* find the first valid CRTC if not assigned */
++			if (!enc->crtc_id) {
++				for (j = 0; j < dev->res->count_crtcs; ++j) {
++					/* check whether this CRTC works with the encoder */
++					if (!(enc->possible_crtcs & (1 << j)))
++						continue;
++
++					enc->crtc_id = dev->res->crtcs[j];
++					break;
++				}
++
++				if ( j  == dev->res->count_crtcs) {
++					error("No active lcd crtc found!\n");
++					exit(0);
++				}
++			}
++			break;
++		}
++		drmModeFreeEncoder(enc);
++	}
++
++	if (i == con->count_encoders) {
++		error("No active lcd encoder found!\n");
++		exit(0);
++	}
++
++	/* find the encoder and crtc for HDMI connector */
++	con = dev->hdmi_con;
++	for (i = 0; i < con->count_encoders; ++i) {
++		enc = drmModeGetEncoder(dev->fd, con->encoders[i]);
++		if (!enc)
++			continue;
++
++		/* Take the fisrt one, if none is assigned */
++		if (!con->encoder_id)
++			con->encoder_id = enc->encoder_id;
++
++		if (enc->encoder_id == con->encoder_id) {
+ 			dev->hdmi_enc = enc;
+-			printf("hdmi encoder id = %d\n",
+-				dev->hdmi_enc->encoder_id);
+-			if(dev->lcd_enc)
+-				break;
+-			else
+-				continue;
++			printf("hdmi encoder id = %d\n", con->encoder_id);
++
++			/* find the first valid CRTC if not assigned */
++			if (!enc->crtc_id) {
++				for (j = 0; j < dev->res->count_crtcs; ++j) {
++					/* check whether this CRTC works with the encoder */
++					if (!(enc->possible_crtcs & (1 << j)))
++						continue;
++
++					enc->crtc_id = dev->res->crtcs[j];
++					break;
++				}
++
++				if ( j  == dev->res->count_crtcs) {
++					error("No active hdmi crtc found!\n");
++					exit(0);
++				}
++			}
++			break;
+ 		}
+ 		drmModeFreeEncoder(enc);
+ 	}
+ 
+-	if (i == dev->res->count_encoders) {
+-		error("No active lcd or hdmi encoder found!\n");
++	if (i == con->count_encoders) {
++		error("No active hdmi encoder found!\n");
+ 		exit(0);
+ 	}
+ }
+diff --git a/drm-tests/drm_z_alpha.c b/drm-tests/drm_z_alpha.c
+index af6c8f3..6f89ad1 100644
+--- a/drm-tests/drm_z_alpha.c
++++ b/drm-tests/drm_z_alpha.c
+@@ -135,17 +135,37 @@ static void get_drm_connector(struct device *dev)
+ */
+ static void get_drm_encoder(struct device *dev)
+ {
+-	uint32_t i;
++	uint32_t i,j;
+ 
+-	for (i = 0; i < dev->res->count_encoders; ++i) {
++	for (i = 0; i < dev->con->count_encoders; ++i) {
+ 		dev->enc = drmModeGetEncoder(dev->fd,
+-					     dev->res->encoders[i]);
++					     dev->con->encoders[i]);
+ 		if (!dev->enc)
+ 			continue;
+ 
+-		if (dev->enc->encoder_id == dev->con->encoder_id)
++		/* Take the fisrt one, if none is assigned */
++		if (!dev->con->encoder_id)
++			dev->con->encoder_id = dev->enc->encoder_id;
++
++		if (dev->enc->encoder_id == dev->con->encoder_id) {
++			/* find the first valid CRTC if not assigned */
++			if (!dev->enc->crtc_id) {
++				for (j = 0; j < dev->res->count_crtcs; ++j) {
++					/* check whether this CRTC works with the encoder */
++					if (!(dev->enc->possible_crtcs & (1 << j)))
++						continue;
++
++					dev->enc->crtc_id = dev->res->crtcs[j];
++					break;
++				}
++
++				if ( j  == dev->res->count_crtcs) {
++					error("No active crtc found!\n");
++					exit(0);
++				}
++			}
+ 			break;
+-
++		}
+ 		drmModeFreeEncoder(dev->enc);
+ 	}
+ 
+-- 
+1.9.1
+
