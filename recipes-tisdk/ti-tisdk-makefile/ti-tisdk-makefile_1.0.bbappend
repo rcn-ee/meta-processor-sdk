@@ -1,4 +1,4 @@
-PR_append = ".tisdk27"
+PR_append = ".tisdk28"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -17,7 +17,7 @@ MAKEFILES_append_k2g-evm = " opencl-examples \
 MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               image-gallery \
                               uio-module-drv \
-                              ${@base_conditional('ARAGO_RT_ENABLE', '1', '', 'ti-gc320-driver', d)} \
+                              ti-gc320-driver \
                               ti-ipc \
                               barcode-roi \
 "
