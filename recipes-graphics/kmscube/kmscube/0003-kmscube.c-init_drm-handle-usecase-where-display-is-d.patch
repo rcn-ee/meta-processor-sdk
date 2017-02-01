@@ -1,0 +1,88 @@
+From 1276ca128cee528e48d8e419f378657df5847d23 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Tue, 31 Jan 2017 17:16:12 -0500
+Subject: [PATCH 3/3] kmscube.c: init_drm(): handle usecase where display is
+ disabled
+
+In some usecases HDMI is connected but is disabled by default.
+In such scenario, connector->encoder_id and encoder->crtc_id
+may be 0. This patch iterates over all possible encoders and
+CRTCs to find and store the encoder and CRTC accordingly.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ kmscube.c |   45 ++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 38 insertions(+), 7 deletions(-)
+
+diff --git a/kmscube.c b/kmscube.c
+index 6bfa86a..3e9eeef 100644
+--- a/kmscube.c
++++ b/kmscube.c
+@@ -91,7 +91,7 @@ static int init_drm(void)
+ 	drmModeEncoder *encoder = NULL;
+ 	drmModeCrtc *crtc = NULL;
+ 
+-	int i, j;
++	int i, j, k;
+ 	uint32_t maxRes, curRes;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(modules); i++) {
+@@ -123,18 +123,49 @@ static int init_drm(void)
+ 		if (connector->connection == DRM_MODE_CONNECTED) {
+ 
+ 			/* find the matched encoders */
+-			for (j=0; j<resources->count_encoders; j++) {
+-				encoder = drmModeGetEncoder(drm.fd, resources->encoders[j]);
+-				if (encoder->encoder_id == connector->encoder_id)
+-					break;
++			for (j=0; j<connector->count_encoders; j++) {
++				encoder = drmModeGetEncoder(drm.fd, connector->encoders[j]);
++
++				/* Take the fisrt one, if none is assigned */
++				if (!connector->encoder_id)
++				{
++					connector->encoder_id = encoder->encoder_id;
++				}
++
++				if (encoder->encoder_id == connector->encoder_id)
++				{
++					/* find the first valid CRTC if not assigned */
++					if (!encoder->crtc_id)
++					{
++						for (k = 0; k < resources->count_crtcs; ++k) {
++							/* check whether this CRTC works with the encoder */
++							if (!(encoder->possible_crtcs & (1 << k)))
++								continue;
++
++							encoder->crtc_id = resources->crtcs[k];
++							break;
++						}
++
++						if (!encoder->crtc_id)
++						{
++							printf("Encoder(%d): no CRTC find!\n", encoder->encoder_id);
++							drmModeFreeEncoder(encoder);
++							encoder = NULL;
++							continue;
++						}
++					}
++
++					break;
++				}
+ 
+ 				drmModeFreeEncoder(encoder);
+ 				encoder = NULL;
+ 			}
+ 
+ 			if (!encoder) {
+-				printf("no encoder!\n");
+-				return -1;
++				printf("Connector (%d): no encoder!\n", connector->connector_id);
++				drmModeFreeConnector(connector);
++				continue;
+ 			}
+ 
+ 			/* choose the current or first supported mode */
+-- 
+1.7.9.5
+
