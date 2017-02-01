@@ -1,4 +1,4 @@
-PR_append = ".tisdk50"
+PR_append = ".tisdk51"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4:"
 
@@ -70,6 +70,7 @@ SRC_URI_append = " \
     file://0001-ARM-dts-am335x-boneblack-spi0-add-spi0-configuration.patch \
     file://0002-ARM-dts-am335x-boneblack-iot-cape-add-custom-device-.patch \
     file://0003-ti_config_fragments-am33xx_only-enable-spidev-module.patch \
+    file://tiL-4.4-AD-v2-2-2-drm-omap-Create-fbdev-emulation-only-for-the-first-DMR-connector.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
