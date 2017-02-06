@@ -1,0 +1,123 @@
+From 0f39028cd695b9a9790089c01c0a4a10f2d3e627 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Mon, 6 Feb 2017 16:46:24 -0500
+Subject: [PATCH] display-kms and display-kmscube: handle usecase where display
+ is disabled
+
+In some usecases HDMI is connected but is disabled by default.
+In such scenario, connector->encoder_id and encoder->crtc_id
+may be 0. This patch iterates over all possible encoders and
+CRTCs to find and store the encoder and CRTC accordingly.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ util/display-kms.c     | 37 +++++++++++++++++++++++++++++++------
+ util/display-kmscube.c | 36 ++++++++++++++++++++++++++++++++----
+ 2 files changed, 63 insertions(+), 10 deletions(-)
+
+diff --git a/util/display-kms.c b/util/display-kms.c
+index 7a5a4d1..193e07f 100644
+--- a/util/display-kms.c
++++ b/util/display-kms.c
+@@ -495,20 +495,45 @@ connector_find_mode(struct display *disp, struct connector *c)
+ 	}
+ 
+ 	/* Now get the encoder */
+-	for (i = 0; i < disp_kms->resources->count_encoders; i++) {
++	for (i = 0; i < connector->count_encoders; i++) {
+ 		c->encoder = drmModeGetEncoder(disp->fd,
+-				disp_kms->resources->encoders[i]);
++				connector->encoders[i]);
+ 
+ 		if (!c->encoder) {
+ 			ERROR("could not get encoder %i: %s",
+ 					disp_kms->resources->encoders[i], strerror(errno));
+-			drmModeFreeEncoder(c->encoder);
+ 			continue;
+ 		}
+-
+-		if (c->encoder->encoder_id  == connector->encoder_id)
++
++		/* Take the fisrt one, if none is assigned */
++		if (!connector->encoder_id)
++		{
++			connector->encoder_id = c->encoder->encoder_id;
++		}
++
++		if (c->encoder->encoder_id  == connector->encoder_id) {
++			/* find the first valid CRTC if not assigned */
++			if (!c->encoder->crtc_id)
++			{
++				int k;
++				for (k = 0; k < disp_kms->resources->count_crtcs; ++k) {
++					/* check whether this CRTC works with the encoder */
++					if (!(c->encoder->possible_crtcs & (1 << k)))
++						continue;
++
++					c->encoder->crtc_id = disp_kms->resources->crtcs[k];
++					break;
++				}
++
++				if (!c->encoder->crtc_id)
++				{
++					ERROR("Encoder(%d): no CRTC found!\n", c->encoder->encoder_id);
++					drmModeFreeEncoder(c->encoder);
++					continue;
++				}
++			}
+ 			break;
+-
++		}
+ 		drmModeFreeEncoder(c->encoder);
+ 	}
+ 
+diff --git a/util/display-kmscube.c b/util/display-kmscube.c
+index 149f1d5..8ccc09e 100644
+--- a/util/display-kmscube.c
++++ b/util/display-kmscube.c
+@@ -202,10 +202,38 @@ static int init_drm(struct display_kmscube *disp_kmsc)
+ 	}
+ 
+ 	/* find encoder: */
+-	for (i = 0; i < resources->count_encoders; i++) {
+-		encoder = drmModeGetEncoder(disp_kmsc->base.fd, resources->encoders[i]);
+-		if (encoder->encoder_id == connector->encoder_id)
+-			break;
++	for (i = 0; i < connector->count_encoders; i++) {
++		encoder = drmModeGetEncoder(disp_kmsc->base.fd, connector->encoders[i]);
++		/* Take the fisrt one, if none is assigned */
++		if (!connector->encoder_id)
++		{
++			connector->encoder_id = encoder->encoder_id;
++		}
++
++		if (encoder->encoder_id == connector->encoder_id) {
++			/* find the first valid CRTC if not assigned */
++			if (!encoder->crtc_id)
++			{
++				int k;
++				for (k = 0; k < resources->count_crtcs; ++k) {
++					/* check whether this CRTC works with the encoder */
++					if (!(encoder->possible_crtcs & (1 << k)))
++						continue;
++
++					encoder->crtc_id = resources->crtcs[k];
++					break;
++				}
++
++				if (!encoder->crtc_id)
++				{
++					ERROR("Encoder(%d): no CRTC find!\n", encoder->encoder_id);
++					drmModeFreeEncoder(encoder);
++					encoder = NULL;
++					continue;
++				}
++			}
++			break;
++		}
+ 		drmModeFreeEncoder(encoder);
+ 		encoder = NULL;
+ 	}
+-- 
+1.9.1
+
