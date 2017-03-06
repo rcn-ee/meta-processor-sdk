@@ -1,6 +1,6 @@
-From 10894cbdf0e51a08f74a7b6fe30a733605469a28 Mon Sep 17 00:00:00 2001
+From f7d038faff7d39bdb68f38d46df665786322bace Mon Sep 17 00:00:00 2001
 From: Eric Ruei <e-ruei1@ti.com>
-Date: Tue, 29 Nov 2016 18:36:27 -0500
+Date: Fri, 3 Mar 2017 16:44:46 -0500
 Subject: [PATCH] qtbase: enhance eglfs_kms to handle DRM plane set request
  from application
 
@@ -13,20 +13,20 @@ and the application may own the DRM overlay planes optionally.
 
 Signed-off-by: Eric Ruei <e-ruei1@ti.com>
 ---
- .../eglfs_kms/qeglfskmsdevice.cpp                  | 350 ++++++++++++++++++++-
+ .../eglfs_kms/qeglfskmsdevice.cpp                  | 362 ++++++++++++++++++++-
  .../deviceintegration/eglfs_kms/qeglfskmsdevice.h  |  55 ++++
  .../eglfs_kms/qeglfskmsintegration.cpp             |  22 ++
  .../eglfs_kms/qeglfskmsintegration.h               |   3 +-
- .../eglfs_kms/qeglfskmsscreen.cpp                  |  63 +++-
+ .../eglfs_kms/qeglfskmsscreen.cpp                  |  69 +++-
  .../deviceintegration/eglfs_kms/qeglfskmsscreen.h  |   2 +
  src/plugins/platforms/eglfs/eglfs_device_lib.pro   |   3 +-
  .../platforms/eglfs/qeglfsdeviceintegration.cpp    |  16 +
  .../platforms/eglfs/qeglfsdeviceintegration.h      |   2 +
  src/plugins/platforms/eglfs/qeglfsintegration.cpp  |  21 +-
- 10 files changed, 522 insertions(+), 15 deletions(-)
+ 10 files changed, 533 insertions(+), 22 deletions(-)
 
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
-index 8ba0a5c..1a73baf 100644
+index 8ba0a5c..5f74ae0 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
 @@ -45,8 +45,12 @@
@@ -169,6 +169,28 @@ index 8ba0a5c..1a73baf 100644
  
      const QByteArray mode = m_integration->outputSettings().value(QString::fromUtf8(connectorName))
              .value(QStringLiteral("mode"), QStringLiteral("preferred")).toByteArray().toLower();
+@@ -260,15 +377,15 @@ QEglFSKmsScreen *QEglFSKmsDevice::screenForConnector(drmModeResPtr resources, dr
+         configured = current;
+ 
+     int selected_mode = -1;
+-
+-    if (configured >= 0)
+-        selected_mode = configured;
++
++    if (current >= 0)
++        selected_mode = current;
+     else if (preferred >= 0)
+         selected_mode = preferred;
+-    else if (current >= 0)
+-        selected_mode = current;
+     else if (best >= 0)
+-        selected_mode = best;
++        selected_mode = best;
++    else if (configured >= 0)
++        selected_mode = configured;
+ 
+     if (selected_mode < 0) {
+         qWarning() << "No modes available for output" << connectorName;
 @@ -281,6 +398,11 @@ QEglFSKmsScreen *QEglFSKmsDevice::screenForConnector(drmModeResPtr resources, dr
                                    << '@' << refresh << "hz for output" << connectorName;
      }
@@ -609,7 +631,7 @@ index edb6906..e958864 100644
      bool separateScreens() const;
      QMap<QString, QVariantMap> outputSettings() const;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
-index 048f543..1ba3d0f 100644
+index 048f543..fef6a04 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
 @@ -244,8 +244,31 @@ void QEglFSKmsScreen::waitForFlip()
@@ -644,12 +666,18 @@ index 048f543..1ba3d0f 100644
      if (!m_gbm_surface) {
          qWarning("Cannot sync before platform init!");
          return;
-@@ -268,27 +291,53 @@ void QEglFSKmsScreen::flip()
+@@ -267,28 +290,58 @@ void QEglFSKmsScreen::flip()
+                                  &m_output.connector_id, 1,
                                   &m_output.modes[m_output.mode]);
  
-         if (ret) {
+-        if (ret) {
 -            qErrnoWarning("Could not set DRM mode!");
-+            qErrnoWarning("Could not set DRM CRTC mode!");
++        if (ret) {
++            qErrnoWarning("Could not set DRM (%d) CRTC (%d) mode!", m_device->fd(), m_output.crtc_id);
++            // Ignore page flip request if CRTC can not be configured
++            gbm_surface_release_buffer(m_gbm_surface, m_gbm_bo_next);
++            m_gbm_bo_next = Q_NULLPTR;
++            return;
          } else {
 +            // Plane setting
 +            int ret;
@@ -719,7 +747,7 @@ index 7fd6cca..7813249 100644
  
  class QEglFSKmsScreen : public QEglFSScreen
 diff --git a/src/plugins/platforms/eglfs/eglfs_device_lib.pro b/src/plugins/platforms/eglfs/eglfs_device_lib.pro
-index f784020..032d504 100644
+index f784020..7f779ba 100644
 --- a/src/plugins/platforms/eglfs/eglfs_device_lib.pro
 +++ b/src/plugins/platforms/eglfs/eglfs_device_lib.pro
 @@ -4,7 +4,8 @@
@@ -758,10 +786,10 @@ index 1fb6020..4a6ba0d 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
-index 5ec98b3..2cbb832 100644
+index 303810e..c13f8f4 100644
 --- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
 +++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
-@@ -100,6 +100,8 @@ public:
+@@ -99,6 +99,8 @@ public:
      virtual bool supportsSurfacelessContexts() const;
  
      virtual void *wlDisplay() const;
@@ -771,10 +799,10 @@ index 5ec98b3..2cbb832 100644
  
  class Q_EGLFS_EXPORT QEGLDeviceIntegrationPlugin : public QObject
 diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
-index 35b27cb..b27401f 100644
+index c226c01..84d9c02 100644
 --- a/src/plugins/platforms/eglfs/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
-@@ -242,6 +242,12 @@ QPlatformNativeInterface *QEglFSIntegration::nativeInterface() const
+@@ -240,6 +240,12 @@ QPlatformNativeInterface *QEglFSIntegration::nativeInterface() const
      return const_cast<QEglFSIntegration *>(this);
  }
  
@@ -787,7 +815,7 @@ index 35b27cb..b27401f 100644
  enum ResourceType {
      EglDisplay,
      EglWindow,
-@@ -249,7 +255,9 @@ enum ResourceType {
+@@ -247,7 +253,9 @@ enum ResourceType {
      EglConfig,
      NativeDisplay,
      XlibDisplay,
@@ -798,7 +826,7 @@ index 35b27cb..b27401f 100644
  };
  
  static int resourceType(const QByteArray &key)
-@@ -261,7 +269,9 @@ static int resourceType(const QByteArray &key)
+@@ -259,7 +267,9 @@ static int resourceType(const QByteArray &key)
          QByteArrayLiteral("eglconfig"),
          QByteArrayLiteral("nativedisplay"),
          QByteArrayLiteral("display"),
@@ -809,7 +837,7 @@ index 35b27cb..b27401f 100644
      };
      const QByteArray *end = names + sizeof(names) / sizeof(names[0]);
      const QByteArray *result = std::find(names, end, key);
-@@ -284,6 +294,13 @@ void *QEglFSIntegration::nativeResourceForIntegration(const QByteArray &resource
+@@ -282,6 +292,13 @@ void *QEglFSIntegration::nativeResourceForIntegration(const QByteArray &resource
      case WaylandDisplay:
          result = qt_egl_device_integration()->wlDisplay();
          break;
