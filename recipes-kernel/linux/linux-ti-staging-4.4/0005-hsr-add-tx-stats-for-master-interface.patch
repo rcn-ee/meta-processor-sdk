@@ -1,0 +1,25 @@
+From b997df7eba3cc3828ca5c8ba23b9060b6f92956f Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 14 Feb 2017 15:00:34 -0500
+Subject: [PATCH 05/20] hsr: add tx stats for master interface
+
+---
+ net/hsr/hsr_device.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index d5e5da6..c84973f 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -241,6 +241,8 @@ static int hsr_dev_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	master = hsr_port_get_hsr(hsr, HSR_PT_MASTER);
+ 	skb->dev = master->dev;
+ 	hsr_forward_skb(skb, master);
++	master->dev->stats.tx_packets++;
++	master->dev->stats.tx_bytes += skb->len;
+ 
+ 	return NETDEV_TX_OK;
+ }
+-- 
+1.9.1
+
