@@ -1,10 +1,11 @@
-PR_append = ".tisdk29"
+PR_append = ".tisdk30"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = "\
     file://Makefile_ti-gc320-driver \
     file://Makefile_ti-ipc \
+    file://Makefile_video-graphics-test \
 "
 
 MAKEFILES_append_keystone = " ti-ipc"
@@ -20,6 +21,7 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               ti-ipc \
 "
 
+MAKEFILES_append_omap-a15 = " video-graphics-test"
 MAKEFILES_append_dra7xx = " linalg-examples"
 
 MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"

@@ -1,0 +1,24 @@
+# QT Video Graphics build targets
+video-graphics-test:
+	@echo ================================
+	@echo    Building Video Graphics Test
+	@echo ================================
+	@cd example-applications; cd `find . -name "*video-graphics-test*"`; make -f Makefile.build
+
+video-graphics-test_clean:
+	@echo ================================
+	@echo    Building Video Graphics Test
+	@echo ================================
+	@cd example-applications; cd `find . -name "*video-graphics-test*"`; make -f Makefile.build clean
+
+video-graphics-test_install:
+	@echo ===================================================
+	@echo   Installing Video Graphics Test - Release version
+	@echo ===================================================
+	@cd example-applications; cd `find . -name "*video-graphics-test*"`; make -f Makefile.build install
+
+video-graphics-test_install_debug:
+	@echo =================================================
+	@echo   Installing Video Graphics Test - Debug version
+	@echo =================================================
+	@cd example-applications; cd `find . -name "*video-graphics-test*"`; make -f Makefile.build install_debug
