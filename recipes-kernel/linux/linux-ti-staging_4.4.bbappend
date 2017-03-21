@@ -1,4 +1,4 @@
-PR_append = ".tisdk52"
+PR_append = ".tisdk53"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:"
 
@@ -90,6 +90,7 @@ SRC_URI_append = " \
     file://0018-hsr-prp-add-vlan-support.patch \
     file://0019-hsr-prp-bail-out-if-skb-data-not-pointing-to-mac-hea.patch \
     file://0020-hsr-prp-add-sanity-check-to-accept-only-configured-p.patch \
+    file://0001-drm-omapdrm-Allow-HDMI-audio-setup-even-if-we-do-not.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
