@@ -1,0 +1,6 @@
+PV = "03.00.00.17"
+
+INC_PR = "r0"
+
+# commit ID corresponding to "DEV.SA_LLD.03.00.00.17"
+SA_LLD_SRCREV = "5f153253b1874420b04bd8f95450a2b0c8c11335"
