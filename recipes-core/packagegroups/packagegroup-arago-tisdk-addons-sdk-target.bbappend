@@ -1,4 +1,4 @@
-PR_append = "-tisdk19"
+PR_append = "-tisdk20"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -26,8 +26,9 @@ EXTRA_LIBS_append_k2hk-evm = " \
     aif2-lld-staticdev \
 "
 
-EXTRA_LIBS_append_dra7xx = " osal-dev \
-                             osal-staticdev \
-                             pruss-lld-dev \
-                             pruss-lld-staticdev \
+EXTRA_LIBS_append_am57xx-evm = " \
+    osal-dev \
+    osal-staticdev \
+    pruss-lld-dev \
+    pruss-lld-staticdev \
 "
