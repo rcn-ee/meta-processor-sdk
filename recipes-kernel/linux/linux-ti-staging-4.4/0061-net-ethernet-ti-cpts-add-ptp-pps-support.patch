@@ -1,7 +1,7 @@
-From 977f98be60eb497303a913e9ab5a183ccc90a0a4 Mon Sep 17 00:00:00 2001
+From 71a3a2fefc12499101732e82355a6a6f7f3176c0 Mon Sep 17 00:00:00 2001
 From: Grygorii Strashko <grygorii.strashko@ti.com>
 Date: Fri, 28 Oct 2016 11:41:23 -0500
-Subject: [PATCH 61/62] net: ethernet: ti: cpts: add ptp pps support
+Subject: [PATCH 61/89] net: ethernet: ti: cpts: add ptp pps support
 
 The TS_COMP output in the CPSW CPTS module is asserted for
 ts_comp_length[15:0] RCLK periods when the time_stamp value compares
@@ -46,7 +46,7 @@ index 09ab2dd..12d29ca 100644
  NetCP interface properties: Interface specification for NetCP sub-modules.
  Required properties:
 diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
-index 2eadae2..12ae308 100644
+index 54c6089..9b26d8a 100644
 --- a/drivers/net/ethernet/ti/cpts.c
 +++ b/drivers/net/ethernet/ti/cpts.c
 @@ -31,9 +31,13 @@

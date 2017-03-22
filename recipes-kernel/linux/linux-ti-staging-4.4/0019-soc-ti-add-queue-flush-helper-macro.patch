@@ -1,7 +1,7 @@
-From fe6f0e638f90568ede3bd496416d28cef382f6f7 Mon Sep 17 00:00:00 2001
+From 9af13b49aeb470556df1419d9cf95fae833a1fd1 Mon Sep 17 00:00:00 2001
 From: Aurelien Jacquiot <a-jacquiot@ti.com>
 Date: Fri, 10 Jun 2016 19:59:57 -0400
-Subject: [PATCH 19/58] soc: ti: add queue flush helper macro
+Subject: [PATCH 19/89] soc: ti: add queue flush helper macro
 
 This patch adds a macro for the knav_queue_device_control
 helper for KNAV_QUEUE_FLUSH.

@@ -1,7 +1,7 @@
-From c51a1e3691d5a6f003eba5d1edb44ddd2a8660f9 Mon Sep 17 00:00:00 2001
+From c3e64f502ac69ce79ebffa85779fc35f3ada8dbd Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 29 Apr 2016 16:07:36 -0400
-Subject: [PATCH 10/58] soc: ti: saving qmss clock in driver storage
+Subject: [PATCH 10/89] soc: ti: saving qmss clock in driver storage
 
 Some QMSS drivers requires the knowledge of the
 clock rate at which the QMSS hardware subsystem
@@ -56,7 +56,7 @@ index 50b753f..0859b1e 100644
  	unsigned				num_queues;
  	unsigned				num_queues_in_use;
 diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 1309dce..6088423 100644
+index 36c421f..30bdcff 100644
 --- a/drivers/soc/ti/knav_qmss_queue.c
 +++ b/drivers/soc/ti/knav_qmss_queue.c
 @@ -16,6 +16,7 @@

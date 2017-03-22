@@ -1,7 +1,7 @@
-From d5ea21e407eacf6f7182b96c13079c8657a2479d Mon Sep 17 00:00:00 2001
+From e53924aa37a8e6e0c310930c2f72454f7ea65dd1 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 11 Oct 2016 05:41:27 -0400
-Subject: [PATCH 59/62] rapidio: keystone: fix 10gbe link drop problem when
+Subject: [PATCH 59/89] rapidio: keystone: fix 10gbe link drop problem when
  other serdeses are enabled
 
 It is reported that, on certain customer boards,

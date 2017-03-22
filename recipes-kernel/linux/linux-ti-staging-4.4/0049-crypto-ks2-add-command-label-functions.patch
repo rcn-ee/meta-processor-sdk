@@ -1,7 +1,7 @@
-From e69f7b789e1db51cf0f2861506905b01cb6de84d Mon Sep 17 00:00:00 2001
+From 781d54f16d61ee20e6b9995234453fb38594b07e Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Jul 2016 14:13:36 -0400
-Subject: [PATCH 49/58] crypto: ks2: add command label functions
+Subject: [PATCH 49/89] crypto: ks2: add command label functions
 
 KS2 SA hardware performs transformations accordingly to the instructions
 given to it in the packet hardware descriptor ps_info fields.

@@ -1,7 +1,7 @@
-From f983ed514a6bfb3dedb9a440ad98d7f701945e54 Mon Sep 17 00:00:00 2001
+From ac7040d7d678e1b88d64f2af1940d60f665a6f89 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 1 Sep 2016 15:57:32 -0400
-Subject: [PATCH 33/58] phy: keystone: fix async abort during probe on k2g soc
+Subject: [PATCH 33/89] phy: keystone: fix async abort during probe on k2g soc
 
 SerDes is part of the peripheral device. With recent change to the
 keystone SerDes driver, the phy provider may get initialized

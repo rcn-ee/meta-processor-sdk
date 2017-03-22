@@ -1,7 +1,7 @@
-From 2e7551a83f2934d0d565954ccb7cfdb605c604b3 Mon Sep 17 00:00:00 2001
+From f19f68ce43a62b469f008135467ed91fd64a7f51 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 15 Sep 2016 12:45:13 -0400
-Subject: [PATCH 38/58] net: netcp: ethss: Do not read 10gbe pcsr reg if no
+Subject: [PATCH 38/89] net: netcp: ethss: Do not read 10gbe pcsr reg if no
  serdes phy defined
 
 If there is no serdes phy defined, i.e. no individual SerDes
@@ -18,10 +18,10 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index aafc827..b4c354f 100644
+index 1eca135..eb11a48 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -139,6 +139,8 @@
+@@ -141,6 +141,8 @@
  #define	GBE_RXHOOK_ORDER			0
  #define GBE_DEFAULT_ALE_AGEOUT			30
  #define SLAVE_LINK_IS_XGMII(s) ((s)->link_interface >= XGMII_LINK_MAC_PHY)
@@ -30,7 +30,7 @@ index aafc827..b4c354f 100644
  #define SLAVE_LINK_IS_RGMII(s) \
  	(((s)->link_interface >= RGMII_LINK_MAC_PHY) && \
  	 ((s)->link_interface <= RGMII_LINK_MAC_PHY_NO_MDIO))
-@@ -1980,6 +1982,12 @@ static void netcp_ethss_link_state_action(struct gbe_priv *gbe_dev,
+@@ -2017,6 +2019,12 @@ static void netcp_ethss_link_state_action(struct gbe_priv *gbe_dev,
  	}
  
  	if (slave->link_interface == XGMII_LINK_MAC_MAC_FORCED) {
@@ -43,7 +43,7 @@ index aafc827..b4c354f 100644
  		if (up) {
  			if (slave->link_recover_thresh ||
  			    slave->link_recovering) {
-@@ -2044,7 +2052,7 @@ static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
+@@ -2081,7 +2089,7 @@ static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
  		} else
  			sw_link_state = netcp_sgmii_get_port_link(
  						SGMII_BASE(gbe_dev, sp), sp);
@@ -52,7 +52,7 @@ index aafc827..b4c354f 100644
  		/* read status from pcsr status reg */
  		ret = regmap_read(gbe_dev->pcsr_regmap,
  				  XGBE10_PCSR_RX_STATUS(sp), &stat);
-@@ -2062,14 +2070,10 @@ static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
+@@ -2099,14 +2107,10 @@ static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
  	if (atomic_xchg(&slave->link_state, link_state) != link_state) {
  		netcp_ethss_link_state_action(gbe_dev, ndev, slave,
  					      link_state);

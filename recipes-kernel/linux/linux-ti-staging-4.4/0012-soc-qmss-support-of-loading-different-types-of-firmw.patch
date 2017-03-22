@@ -1,7 +1,7 @@
-From d736350c4391350431c40f1c1bf524c9926dfd1e Mon Sep 17 00:00:00 2001
+From 5667b934b37325709d13f9010d7cc1a5a50f9306 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Sat, 5 Mar 2016 10:23:30 -0500
-Subject: [PATCH 12/58] soc: qmss: support of loading different types of
+Subject: [PATCH 12/89] soc: qmss: support of loading different types of
  firmware to pdsp
 
 Prior to this patch, it only supports the loading of accumulator
@@ -81,7 +81,7 @@ index 5baf15a..e783efe 100644
  			info->pdsp_id, range->name);
  		return -ENODEV;
 diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 6088423..7db75a0 100644
+index 30bdcff..e6cecfe 100644
 --- a/drivers/soc/ti/knav_qmss_queue.c
 +++ b/drivers/soc/ti/knav_qmss_queue.c
 @@ -1595,6 +1595,7 @@ static int knav_queue_init_pdsps(struct knav_device *kdev,

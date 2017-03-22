@@ -1,4 +1,4 @@
-PR_append = ".tisdk53"
+PR_append = ".tisdk54"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:"
 
@@ -65,32 +65,33 @@ SRC_URI_append = " \
     file://0060-net-ethernet-ti-cpts-drop-excessive-writes-to-CTRL-a.patch \
     file://0061-net-ethernet-ti-cpts-add-ptp-pps-support.patch \
     file://0062-ARM-dts-keystone-k2e-l-g-enable-cpts-ts_comp.patch \
-    file://0001-net-hsr-Added-support-for-HSR-v1.patch \
-    file://0002-ti_config_fragment-connectivity-enable-HSR.patch \
-    file://0001-ARM-dts-am335x-boneblack-spi0-add-spi0-configuration.patch \
-    file://0002-ARM-dts-am335x-boneblack-iot-cape-add-custom-device-.patch \
-    file://0003-ti_config_fragments-am33xx_only-enable-spidev-module.patch \
-    file://tiL-4.4-AD-v2-2-2-drm-omap-Create-fbdev-emulation-only-for-the-first-DMR-connector.patch \
-    file://0002-hsr-add-debugfs-support-for-display-node-list.patch \
-    file://0003-hsr-introduce-rx-offload-feature-flags-for-HSR-and-P.patch \
-    file://0004-hsr-update-to-support-lre-rx-and-l2-forward-offload.patch \
-    file://0005-hsr-add-tx-stats-for-master-interface.patch \
-    file://0006-hsr-remove-the-warn_once-for-non-hsr-frame.patch \
-    file://0007-hsr-add-address-B-port-in-the-debugfs-print.patch \
-    file://0008-hsr-cleanup-to-fix-coding-style-and-checkpatch-issue.patch \
-    file://0009-hsr-preparatary-update-for-adding-prp-support.patch \
-    file://0010-hsr-rename-functions-to-introduce-prp-protocol-suppo.patch \
-    file://0011-hsr-rename-files-to-introduce-prp-protocol-support.patch \
-    file://0012-hsr-move-notification-handling-to-a-common-file-for-.patch \
-    file://0013-hsr-add-netlink-interface-to-create-prp-device.patch \
-    file://0014-prp-add-supervision-frame-generation-and-handling-su.patch \
-    file://0015-prp-add-packet-handling-support.patch \
-    file://0016-hsr-prp-add-LRE-stats-support.patch \
-    file://0017-hsr-prp-improvement-and-fixes-for-lan_id-handling.patch \
-    file://0018-hsr-prp-add-vlan-support.patch \
-    file://0019-hsr-prp-bail-out-if-skb-data-not-pointing-to-mac-hea.patch \
-    file://0020-hsr-prp-add-sanity-check-to-accept-only-configured-p.patch \
-    file://0001-drm-omapdrm-Allow-HDMI-audio-setup-even-if-we-do-not.patch \
+    file://0063-net-hsr-Added-support-for-HSR-v1.patch \
+    file://0064-ti_config_fragment-connectivity-enable-HSR.patch \
+    file://0065-ARM-dts-am335x-boneblack-spi0-add-spi0-configuration.patch \
+    file://0066-ARM-dts-am335x-boneblack-iot-cape-add-custom-device-.patch \
+    file://0067-ti_config_fragments-am33xx_only-enable-spidev-module.patch \
+    file://0068-hsr-add-debugfs-support-for-display-node-list.patch \
+    file://0069-hsr-introduce-rx-offload-feature-flags-for-HSR-and-P.patch \
+    file://0070-hsr-update-to-support-lre-rx-and-l2-forward-offload.patch \
+    file://0071-hsr-add-tx-stats-for-master-interface.patch \
+    file://0072-hsr-remove-the-warn_once-for-non-hsr-frame.patch \
+    file://0073-hsr-add-address-B-port-in-the-debugfs-print.patch \
+    file://0074-hsr-cleanup-to-fix-coding-style-and-checkpatch-issue.patch \
+    file://0075-hsr-preparatary-update-for-adding-prp-support.patch \
+    file://0076-hsr-rename-functions-to-introduce-prp-protocol-suppo.patch \
+    file://0077-hsr-rename-files-to-introduce-prp-protocol-support.patch \
+    file://0078-hsr-move-notification-handling-to-a-common-file-for-.patch \
+    file://0079-hsr-add-netlink-interface-to-create-prp-device.patch \
+    file://0080-prp-add-supervision-frame-generation-and-handling-su.patch \
+    file://0081-prp-add-packet-handling-support.patch \
+    file://0082-hsr-prp-add-LRE-stats-support.patch \
+    file://0083-hsr-prp-improvement-and-fixes-for-lan_id-handling.patch \
+    file://0084-hsr-prp-add-vlan-support.patch \
+    file://0085-hsr-prp-bail-out-if-skb-data-not-pointing-to-mac-hea.patch \
+    file://0086-hsr-prp-add-sanity-check-to-accept-only-configured-p.patch \
+    file://0087-drm-omap-Create-fbdev-emulation-only-for-the-first-D.patch \
+    file://0088-drm-omapdrm-Allow-HDMI-audio-setup-even-if-we-do-not.patch \
+    file://0089-uapi-add-missing-install-of-dma-buf.h.patch \
 "
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"

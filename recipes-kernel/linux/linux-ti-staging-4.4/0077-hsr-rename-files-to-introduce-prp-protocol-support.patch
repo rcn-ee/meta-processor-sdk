@@ -1,13 +1,14 @@
-From 818eab0c30dffcc7bbc13118b5edb1a0913bf647 Mon Sep 17 00:00:00 2001
+From f627743752a4bf751498ac163450d14f6264c302 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 14:06:44 -0500
-Subject: [PATCH 11/20] hsr: rename files to introduce prp protocol support
+Subject: [PATCH 77/89] hsr: rename files to introduce prp protocol support
 
 To re-use files for PRP implementation, rename some of the files
 which are common across both protocol implementation. While at
 it rename the directory under net to net/hsr-prp as well.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  MAINTAINERS                    |   1 +
  net/Kconfig                    |   2 +-
@@ -75,10 +76,10 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  delete mode 100644 net/hsr/hsr_slave.h
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index ab714f5..ee03792 100644
+index 8c8b47a..c0d685a 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -5101,6 +5101,7 @@ F:	drivers/net/usb/hso.c
+@@ -5105,6 +5105,7 @@ F:	drivers/net/usb/hso.c
  
  HSR NETWORK PROTOCOL
  M:	Arvid Brodin <arvid.brodin@alten.se>

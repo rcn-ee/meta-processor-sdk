@@ -1,7 +1,7 @@
-From 34e3940b9547dd111cb07a835f7fdfe489d2cdd1 Mon Sep 17 00:00:00 2001
+From 43fcced303e2c1228072178efa05f95432dc134f Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 15 Aug 2016 12:26:06 -0400
-Subject: [PATCH 32/58] arm: dts: k2e: add dts node for netcp-sa driver
+Subject: [PATCH 32/89] arm: dts: k2e: add dts node for netcp-sa driver
 
 This patch adds dts node for netcp-sa driver to support crypto inflow mode
 
@@ -12,7 +12,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 24 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 73eeaba..473101b 100644
+index 619069cc..553f119 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -364,7 +364,8 @@ netcp: netcp@24000000 {

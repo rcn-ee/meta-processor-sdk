@@ -1,8 +1,9 @@
-From b997df7eba3cc3828ca5c8ba23b9060b6f92956f Mon Sep 17 00:00:00 2001
+From 4aa89947849a40b32d36057c6479028cc766ede6 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 14 Feb 2017 15:00:34 -0500
-Subject: [PATCH 05/20] hsr: add tx stats for master interface
+Subject: [PATCH 71/89] hsr: add tx stats for master interface
 
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr/hsr_device.c | 2 ++
  1 file changed, 2 insertions(+)

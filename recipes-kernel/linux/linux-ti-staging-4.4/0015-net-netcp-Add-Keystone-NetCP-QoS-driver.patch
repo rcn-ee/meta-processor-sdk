@@ -1,7 +1,7 @@
-From 1ac0a2d2fb8b8f9ce3f86d2fe2cac93a13e57560 Mon Sep 17 00:00:00 2001
+From 39deeba4e4f1b76bb17cd469c6d083684f8c2840 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 18 May 2016 08:22:14 -0400
-Subject: [PATCH 15/58] net: netcp: Add Keystone NetCP QoS driver
+Subject: [PATCH 15/89] net: netcp: Add Keystone NetCP QoS driver
 
 This patch adds a netcp qos driver. This driver
 sets up the hooks (txpipes) to the QMSS QoS
@@ -95,7 +95,7 @@ index f6361b69..7576fea 100644
  	tristate "TI ThunderLAN support"
  	depends on (PCI || EISA)
 diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
-index 9404d30..2ad9dc2 100644
+index 9404d30..2ad9dc24 100644
 --- a/drivers/net/ethernet/ti/Makefile
 +++ b/drivers/net/ethernet/ti/Makefile
 @@ -25,5 +25,7 @@ obj-$(CONFIG_TI_KEYSTONE_NETCP_PA) += keystone_netcp_pa.o

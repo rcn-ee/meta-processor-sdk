@@ -1,7 +1,7 @@
-From 35f78294a23a849dffe2ebafbf04e2fcff9c93fd Mon Sep 17 00:00:00 2001
+From 73ceb6e60f261ac362580d2a35510ed4d21a06e0 Mon Sep 17 00:00:00 2001
 From: Mark Garrett <m-garrett@ti.com>
 Date: Tue, 16 Aug 2016 08:53:15 -0500
-Subject: [PATCH 02/58] ARM: dts: am57-evm: add bindings for debugss
+Subject: [PATCH 02/89] ARM: dts: am57-evm: add bindings for debugss
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
@@ -39,10 +39,10 @@ index 0000000..79a3ba8
 +        clock-names = "sysclockin1";
 +};
 diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index b29753b..315ff36 100644
+index a05300c..3d8ada4 100644
 --- a/arch/arm/boot/dts/dra7.dtsi
 +++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -2370,6 +2370,12 @@
+@@ -2371,6 +2371,12 @@
  			clocks = <&l3_iclk_div>;
  			clock-names = "fck";
  		};

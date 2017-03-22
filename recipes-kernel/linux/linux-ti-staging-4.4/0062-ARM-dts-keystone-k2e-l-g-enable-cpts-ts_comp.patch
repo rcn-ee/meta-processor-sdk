@@ -1,7 +1,7 @@
-From 73c849fa927557029527c75e54cf72f6c2961778 Mon Sep 17 00:00:00 2001
+From b793b0bfd1c2e1f5ef0e75a4fe874dc02432ece6 Mon Sep 17 00:00:00 2001
 From: Grygorii Strashko <grygorii.strashko@ti.com>
 Date: Mon, 31 Oct 2016 17:42:04 -0500
-Subject: [PATCH 62/62] ARM: dts: keystone: k2e/l/g: enable cpts ts_comp
+Subject: [PATCH 62/89] ARM: dts: keystone: k2e/l/g: enable cpts ts_comp
 
 CPTS module of 1G Ethernet (GbE) Switch Subsystem on Keystone SoCs
 66AK2Exx/66AK2Lxx/66AK2Gxx supports time stamp comparison event and TS_COMP
@@ -19,7 +19,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 3 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 393d65e..6f94774 100644
+index 01acfa7..4aba07d 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -403,6 +403,7 @@ netcp: netcp@24000000 {

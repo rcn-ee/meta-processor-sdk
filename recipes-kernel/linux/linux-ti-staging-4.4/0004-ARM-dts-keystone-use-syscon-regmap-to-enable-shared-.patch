@@ -1,7 +1,7 @@
-From 676977002f0218770340e88a2cfcb2bc4658505e Mon Sep 17 00:00:00 2001
+From b5bbe0de62c4e187263986949380def2682bc2ee Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 13 Jan 2016 08:20:51 -0500
-Subject: [PATCH 04/58] ARM: dts: keystone: use syscon regmap to enable shared
+Subject: [PATCH 04/89] ARM: dts: keystone: use syscon regmap to enable shared
  access of QMSS INTD
 
 This patch adds syscon regmap entry for QMSS INTD (interrupt distributor)
@@ -16,7 +16,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index d6ed508..22029ac 100644
+index 9a7ede0..4081a49 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -8,6 +8,11 @@

@@ -1,7 +1,7 @@
-From cc8414748d8c766b667f8c39594e385738eb2791 Mon Sep 17 00:00:00 2001
+From cc3617d956321f2661f6125adb5a79d3a4c317b9 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 30 Sep 2016 13:15:30 -0400
-Subject: [PATCH 56/58] crypto: keystone: save device data to dev struct
+Subject: [PATCH 56/89] crypto: keystone: save device data to dev struct
 
 We need to save dev data to get access to it later
 

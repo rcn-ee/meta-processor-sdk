@@ -1,7 +1,7 @@
-From 8c0f817d47f98c288501f9611910ff00158854de Mon Sep 17 00:00:00 2001
+From 5afeb8993edb1dabf9566ecb0224d10aee4f2dd2 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Aug 2016 11:40:40 -0400
-Subject: [PATCH 28/58] ARM: dts: k2l/k2e: enable pre-classify feature
+Subject: [PATCH 28/89] ARM: dts: k2l/k2e: enable pre-classify feature
 
 This patch add pre-classify support in PA2 firmware. Also add cluster5
 node since the commands to enable this feature is send to post processing
@@ -15,7 +15,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  2 files changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 36bd6a0..73eeaba 100644
+index 8a80e74..619069cc 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -478,7 +478,6 @@ netcp: netcp@24000000 {

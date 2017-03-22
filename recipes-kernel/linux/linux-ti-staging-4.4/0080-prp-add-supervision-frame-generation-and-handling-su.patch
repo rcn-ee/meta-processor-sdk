@@ -1,7 +1,7 @@
-From 8c3b77def93bd2a935d14004ba6fffa49ccfbcc8 Mon Sep 17 00:00:00 2001
+From a04423e9f0013c756c295f65bf3397ec4204e7cc Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 17:22:38 -0500
-Subject: [PATCH 14/20] prp: add supervision frame generation and handling
+Subject: [PATCH 80/89] prp: add supervision frame generation and handling
  support
 
 Add support for sending and handling supervision frames. For PRP,
@@ -9,6 +9,7 @@ supervision frame format is similar to HSR version 0, but have a
 PRP Redunancy Control Trailor (RCT) added.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr-prp/hsr_prp_device.c   | 48 ++++++++++++++++++++++++++++++------------
  net/hsr-prp/hsr_prp_forward.c  |  4 +++-

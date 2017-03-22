@@ -1,7 +1,7 @@
-From ce26fa998c4966e8a34d9e3be569d31636a12cf7 Mon Sep 17 00:00:00 2001
+From 302a1fe4778d70ae178e7ab552e23411eb572d7c Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 13 Sep 2016 14:45:56 -0400
-Subject: [PATCH 37/58] ARM: dts: keystone: Add bindings for 10gbe MCU firmware
+Subject: [PATCH 37/89] ARM: dts: keystone: Add bindings for 10gbe MCU firmware
 
 This patch adds the devicetree bindings for 10gbe
 MCU firmware. These bindings are disabled by default.
@@ -17,7 +17,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  2 files changed, 52 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index a3a8d17..30858b2 100644
+index c66036e..64e1e0e 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -656,6 +656,32 @@ xgbe_serdes: phy@231e000 {

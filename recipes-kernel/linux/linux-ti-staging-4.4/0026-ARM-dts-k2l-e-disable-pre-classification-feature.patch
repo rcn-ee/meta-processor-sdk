@@ -1,7 +1,7 @@
-From 081acb5cb0a63688dd8c27db73064b8ad329d3b7 Mon Sep 17 00:00:00 2001
+From ab73c1afb8913f8279e96ce269c98d2159972939 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 1 Aug 2016 11:42:05 -0400
-Subject: [PATCH 26/58] ARM: dts: k2l/e: disable pre-classification feature
+Subject: [PATCH 26/89] ARM: dts: k2l/e: disable pre-classification feature
 
 Currently pre-classify BC & MC feature is available only K2HK. So disable
 this by default on these platforms.
@@ -14,7 +14,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 65bff64..36bd6a0 100644
+index 4b4b56d..8a80e74 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -478,7 +478,7 @@ netcp: netcp@24000000 {

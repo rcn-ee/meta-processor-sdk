@@ -1,7 +1,7 @@
-From 7fce97502efe2fef35c3fd8eed45f31d8e6f867d Mon Sep 17 00:00:00 2001
+From 46df1f6dc290f8cae2bc4ad26dd3fce1300ea36b Mon Sep 17 00:00:00 2001
 From: Grygorii Strashko <grygorii.strashko@ti.com>
 Date: Fri, 28 Oct 2016 00:37:51 -0500
-Subject: [PATCH 60/62] net: ethernet: ti: cpts: drop excessive writes to CTRL
+Subject: [PATCH 60/89] net: ethernet: ti: cpts: drop excessive writes to CTRL
  and INT_EN regs
 
 CPTS module and IRQs are always enabled when CPTS is registered,
@@ -17,7 +17,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 7 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
-index f862742..2eadae2 100644
+index 1b9d865..54c6089 100644
 --- a/drivers/net/ethernet/ti/cpts.c
 +++ b/drivers/net/ethernet/ti/cpts.c
 @@ -325,16 +325,9 @@ static void cpts_overflow_check(struct work_struct *work)

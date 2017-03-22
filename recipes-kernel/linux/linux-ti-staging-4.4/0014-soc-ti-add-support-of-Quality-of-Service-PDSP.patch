@@ -1,7 +1,7 @@
-From 99fc75edde5f684e47b93cab943c76ba513f4833 Mon Sep 17 00:00:00 2001
+From e5dc1ffe34a8add8d38e88d4e7e45c0e25fe21f4 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Tue, 3 May 2016 14:56:53 -0400
-Subject: [PATCH 14/58] soc: ti: add support of Quality of Service PDSP.
+Subject: [PATCH 14/89] soc: ti: add support of Quality of Service PDSP.
 
 The QoS PDSP is charged with the job of policing all packet flows
 in the system, and verifying that neither the peripherals nor the
@@ -4532,7 +4532,7 @@ index 0000000..5081e40
 +
 +#endif /* __KNAV_QMSS_QOS_H__ */
 diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index b0beebf..a946492 100644
+index 9ec099a..16bd000 100644
 --- a/drivers/soc/ti/knav_qmss_queue.c
 +++ b/drivers/soc/ti/knav_qmss_queue.c
 @@ -32,6 +32,7 @@

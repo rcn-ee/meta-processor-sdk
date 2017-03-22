@@ -1,7 +1,7 @@
-From 22359cd5e205333caa0d10613ab0b7f30108660e Mon Sep 17 00:00:00 2001
+From 42b7b8a03c23dc0341104cf385953defd3eccc32 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 15 Feb 2017 11:55:08 -0500
-Subject: [PATCH 06/20] hsr: remove the warn_once for non hsr frame
+Subject: [PATCH 72/89] hsr: remove the warn_once for non hsr frame
 
 Remove the annoying WARN_ONCE() which happens while the hsr
 interface is being setup. Also check the validity of mac B
@@ -9,6 +9,7 @@ address as it can be zero when same MAC is used on both
 interfaces.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr/hsr_framereg.c | 11 ++++++-----
  1 file changed, 6 insertions(+), 5 deletions(-)

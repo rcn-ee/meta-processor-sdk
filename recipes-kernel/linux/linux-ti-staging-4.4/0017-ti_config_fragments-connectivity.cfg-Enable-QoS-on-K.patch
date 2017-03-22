@@ -1,7 +1,7 @@
-From c1d5cd287649f3c190f052f31ea8df92ece8a71b Mon Sep 17 00:00:00 2001
+From 05eb6a5ed2d6443c3235fc307b56946d1636dda3 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Wed, 18 May 2016 08:26:58 -0400
-Subject: [PATCH 17/58] ti_config_fragments/connectivity.cfg: Enable QoS on
+Subject: [PATCH 17/89] ti_config_fragments/connectivity.cfg: Enable QoS on
  Keystone2
 
 Enables NETCP QoS on Keystone2 K2HK, K2E and K2L.
@@ -13,10 +13,10 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index 959c223..53f284f 100644
+index e485330..50a9250 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
-@@ -171,6 +171,7 @@ CONFIG_TI_KEYSTONE_NETCP_ETHSS=y
+@@ -172,6 +172,7 @@ CONFIG_TI_KEYSTONE_NETCP_ETHSS=y
  CONFIG_TI_KEYSTONE_NETCP_PA_CORE=y
  CONFIG_TI_KEYSTONE_NETCP_PA=y
  CONFIG_TI_KEYSTONE_NETCP_PA2=y
@@ -24,7 +24,7 @@ index 959c223..53f284f 100644
  CONFIG_TI_DAVINCI_EMAC=y
  CONFIG_TI_DAVINCI_MDIO=y
  CONFIG_TI_DAVINCI_CPDMA=y
-@@ -178,6 +179,7 @@ CONFIG_TI_CPSW_PHY_SEL=y
+@@ -179,6 +180,7 @@ CONFIG_TI_CPSW_PHY_SEL=y
  CONFIG_TI_CPSW_ALE=y
  CONFIG_TI_CPSW=y
  CONFIG_TI_CPTS=y

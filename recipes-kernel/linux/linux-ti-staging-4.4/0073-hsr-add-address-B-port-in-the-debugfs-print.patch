@@ -1,12 +1,13 @@
-From 9438f5cf438bc8aa5e9aacdd8a7352a9ce8e2567 Mon Sep 17 00:00:00 2001
+From 041284722ee53e399a3c29d5da9c5be28000d635 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 15 Feb 2017 12:01:14 -0500
-Subject: [PATCH 07/20] hsr: add address B port in the debugfs print
+Subject: [PATCH 73/89] hsr: add address B port in the debugfs print
 
 For debug, it will be helpful to show the address B port
 as well when displaying the remote node stats.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr/hsr_prp_debugfs.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)

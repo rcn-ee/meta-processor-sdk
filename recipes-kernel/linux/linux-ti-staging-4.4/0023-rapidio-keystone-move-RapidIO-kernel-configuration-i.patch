@@ -1,7 +1,7 @@
-From 0697e4ab796c22ad9d17467c04860e0f15b55bbb Mon Sep 17 00:00:00 2001
+From d9f08141c1204e436a1a57c110dbf6005023e808 Mon Sep 17 00:00:00 2001
 From: Aurelien Jacquiot <a-jacquiot@ti.com>
 Date: Fri, 17 Jun 2016 09:21:08 -0400
-Subject: [PATCH 23/58] rapidio: keystone: move RapidIO kernel configuration
+Subject: [PATCH 23/89] rapidio: keystone: move RapidIO kernel configuration
  into ARM bus section
 
 This patch moves RapidIO kernel configuration into
@@ -16,7 +16,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  2 files changed, 14 insertions(+)
 
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 2d35376..4bb6ae0 100644
+index 9049ac0..8e4417f 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
 @@ -1304,6 +1304,19 @@ source "drivers/pci/pcie/Kconfig"

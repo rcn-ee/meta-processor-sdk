@@ -1,7 +1,7 @@
-From 02b401033c23ac1eea3f1deac5a0d1aaaea57e5f Mon Sep 17 00:00:00 2001
+From 1351da7e5078c3944da8af75b83ac5af49f450ab Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 15 Aug 2016 12:13:54 -0400
-Subject: [PATCH 30/58] arm: dts: k2hk: add dts node for netcp-sa driver
+Subject: [PATCH 30/89] arm: dts: k2hk: add dts node for netcp-sa driver
 
 This patch adds dts node for netcp-sa driver to support crypto inflow mode
 

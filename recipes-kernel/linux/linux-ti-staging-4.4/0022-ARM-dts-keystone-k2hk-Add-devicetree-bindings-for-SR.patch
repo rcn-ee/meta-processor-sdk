@@ -1,7 +1,7 @@
-From f6db2db75d10e07c35b6e65aa15633b896447f57 Mon Sep 17 00:00:00 2001
+From bd6fe9993cf0687632efdefe9fe1c867d803eb0b Mon Sep 17 00:00:00 2001
 From: Aurelien Jacquiot <a-jacquiot@ti.com>
 Date: Fri, 17 Jun 2016 09:19:42 -0400
-Subject: [PATCH 22/58] ARM: dts: keystone: k2hk: Add devicetree bindings for
+Subject: [PATCH 22/89] ARM: dts: keystone: k2hk: Add devicetree bindings for
  SRIO driver
 
 Signed-off-by: Aurelien Jacquiot <a-jacquiot@ti.com>

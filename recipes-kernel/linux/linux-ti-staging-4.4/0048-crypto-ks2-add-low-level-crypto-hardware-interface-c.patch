@@ -1,7 +1,7 @@
-From 395f35b90911732b861e51e3b2368b5b3ad63616 Mon Sep 17 00:00:00 2001
+From 3e55a6495f3987fdde112be857b432d2d7708ee6 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 6 Jul 2016 15:40:20 -0400
-Subject: [PATCH 48/58] crypto: ks2: add low level crypto hardware interface
+Subject: [PATCH 48/89] crypto: ks2: add low level crypto hardware interface
  code
 
 The driver is based on TI SA Low Level Driver (LLD). This commit introduces

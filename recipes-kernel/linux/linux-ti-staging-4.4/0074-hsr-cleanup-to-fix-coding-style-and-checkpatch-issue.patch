@@ -1,13 +1,14 @@
-From 39a0eefd849159a884ffbe1e83d65d03d3369055 Mon Sep 17 00:00:00 2001
+From ef6eca70d1e72254cecd662ae92c38aa82d4dcd2 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 15 Feb 2017 15:55:20 -0500
-Subject: [PATCH 08/20] hsr: cleanup to fix coding style and checkpatch issues
+Subject: [PATCH 74/89] hsr: cleanup to fix coding style and checkpatch issues
 
 Fix camel case usage and checkpatch related issues in the code
 as a preparatory patch before adding more code to add support
 for PRP protocol in the driver.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr/hsr_device.c      | 66 +++++++++++++++++------------------
  net/hsr/hsr_forward.c     | 58 +++++++++++++++++--------------

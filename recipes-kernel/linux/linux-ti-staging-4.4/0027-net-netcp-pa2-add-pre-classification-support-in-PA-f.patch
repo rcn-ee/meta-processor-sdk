@@ -1,7 +1,7 @@
-From 39406293e7f674eff52f693b942ba4cba0c38e2b Mon Sep 17 00:00:00 2001
+From 83c3287d69683a6cc3927a8e41157cbb15eda266 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 3 Aug 2016 11:38:10 -0400
-Subject: [PATCH 27/58] net: netcp: pa2: add pre-classification support in PA
+Subject: [PATCH 27/89] net: netcp: pa2: add pre-classification support in PA
  firmware
 
 Pre-classification of BC and MC in PA firmware helps avoiding explicit
@@ -513,7 +513,7 @@ index a8d0d3f..b4c4fc07 100644
  	*error = pa_core_init_common_rx_resources(core_dev);
  	if (*error)
 diff --git a/drivers/net/ethernet/ti/netcp_pa_core.h b/drivers/net/ethernet/ti/netcp_pa_core.h
-index b87b028..3c6f31d 100644
+index b87b028..3c6f31df 100644
 --- a/drivers/net/ethernet/ti/netcp_pa_core.h
 +++ b/drivers/net/ethernet/ti/netcp_pa_core.h
 @@ -132,6 +132,7 @@ struct pa_hw {

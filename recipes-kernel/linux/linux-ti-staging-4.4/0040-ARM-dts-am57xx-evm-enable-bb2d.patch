@@ -1,7 +1,7 @@
-From 14c33ad1b6190e14f71e0eb8dc8e06a382a874a2 Mon Sep 17 00:00:00 2001
+From d19d47e468c6d11a2cfd7bf8d1886888fc2ff208 Mon Sep 17 00:00:00 2001
 From: Eric Ruei <e-ruei1@ti.com>
 Date: Fri, 16 Sep 2016 14:35:25 -0400
-Subject: [PATCH 40/58] ARM: dts: am57xx evm: enable bb2d
+Subject: [PATCH 40/89] ARM: dts: am57xx evm: enable bb2d
 
 Signed-off-by: Eric Ruei <e-ruei1@ti.com>
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
@@ -26,10 +26,10 @@ index da403a8..b04f6d4 100644
  	status = "ok";
  	vdda-supply = <&ldo4_reg>;
 diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-index 4fcce26..2d27e04 100644
+index efb968b..995d781 100644
 --- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
 +++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-@@ -586,6 +586,10 @@
+@@ -593,6 +593,10 @@
  	};
  };
  

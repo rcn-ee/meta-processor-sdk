@@ -1,7 +1,7 @@
-From 370ee1d3a43f7603b5f098a9855830bdbeb7c889 Mon Sep 17 00:00:00 2001
+From a27227695ee5b9dfa874ed1b79b0b9c2670258a7 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 1 Sep 2016 13:25:47 -0400
-Subject: [PATCH 34/58] ARM: dts: k2g: disable dma-coherency for PCIe
+Subject: [PATCH 34/89] ARM: dts: k2g: disable dma-coherency for PCIe
 
 The DMA coherency is broken for Keystone PCIe in the latest kernel . Add
 an intermediate solution of removing the dma-coherency property in

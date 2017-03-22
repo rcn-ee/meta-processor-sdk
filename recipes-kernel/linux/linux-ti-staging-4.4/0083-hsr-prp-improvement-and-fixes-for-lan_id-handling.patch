@@ -1,7 +1,7 @@
-From 12f6adce2a89aa6574bc2246d6b411bf4c5ce6df Mon Sep 17 00:00:00 2001
+From e53d111b69d74817781facdbcf5b6910fca6ceaa Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 21 Feb 2017 16:37:08 -0500
-Subject: [PATCH 17/20] hsr/prp: improvement and fixes for lan_id handling
+Subject: [PATCH 83/89] hsr/prp: improvement and fixes for lan_id handling
 
 Currently lan id is not set in supervisor frames. Also do a sanity
 check for frames at the ingress for proper lan_id and update the
@@ -17,6 +17,7 @@ instead of calling the skb_get_PRP_rct() again as the same is available
 to the caller.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr-prp/hsr_prp_forward.c  | 117 +++++++++++++++++++++++++++++++++++------
  net/hsr-prp/hsr_prp_framereg.c |   2 +-

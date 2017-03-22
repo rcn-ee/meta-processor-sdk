@@ -1,7 +1,7 @@
-From b4a8bef68b28d24afdfb0623103bcacee92edf8d Mon Sep 17 00:00:00 2001
+From 14eb6a70cb713a873f5d6ff5b24a073597f9d5cd Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 21 Feb 2017 16:23:36 -0500
-Subject: [PATCH 16/20] hsr:prp: add LRE stats support
+Subject: [PATCH 82/89] hsr:prp: add LRE stats support
 
 Add LRE stats struct to hsr/prp device node private data to allow
 update of various stats at the slave interfaces and master interface
@@ -11,6 +11,7 @@ Add debugfs file stats to show LRE stats for hsr and prp nodes from
 user space
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr-prp/hsr_prp_debugfs.c | 84 ++++++++++++++++++++++++++++++++++++++-----
  net/hsr-prp/hsr_prp_forward.c | 16 +++++++--

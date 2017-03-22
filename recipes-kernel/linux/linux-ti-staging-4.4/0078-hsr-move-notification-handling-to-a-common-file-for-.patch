@@ -1,13 +1,14 @@
-From 0db24e65e3ceb5803b1537502dfcda9d03553c40 Mon Sep 17 00:00:00 2001
+From 9aa28ebc67cc65d50fa0da079e8b083c94a1cdb2 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 15:02:41 -0500
-Subject: [PATCH 12/20] hsr: move notification handling to a common file for
+Subject: [PATCH 78/89] hsr: move notification handling to a common file for
  re-use
 
 Move the code for handling interface notification to a common file
 hsr_prp_main.c so that it can be re-used from prp main code as well.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr-prp/Makefile       |   5 +-
  net/hsr-prp/hsr_main.c     | 127 +++++++--------------------------------------

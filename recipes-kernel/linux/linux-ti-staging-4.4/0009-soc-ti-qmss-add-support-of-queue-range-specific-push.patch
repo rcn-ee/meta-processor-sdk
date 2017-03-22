@@ -1,7 +1,7 @@
-From e7e0c82fe6570a902f0dbdbfc0d9ea788233be46 Mon Sep 17 00:00:00 2001
+From a6daab27b14a0052a31ea7e46f2260dcc38d76ca Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Mon, 7 Mar 2016 04:20:45 -0500
-Subject: [PATCH 09/58] soc: ti: qmss: add support of queue range specific push
+Subject: [PATCH 09/89] soc: ti: qmss: add support of queue range specific push
  pop methods
 
 When a range of hardware queues are monitored and
@@ -34,7 +34,7 @@ index 60e3f3c..50b753f 100644
  
  struct knav_irq_info {
 diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 82aebac..1309dce 100644
+index 71f8cec..36c421f 100644
 --- a/drivers/soc/ti/knav_qmss_queue.c
 +++ b/drivers/soc/ti/knav_qmss_queue.c
 @@ -633,7 +633,18 @@ int knav_queue_push(void *qhandle, dma_addr_t dma,

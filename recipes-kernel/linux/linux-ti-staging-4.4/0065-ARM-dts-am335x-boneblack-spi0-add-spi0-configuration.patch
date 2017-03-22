@@ -1,7 +1,7 @@
-From 46154b6c3e496f1904cc731ea7201b7b86e622db Mon Sep 17 00:00:00 2001
+From 2b8e2146320f1da148341a9b9ffe70b47e844282 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Wed, 30 Nov 2016 13:21:56 -0500
-Subject: [PATCH 1/4] ARM: dts: am335x-boneblack-spi0: add spi0 configuration
+Subject: [PATCH 65/89] ARM: dts: am335x-boneblack-spi0: add spi0 configuration
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---

@@ -1,7 +1,7 @@
-From a221fbb84abf1c4e633eb25972a9356b39edc7ca Mon Sep 17 00:00:00 2001
+From 27c35c6598b5eebb6b17ccf1ba0a9f907e53ad8b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 13 Feb 2017 16:00:06 -0500
-Subject: [PATCH 04/20] hsr: update to support lre rx and l2 forward offload
+Subject: [PATCH 70/89] hsr: update to support lre rx and l2 forward offload
 
 hsr LRE functionality as well L2 forwarding is expected to be offloaded
 to hardware (h/w) or firmware (f/w). When the LRE Ingress function is
@@ -17,6 +17,7 @@ forwarding happens in the hsr L2 forwarder and the same is assumed to be
 handled at h/w or f/w.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr/hsr_device.c  | 28 +++++++++++++++++--
  net/hsr/hsr_forward.c | 76 +++++++++++++++++++++++++++++++++++++++------------

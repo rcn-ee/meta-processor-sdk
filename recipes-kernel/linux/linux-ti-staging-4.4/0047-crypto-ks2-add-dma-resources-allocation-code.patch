@@ -1,7 +1,7 @@
-From 034ba1dbe3bdcf78c677cf6c238d62444244b0a7 Mon Sep 17 00:00:00 2001
+From 9e85732a22c1d6991547d681f1b13eb7ebdf3f3c Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 6 Jul 2016 14:07:13 -0400
-Subject: [PATCH 47/58] crypto: ks2: add dma resources allocation code
+Subject: [PATCH 47/89] crypto: ks2: add dma resources allocation code
 
 Keystone crypto accelerator uses KS2 HW queues and dma channels for its
 operation. This commit adds code to allocate required memory and buffer

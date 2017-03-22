@@ -1,7 +1,7 @@
-From 2a521518129dcedffaef2173dfca65125c6eb0c9 Mon Sep 17 00:00:00 2001
+From 0e3f93434b2409bb9ac098eeae53a8fd321a56fe Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 9 Mar 2017 16:33:13 -0500
-Subject: [PATCH 19/20] hsr/prp: bail out if skb data not pointing to mac
+Subject: [PATCH 85/89] hsr/prp: bail out if skb data not pointing to mac
  header
 
 Currently if hsr/prp driver receives a packet and the mac
@@ -11,6 +11,7 @@ the mac header is matching with skb->data. This patch adds the
 additional check and bail out.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr-prp/hsr_prp_slave.c | 14 ++++++++++----
  1 file changed, 10 insertions(+), 4 deletions(-)

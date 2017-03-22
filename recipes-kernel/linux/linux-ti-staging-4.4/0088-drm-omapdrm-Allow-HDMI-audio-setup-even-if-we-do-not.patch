@@ -1,8 +1,8 @@
-From 8810e854d96a2d40e9d587be84b041328ec8944d Mon Sep 17 00:00:00 2001
+From aaaa2aca298455ac2a03365be262a919c16ebc9b Mon Sep 17 00:00:00 2001
 From: Jyri Sarha <jsarha@ti.com>
 Date: Thu, 16 Mar 2017 12:05:04 +0200
-Subject: [tiL4.9-AD PATCH] drm/omapdrm: Allow HDMI audio setup even if we do
- not have video configured
+Subject: [PATCH 88/89] drm/omapdrm: Allow HDMI audio setup even if we do not
+ have video configured
 
 Allow HDMI audio setup even if we do not have video configured. Audio
 will get configured at the same time with video if the video is
@@ -10,18 +10,17 @@ configured soon enough. If it is not the audio DMA will timeout in
 couple of seconds and audio playback will be aborted.
 
 Signed-off-by: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
-Should fix: PLSDK-1185
-
  drivers/gpu/drm/omapdrm/dss/hdmi4.c | 33 ++++++++++++++-------------------
  drivers/gpu/drm/omapdrm/dss/hdmi5.c | 37 ++++++++++++++++---------------------
  2 files changed, 30 insertions(+), 40 deletions(-)
 
 diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi4.c b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
-index e7162c1..2ad402b 100644
+index ed3ca97..443c6ad 100644
 --- a/drivers/gpu/drm/omapdrm/dss/hdmi4.c
 +++ b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
-@@ -567,21 +567,16 @@ static int hdmi_audio_startup(struct device *dev,
+@@ -576,21 +576,16 @@ static int hdmi_audio_startup(struct device *dev,
  			      void (*abort_cb)(struct device *dev))
  {
  	struct omap_hdmi *hd = dev_get_drvdata(dev);
@@ -45,7 +44,7 @@ index e7162c1..2ad402b 100644
  }
  
  static int hdmi_audio_shutdown(struct device *dev)
-@@ -602,12 +597,14 @@ static int hdmi_audio_start(struct device *dev)
+@@ -611,12 +606,14 @@ static int hdmi_audio_start(struct device *dev)
  	struct omap_hdmi *hd = dev_get_drvdata(dev);
  	unsigned long flags;
  
@@ -63,7 +62,7 @@ index e7162c1..2ad402b 100644
  	hd->audio_playing = true;
  
  	spin_unlock_irqrestore(&hd->audio_playing_lock, flags);
-@@ -638,17 +635,15 @@ static int hdmi_audio_config(struct device *dev,
+@@ -647,17 +644,15 @@ static int hdmi_audio_config(struct device *dev,
  
  	mutex_lock(&hd->lock);
  
@@ -89,10 +88,10 @@ index e7162c1..2ad402b 100644
  	mutex_unlock(&hd->lock);
  
 diff --git a/drivers/gpu/drm/omapdrm/dss/hdmi5.c b/drivers/gpu/drm/omapdrm/dss/hdmi5.c
-index 678dfb0..dc7f656 100644
+index 5493022..8edb8eb 100644
 --- a/drivers/gpu/drm/omapdrm/dss/hdmi5.c
 +++ b/drivers/gpu/drm/omapdrm/dss/hdmi5.c
-@@ -593,21 +593,16 @@ static int hdmi_audio_startup(struct device *dev,
+@@ -602,21 +602,16 @@ static int hdmi_audio_startup(struct device *dev,
  			      void (*abort_cb)(struct device *dev))
  {
  	struct omap_hdmi *hd = dev_get_drvdata(dev);
@@ -116,7 +115,7 @@ index 678dfb0..dc7f656 100644
  }
  
  static int hdmi_audio_shutdown(struct device *dev)
-@@ -628,12 +623,14 @@ static int hdmi_audio_start(struct device *dev)
+@@ -637,12 +632,14 @@ static int hdmi_audio_start(struct device *dev)
  	struct omap_hdmi *hd = dev_get_drvdata(dev);
  	unsigned long flags;
  
@@ -134,7 +133,7 @@ index 678dfb0..dc7f656 100644
  	hd->audio_playing = true;
  
  	spin_unlock_irqrestore(&hd->audio_playing_lock, flags);
-@@ -645,7 +642,8 @@ static void hdmi_audio_stop(struct device *dev)
+@@ -654,7 +651,8 @@ static void hdmi_audio_stop(struct device *dev)
  	struct omap_hdmi *hd = dev_get_drvdata(dev);
  	unsigned long flags;
  
@@ -144,7 +143,7 @@ index 678dfb0..dc7f656 100644
  
  	spin_lock_irqsave(&hd->audio_playing_lock, flags);
  
-@@ -664,18 +662,15 @@ static int hdmi_audio_config(struct device *dev,
+@@ -673,18 +671,15 @@ static int hdmi_audio_config(struct device *dev,
  
  	mutex_lock(&hd->lock);
  

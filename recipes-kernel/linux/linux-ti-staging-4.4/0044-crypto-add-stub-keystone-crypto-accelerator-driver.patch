@@ -1,7 +1,7 @@
-From 5d951d5006b8ac0862c2532cefc5bb053dae9c02 Mon Sep 17 00:00:00 2001
+From 57ca9a111550016e72ca198dedfd185f34939a2f Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 14 Jun 2016 09:01:00 -0400
-Subject: [PATCH 44/58] crypto: add stub keystone crypto accelerator driver
+Subject: [PATCH 44/89] crypto: add stub keystone crypto accelerator driver
 
 This driver only enables clock for now
 

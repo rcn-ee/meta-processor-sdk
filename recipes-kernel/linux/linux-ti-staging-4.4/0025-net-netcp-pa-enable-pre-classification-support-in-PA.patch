@@ -1,7 +1,7 @@
-From 3c39359cc51e5c7f26250d5496d111925f1ef970 Mon Sep 17 00:00:00 2001
+From 7261459d5352cb92d013e52ab314886976c35730 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 29 Jul 2016 11:02:16 -0400
-Subject: [PATCH 25/58] net: netcp: pa: enable pre-classification support in PA
+Subject: [PATCH 25/89] net: netcp: pa: enable pre-classification support in PA
  firmware
 
 Currently Linux PA driver adds specific rules to forward BC and MC

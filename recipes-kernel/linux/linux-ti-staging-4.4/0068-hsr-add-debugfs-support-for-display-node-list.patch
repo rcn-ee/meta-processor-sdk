@@ -1,12 +1,13 @@
-From 90c3db8e7f908ebe315d265ee7bfd541d1b39ff2 Mon Sep 17 00:00:00 2001
+From ec9f02e34d33ed6b88805e0b14484b6ce35b6735 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 10 Feb 2017 17:27:32 -0500
-Subject: [PATCH 02/20] hsr: add debugfs support for display node list
+Subject: [PATCH 68/89] hsr: add debugfs support for display node list
 
 This adds a debugfs interface to allow display the nodes learned
 by the hsr master.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/hsr/Makefile          |   1 +
  net/hsr/hsr_device.c      |   6 +++

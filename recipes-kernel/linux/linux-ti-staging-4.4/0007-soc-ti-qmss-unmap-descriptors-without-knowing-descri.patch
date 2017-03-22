@@ -1,7 +1,7 @@
-From 59a2f7a87eddb7ebd7ba4dcddf55f52f264db62b Mon Sep 17 00:00:00 2001
+From de46bfa4a798f4f99f2a9a7efd252412617e8ba3 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 28 Apr 2016 17:34:00 -0400
-Subject: [PATCH 07/58] soc: ti: qmss: unmap descriptors without knowing
+Subject: [PATCH 07/89] soc: ti: qmss: unmap descriptors without knowing
  descriptor pool
 
 Prior to this patch, it is always assumed that the descriptor pool from
@@ -30,7 +30,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  2 files changed, 41 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 369bd5d..82aebac 100644
+index 2e23e8e..71f8cec 100644
 --- a/drivers/soc/ti/knav_qmss_queue.c
 +++ b/drivers/soc/ti/knav_qmss_queue.c
 @@ -743,6 +743,22 @@ void *knav_pool_desc_dma_to_virt(void *ph, dma_addr_t dma)

@@ -1,8 +1,9 @@
-From 175a43aa8ee995d20d253c199f2acc6a4f8a2712 Mon Sep 17 00:00:00 2001
+From c7bd53b4606968ae9a80b8992c7cd650aff81f2b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 15 Feb 2017 13:54:44 -0500
-Subject: [PATCH 09/20] hsr: preparatary update for adding prp support
+Subject: [PATCH 75/89] hsr: preparatary update for adding prp support
 
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  net/Makefile                         |  2 +-
  net/hsr/Kconfig                      | 38 ++++++++++++++++++++++--------------
@@ -91,7 +92,7 @@ index d74d89d..d7ab933 100644
  hsr-y			:= hsr_main.o hsr_framereg.o hsr_device.o \
  			   hsr_netlink.o hsr_slave.o hsr_forward.o
 diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
-index 3267006..6867cba 100644
+index 7a68c22..8ba94b2 100644
 --- a/ti_config_fragments/connectivity.cfg
 +++ b/ti_config_fragments/connectivity.cfg
 @@ -45,7 +45,7 @@ CONFIG_MTD_NAND_OMAP_BCH_BUILD=y

@@ -1,7 +1,7 @@
-From 240d40b132278df03e5d2ac995185e49061b2edf Mon Sep 17 00:00:00 2001
+From 0cc16adeaea3f65349821ca8005ede1f99de6f8b Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 22 Jul 2016 20:24:06 -0400
-Subject: [PATCH 36/58] phy: keystone: add support 10gbe mcu firmware
+Subject: [PATCH 36/89] phy: keystone: add support 10gbe mcu firmware
 
 The Keystone 10gbe SerDes has an option to use
 an MCU firmware that does the configuration of

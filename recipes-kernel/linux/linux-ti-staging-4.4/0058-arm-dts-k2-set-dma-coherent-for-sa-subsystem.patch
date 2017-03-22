@@ -1,7 +1,7 @@
-From add9437569edad2642bbe3a50e5150adaf889a50 Mon Sep 17 00:00:00 2001
+From cb6dc7c82fea4b624bdb4f875ed051413b62ffb5 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
-Date: Fri, 30 Sep 2016 13:26:28 -0400
-Subject: [PATCH 58/58] arm: dts: k2: set dma-coherent for sa subsystem
+Date: Tue, 21 Mar 2017 13:28:38 -0400
+Subject: [PATCH 58/89] arm: dts: k2: set dma-coherent for sa subsystem
 
 We moved crypto node one level down in dts. To keep its dma properties,
 we need to set dma-coherent and dma-ranges properties for its parent.
@@ -15,12 +15,12 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index f5fdc92..393d65e 100644
+index a388a8c..01acfa7 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -763,6 +763,8 @@ sa_subsys: subsys@24080000 {
  	#size-cells = <1>;
- 	ranges = <0 24080000 0x40000>;
+ 	ranges = <0 0x24080000 0x40000>;
  	compatible = "simple-bus";
 +	dma-coherent;
 +	dma-ranges;

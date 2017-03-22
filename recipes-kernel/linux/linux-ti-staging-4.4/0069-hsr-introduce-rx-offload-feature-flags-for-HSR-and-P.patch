@@ -1,7 +1,7 @@
-From 11dbb761ff385095051b5e4f1df4d69eb283a7d0 Mon Sep 17 00:00:00 2001
+From d0190dc53710b8525785097f0ea5b2b050472fee Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 10 Feb 2017 17:34:03 -0500
-Subject: [PATCH 03/20] hsr: introduce rx offload feature flags for HSR and PRP
+Subject: [PATCH 69/89] hsr: introduce rx offload feature flags for HSR and PRP
 
 This patch introduces the HSR/PRP rx offload flag to allow offload
 of LRE rx side processing such as duplicate detect/drop, node_table,
@@ -10,6 +10,7 @@ protocol handling list this feature in the feature flag of the
 net_device.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  include/linux/netdev_features.h | 4 ++++
  net/core/ethtool.c              | 2 ++

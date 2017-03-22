@@ -1,12 +1,13 @@
-From 179f7dd6a95a9d18768da4354ef5d02ed0025008 Mon Sep 17 00:00:00 2001
+From 6b1237f88ebe37f7b59b9da08ae81df72fba1f11 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 16:04:49 -0500
-Subject: [PATCH 13/20] hsr: add netlink interface to create prp device
+Subject: [PATCH 79/89] hsr: add netlink interface to create prp device
 
 This patch adds a netlink interface to create a prp device similar in
 line with hsr. Also add a notifier for the same.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  include/uapi/linux/if_link.h     |  13 ++
  include/uapi/linux/prp_netlink.h |  52 +++++

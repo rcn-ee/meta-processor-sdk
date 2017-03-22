@@ -1,7 +1,7 @@
-From f6902f53aabd879e4867dd050191ffe33a30530a Mon Sep 17 00:00:00 2001
+From 4642b768ee1f240837e3025a1f7dbdbe47f132db Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 10 Mar 2016 18:25:45 -0500
-Subject: [PATCH 11/58] ARM: dts: keystone: add qmss clock name
+Subject: [PATCH 11/89] ARM: dts: keystone: add qmss clock name
 
 This patch adds the QMSS subsystem clock name
 for Keystone platforms.
@@ -15,7 +15,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 3 insertions(+)
 
 diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
-index 22029ac..01354e8 100644
+index 4081a49..01f62c5 100644
 --- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 +++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
 @@ -19,6 +19,7 @@ qmss: qmss@2a40000 {
