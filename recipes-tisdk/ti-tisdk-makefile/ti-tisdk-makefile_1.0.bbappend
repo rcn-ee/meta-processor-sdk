@@ -1,4 +1,4 @@
-PR_append = ".tisdk30"
+PR_append = ".tisdk31"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -28,6 +28,7 @@ MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sg
 MAKEFILES_remove_ti43x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 
 KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"
+KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am571x-idk-pru-excl-uio.dtb', '', d)}"
 
 IPC_TOOLS_PATHS_A15 = "gnu.targets.arm.A15="\$\${TOOLCHAIN_PATH_A15}" gnu.targets.arm.A15F="\$\${TOOLCHAIN_PATH_A15}""
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\${C6X_GEN_INSTALL_PATH}""
