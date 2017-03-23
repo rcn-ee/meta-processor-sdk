@@ -7,7 +7,7 @@ PR_append = ".tisdk55"
 
 # Use proessor-sdk-linux repo with patches already applied
 KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
-KERNEL_GIT_PROTOCOL = "ssh"
+KERNEL_GIT_PROTOCOL = "git"
 BRANCH = "processor-sdk-linux-rt-03.03.00"
 
 SRCREV = "55deef79f414e06052c088c6756b5c2572339144"
