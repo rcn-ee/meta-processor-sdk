@@ -1,6 +1,6 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
-SRCREV = "f324ef86f0f2283709d1625ca26e694a71480a02"
+SRCREV = "7ab39e827e65c35f4e37d1142a45071f670395fe"
 
 PACKAGES += "matrix-machinevision-demo-simplepeopletracking"
 
