@@ -1,6 +1,6 @@
-PR_append = ".tisdk56"
+PR_append = ".tisdk57"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
 # Apply patches on top of ti-linux-kernel
 #require linux-ti-staging-4.4-patches.inc
