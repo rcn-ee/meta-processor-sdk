@@ -1,4 +1,4 @@
-PR_append = ".0"
+PR_append = ".1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4-patches:"
 
@@ -92,4 +92,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0087-drm-omap-Create-fbdev-emulation-only-for-the-first-D.patch \
     file://0088-drm-omapdrm-Allow-HDMI-audio-setup-even-if-we-do-not.patch \
     file://0089-uapi-add-missing-install-of-dma-buf.h.patch \
+    file://0090-arm-Export-__boot_cpu_mode-for-use-in-Jailhouse-driv.patch \
+    file://0091-am57-jailhouse-reserve-memory-for-jailhouse.patch \
+    file://0092-am57-jailhouse-disable-using-timer7-8-and-uart9-by-L.patch \
+    file://0093-am57xx-jailhouse-reserve-2-GIC-interrupt-lines-for-i.patch \
+    file://0094-ti_config_fragments-add-jailhouse-config-overlay.patch \
 "

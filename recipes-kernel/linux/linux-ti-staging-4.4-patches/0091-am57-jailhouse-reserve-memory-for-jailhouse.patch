@@ -1,0 +1,41 @@
+From c99255b3996ea512c4de5f60b4c16dda8bd472f2 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Mon, 20 Feb 2017 12:37:37 -0500
+Subject: [PATCH 91/94] am57: jailhouse: reserve memory for jailhouse
+
+We reserve memory for jailhouse supervisor and inmate.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/am57xx-evm-reva3.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am57xx-evm-reva3.dts b/arch/arm/boot/dts/am57xx-evm-reva3.dts
+index 149b0c8..28c90c0 100644
+--- a/arch/arm/boot/dts/am57xx-evm-reva3.dts
++++ b/arch/arm/boot/dts/am57xx-evm-reva3.dts
+@@ -12,6 +12,20 @@
+ 
+ / {
+ 	model = "TI AM572x EVM Rev A3";
++
++	reserved-memory {
++		jailhouse: jailhouse@ef000000 {
++			reg = <0x0 0xef000000 0x0 0x1000000>;
++			no-map;
++			status = "okay";
++		};
++
++		jh_inmate: jh_inmate@ee000000 {
++			reg = <0x0 0xee000000 0x0 0x1000000>;
++			no-map;
++			status = "okay";
++		};
++	};
+ };
+ 
+ &dra7_pmx_core {
+-- 
+1.9.1
+
