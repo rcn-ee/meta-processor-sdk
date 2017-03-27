@@ -1,0 +1,90 @@
+From 7e92c2ae283fb4929ea37cdaa6f9a88d33a231c9 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 20 Mar 2017 14:13:03 -0400
+Subject: [PATCH 2/3] net: phy: dp83867: add 4-level strap mode 1 support
+
+The phy allows configuring the device through 4 level strap. In this
+configuration method, when the strap mode 1 or 2 is used, the bit
+7 of CFG4 register should be cleared. This patch add support for
+handling mode 1.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/phy/ti.c                 | 18 ++++++++++++++++++
+ include/dt-bindings/net/ti-dp83867.h |  5 +++++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/drivers/net/phy/ti.c b/drivers/net/phy/ti.c
+index 21b181a..464c1bd 100644
+--- a/drivers/net/phy/ti.c
++++ b/drivers/net/phy/ti.c
+@@ -25,6 +25,7 @@ DECLARE_GLOBAL_DATA_PTR;
+ #define DP83867_CTRL		0x1f
+ 
+ /* Extended Registers */
++#define DP83867_CFG4		0x0031
+ #define DP83867_RGMIICTL	0x0032
+ #define DP83867_RGMIIDCTL	0x0086
+ #define DP83867_IO_MUX_CFG	0x0170
+@@ -96,6 +97,7 @@ struct dp83867_private {
+ 	int tx_id_delay;
+ 	int fifo_depth;
+ 	int io_impedance;
++	int strap_mode;
+ };
+ 
+ /**
+@@ -184,6 +186,12 @@ static int dp83867_of_init(struct phy_device *phydev)
+ 	else
+ 		dp83867->io_impedance = -EINVAL;
+ 
++	dp83867->strap_mode = fdtdec_get_int(fdt,  node, "ti,strap-mode",
++					     -EINVAL);
++	if ((dp83867->strap_mode >= 0) &&
++	    (dp83867->strap_mode != DP83867_4LEVEL_STRAP_MODE1))
++		return -EINVAL;
++
+ 	dp83867->rx_id_delay = fdtdec_get_uint(gd->fdt_blob, dev->of_offset,
+ 				 "ti,rx-internal-delay", -1);
+ 
+@@ -204,6 +212,7 @@ static int dp83867_of_init(struct phy_device *phydev)
+ 	dp83867->tx_id_delay = DEFAULT_TX_ID_DELAY;
+ 	dp83867->fifo_depth = DEFAULT_FIFO_DEPTH;
+ 	dp83867->io_impedance = -EINVAL;
++	dp83867->strap_mode = -EINVAL;
+ 
+ 	return 0;
+ }
+@@ -233,6 +242,15 @@ static int dp83867_config(struct phy_device *phydev)
+ 	phy_write(phydev, MDIO_DEVAD_NONE, DP83867_CTRL,
+ 		  val | DP83867_SW_RESTART);
+ 
++	if ((dp83867->strap_mode == DP83867_4LEVEL_STRAP_MODE1) ||
++	    (dp83867->strap_mode == DP83867_4LEVEL_STRAP_MODE2)) {
++		val = phy_read_mmd_indirect(phydev, DP83867_CFG4,
++					    DP83867_DEVADDR, phydev->addr);
++		val &= ~BIT(7);
++		phy_write_mmd_indirect(phydev, DP83867_CFG4,
++				       DP83867_DEVADDR, phydev->addr, val);
++	}
++
+ 	if (phy_interface_is_rgmii(phydev)) {
+ 		ret = phy_write(phydev, MDIO_DEVAD_NONE, MII_DP83867_PHYCTRL,
+ 			(DP83867_MDI_CROSSOVER_AUTO << DP83867_MDI_CROSSOVER) |
+diff --git a/include/dt-bindings/net/ti-dp83867.h b/include/dt-bindings/net/ti-dp83867.h
+index 1843757..a857e63 100644
+--- a/include/dt-bindings/net/ti-dp83867.h
++++ b/include/dt-bindings/net/ti-dp83867.h
+@@ -32,4 +32,9 @@
+ #define DP83867_RGMIIDCTL_3_75_NS	0xe
+ #define DP83867_RGMIIDCTL_4_00_NS	0xf
+ 
++/* 4 level Strap modes */
++#define DP83867_4LEVEL_STRAP_MODE1	0x1
++#define DP83867_4LEVEL_STRAP_MODE2	0x2
++#define DP83867_4LEVEL_STRAP_MODE3	0x3
++#define DP83867_4LEVEL_STRAP_MODE4	0x4
+ #endif
+-- 
+1.9.1
+
