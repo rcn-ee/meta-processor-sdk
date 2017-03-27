@@ -1,4 +1,4 @@
-PR_append = ".tisdk57"
+PR_append = ".tisdk58"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -12,7 +12,7 @@ KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
 KERNEL_GIT_PROTOCOL = "git"
 BRANCH = "processor-sdk-linux-rt-03.03.00"
 
-SRCREV = "7c6f2f12c213d266d4f9a091da3ec9e6d8f48889"
+SRCREV = "a2722439fcfb589a702126972e54328ce02aac74"
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
 

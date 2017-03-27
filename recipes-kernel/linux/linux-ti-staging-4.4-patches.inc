@@ -1,4 +1,4 @@
-PR_append = ".1"
+PR_append = ".2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4-patches:"
 
@@ -97,4 +97,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0092-am57-jailhouse-disable-using-timer7-8-and-uart9-by-L.patch \
     file://0093-am57xx-jailhouse-reserve-2-GIC-interrupt-lines-for-i.patch \
     file://0094-ti_config_fragments-add-jailhouse-config-overlay.patch \
+    file://0095-ARM-dts-k2g-ice-add-tx-internal-delay-for-dp83867-cl.patch \
+    file://0096-net-phy-dp83867-add-4-level-strap-mode-1-support.patch \
+    file://0097-ARM-dts-k2g-ice-dp83867-configure-4-level-strap-mode.patch \
 "

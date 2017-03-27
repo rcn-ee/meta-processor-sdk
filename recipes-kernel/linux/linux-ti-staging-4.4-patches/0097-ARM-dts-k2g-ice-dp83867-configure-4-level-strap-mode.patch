@@ -1,0 +1,31 @@
+From 0dc99bda7a626b97d37e3c39b217a2fe0b4d29f2 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 20 Mar 2017 14:16:32 -0400
+Subject: [PATCH 97/97] ARM: dts: k2g-ice: dp83867: configure 4 level strap
+ mode 1
+
+The K2G ICE EVM uses 4 level strap 1 mode to configure the dp83867
+Phy. This patch add the DT parameter to configure the phy in
+mode 1.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2g-ice.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/keystone-k2g-ice.dts b/arch/arm/boot/dts/keystone-k2g-ice.dts
+index da4ba60..3c543df 100644
+--- a/arch/arm/boot/dts/keystone-k2g-ice.dts
++++ b/arch/arm/boot/dts/keystone-k2g-ice.dts
+@@ -719,6 +719,7 @@
+ 		ti,tx-internal-delay = <DP83867_RGMIIDCTL_250_PS>;
+ 		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_8_B_NIB>;
+ 		ti,min-output-impedance;
++		ti,strap-mode = <DP83867_4LEVEL_STRAP_MODE1>;
+ 	};
+ };
+ 
+-- 
+1.9.1
+
