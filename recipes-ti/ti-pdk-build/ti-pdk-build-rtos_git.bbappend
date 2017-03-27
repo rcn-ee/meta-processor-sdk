@@ -1,5 +1,5 @@
 PV = "01.00.00.04B"
-PR = "r0"
+PR = "r1"
 
 # Below Commit ID corresponds to "DEV.PDK_BUILD.01.00.00.04B"
 PDK_BUILD_SRCREV = "98b62506c451304252c7cd1e6af60dd11adc588a"
@@ -45,7 +45,7 @@ do_install_append_am57xx-evm() {
     install -m 0755 pruss/PRU1_to_ARM.cmd ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/build/pruss
 }
  
-do_install_dra7xx-evm() {
+do_install_append_dra7xx-evm() {
     install -d ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/build/tda2xx
     install -d ${D}${PDK_INSTALL_DIR_RECIPE}/packages/ti/build/tda3xx
 
