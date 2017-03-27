@@ -1,0 +1,69 @@
+From 6f738a15e8d7c232f2bf5f41d667d151aadd5746 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Mon, 27 Mar 2017 12:49:30 -0400
+Subject: [PATCH 98/98] ti_config_fragments: add defconfig specific to k2hk
+
+XFRM support is required for k2hk, but not other keystone SOCs.
+Therefore add a new defconfig by adding a k2hk-only config fragment
+which enables XFRM support.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ ti_config_fragments/defconfig_map.txt | 4 ++++
+ ti_config_fragments/k2hk_only.cfg     | 8 ++++++++
+ 2 files changed, 12 insertions(+)
+ create mode 100644 ti_config_fragments/k2hk_only.cfg
+
+diff --git a/ti_config_fragments/defconfig_map.txt b/ti_config_fragments/defconfig_map.txt
+index 8a34f8f..64fd766 100644
+--- a/ti_config_fragments/defconfig_map.txt
++++ b/ti_config_fragments/defconfig_map.txt
+@@ -4,6 +4,7 @@ classification: SDK_Release_Defconfigs type: ti_sdk_am4x_release defconfig: mult
+ classification: SDK_Release_Defconfigs type: ti_sdk_dra7x_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg lpae.cfg dra7_only.cfg systemd.cfg
+ classification: SDK_Release_Defconfigs type: ti_sdk_omap2_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg systemd.cfg
+ classification: SDK_Release_Defconfigs type: ti_sdk_k2g_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2g_only.cfg systemd.cfg
++classification: SDK_Release_Defconfigs type: ti_sdk_k2hk_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2hk_only.cfg systemd.cfg
+ classification: SDK_Release_Defconfigs type: ti_sdk_keystone_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg systemd.cfg
+ # Debug Defconfigs
+ classification: SDK_Debug_Defconfigs type: ti_sdk_am3x_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg am33xx_only.cfg systemd.cfg debug_options.cfg
+@@ -11,6 +12,7 @@ classification: SDK_Debug_Defconfigs type: ti_sdk_am4x_debug defconfig: multi_v7
+ classification: SDK_Debug_Defconfigs type: ti_sdk_dra7x_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg lpae.cfg dra7_only.cfg systemd.cfg debug_options.cfg
+ classification: SDK_Debug_Defconfigs type: ti_sdk_omap2_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg systemd.cfg debug_options.cfg
+ classification: SDK_Debug_Defconfigs type: ti_sdk_k2g_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2g_only.cfg systemd.cfg debug_options.cfg
++classification: SDK_Debug_Defconfigs type: ti_sdk_k2hk_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2hk_only.cfg systemd.cfg debug_options.cfg
+ classification: SDK_Debug_Defconfigs type: ti_sdk_keystone_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg systemd.cfg debug_options.cfg
+ # RT Defconfigs
+ classification: SDK_Release_Defconfigs type: ti_sdk_am3x_rt_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg am33xx_only.cfg real_time.cfg systemd.cfg
+@@ -18,6 +20,7 @@ classification: SDK_Release_Defconfigs type: ti_sdk_am4x_rt_release defconfig: m
+ classification: SDK_Release_Defconfigs type: ti_sdk_dra7x_rt_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg lpae.cfg dra7_only.cfg real_time.cfg systemd.cfg
+ classification: SDK_Release_Defconfigs type: ti_sdk_omap2_rt_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg real_time.cfg systemd.cfg
+ classification: SDK_Release_Defconfigs type: ti_sdk_k2g_rt_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2g_only.cfg real_time.cfg systemd.cfg
++classification: SDK_Release_Defconfigs type: ti_sdk_k2hk_rt_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2hk_only.cfg real_time.cfg systemd.cfg
+ classification: SDK_Release_Defconfigs type: ti_sdk_keystone_rt_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg real_time.cfg systemd.cfg
+ # RT Debug Defconfigs
+ classification: SDK_Debug_Defconfigs type: ti_sdk_am3x_rt_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg am33xx_only.cfg real_time.cfg systemd.cfg debug_options.cfg
+@@ -25,6 +28,7 @@ classification: SDK_Debug_Defconfigs type: ti_sdk_am4x_rt_debug defconfig: multi
+ classification: SDK_Debug_Defconfigs type: ti_sdk_dra7x_rt_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg lpae.cfg dra7_only.cfg real_time.cfg systemd.cfg debug_options.cfg
+ classification: SDK_Debug_Defconfigs type: ti_sdk_omap2_rt_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg real_time.cfg systemd.cfg debug_options.cfg
+ classification: SDK_Debug_Defconfigs type: ti_sdk_k2g_rt_debug defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2g_only.cfg real_time.cfg systemd.cfg debug_options.cfg
++classification: SDK_Debug_Defconfigs type: ti_sdk_k2hk_rt_debug defconfig: multi_v7_defconfig config_file: None extra_configs:  multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg k2hk_only.cfg real_time.cfg systemd.cfg debug_options.cfg
+ classification: SDK_Debug_Defconfigs type: ti_sdk_keystone_rt_debug defconfig: multi_v7_defconfig config_file: None extra_configs:  multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg keystone.cfg lpae.cfg real_time.cfg systemd.cfg debug_options.cfg
+ # Android Defconfigs
+ classification: SDK_Release_Defconfigs type: ti_sdk_dra7x_android_release defconfig: multi_v7_defconfig config_file: None extra_configs: multi_v7_prune.cfg baseport.cfg ipc.cfg connectivity.cfg audio_display.cfg wlan.cfg omap_soc.cfg lpae.cfg dra7_only.cfg systemd.cfg ../android/configs/android-base.cfg ../android/configs/android-recommended.cfg
+diff --git a/ti_config_fragments/k2hk_only.cfg b/ti_config_fragments/k2hk_only.cfg
+new file mode 100644
+index 0000000..b11488b
+--- /dev/null
++++ b/ti_config_fragments/k2hk_only.cfg
+@@ -0,0 +1,8 @@
++##################################################
++# TI K2HK specific config options
++##################################################
++
++# Configure XFRM
++CONFIG_XFRM_SUB_POLICY=y
++CONFIG_XFRM_MIGRATE=y
++CONFIG_XFRM_STATISTICS=y
+-- 
+1.9.1
+

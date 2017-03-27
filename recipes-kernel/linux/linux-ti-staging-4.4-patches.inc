@@ -1,4 +1,4 @@
-PR_append = ".2"
+PR_append = ".3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.4-patches:"
 
@@ -100,4 +100,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0095-ARM-dts-k2g-ice-add-tx-internal-delay-for-dp83867-cl.patch \
     file://0096-net-phy-dp83867-add-4-level-strap-mode-1-support.patch \
     file://0097-ARM-dts-k2g-ice-dp83867-configure-4-level-strap-mode.patch \
+    file://0098-ti_config_fragments-add-defconfig-specific-to-k2hk.patch \
 "
