@@ -1,4 +1,4 @@
-PR_append = ".tisdk31"
+PR_append = ".tisdk32"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -23,6 +23,8 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
 MAKEFILES_append_dra7xx = " linalg-examples"
+
+MAKEFILES_append_ti43x = " cmem-mod"
 
 MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
