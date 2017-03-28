@@ -1,4 +1,4 @@
-PR_append = ".tisdk59"
+PR_append = ".tisdk60"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.4:${THISDIR}/files:"
 
@@ -12,8 +12,9 @@ KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
 KERNEL_GIT_PROTOCOL = "git"
 BRANCH = "processor-sdk-linux-rt-03.03.00"
 
-SRCREV = "9b4a8c0b5b74f2f3e219bdae3e81c0955f02ada0"
+SRCREV = "968d071ce9dda754996e64111ab148931f28f771"
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw qmss-pdsp-fw"
+RDEPENDS_kernel-base_append_am57xx-evm = " pruhsr-fw pruprp-fw"
 
 KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"

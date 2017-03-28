@@ -1,0 +1,57 @@
+From 42a7318778ffa514c0c0b78ddb8b49c6cb04e8f3 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 17 Mar 2017 17:36:56 -0400
+Subject: [PATCH 099/102] hsr/prp: Remove self node from node table list for
+ query
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_netlink.c | 10 ++++++----
+ net/hsr-prp/prp_netlink.c | 10 ++++++----
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_netlink.c b/net/hsr-prp/hsr_netlink.c
+index 682f38f..1f13602 100644
+--- a/net/hsr-prp/hsr_netlink.c
++++ b/net/hsr-prp/hsr_netlink.c
+@@ -420,10 +420,12 @@ static int hsr_get_node_list(struct sk_buff *skb_in, struct genl_info *info)
+ 	rcu_read_lock();
+ 	pos = hsr_prp_get_next_node(priv, NULL, addr);
+ 	while (pos) {
+-		res = nla_put(skb_out, HSR_A_NODE_ADDR, ETH_ALEN, addr);
+-		if (res < 0) {
+-			rcu_read_unlock();
+-			goto nla_put_failure;
++		if (!hsr_prp_addr_is_self(priv, addr)) {
++			res = nla_put(skb_out, HSR_A_NODE_ADDR, ETH_ALEN, addr);
++			if (res < 0) {
++				rcu_read_unlock();
++				goto nla_put_failure;
++			}
+ 		}
+ 		pos = hsr_prp_get_next_node(priv, pos, addr);
+ 	}
+diff --git a/net/hsr-prp/prp_netlink.c b/net/hsr-prp/prp_netlink.c
+index 35e7c17..71b2232 100644
+--- a/net/hsr-prp/prp_netlink.c
++++ b/net/hsr-prp/prp_netlink.c
+@@ -378,10 +378,12 @@ static int prp_get_node_list(struct sk_buff *skb_in, struct genl_info *info)
+ 	rcu_read_lock();
+ 	pos = hsr_prp_get_next_node(priv, NULL, addr);
+ 	while (pos) {
+-		res = nla_put(skb_out, PRP_A_NODE_ADDR, ETH_ALEN, addr);
+-		if (res < 0) {
+-			rcu_read_unlock();
+-			goto nla_put_failure;
++		if (!hsr_prp_addr_is_self(priv, addr)) {
++			res = nla_put(skb_out, PRP_A_NODE_ADDR, ETH_ALEN, addr);
++			if (res < 0) {
++				rcu_read_unlock();
++				goto nla_put_failure;
++			}
+ 		}
+ 		pos = hsr_prp_get_next_node(priv, pos, addr);
+ 	}
+-- 
+1.9.1
+
