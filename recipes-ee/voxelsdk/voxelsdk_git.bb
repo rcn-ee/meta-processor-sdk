@@ -1,42 +1,55 @@
-DESCRIPTION = "VOXELSDK and 3D scanning application"
+SUMMARY = "VOXELSDK and 3D scanning application"
 HOMEPAGE = "https://github.com/3dtof/voxelsdk"
 SECTION = "multimedia"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e69c599445026ffeae140a21181dfa88"
 
-PV = "0.6.6"
-PR = "r0"
+PV = "0.6.8"
+PR = "r1"
+BRANCH = "plsdk-devel"
+SRC_URI = "git://github.com/3dtof/voxelsdk.git;branch=${BRANCH}"
+SRCREV  = "7337ac265a1542f22ccffe592762c226b23b2dbd"
 
-SRC_URI = "git://github.com/3dtof/voxelsdk.git;protocol=git"
-SRCREV  = "e60dc7bd0cd27ea8f205e05587b3f9b65563eb41"
+SRC_URI += " \
+            file://0001-PLSDK-AM437x-update.patch;patchdir=${S} \
+            file://0002-Fix-SWIG-support.patch;patchdir=${S} \
+            file://0003-Add-more-command-line-options-and-move-OpenCV-render.patch;patchdir=${S} \
+            file://0004-Platform-specific-op_clk_freq-setting.patch;patchdir=${S} \
+            file://0005-Exit-on-window-touch-mouse-even-left-button-click.patch;patchdir=${S} \
+           "
 
 S = "${WORKDIR}/git"
 
-SRC_URI += " \
-            file://0001-Add-support-for-AM437x-device-in-PLSDK-Also-Add-Simp.patch;patchdir=${S} \
-            file://0002-Add-command-line-option-for-non-interactive-operatio.patch;patchdir=${S} \
-            file://0003-extract-utility-allows-extraction-of-phase-and-ampli.patch;patchdir=${S} \
-            file://0004-Fix-abosulute-path-of-include-directory.patch;patchdir=${S} \
-"
+COMPATIBLE_MACHINE = "ti33x|ti43x|omap-a15"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 export CMAKE_PREFIX_PATH="${WORKDIR}/build"
 
-EXTRA_OECMAKE += "-DCMAKE_BUILD_TYPE=Debug -DVOXELSDK_INCDIR=${STAGING_INCDIR} "
+OPCLK = "SET_OPCLK"
+OPCLK_ti43x = "RESET_OPCLK"
+CXXFLAGS_append = " -I${STAGING_INCDIR}/libusb-1.0 -D${OPCLK}"
+EXTRA_OECMAKE += "-DDISTROFEATURE=ExcludePCL -DCMAKE_BUILD_TYPE=Debug -DPYTHON_INCLUDE_DIRS=${STAGING_INCDIR}/include/python2.7"
 
-inherit pkgconfig cmake
+inherit pkgconfig cmake pythonnative python-dir
 
-DEPENDS = "libusb1 udev opencv boost"
+DEPENDS = "libusb1 udev opencv boost python python-dev swig swig-native"
 
 RDEPENDS_${PN} = "libusb1 udev opencv"
 
-FILES_${PN} = "${bindir}"
+do_install_append () {
+    install -d ${D}${bindir}
+    install -m 0775 ${S}/Test/CameraSystemTest.py ${D}${bindir}
+    install -m 0775 ${S}/Test/CameraSystemIQFrameTest.py ${D}${bindir}
+    install -m 0775 ${S}/Test/LensCalibrationTest.py ${D}${bindir}
+}
+
 FILES_${PN} += "${datadir}"
-FILES_${PN} += "/etc /etc/udev /etc/udev/rules.d /etc/udev/rules.d/*"
-FILES_${PN} += "${libdir}/*.so.*"
+FILES_${PN} += "${sysconfdir}/udev/rules.d/*"
 FILES_${PN} += "${libdir}/voxel/*.so.*"
+FILES_${PN} += "${libdir}/python2.7/_*.so"
+FILES_${PN} += "${libdir}/python2.7/*.py"
 
 FILES_${PN}-dev += "${libdir}/cmake ${libdir}/cmake/Voxel ${libdir}/cmake/TI3DToF"
 FILES_${PN}-dev += "${libdir}/cmake/Voxel/*.cmake"
 FILES_${PN}-dev += "${libdir}/cmake/TI3DToF/*.cmake"
-FILES_${PN}-dev += "${libdir}/*.so"
 FILES_${PN}-dev += "${libdir}/voxel/*.so"
