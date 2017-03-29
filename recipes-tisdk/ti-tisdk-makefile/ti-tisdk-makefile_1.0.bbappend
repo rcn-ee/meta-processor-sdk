@@ -1,4 +1,4 @@
-PR_append = ".tisdk33"
+PR_append = ".tisdk34"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -23,7 +23,6 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
 "
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
-MAKEFILES_append_dra7xx = " linalg-examples"
 
 MAKEFILES_append_ti43x = " cmem-mod"
 
