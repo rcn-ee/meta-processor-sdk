@@ -1,3 +1,5 @@
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+
 SRC_URI_append_keystone = " file://keystone-uio.dtsi"
 SRC_URI_append_k2hk-evm = " file://k2hk-uio.dtsi"
 SRC_URI_append_k2l-evm = " file://k2l-uio.dtsi"
