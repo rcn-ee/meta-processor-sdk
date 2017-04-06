@@ -1,18 +1,15 @@
-PR_append = "-tisdk22"
+PR_append = "-tisdk23"
 
 UTILS_append_ti33x = " \
     opencv-dev \
-    voxelsdk-dev \
 "
 
 UTILS_append_ti43x = " \
     opencv-dev \
-    voxelsdk-dev \
 "
 
 UTILS_append_omap-a15 = " \
     opencv-dev \
-    voxelsdk-dev \
 "
 
 UTILS_append_keystone = " \
