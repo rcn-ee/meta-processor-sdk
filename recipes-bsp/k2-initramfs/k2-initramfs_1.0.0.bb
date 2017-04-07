@@ -3,7 +3,7 @@ DESCRIPTION = "Keystone2 initramfs with SerDes, QMSS and NETCP PA firmware"
 LICENSE = "TI-TFL"
 PACKAGES = "${PN}"
 
-PR = "r0"
+PR = "r1"
 
 COMPATIBLE_MACHINE = "keystone"
 
@@ -24,6 +24,8 @@ PACKAGE_INSTALL_remove_k2g-evm = "netcp-pa-fw"
 export IMAGE_BASENAME = "k2-fw-initrd"
 export IMAGE_NAME = "${IMAGE_BASENAME}"
 export IMAGE_NAME_SUFFIX = ""
+
+IMGDEPLOYDIR = "${WORKDIR}/deploy-${PN}-image-complete"
 
 USE_DEVFS = "1"
 
@@ -72,7 +74,7 @@ fakeroot python do_rootfs () {
     create_rootfs(d)
 }
 do_rootfs[dirs] = "${TOPDIR}"
-do_rootfs[cleandirs] += "${S}"
+do_rootfs[cleandirs] += "${S} ${IMGDEPLOYDIR}"
 do_rootfs[umask] = "022"
 addtask rootfs before do_install
 
@@ -86,7 +88,7 @@ do_image() {
     (echo .; echo ./lib; find ./lib/firmware; ) | cpio -o -H newc >${image_base_path}.cpio
     gzip -f -9 -c ${image_base_path}.cpio > ${image_base_path}.cpio.gz
 }
-do_image[dirs] = "${TOPDIR}"
+do_image[dirs] = "${TOPDIR} ${DEPLOY_DIR_IMAGE}"
 do_image[umask] = "022"
 addtask do_image after do_rootfs before do_install
 
