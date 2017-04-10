@@ -28,8 +28,8 @@ MAKEFILES_append_ti43x = " cmem-mod"
 
 MAKEFILES_append_am57xx-evm = " jailhouse"
 
-MAKEFILES_remove_ti33x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
-MAKEFILES_remove_ti43x = "${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
+MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
+MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 
 KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"
 KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am571x-idk-pru-excl-uio.dtb', '', d)}"

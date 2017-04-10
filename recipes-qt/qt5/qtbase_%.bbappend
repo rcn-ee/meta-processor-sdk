@@ -2,7 +2,7 @@ PR_append = ".tisdk3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-GLES_EXTRA_DEPS = "libdrm ${@base_contains('MACHINE_FEATURES', 'sgx', 'wayland', '', d)}"
+GLES_EXTRA_DEPS = "libdrm ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', 'wayland', '', d)}"
 
 # kms packageconfig requires virtual/mesa
 #

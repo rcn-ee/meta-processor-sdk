@@ -14,10 +14,10 @@ GRAPHICS_GC320_RDEPENDS = "\
 GRAPHICS_RDEPENDS_append_omap-a15 = " ${GRAPHICS_GC320_RDEPENDS}"
 
 GRAPHICS_RDEPENDS_remove_ti33x = "\
-    ${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)} \
 "
 GRAPHICS_RDEPENDS_remove_ti43x = "\
-    ${@base_contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)} \
 "
 
 RDEPENDS_${PN} += "${GRAPHICS_DEMO}"
