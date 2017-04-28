@@ -1,0 +1,41 @@
+From 573184e3809037286b57e4b1b87aef0de70c31e2 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 12 Apr 2017 17:16:09 -0400
+Subject: [PATCH 20/22] hsr/prp: fix protocol version number setting error
+
+The protocol version number needs to be set before it is used. Otherwise
+the behavior is undetermined. For example, in the case of PRP, the RCT
+will have an incorrect LanID which that leads to receiving duplicate
+frames, such as 3 duplicate ping responses (a total of 4 responses) for
+each ping request generated.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_device.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_device.c b/net/hsr-prp/hsr_prp_device.c
+index 60836e4..ca6ea4c 100644
+--- a/net/hsr-prp/hsr_prp_device.c
++++ b/net/hsr-prp/hsr_prp_device.c
+@@ -497,6 +497,7 @@ int hsr_prp_dev_finalize(struct net_device *hsr_prp_dev,
+ 	if (res < 0)
+ 		return res;
+ 
++	priv->prot_version = protocol_version;
+ 	if (priv->prot_version == PRP_V1) {
+ 		/* For PRP, lan_id has most significant 3 bits holding
+ 		 * the net_id of PRP_LAN_ID
+@@ -519,8 +520,6 @@ int hsr_prp_dev_finalize(struct net_device *hsr_prp_dev,
+ 	ether_addr_copy(priv->sup_multicast_addr, def_multicast_addr);
+ 	priv->sup_multicast_addr[ETH_ALEN - 1] = multicast_spec;
+ 
+-	priv->prot_version = protocol_version;
+-
+ 	/* FIXME: should I modify the value of these?
+ 	 *
+ 	 * - hsr_dev->flags - i.e.
+-- 
+1.9.1
+

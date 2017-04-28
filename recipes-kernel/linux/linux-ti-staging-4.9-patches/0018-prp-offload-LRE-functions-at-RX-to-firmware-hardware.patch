@@ -1,0 +1,38 @@
+From 073e6f568cf8d45fe1763818a2822f82b68f8233 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 14 Mar 2017 16:28:22 -0400
+Subject: [PATCH 18/22] prp: offload LRE functions at RX to firmware/hardware
+
+The hardware/firmware will do LRE rx processing and forward
+only one frame to Linux network interface. This patch checks if
+the prp lower level driver support offload and enable flags so
+that same pocessing gets disabled at the Linux PRP driver.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_device.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_device.c b/net/hsr-prp/hsr_prp_device.c
+index 21ad77f..60836e4 100644
+--- a/net/hsr-prp/hsr_prp_device.c
++++ b/net/hsr-prp/hsr_prp_device.c
+@@ -538,9 +538,11 @@ int hsr_prp_dev_finalize(struct net_device *hsr_prp_dev,
+ 	if (res)
+ 		return res;
+ 
+-	/* HSR LRE Rx offload supported in lower device? */
+-	if ((slave[0]->features & NETIF_F_HW_HSR_RX_OFFLOAD) &&
+-	    (slave[1]->features & NETIF_F_HW_HSR_RX_OFFLOAD))
++	/* HSR/PRP LRE Rx offload supported in lower device? */
++	if (((slave[0]->features & NETIF_F_HW_HSR_RX_OFFLOAD) &&
++	     (slave[1]->features & NETIF_F_HW_HSR_RX_OFFLOAD)) ||
++	     ((slave[0]->features & NETIF_F_HW_PRP_RX_OFFLOAD) &&
++	     (slave[1]->features & NETIF_F_HW_PRP_RX_OFFLOAD)))
+ 		priv->rx_offloaded = true;
+ 
+ 	/* HSR LRE L2 forward offload supported in lower device? */
+-- 
+1.9.1
+

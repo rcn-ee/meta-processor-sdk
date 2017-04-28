@@ -1,0 +1,108 @@
+From c7cbc5b4d883df545bac0e86373488ba2cf3f1b4 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 15 Feb 2017 13:54:44 -0500
+Subject: [PATCH 08/22] hsr: preparatary update for adding prp support
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/Makefile                         |  2 +-
+ net/hsr/Kconfig                      | 38 ++++++++++++++++++++++--------------
+ net/hsr/Makefile                     |  2 +-
+ ti_config_fragments/connectivity.cfg |  1 +
+ 4 files changed, 26 insertions(+), 17 deletions(-)
+
+diff --git a/net/Makefile b/net/Makefile
+index 77f2c68..baf377e 100644
+--- a/net/Makefile
++++ b/net/Makefile
+@@ -72,7 +72,7 @@ obj-$(CONFIG_NFC)		+= nfc/
+ obj-$(CONFIG_OPENVSWITCH)	+= openvswitch/
+ obj-$(CONFIG_VSOCKETS)	+= vmw_vsock/
+ obj-$(CONFIG_MPLS)		+= mpls/
+-obj-$(CONFIG_HSR)		+= hsr/
++obj-$(CONFIG_HSR_PRP)		+= hsr/
+ ifneq ($(CONFIG_NET_SWITCHDEV),)
+ obj-y				+= switchdev/
+ endif
+diff --git a/net/hsr/Kconfig b/net/hsr/Kconfig
+index 4b683fd..3684735 100644
+--- a/net/hsr/Kconfig
++++ b/net/hsr/Kconfig
+@@ -1,26 +1,34 @@
+ #
+-# IEC 62439-3 High-availability Seamless Redundancy
++# IEC 62439-3 High-availability Seamless Redundancy (HSR) /
++# IEC 62439-4 Parallel Redundancy Protocol (PRP) support
+ #
+-
+-config HSR
+-	tristate "High-availability Seamless Redundancy (HSR)"
++config HSR_PRP
++	tristate "IEC 62439 HSR/PRP Support"
+ 	---help---
++	  This enables IEC 62439 defined High-availability Seamless
++	  Redundancy (HSR) and Parallel Redundancy Protocol (PRP) support.
+ 	  If you say Y here, then your Linux box will be able to act as a
+-	  DANH ("Doubly attached node implementing HSR"). For this to work,
+-	  your Linux box needs (at least) two physical Ethernet interfaces,
+-	  and it must be connected as a node in a ring network together with
+-	  other HSR capable nodes.
++	  DANH ("Doubly attached node implementing HSR") or DANP ("Doubly
++	  attached node implementing PRP"). For this to work, your Linux
++	  box needs (at least) two physical Ethernet interfaces.
++
++	  For DANH, it must be connected as a node in a ring network together
++	  with other HSR capable nodes. All Ethernet frames sent over the hsr
++	  device will be sent in both directions on the ring (over both slave
++	  ports), giving a redundant, instant fail-over network. Each HSR node
++	  in the ring acts like a bridge for HSR frames, but filters frames
++	  that have been forwarded earlier.
+ 
+-	  All Ethernet frames sent over the hsr device will be sent in both
+-	  directions on the ring (over both slave ports), giving a redundant,
+-	  instant fail-over network. Each HSR node in the ring acts like a
+-	  bridge for HSR frames, but filters frames that have been forwarded
+-	  earlier.
++	  For DANP, it must be connected as a node connecting to two
++	  separate networks over the two slave interfaces. Like HSR, Ethernet
++	  frames sent over the prp device will be sent to both networks giving
++	  a redundant, instant fail-over network.
+ 
+ 	  This code is a "best effort" to comply with the HSR standard as
+ 	  described in IEC 62439-3:2010 (HSRv0) and IEC 62439-3:2012 (HSRv1),
+-	  but no compliancy tests have been made. Use iproute2 to select
+-	  the version you desire.
++	  and PRP standard described in IEC 62439-4:2012 (PRP), but no
++	  compliancy tests have been made. Use iproute2 to select the protocol
++	  you would like to use.
+ 
+ 	  You need to perform any and all necessary tests yourself before
+ 	  relying on this code in a safety critical system!
+diff --git a/net/hsr/Makefile b/net/hsr/Makefile
+index d74d89d..d7ab933 100644
+--- a/net/hsr/Makefile
++++ b/net/hsr/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for HSR
+ #
+ 
+-obj-$(CONFIG_HSR)	+= hsr.o
++obj-$(CONFIG_HSR_PRP)	+= hsr.o
+ 
+ hsr-y			:= hsr_main.o hsr_framereg.o hsr_device.o \
+ 			   hsr_netlink.o hsr_slave.o hsr_forward.o
+diff --git a/ti_config_fragments/connectivity.cfg b/ti_config_fragments/connectivity.cfg
+index 01de1db..9916115 100644
+--- a/ti_config_fragments/connectivity.cfg
++++ b/ti_config_fragments/connectivity.cfg
+@@ -124,6 +124,7 @@ CONFIG_IWLWIFI=m
+ CONFIG_IWLDVM=m
+ 
+ # Networking
++CONFIG_HSR_PRP=y
+ CONFIG_NF_CONNTRACK=m
+ CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_IP_NF_IPTABLES=m
+-- 
+1.9.1
+
