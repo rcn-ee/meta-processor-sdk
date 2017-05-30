@@ -1,4 +1,4 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -7,10 +7,11 @@ GLES_EXTRA_DEPS = "libdrm ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', 'wayla
 # kms packageconfig requires virtual/mesa
 #
 # Seems that there is a patch missing on morty which exists for both krogoth and
-# master.
+# master. (63f018e5a795e30f913ead00e840ad3263cb0edf)
 #
-# Disable until this can be resolved upstream.
-#PACKAGECONFIG += "kms"
+# Implement the patch here
+PACKAGECONFIG[kms] = "-kms,-no-kms,drm virtual/egl"
+PACKAGECONFIG += "kms"
 
 QT_NOSGX_PATCHES = "\
     file://0001-calculator-Add-exit-button-for-non-window-environmen.patch \
@@ -18,10 +19,9 @@ QT_NOSGX_PATCHES = "\
     file://quit.png \
 "
 
-# Patch needs to be updated
-#    file://0001-qtbase-enhance-eglfs_kms-to-handle-DRM-plane-set-req.patch 
 SRC_URI += "\
     ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', "${QT_NOSGX_PATCHES}", d)}\
+    file://0001-qtbase-enhance-eglfs_kms-to-handle-DRM-plane-set-req.patch        \
 "
 
 python do_patch_append() {
