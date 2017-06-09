@@ -1,4 +1,4 @@
-PR_append = ".tisdk10"
+PR_append = ".tisdk11"
 
 DTB_FILTER_k2hk-evm = "k2hk"
 DTB_FILTER_k2e-evm = "k2e"
@@ -20,6 +20,8 @@ DEPLOY_FITIMAGE_NAMES ?= "${FITIMAGE_INITRAMFS_ITS_SYMLINK} ${FITIMAGE_INITRAMFS
 
 # U-Boot HS_MLO filename
 DEPLOY_HS_MLO_NAME ?= "u-boot_HS_MLO-${MACHINE}"
+
+DEPLOY_SPL_NAME_k2g-evm = "MLO-${MACHINE}"
 
 SW_MANIFEST_QT5_FOOTER = "Any Qt package referenced in this manifest that has LGPL 2.1 or LGPL 3 as a licensing option is only being used and distributed by TI under LGPL 2.1. The choice of having both, as reflected in the manifest table, comes from the licensing line the corresponding recipe. TI has opted to only use LGPL 2.1."
 
