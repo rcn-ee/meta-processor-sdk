@@ -1,4 +1,4 @@
-PR_append = ".tisdk35"
+PR_append = ".tisdk36"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -28,10 +28,14 @@ MAKEFILES_append_ti43x = " cmem-mod"
 
 MAKEFILES_append_am57xx-evm = " jailhouse"
 
+MAKEFILES_append_k2g = " pru-icss"
+
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 
 MAKEFILES_remove_keystone = "ipsecmgr-mod"
+
+PRU_ICSS_INSTALL_TARGET_k2g = "pru-icss_install_k2g"
 
 KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"
 KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am571x-idk-pru-excl-uio.dtb', '', d)}"
