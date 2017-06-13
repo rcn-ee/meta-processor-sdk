@@ -1,4 +1,4 @@
-PR_append = ".p1"
+PR_append = ".p2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -30,4 +30,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0023-ARM-dts-am335x-boneblack-spi0-add-spi0-configuration.patch \
     file://0024-ARM-dts-am335x-boneblack-iot-cape-add-custom-device-.patch \
     file://0025-ti_config_fragments-am33xx_only-enable-spidev-module.patch \
+    file://0026-arm-Export-__boot_cpu_mode-for-use-in-Jailhouse-driv.patch \
+    file://0027-arm-dts-am572x-add-am572x-idk-jailhouse-dts.patch \
+    file://0028-arm-dts-am572x-add-am572x-evm-jailhouse-dts.patch \
 "
+
+KERNEL_DEVICETREE_append_am57xx-evm = " am572x-evm-jailhouse.dtb am572x-idk-jailhouse.dtb"
