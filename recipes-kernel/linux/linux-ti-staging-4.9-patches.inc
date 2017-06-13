@@ -1,4 +1,4 @@
-PR_append = ".p0"
+PR_append = ".p1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -27,4 +27,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0020-hsr-prp-fix-protocol-version-number-setting-error.patch \
     file://0021-hsr-Don-t-update-error-count-for-incorrect-lan.patch \
     file://0022-hsr-fix-filling-up-hsr-tag-error.patch \
+    file://0023-ARM-dts-am335x-boneblack-spi0-add-spi0-configuration.patch \
+    file://0024-ARM-dts-am335x-boneblack-iot-cape-add-custom-device-.patch \
+    file://0025-ti_config_fragments-am33xx_only-enable-spidev-module.patch \
 "
