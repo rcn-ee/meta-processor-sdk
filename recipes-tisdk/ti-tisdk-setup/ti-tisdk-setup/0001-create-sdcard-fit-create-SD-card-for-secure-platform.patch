@@ -963,7 +963,7 @@ index 0000000..60f32fa
 +
 +echo "Copying FIT Image"
 +sudo mkdir -p $PATH_TO_SDROOTFS/boot
-+sudo cp $FITIMAGEUSERFILEPATH $PATH_TO_SDROOTFS/boot/fitImage.itb
++sudo cp $FITIMAGEUSERFILEPATH $PATH_TO_SDROOTFS/boot/fitImage
 +
 +echo ""
 +echo ""
