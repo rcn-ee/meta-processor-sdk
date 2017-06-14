@@ -1,4 +1,4 @@
-PR_append = ".p2"
+PR_append = ".p3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -33,6 +33,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0026-arm-Export-__boot_cpu_mode-for-use-in-Jailhouse-driv.patch \
     file://0027-arm-dts-am572x-add-am572x-idk-jailhouse-dts.patch \
     file://0028-arm-dts-am572x-add-am572x-evm-jailhouse-dts.patch \
+    file://0029-tiL4.9-AD-HACK-input-touchscreen-edt-ft5x06-fix-driver-autoprobing.patch \
 "
 
 KERNEL_DEVICETREE_append_am57xx-evm = " am572x-evm-jailhouse.dtb am572x-idk-jailhouse.dtb"
