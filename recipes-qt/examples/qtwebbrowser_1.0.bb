@@ -7,8 +7,9 @@ LIC_FILES_CHKSUM = " \
     file://LICENSE.FDL;md5=6d9f2a9af4c8b8c3c769f6cc1b6aaf7e \
 "
 DEPENDS += "qtwebengine"
+PACKAGES += "${PN}-examples"
 
-PR = "r0"
+PR = "r1"
 
 BRANCH = "dev"
 SRCREV = "023733af5523a5ad84359926224fa106001215f4"
