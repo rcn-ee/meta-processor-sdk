@@ -1,4 +1,4 @@
-PR_append = "-tisdk47"
+PR_append = "-tisdk48"
 
 PACKAGES =+ "${PN}-extra"
 
@@ -21,4 +21,6 @@ MATRIX_APPS_append_ti43x = " \
 "
 
 RDEPENDS_${PN}_remove = "${MATRIX_OPENCV_OPENCL_APPS}"
-RDEPENDS_${PN}-extra = "${MATRIX_OPENCV_OPENCL_APPS}"
+RDEPENDS_${PN}-extra = " \
+    ${@bb.utils.contains('MACHINE_FEATURES','dsp',"${MATRIX_OPENCV_OPENCL_APPS}",'',d)} \
+"
