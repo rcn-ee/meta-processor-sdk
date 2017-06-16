@@ -1,4 +1,4 @@
-PR_append = "-tisdk48"
+PR_append = "-tisdk49"
 
 PACKAGES =+ "${PN}-extra"
 
@@ -14,6 +14,7 @@ MATRIX_APPS_append_omap-a15 += " \
     matrix-gui-apps-dual-camera \
     matrix-gui-apps-image-gallery \
     matrix-multimedia-demo-audiocapture \
+    matrix-gui-browser-demos \
 "
 
 MATRIX_APPS_append_ti43x = " \
