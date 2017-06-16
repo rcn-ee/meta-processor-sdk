@@ -14,7 +14,7 @@ PR = "r1"
 BRANCH = "dev"
 SRCREV = "023733af5523a5ad84359926224fa106001215f4"
 
-SRC_URI = "git://code.qt.io/qt-apps/qtwebbrowser.git;protocol=git;branch=${BRANCH} \
+SRC_URI = "git://code.qt.io/qt-apps/qtwebbrowser.git;protocol=http;branch=${BRANCH} \
     file://0001-qtwebbrowser-disable-FullScreen-mode.patch \
 "
 
