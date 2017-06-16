@@ -1,4 +1,6 @@
-PR_append = "-tisdk46"
+PR_append = "-tisdk47"
+
+PACKAGES =+ "${PN}-extra"
 
 MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -17,3 +19,6 @@ MATRIX_APPS_append_omap-a15 += " \
 MATRIX_APPS_append_ti43x = " \
     matrix-multimedia-demo-audiocapture \
 "
+
+RDEPENDS_${PN}_remove = "${MATRIX_OPENCV_OPENCL_APPS}"
+RDEPENDS_${PN}-extra = "${MATRIX_OPENCV_OPENCL_APPS}"
