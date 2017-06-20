@@ -7,9 +7,9 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=9fa7f895f96bde2d47fd5b7d95b6ba4d"
 BRANCH = "plsdk_am57xx"
 SRC_URI = "git://git.ti.com/processor-sdk/jailhouse.git;branch=${BRANCH}"
 
-SRCREV = "8a8eb71342fc36f3b7ab8ec8400a00277ab12664"
+SRCREV = "a437230019ae4aa83a614e9b71690ec792a306b5"
 
-PV = "0.6"
+PV = "0.7"
 PR = "r0"
 
 PACKAGES =+ "${PN}-drivers ${PN}-firmware ${PN}-examples"
@@ -41,10 +41,13 @@ JAILHOUSE_EXAMPLE_FILES = " \
     configs/${MACHINE}.cell \
     configs/${MACHINE}-ti-app.cell \
     inmates/ti_app/ti-app.bin \
+    inmates/tools/arm/linux-loader.bin \
 "
 
 JAILHOUSE_EXAMPLE_FILES_append_am57xx-evm = " \
     configs/am57xx-pdk-leddiag.cell \
+    configs/am572x-rtos-icss.cell \
+    configs/am572x-rtos-pruss.cell \
 "
 
 do_configure() {
