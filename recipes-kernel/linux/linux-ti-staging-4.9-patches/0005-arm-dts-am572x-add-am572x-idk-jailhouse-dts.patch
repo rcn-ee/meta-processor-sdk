@@ -1,7 +1,7 @@
-From 39ba122599133b7a1dc81439109ecf59d1f27b1f Mon Sep 17 00:00:00 2001
+From a1fe81c87095d342b20eab59eb68d3ab3169d002 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 12 May 2017 09:53:43 -0400
-Subject: [PATCH 27/28] arm: dts: am572x: add am572x-idk-jailhouse dts
+Subject: [PATCH 5/7] arm: dts: am572x: add am572x-idk-jailhouse dts
 
 This commit add the am572x-idk-jailhouse.dts which is extension of the
 am572x-idk.dts. It allows to demonstrate Jailhouse hypervisor and run

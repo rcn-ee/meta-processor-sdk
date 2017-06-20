@@ -1,8 +1,8 @@
-Subject: [tiL4.9-AD] HACK: input: touchscreen: edt-ft5x06: fix driver
- autoprobing
-Date: Fri, 09 Jun 2017 15:14:45 -0000
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From 78a513dbeaad9b644949868cf8371427eba2848a Mon Sep 17 00:00:00 2001
 From: Felipe Balbi <balbi@ti.com>
+Date: Fri, 9 Jun 2017 15:14:45 +0000
+Subject: [PATCH 7/7] HACK: input: touchscreen: edt-ft5x06: fix driver
+ autoprobing
 
 Because with OF we can pass more specific
 compatible flags (such as edt-ft5306) instead
@@ -26,19 +26,15 @@ Signed-off-by: Felipe Balbi <balbi@ti.com>
 [fcooper@ti.com: tweaked to add support FT5506]
 Signed-off-by: Franklin S Cooper Jr <fcooper@ti.com>
 Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-
 ---
-This fixes: LCPD-9967
-
-
  drivers/input/touchscreen/edt-ft5x06.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index 28466e358fee..0e7dee0dcdb8 100644
+index 28466e3..0e7dee0 100644
 --- a/drivers/input/touchscreen/edt-ft5x06.c
 +++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1102,6 +1102,10 @@ static struct i2c_driver edt_ft5x06_ts_driver = {
+@@ -1102,6 +1102,10 @@ static SIMPLE_DEV_PM_OPS(edt_ft5x06_ts_pm_ops,
  
  module_i2c_driver(edt_ft5x06_ts_driver);
  
@@ -49,3 +45,6 @@ index 28466e358fee..0e7dee0dcdb8 100644
  MODULE_AUTHOR("Simon Budig <simon.budig@kernelconcepts.de>");
  MODULE_DESCRIPTION("EDT FT5x06 I2C Touchscreen Driver");
  MODULE_LICENSE("GPL");
+-- 
+1.9.1
+

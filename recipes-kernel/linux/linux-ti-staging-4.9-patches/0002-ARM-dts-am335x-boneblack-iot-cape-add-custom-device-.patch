@@ -1,7 +1,7 @@
-From 533c1750a7543c0413fbedd3b406a3c82a460565 Mon Sep 17 00:00:00 2001
+From 8cc1deede2df0156d3d19032f808f40cedba24cd Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Wed, 30 Nov 2016 13:23:23 -0500
-Subject: [PATCH 24/25] ARM: dts: am335x-boneblack-iot-cape: add custom device
+Subject: [PATCH 2/7] ARM: dts: am335x-boneblack-iot-cape: add custom device
  tree
 
 * This device tree enables various HW interfaces such as SPI
