@@ -1,0 +1,218 @@
+From 83dc65ae7fec4ae58a1a52b331c97f861aa7cb0c Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Thu, 16 Feb 2017 17:22:38 -0500
+Subject: [PATCH 29/51] prp: add supervision frame generation and handling
+ support
+
+Add support for sending and handling supervision frames. For PRP,
+supervision frame format is similar to HSR version 0, but have a
+PRP Redunancy Control Trailor (RCT) added.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_device.c   | 48 ++++++++++++++++++++++++++++++------------
+ net/hsr-prp/hsr_prp_forward.c  |  4 +++-
+ net/hsr-prp/hsr_prp_framereg.c |  8 +++++--
+ net/hsr-prp/hsr_prp_main.h     | 23 ++++++++++++++++++++
+ 4 files changed, 67 insertions(+), 16 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_device.c b/net/hsr-prp/hsr_prp_device.c
+index 1b498d6..afeea91 100644
+--- a/net/hsr-prp/hsr_prp_device.c
++++ b/net/hsr-prp/hsr_prp_device.c
+@@ -253,12 +253,19 @@ static void send_supervision_frame(struct hsr_prp_port *master,
+ 	struct sk_buff *skb;
+ 	int hlen, tlen;
+ 	struct hsr_tag *hsr_tag;
++	struct prp_rct *rct;
+ 	struct hsr_prp_sup_tag *hsr_stag;
+ 	struct hsr_prp_sup_payload *hsr_sp;
+ 	unsigned long irqflags;
++	u16 proto;
++	u8 *tail;
+ 
+ 	hlen = LL_RESERVED_SPACE(master->dev);
+ 	tlen = master->dev->needed_tailroom;
++	/* skb size is same for PRP/HSR frames, only difference
++	 * being for PRP, it is a trailor and for HSR it is a
++	 * header
++	 */
+ 	skb = dev_alloc_skb(
+ 			sizeof(struct hsr_tag) +
+ 			sizeof(struct hsr_prp_sup_tag) +
+@@ -267,18 +274,21 @@ static void send_supervision_frame(struct hsr_prp_port *master,
+ 		return;
+ 
+ 	skb_reserve(skb, hlen);
+-
++	if (!prot_ver)
++		proto = ETH_P_PRP;
++	else
++		proto = (prot_ver == HSR_V1) ? ETH_P_HSR : ETH_P_PRP;
+ 	skb->dev = master->dev;
+-	skb->protocol = htons(prot_ver ? ETH_P_HSR : ETH_P_PRP);
++	skb->protocol = htons(proto);
+ 	skb->priority = TC_PRIO_CONTROL;
+ 
+-	if (dev_hard_header(skb, skb->dev, (prot_ver ? ETH_P_HSR : ETH_P_PRP),
++	if (dev_hard_header(skb, skb->dev, proto,
+ 			    master->priv->sup_multicast_addr,
+ 			    skb->dev->dev_addr, skb->len) <= 0)
+ 		goto out;
+ 
+ 	skb_reset_mac_header(skb);
+-	if (prot_ver > 0) {
++	if (prot_ver == HSR_V1) {
+ 		hsr_tag = (typeof(hsr_tag))skb_put(skb,
+ 						   sizeof(struct hsr_tag));
+ 		hsr_tag->encap_proto = htons(ETH_P_PRP);
+@@ -288,15 +298,17 @@ static void send_supervision_frame(struct hsr_prp_port *master,
+ 	hsr_stag = (typeof(hsr_stag))skb_put(skb,
+ 					     sizeof(struct hsr_prp_sup_tag));
+ 	set_hsr_stag_path(hsr_stag, (prot_ver ? 0x0 : 0xf));
+-	set_hsr_stag_HSR_ver(hsr_stag, prot_ver);
++	set_hsr_stag_HSR_ver(hsr_stag, prot_ver ? 0x1 : 0x0);
+ 
+ 	/* From HSRv1 on we have separate supervision sequence numbers. */
+ 	spin_lock_irqsave(&master->priv->seqnr_lock, irqflags);
+ 	if (prot_ver > 0) {
+ 		hsr_stag->sequence_nr = htons(master->priv->sup_sequence_nr);
+-		hsr_tag->sequence_nr = htons(master->priv->sequence_nr);
+ 		master->priv->sup_sequence_nr++;
+-		master->priv->sequence_nr++;
++		if (prot_ver == HSR_V1) {
++			hsr_tag->sequence_nr = htons(master->priv->sequence_nr);
++			master->priv->sequence_nr++;
++		}
+ 	} else {
+ 		hsr_stag->sequence_nr = htons(master->priv->sequence_nr);
+ 		master->priv->sequence_nr++;
+@@ -314,6 +326,16 @@ static void send_supervision_frame(struct hsr_prp_port *master,
+ 	ether_addr_copy(hsr_sp->mac_address_a, master->dev->dev_addr);
+ 	skb_put_padto(skb, ETH_ZLEN + HSR_PRP_HLEN);
+ 
++	spin_lock_irqsave(&master->priv->seqnr_lock, irqflags);
++	if (prot_ver == PRP_V1) {
++		tail = skb_tail_pointer(skb) - HSR_PRP_HLEN;
++		rct = (struct prp_rct *)tail;
++		rct->PRP_suffix = htons(ETH_P_PRP);
++		set_prp_LSDU_size(rct, HSR_V1_SUP_LSDUSIZE);
++		rct->sequence_nr = htons(master->priv->sequence_nr);
++		master->priv->sequence_nr++;
++	}
++	spin_unlock_irqrestore(&master->priv->seqnr_lock, irqflags);
+ 	hsr_prp_forward_skb(skb, master);
+ 	return;
+ 
+@@ -342,8 +364,12 @@ static void hsr_prp_announce(unsigned long data)
+ 		priv->announce_timer.expires = jiffies +
+ 				msecs_to_jiffies(HSR_PRP_ANNOUNCE_INTERVAL);
+ 	} else {
+-		send_supervision_frame(master, HSR_TLV_LIFE_CHECK,
+-				       priv->prot_version);
++		if (priv->prot_version <= HSR_V1)
++			send_supervision_frame(master, HSR_TLV_LIFE_CHECK,
++					       priv->prot_version);
++		else /* PRP */
++			send_supervision_frame(master, PRP_TLV_LIFE_CHECK_DD,
++					       priv->prot_version);
+ 
+ 		priv->announce_timer.expires = jiffies +
+ 				msecs_to_jiffies(HSR_PRP_LIFE_CHECK_INTERVAL);
+@@ -455,10 +481,6 @@ int hsr_prp_dev_finalize(struct net_device *hsr_prp_dev,
+ 	struct hsr_prp_port *port;
+ 	int res;
+ 
+-	/* PRP not supported yet */
+-	if (protocol_version == PRP_V1)
+-		return -EPROTONOSUPPORT;
+-
+ 	priv = netdev_priv(hsr_prp_dev);
+ 	INIT_LIST_HEAD(&priv->ports);
+ 	INIT_LIST_HEAD(&priv->node_db);
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 9b061f8..1b9b903 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -78,7 +78,9 @@ static bool is_supervision_frame(struct hsr_prp_priv *priv, struct sk_buff *skb)
+ 	}
+ 
+ 	if ((hsr_sup_tag->HSR_TLV_type != HSR_TLV_ANNOUNCE) &&
+-	    (hsr_sup_tag->HSR_TLV_type != HSR_TLV_LIFE_CHECK))
++	    (hsr_sup_tag->HSR_TLV_type != HSR_TLV_LIFE_CHECK) &&
++	    (hsr_sup_tag->HSR_TLV_type != PRP_TLV_LIFE_CHECK_DD) &&
++	    (hsr_sup_tag->HSR_TLV_type != PRP_TLV_LIFE_CHECK_DA))
+ 		return false;
+ 
+ 	if ((hsr_sup_tag->HSR_TLV_length != 12) &&
+diff --git a/net/hsr-prp/hsr_prp_framereg.c b/net/hsr-prp/hsr_prp_framereg.c
+index 381b21b..2a3aff4 100644
+--- a/net/hsr-prp/hsr_prp_framereg.c
++++ b/net/hsr-prp/hsr_prp_framereg.c
+@@ -21,6 +21,7 @@
+ #include "hsr_prp_main.h"
+ #include "hsr_prp_framereg.h"
+ #include "hsr_netlink.h"
++#include "prp_netlink.h"
+ 
+ /*	TODO: use hash lists for mac addresses (linux/jhash.h)?    */
+ 
+@@ -392,8 +393,11 @@ void hsr_prp_prune_nodes(unsigned long data)
+ 
+ 		/* Prune old entries */
+ 		if (time_is_before_jiffies(timestamp +
+-			msecs_to_jiffies(HSR_PRP_NODE_FORGET_TIME))) {
+-			hsr_nl_nodedown(priv, node->mac_address_a);
++		    msecs_to_jiffies(HSR_PRP_NODE_FORGET_TIME))) {
++			if (priv->prot_version <= HSR_V1)
++				hsr_nl_nodedown(priv, node->mac_address_a);
++			else
++				prp_nl_nodedown(priv, node->mac_address_a);
+ 			list_del_rcu(&node->mac_list);
+ 			/* Note that we need to free this entry later: */
+ 			kfree_rcu(node, rcu_head);
+diff --git a/net/hsr-prp/hsr_prp_main.h b/net/hsr-prp/hsr_prp_main.h
+index cb53920..905d72c 100644
+--- a/net/hsr-prp/hsr_prp_main.h
++++ b/net/hsr-prp/hsr_prp_main.h
+@@ -36,6 +36,10 @@
+ 
+ #define HSR_TLV_ANNOUNCE		   22
+ #define HSR_TLV_LIFE_CHECK		   23
++/* PRP V1 life check for Duplicate discard */
++#define PRP_TLV_LIFE_CHECK_DD		   20
++/* PRP V1 life check for Duplicate Accept */
++#define PRP_TLV_LIFE_CHECK_DA		   21
+ 
+ /* HSR Tag.
+  * As defined in IEC-62439-3:2010, the HSR tag is really { ethertype = 0x88FB,
+@@ -148,6 +152,25 @@ enum hsr_prp_port_type {
+ 	HSR_PRP_PT_PORTS,	/* This must be the last item in the enum */
+ };
+ 
++/* PRP Redunancy Control Trailor (RCT).
++ * As defined in IEC-62439-4:2012, the PRP RCT is really { sequence Nr,
++ * Lan indentifier (LanId), LSDU_size and PRP_suffix = 0x88FB }.
++ *
++ * Field names as defined in the IEC:2012 standard for PRP.
++ */
++struct prp_rct {
++	__be16		sequence_nr;
++	__be16		lan_id_and_LSDU_size;
++	__be16		PRP_suffix;
++} __packed;
++
++static inline void set_prp_LSDU_size(struct prp_rct *rct, u16 LSDU_size)
++{
++	rct->lan_id_and_LSDU_size = htons(
++			(ntohs(rct->lan_id_and_LSDU_size) & 0xF000) |
++			(LSDU_size & 0x0FFF));
++}
++
+ struct hsr_prp_port {
+ 	struct list_head	port_list;
+ 	struct net_device	*dev;
+-- 
+1.9.1
+

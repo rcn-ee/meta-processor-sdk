@@ -1,0 +1,53 @@
+From 6665868d4ba9cc6e9a279101d67a3178522ac80c Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 15 Feb 2017 11:55:08 -0500
+Subject: [PATCH 21/51] hsr: remove the warn_once for non hsr frame
+
+Remove the annoying WARN_ONCE() which happens while the hsr
+interface is being setup. Also check the validity of mac B
+address as it can be zero when same MAC is used on both
+interfaces.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr/hsr_framereg.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 6fcc908..9478db6 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -166,15 +166,13 @@ struct hsr_node *hsr_get_node(struct list_head *node_db, struct sk_buff *skb,
+ 	/* Everyone may create a node entry, connected node to a HSR device. */
+ 
+ 	if (ethhdr->h_proto == htons(ETH_P_PRP)
+-			|| ethhdr->h_proto == htons(ETH_P_HSR)) {
++			|| ethhdr->h_proto == htons(ETH_P_HSR))
+ 		/* Use the existing sequence_nr from the tag as starting point
+ 		 * for filtering duplicate frames.
+ 		 */
+ 		seq_out = hsr_get_skb_sequence_nr(skb) - 1;
+-	} else {
+-		WARN_ONCE(1, "%s: Non-HSR frame\n", __func__);
++	else
+ 		seq_out = HSR_SEQNR_START;
+-	}
+ 
+ 	return hsr_add_node(node_db, ethhdr->h_source, seq_out);
+ }
+@@ -285,7 +283,10 @@ void hsr_addr_subst_dest(struct hsr_node *node_src, struct sk_buff *skb,
+ 	if (port->type != node_dst->AddrB_port)
+ 		return;
+ 
+-	ether_addr_copy(eth_hdr(skb)->h_dest, node_dst->MacAddressB);
++	if (is_valid_ether_addr(node_dst->MacAddressB))
++		ether_addr_copy(eth_hdr(skb)->h_dest, node_dst->MacAddressB);
++	else
++		WARN_ONCE(1, "%s: mac address B not valid\n", __func__);
+ }
+ 
+ 
+-- 
+1.9.1
+

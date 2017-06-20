@@ -1,0 +1,80 @@
+From 2652ae60c21e87397bd757ef6ced64e75f463f8b Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Mon, 27 Mar 2017 18:05:39 -0400
+Subject: [PATCH 48/51] arm: dts: am57xx-idk-common: add prueth HSR PRP
+ bindings
+
+Syntax:
+
+rx-queue-size = /bits/ 16 <q1 q2 q3 q4 colq>
+tx-queue-size = /bits/ 16 <q1 q2 q3 q4 colq>
+
+For EMAC, only the first 4 q sizes take effect.
+The 5th (if present) will be ignored.
+
+For Switch/HSR/PRP, all 5 q sizes take effect.
+All 5 must present if need to config q sizes.
+
+If no q size config exists for a particular port in
+dts, the following defaults for that port will
+be used.
+
+HSR/PRP Defaults:
+host: rx-queue-size = /bits/ 16 <254 134 134 254 48>
+mii0: tx-queue-size = /bits/ 16 <97 97 97 97 48>
+mii1: tx-queue-size = /bits/ 16 <97 97 97 97 48>
+
+EMAC Defaults:
+host: rx-queue-size = /bits/ 16 <194 194 194 194 48>
+mii0: tx-queue-size = /bits/ 16 <97 97 97 97 48>
+mii1: tx-queue-size = /bits/ 16 <97 97 97 97 48>
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ arch/arm/boot/dts/am57xx-idk-common.dtsi | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+index 183e7bf..408d7cfd 100644
+--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+@@ -163,23 +163,31 @@
+ 		pruss = <&pruss2>;
+ 		sram = <&ocmcram1>;
+ 		interrupt-parent = <&pruss2_intc>;
++		/*rx-queue-size = /bits/ 16 <254 134 134 254 48>;*/ /* RED */
++		/*rx-queue-size = /bits/ 16 <194 194 194 194 48>;*/ /* EMAC */
+ 
+ 		pruss2_emac0: ethernet-mii0 {
+ 			phy-handle = <&pruss2_eth0_phy>;
+ 			phy-mode = "mii";
+-			interrupts = <20>, <22>;
+-			interrupt-names = "rx", "tx";
++			interrupts = <20>, <22>,
++				     <20>, <22>;
++			interrupt-names = "rx", "tx",
++					  "red-rx", "red-tx";
+ 			/* Filled in by bootloader */
+ 			local-mac-address = [00 00 00 00 00 00];
++			/*tx-queue-size = /bits/ 16 <97 97 97 97 48>;*/
+ 		};
+ 
+ 		pruss2_emac1: ethernet-mii1 {
+ 			phy-handle = <&pruss2_eth1_phy>;
+ 			phy-mode = "mii";
+-			interrupts = <21>, <23>;
+-			interrupt-names = "rx", "tx";
++			interrupts = <21>, <23>,
++				     <20>, <22>;
++			interrupt-names = "rx", "tx",
++					  "red-rx", "red-tx";
+ 			/* Filled in by bootloader */
+ 			local-mac-address = [00 00 00 00 00 00];
++			/*tx-queue-size = /bits/ 16 <97 97 97 97 48>;*/
+ 		};
+ 	};
+ };
+-- 
+1.9.1
+

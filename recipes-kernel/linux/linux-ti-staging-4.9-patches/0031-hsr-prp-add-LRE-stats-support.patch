@@ -1,0 +1,306 @@
+From c7473e5c8f4dff77ba7a045d8f86542a7503704d Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 21 Feb 2017 16:23:36 -0500
+Subject: [PATCH 31/51] hsr:prp: add LRE stats support
+
+Add LRE stats struct to hsr/prp device node private data to allow
+update of various stats at the slave interfaces and master interface
+as per iec-63439 mibs spec.
+
+Add debugfs file stats to show LRE stats for hsr and prp nodes from
+user space
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_debugfs.c | 84 ++++++++++++++++++++++++++++++++++++++-----
+ net/hsr-prp/hsr_prp_forward.c | 16 +++++++--
+ net/hsr-prp/hsr_prp_main.h    | 29 ++++++++++++++-
+ net/hsr-prp/hsr_prp_slave.c   | 17 ++++++---
+ 4 files changed, 129 insertions(+), 17 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_debugfs.c b/net/hsr-prp/hsr_prp_debugfs.c
+index 94a8609..62deae3 100644
+--- a/net/hsr-prp/hsr_prp_debugfs.c
++++ b/net/hsr-prp/hsr_prp_debugfs.c
+@@ -65,7 +65,8 @@ static void print_mac_address(struct seq_file *sfp, unsigned char *mac)
+ /* hsr_prp_node_table_open - Open the node_table file
+  *
+  * Description:
+- * This routine opens a debugfs file node_table of specific hsr device
++ * This routine opens a debugfs file node_table of specific hsr
++ * or prp device
+  */
+ static int
+ hsr_prp_node_table_open(struct inode *inode, struct file *filp)
+@@ -73,7 +74,7 @@ static void print_mac_address(struct seq_file *sfp, unsigned char *mac)
+ 	return single_open(filp, hsr_prp_node_table_show, inode->i_private);
+ }
+ 
+-static const struct file_operations hsr_prp_fops = {
++static const struct file_operations hsr_prp_node_table_fops = {
+ 	.owner	= THIS_MODULE,
+ 	.open	= hsr_prp_node_table_open,
+ 	.read	= seq_read,
+@@ -81,6 +82,60 @@ static void print_mac_address(struct seq_file *sfp, unsigned char *mac)
+ 	.release = single_release,
+ };
+ 
++/* hsr_prp_stats_show - Formats and prints stats in the device
++ */
++static int
++hsr_prp_stats_show(struct seq_file *sfp, void *data)
++{
++	struct hsr_prp_priv *priv = (struct hsr_prp_priv *)sfp->private;
++	struct hsr_prp_port *master;
++
++	rcu_read_lock();
++	master = hsr_prp_get_port(priv, HSR_PRP_PT_MASTER);
++	rcu_read_unlock();
++
++	seq_puts(sfp, "Stats entries\n");
++	seq_printf(sfp, "cnt_tx_a = %d\n", priv->stats.cnt_tx_a);
++	seq_printf(sfp, "cnt_tx_b = %d\n", priv->stats.cnt_tx_b);
++	seq_printf(sfp, "cnt_tx_c = %ld\n", master->dev->stats.tx_packets);
++	seq_printf(sfp, "cnt_rx_wrong_lan_a = %d\n",
++		   priv->stats.cnt_rx_wrong_lan_a);
++	seq_printf(sfp, "cnt_rx_wrong_lan_b = %d\n",
++		   priv->stats.cnt_rx_wrong_lan_b);
++	seq_printf(sfp, "cnt_rx_a = %d\n", priv->stats.cnt_rx_a);
++	seq_printf(sfp, "cnt_rx_b = %d\n", priv->stats.cnt_rx_b);
++	seq_printf(sfp, "cnt_rx_c = %ld\n", master->dev->stats.rx_packets);
++	seq_printf(sfp, "cnt_rx_errors_a = %d\n", priv->stats.cnt_rx_errors_a);
++	seq_printf(sfp, "cnt_rx_errors_b = %d\n", priv->stats.cnt_rx_errors_b);
++	if (priv->prot_version <= HSR_V1) {
++		seq_printf(sfp, "cnt_own_rx_a = %d\n",
++			   priv->stats.cnt_own_rx_a);
++		seq_printf(sfp, "cnt_own_rx_b = %d\n",
++			   priv->stats.cnt_own_rx_b);
++	}
++	seq_puts(sfp, "\n");
++	return 0;
++}
++
++/* hsr_prp_stats_open - open stats file
++ *
++ * Description:
++ * This routine opens a debugfs file stats of specific hsr or
++ * prp device
++ */
++static int
++hsr_prp_stats_open(struct inode *inode, struct file *filp)
++{
++	return single_open(filp, hsr_prp_stats_show, inode->i_private);
++}
++
++static const struct file_operations hsr_prp_stats_fops = {
++	.owner	= THIS_MODULE,
++	.open	= hsr_prp_stats_open,
++	.read	= seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
+ /* hsr_prp_debugfs_init - create hsr-prp node_table file for dumping
+  * the node table
+  *
+@@ -104,20 +159,29 @@ int hsr_prp_debugfs_init(struct hsr_prp_priv *priv,
+ 		return rc;
+ 	}
+ 
+-	priv->node_tbl_root = de;
++	priv->root_dir = de;
+ 
+ 	de = debugfs_create_file("node_table", S_IFREG | S_IRUGO,
+-				 priv->node_tbl_root, priv,
+-				 &hsr_prp_fops);
++				 priv->root_dir, priv,
++				 &hsr_prp_node_table_fops);
+ 	if (!de) {
+ 		netdev_err(hsr_prp_dev,
+ 			   "Cannot create hsr-prp node_table directory\n");
+ 		return rc;
+ 	}
+ 	priv->node_tbl_file = de;
+-	rc = 0;
+ 
+-	return rc;
++	de = debugfs_create_file("stats", S_IFREG | S_IRUGO,
++				 priv->root_dir, priv,
++				 &hsr_prp_stats_fops);
++	if (!de) {
++		netdev_err(hsr_prp_dev,
++			   "Cannot create hsr-prp stats directory\n");
++		return rc;
++	}
++	priv->stats_file = de;
++
++	return 0;
+ } /* end of hst_prp_debugfs_init */
+ 
+ /* hsr_prp_debugfs_term - Tear down debugfs intrastructure
+@@ -131,6 +195,8 @@ int hsr_prp_debugfs_init(struct hsr_prp_priv *priv,
+ {
+ 	debugfs_remove(priv->node_tbl_file);
+ 	priv->node_tbl_file = NULL;
+-	debugfs_remove(priv->node_tbl_root);
+-	priv->node_tbl_root = NULL;
++	debugfs_remove(priv->stats_file);
++	priv->stats_file = NULL;
++	debugfs_remove(priv->root_dir);
++	priv->root_dir = NULL;
+ }
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 5c91f91..46bdd44 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -311,6 +311,7 @@ static int hsr_prp_xmit(struct sk_buff *skb, struct hsr_prp_port *port,
+ 		 */
+ 		ether_addr_copy(eth_hdr(skb)->h_source, port->dev->dev_addr);
+ 	}
++	INC_CNT_TX(port->type, port->priv);
+ 	return dev_queue_xmit(skb);
+ }
+ 
+@@ -390,9 +391,19 @@ static void hsr_prp_forward_do(struct hsr_prp_frame_info *frame)
+ 		else
+ 			skb = frame_get_stripped_skb(frame, port);
+ 
+-		/* FIXME: Record the dropped frame? */
+-		if (!skb)
++		if (!skb) {
++			if (frame->port_rcv->type == HSR_PRP_PT_SLAVE_A ||
++			    frame->port_rcv->type ==  HSR_PRP_PT_SLAVE_B)
++				INC_CNT_RX_ERROR(frame->port_rcv->type,
++						 port->priv);
++			else {
++				struct net_device *master_dev =
++				hsr_prp_get_port(port->priv,
++						 HSR_PRP_PT_MASTER)->dev;
++				master_dev->stats.rx_dropped++;
++			}
+ 			continue;
++		}
+ 
+ 		skb->dev = port->dev;
+ 		if (port->type == HSR_PRP_PT_MASTER)
+@@ -547,6 +558,7 @@ void hsr_prp_forward_skb(struct sk_buff *skb, struct hsr_prp_port *port)
+ 	return;
+ 
+ out_drop:
++	INC_CNT_RX_ERROR(port->type, port->priv);
+ 	port->dev->stats.tx_dropped++;
+ 	kfree_skb(skb);
+ }
+diff --git a/net/hsr-prp/hsr_prp_main.h b/net/hsr-prp/hsr_prp_main.h
+index db11015..560dff5 100644
+--- a/net/hsr-prp/hsr_prp_main.h
++++ b/net/hsr-prp/hsr_prp_main.h
+@@ -188,6 +188,19 @@ static inline void set_prp_LSDU_size(struct prp_rct *rct, u16 LSDU_size)
+ 			(LSDU_size & 0x0FFF));
+ }
+ 
++struct hsr_prp_lre_if_stats {
++	u32	cnt_tx_a;
++	u32	cnt_tx_b;
++	u32	cnt_rx_wrong_lan_a;
++	u32	cnt_rx_wrong_lan_b;
++	u32	cnt_rx_a;
++	u32	cnt_rx_b;
++	u32	cnt_rx_errors_a;
++	u32	cnt_rx_errors_b;
++	u32	cnt_own_rx_a; /* For HSR only */
++	u32	cnt_own_rx_b; /* For HSR only */
++};
++
+ struct hsr_prp_port {
+ 	struct list_head	port_list;
+ 	struct net_device	*dev;
+@@ -206,6 +219,7 @@ struct hsr_prp_priv {
+ 	struct timer_list	prune_timer;
+ 	bool			rx_offloaded;	/* lre handle in hw */
+ 	bool			l2_fwd_offloaded; /* L2 forward in hw */
++	struct	hsr_prp_lre_if_stats stats;	/* lre interface stats */
+ 	int announce_count;
+ 	u16 sequence_nr;
+ 	u16 sup_sequence_nr;	/* For HSRv1 separate seq_nr for supervision */
+@@ -222,8 +236,9 @@ struct hsr_prp_priv {
+ 	spinlock_t seqnr_lock;	/* locking for sequence_nr */
+ 	unsigned char		sup_multicast_addr[ETH_ALEN];
+ #ifdef	CONFIG_DEBUG_FS
+-	struct dentry *node_tbl_root;
++	struct dentry *root_dir;
+ 	struct dentry *node_tbl_file;
++	struct dentry *stats_file;
+ #endif
+ };
+ 
+@@ -289,6 +304,18 @@ static inline bool prp_check_lsdu_size_integrity(struct sk_buff *skb,
+ int hsr_prp_register_notifier(u8 proto);
+ void hsr_prp_unregister_notifier(u8 proto);
+ 
++#define INC_CNT_TX(type, priv) (((type) == HSR_PRP_PT_SLAVE_A) ? \
++		priv->stats.cnt_tx_a++ : priv->stats.cnt_tx_b++)
++#define INC_CNT_RX_WRONG_LAN(type, priv) (((type) == HSR_PRP_PT_SLAVE_A) ? \
++		priv->stats.cnt_rx_wrong_lan_a++ : \
++		priv->stats.cnt_rx_wrong_lan_b++)
++#define INC_CNT_RX(type, priv) (((type) == HSR_PRP_PT_SLAVE_A) ? \
++		priv->stats.cnt_rx_a++ : priv->stats.cnt_rx_b++)
++#define INC_CNT_RX_ERROR(type, priv) (((type) == HSR_PRP_PT_SLAVE_A) ? \
++		priv->stats.cnt_rx_errors_a++ : priv->stats.cnt_rx_errors_b++)
++#define INC_CNT_OWN_RX(type, priv) (((type) == HSR_PRP_PT_SLAVE_A) ? \
++		priv->stats.cnt_own_rx_a++ : priv->stats.cnt_own_rx_b++)
++
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
+ int hsr_prp_debugfs_init(struct hsr_prp_priv *priv,
+ 			 struct net_device *hsr_prp_dev);
+diff --git a/net/hsr-prp/hsr_prp_slave.c b/net/hsr-prp/hsr_prp_slave.c
+index 8ca9aa6..db63340 100644
+--- a/net/hsr-prp/hsr_prp_slave.c
++++ b/net/hsr-prp/hsr_prp_slave.c
+@@ -21,17 +21,20 @@ static rx_handler_result_t hsr_prp_handle_frame(struct sk_buff **pskb)
+ {
+ 	struct sk_buff *skb = *pskb;
+ 	struct hsr_prp_port *port;
++	struct hsr_prp_priv *priv;
++
+ 	u16 protocol;
+ 
++	rcu_read_lock(); /* hsr->node_db, hsr->ports */
++	port = hsr_prp_port_get_rcu(skb->dev);
++	priv = port->priv;
++
+ 	if (!skb_mac_header_was_set(skb)) {
+ 		WARN_ONCE(1, "%s: skb invalid", __func__);
+-		return RX_HANDLER_PASS;
++		goto finish_pass;
+ 	}
+ 
+-	rcu_read_lock(); /* hsr->node_db, hsr->ports */
+-	port = hsr_prp_port_get_rcu(skb->dev);
+-
+-	if (hsr_prp_addr_is_self(port->priv, eth_hdr(skb)->h_source)) {
++	if (hsr_prp_addr_is_self(priv, eth_hdr(skb)->h_source)) {
+ 		/* Directly kill frames sent by ourselves */
+ 		kfree_skb(skb);
+ 		goto finish_consume;
+@@ -58,13 +61,17 @@ static rx_handler_result_t hsr_prp_handle_frame(struct sk_buff **pskb)
+ 	if (skb_mac_header(skb) != skb->data)
+ 		skb_push(skb, ETH_HLEN);
+ 
++	INC_CNT_RX(port->type, priv);
+ 	hsr_prp_forward_skb(skb, port);
+ 
+ finish_consume:
++	if (priv->prot_version <= HSR_V1)
++		INC_CNT_OWN_RX(port->type, priv);
+ 	rcu_read_unlock(); /* hsr->node_db, hsr->ports */
+ 	return RX_HANDLER_CONSUMED;
+ 
+ finish_pass:
++	INC_CNT_RX_ERROR(port->type, priv);
+ 	rcu_read_unlock(); /* hsr->node_db, hsr->ports */
+ 	return RX_HANDLER_PASS;
+ }
+-- 
+1.9.1
+

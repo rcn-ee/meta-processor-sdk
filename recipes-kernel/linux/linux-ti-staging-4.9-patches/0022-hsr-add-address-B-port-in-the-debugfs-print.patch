@@ -1,0 +1,40 @@
+From cb1261e1ce1585adf11e533165e8cf0f463a643a Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 15 Feb 2017 12:01:14 -0500
+Subject: [PATCH 22/51] hsr: add address B port in the debugfs print
+
+For debug, it will be helpful to show the address B port
+as well when displaying the remote node stats.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr/hsr_prp_debugfs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/hsr/hsr_prp_debugfs.c b/net/hsr/hsr_prp_debugfs.c
+index dfb3c8e..1d0047f 100644
+--- a/net/hsr/hsr_prp_debugfs.c
++++ b/net/hsr/hsr_prp_debugfs.c
+@@ -36,7 +36,7 @@ static void print_mac_address(struct seq_file *sfp, unsigned char *mac)
+ 
+ 	seq_printf(sfp, "Node Table entries\n");
+ 	seq_printf(sfp, "MAC-Address-A,   MAC-Address-B, time_in[A], ");
+-	seq_printf(sfp, "time_in[B]");
++	seq_printf(sfp, "time_in[B], Address-B port");
+ 	seq_printf(sfp, "\n");
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(node, &priv->node_db, mac_list) {
+@@ -47,7 +47,8 @@ static void print_mac_address(struct seq_file *sfp, unsigned char *mac)
+ 		seq_printf(sfp, " ");
+ 		print_mac_address(sfp, &node->MacAddressB[0]);
+ 		seq_printf(sfp, "0x%lx, ", node->time_in[HSR_PT_SLAVE_A]);
+-		seq_printf(sfp, "0x%lx", node->time_in[HSR_PT_SLAVE_B]);
++		seq_printf(sfp, "0x%lx ", node->time_in[HSR_PT_SLAVE_B]);
++		seq_printf(sfp, "0x%x", node->AddrB_port);
+ 		seq_printf(sfp, "\n");
+ 	}
+ 	rcu_read_unlock();
+-- 
+1.9.1
+
