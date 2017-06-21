@@ -9,6 +9,8 @@ SRC_URI_append = "\
     file://Makefile_jailhouse \
 "
 
+SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
+
 MAKEFILES_append_keystone = " ti-ipc"
 
 MAKEFILES_append_k2g-evm = " opencl-examples \
@@ -20,6 +22,7 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               uio-module-drv \
                               ti-gc320-driver \
                               ti-ipc \
+                              big-data-ipc-demo \
 "
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
