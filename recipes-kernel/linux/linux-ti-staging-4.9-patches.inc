@@ -1,4 +1,4 @@
-PR_append = ".p6"
+PR_append = ".p7"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -56,6 +56,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0049-tmp-prueth-add-debugfs-file-to-show-write-configurat.patch \
     file://0050-prueth-use-constants-for-busy-overflow-bits.patch \
     file://0051-hsr-add-mode-T-support-for-HSR-in-offload-case.patch \
+    file://0052-arm-dts-am57xx-allow-mt9t111-support-in-the-default-.patch \
 "
 
 KERNEL_DEVICETREE_append_am57xx-evm = " am572x-evm-jailhouse.dtb am572x-idk-jailhouse.dtb"
