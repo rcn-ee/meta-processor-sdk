@@ -1,4 +1,4 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -21,3 +21,7 @@ SRC_URI_append = " \
 
 PACKAGECONFIG[iec-62439-3-mib] = "--with-mib-modules=iec-62439-3-mib,,,"
 PACKAGECONFIG += "iec-62439-3-mib"
+
+RDEPENDS_${PN}-client += "perl-module-getopt-std \
+                          perl-module-term-readline \
+"
