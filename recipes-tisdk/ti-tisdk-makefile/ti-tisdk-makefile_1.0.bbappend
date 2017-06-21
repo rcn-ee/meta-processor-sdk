@@ -1,4 +1,4 @@
-PR_append = ".tisdk39"
+PR_append = ".tisdk40"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -59,7 +59,8 @@ KERNEL_DEVICETREE_am57xx-hs-evm = "${KERNEL_DEVICETREE_am57xx-evm}"
 KERNEL_DEVICETREE_k2g = "keystone-k2g-evm.dtb keystone-k2g-evm-lcd.dtb keystone-k2g-ice.dtb"
 
 
-KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb"
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am335x-icev2-pru-excl-uio.dtb', '', d)}"
+KERNEL_DEVICETREE_append_ti43x = " ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am437x-idk-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am571x-idk-pru-excl-uio.dtb', '', d)}"
 
 IPC_TOOLS_PATHS_A15 = "gnu.targets.arm.A15="\$\${TOOLCHAIN_PATH_A15}" gnu.targets.arm.A15F="\$\${TOOLCHAIN_PATH_A15}""
