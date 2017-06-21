@@ -4,10 +4,13 @@ DEPENDS="common-csl-ip pruss-lld osal"
 
 include icss-emac-lld-01.00.00.inc
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
-COMPATIBLE_MACHINE = "am57xx-evm"
+COMPATIBLE_MACHINE = "am57xx-evm|ti33x|ti43x"
+
 TARGET_NAME_am57xx-evm = "SOC_AM572x"
+TARGET_NAME_ti33x = "SOC_AM335x"
+TARGET_NAME_ti43x = "SOC_AM437x"
 
 EXTRA_OEMAKE += "-f makefile_armv7 PDK_INSTALL_PATH=${STAGING_INCDIR} TARGET=${TARGET_NAME}"
 
