@@ -1,3 +1,3 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
-include uio-module-drv-2.1.0.inc
+include uio-module-drv-2.2.0.inc
