@@ -1,4 +1,4 @@
-PR_append = ".tisdk38"
+PR_append = ".tisdk39"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -27,7 +27,9 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
 
-MAKEFILES_append_ti43x = " cmem-mod"
+MAKEFILES_append_ti33x = " uio-module-drv"
+
+MAKEFILES_append_ti43x = " cmem-mod uio-module-drv"
 
 MAKEFILES_append_am57xx-evm = " jailhouse"
 
