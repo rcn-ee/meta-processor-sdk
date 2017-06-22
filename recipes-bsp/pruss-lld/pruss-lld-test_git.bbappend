@@ -1,3 +1,4 @@
+require pruss-lld-1.0.0.inc
 PR_append = ".tisdk0"
 
 do_compile () {
