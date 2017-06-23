@@ -3,7 +3,7 @@ DESCRIPTION = "PRU PRP firmware for AM57xx"
 LICENSE = "TI-TSPA"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/tspa.txt;md5=35194e99b81bb9bf40524e85cdba72e4"
 
-PR = "r0"
+PR = "r1"
 
 COMPATIBLE_MACHINE = "am57xx-evm"
 
