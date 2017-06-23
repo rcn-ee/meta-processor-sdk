@@ -60,5 +60,3 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0053-net-prueth-add-support-of-hsr-prp-vlan-pcp-to-rx-que.patch \
     file://0054-arm-dts-am57xx-idk-common-add-support-of-hsr-prp-vla.patch \
 "
-
-KERNEL_DEVICETREE_append_am57xx-evm = " am572x-evm-jailhouse.dtb am572x-idk-jailhouse.dtb"
