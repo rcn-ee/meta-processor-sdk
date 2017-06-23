@@ -1,4 +1,4 @@
-PR_append = ".p7"
+PR_append = ".p8"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -57,6 +57,8 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0050-prueth-use-constants-for-busy-overflow-bits.patch \
     file://0051-hsr-add-mode-T-support-for-HSR-in-offload-case.patch \
     file://0052-arm-dts-am57xx-allow-mt9t111-support-in-the-default-.patch \
+    file://0053-net-prueth-add-support-of-hsr-prp-vlan-pcp-to-rx-que.patch \
+    file://0054-arm-dts-am57xx-idk-common-add-support-of-hsr-prp-vla.patch \
 "
 
 KERNEL_DEVICETREE_append_am57xx-evm = " am572x-evm-jailhouse.dtb am572x-idk-jailhouse.dtb"
