@@ -4,6 +4,8 @@ SRC_URI = "${KERNELORG_MIRROR}/linux/utils/net/${BPN}/${BP}.tar.xz \
            file://configure-cross.patch \
            file://0001-iproute2-de-bash-scripts.patch \
            file://iproute2-4.9.0-musl.patch \
+           file://0001-ip-HSR-Fix-cut-and-paste-error.patch \
+           file://0002-add-support-for-prp-similar-to-hsr.patch \
           "
 
 SRC_URI[md5sum] = "44a8371a4b2c40e48e4c9f98cbd41391"
