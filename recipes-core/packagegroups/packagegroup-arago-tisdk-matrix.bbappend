@@ -1,4 +1,4 @@
-PR_append = "-tisdk49"
+PR_append = "-tisdk50"
 
 PACKAGES =+ "${PN}-extra"
 
@@ -20,6 +20,9 @@ MATRIX_APPS_append_omap-a15 += " \
 MATRIX_APPS_append_ti43x = " \
     matrix-multimedia-demo-audiocapture \
 "
+
+MATRIX_TOUCH_APPS_keystone = ""
+MATRIX_TOUCH_APPS_omapl138 = ""
 
 RDEPENDS_${PN}_remove = "${MATRIX_OPENCV_OPENCL_APPS}"
 RDEPENDS_${PN}-extra = " \
