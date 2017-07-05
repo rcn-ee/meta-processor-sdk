@@ -1,10 +1,4 @@
-PR_append = ".tisdk12"
-
-DTB_FILTER_k2hk-evm = "k2hk"
-DTB_FILTER_k2e-evm = "k2e"
-DTB_FILTER_k2l-evm = "k2l"
-DTB_FILTER_am57xx-hs-evm = "${DTB_FILTER_am57xx-evm}"
-DTB_FILTER_omapl138 = "da850"
+PR_append = ".tisdk13"
 
 # The following FITIMAGE vars are copied from kernel-fitimage.bbclass.
 #
