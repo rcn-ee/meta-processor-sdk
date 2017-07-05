@@ -1,0 +1,33 @@
+From 5bcad633df6f7c7b85333691351ccdd89101c86f Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Thu, 9 Mar 2017 17:27:03 -0500
+Subject: [PATCH 25/43] hsr/prp: add sanity check to accept only configured
+ protocol packets
+
+When DAN is configured for HSR, discard PRP packets and vice-versa.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_forward.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 4e4ffe4..5f3479a 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -613,6 +613,11 @@ void hsr_prp_forward_skb(struct sk_buff *skb, struct hsr_prp_port *port)
+ 	if (hsr_prp_fill_frame_info(&frame, skb, port) < 0)
+ 		goto out_drop;
+ 
++	/* Only accept packets for the protocol we have been configured */
++	if ((frame.skb_hsr && port->priv->prot_version == PRP_V1) ||
++	    (frame.skb_prp && port->priv->prot_version <= HSR_V1))
++		goto out_drop;
++
+ 	if (frame.skb_hsr) {
+ 		if (port->type == HSR_PRP_PT_SLAVE_A ||
+ 		    port->type == HSR_PRP_PT_SLAVE_B)
+-- 
+1.9.1
+

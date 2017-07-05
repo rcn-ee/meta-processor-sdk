@@ -1,0 +1,59 @@
+From 9539e86aa49456491b8e59d0d31f1cc08868957f Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 17 Apr 2017 14:41:28 -0400
+Subject: [PATCH 32/43] hsr: Don't update error count for incorrect lan
+
+The LRE stats for incorrect LAN is applicable only for PRP. So remove
+the same for hsr case.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_forward.c | 24 +-----------------------
+ 1 file changed, 1 insertion(+), 23 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index f5041bf..3217bca 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -227,24 +227,6 @@ static void hsr_set_lan_id(struct hsr_ethhdr *hsr_ethhdr,
+ 	set_hsr_tag_path(&hsr_ethhdr->hsr_tag, lane_id);
+ }
+ 
+-/* only hsr skb should be passed in */
+-static void hsr_check_path_id(struct sk_buff *skb, struct hsr_prp_port *port)
+-{
+-	struct hsr_ethhdr *hsr_ethhdr;
+-	int path_id;
+-
+-	hsr_ethhdr = (struct hsr_ethhdr *)skb_mac_header(skb);
+-	path_id = get_hsr_tag_path(&hsr_ethhdr->hsr_tag);
+-
+-	if (port->type == HSR_PRP_PT_SLAVE_A) {
+-		if (path_id & 1)
+-			INC_CNT_RX_WRONG_LAN(port->type, port->priv);
+-	} else {
+-		if (!(path_id & 1))
+-			INC_CNT_RX_WRONG_LAN(port->type, port->priv);
+-	}
+-}
+-
+ static void hsr_fill_tag(struct sk_buff *skb, struct hsr_prp_frame_info *frame,
+ 			 struct hsr_prp_port *port, u8 proto_version)
+ {
+@@ -619,11 +601,7 @@ void hsr_prp_forward_skb(struct sk_buff *skb, struct hsr_prp_port *port)
+ 	    (frame.skb_prp && port->priv->prot_version <= HSR_V1))
+ 		goto out_drop;
+ 
+-	if (frame.skb_hsr) {
+-		if (port->type == HSR_PRP_PT_SLAVE_A ||
+-		    port->type == HSR_PRP_PT_SLAVE_B)
+-			hsr_check_path_id(frame.skb_hsr, port);
+-	}
++	/* Check for LAN_ID only for PRP */
+ 	if (frame.skb_prp) {
+ 		if (port->type == HSR_PRP_PT_SLAVE_A  ||
+ 		    port->type == HSR_PRP_PT_SLAVE_B)
+-- 
+1.9.1
+

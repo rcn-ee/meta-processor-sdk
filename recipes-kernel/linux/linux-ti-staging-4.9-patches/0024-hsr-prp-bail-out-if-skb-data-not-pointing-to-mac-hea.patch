@@ -1,0 +1,61 @@
+From 13a35d15d2a04cbd8cb44f31f6c8df1076fbd559 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Thu, 9 Mar 2017 16:33:13 -0500
+Subject: [PATCH 24/43] hsr/prp: bail out if skb data not pointing to mac
+ header
+
+Currently if hsr/prp driver receives a packet and the mac
+header is not pointing to skb->data, then we do an skb_push()
+and pass the skb for processing. But there is no check if
+the mac header is matching with skb->data. This patch adds the
+additional check and bail out.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_slave.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_slave.c b/net/hsr-prp/hsr_prp_slave.c
+index 5752739..be4253e 100644
+--- a/net/hsr-prp/hsr_prp_slave.c
++++ b/net/hsr-prp/hsr_prp_slave.c
+@@ -35,6 +35,7 @@ static rx_handler_result_t hsr_prp_handle_frame(struct sk_buff **pskb)
+ 
+ 	if (hsr_prp_addr_is_self(priv, eth_hdr(skb)->h_source)) {
+ 		/* Directly kill frames sent by ourselves */
++		INC_CNT_OWN_RX(port->type, priv);
+ 		kfree_skb(skb);
+ 		goto finish_consume;
+ 	}
+@@ -55,18 +56,23 @@ static rx_handler_result_t hsr_prp_handle_frame(struct sk_buff **pskb)
+ 	if (protocol == htons(ETH_P_HSR) || protocol == htons(ETH_P_PRP))
+ 		skb_push(skb, ETH_HLEN);
+ 
+-	/* Not sure why we have to do this as some frames
++	/* HACK: Not sure why we have to do this as some frames
+ 	 * don't have the skb->data pointing to mac header
+ 	 */
+-	if (skb_mac_header(skb) != skb->data)
++	if (skb_mac_header(skb) != skb->data) {
+ 		skb_push(skb, ETH_HLEN);
+ 
++		/* do one more check and bail out */
++		if (skb_mac_header(skb) != skb->data) {
++			INC_CNT_RX_ERROR(port->type, priv);
++			goto finish_consume;
++		}
++	}
++
+ 	INC_CNT_RX(port->type, priv);
+ 	hsr_prp_forward_skb(skb, port);
+ 
+ finish_consume:
+-	if (priv->prot_version <= HSR_V1)
+-		INC_CNT_OWN_RX(port->type, priv);
+ 	rcu_read_unlock(); /* hsr->node_db, hsr->ports */
+ 	return RX_HANDLER_CONSUMED;
+ 
+-- 
+1.9.1
+

@@ -1,0 +1,30 @@
+From 518f5e7f1b39fc2bc637ca322daf19b3f182126e Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 3 Apr 2017 17:47:59 -0400
+Subject: [PATCH 30/43] hsr/prp: fix uninitialized variable compiler warning
+
+Initialize the node table entry to fix the compiler
+warning of uninitialized variable.
+
+Singed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_forward.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 674a49c..f5041bf 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -514,6 +514,7 @@ static int hsr_prp_fill_frame_info(struct hsr_prp_frame_info *frame,
+ 	unsigned long irqflags;
+ 	u16 proto;
+ 
++	memset(frame, 0, sizeof(*frame));
+ 	frame->is_supervision = is_supervision_frame(priv, skb);
+ 	if (frame->is_supervision && priv->rx_offloaded &&
+ 	    (port->type != HSR_PRP_PT_MASTER)) {
+-- 
+1.9.1
+

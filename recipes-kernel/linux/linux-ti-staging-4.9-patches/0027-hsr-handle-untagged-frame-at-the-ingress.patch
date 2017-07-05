@@ -1,0 +1,27 @@
+From 9e5c96f9845bc005389108890bed516219670911 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 21 Mar 2017 16:52:18 -0400
+Subject: [PATCH 27/43] hsr: handle untagged frame at the ingress
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ net/hsr-prp/hsr_prp_slave.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/hsr-prp/hsr_prp_slave.c b/net/hsr-prp/hsr_prp_slave.c
+index be4253e..a56e5bc 100644
+--- a/net/hsr-prp/hsr_prp_slave.c
++++ b/net/hsr-prp/hsr_prp_slave.c
+@@ -47,7 +47,8 @@ static rx_handler_result_t hsr_prp_handle_frame(struct sk_buff **pskb)
+ 
+ 	if (protocol != htons(ETH_P_PRP) &&
+ 	    protocol != htons(ETH_P_HSR) &&
+-	    port->priv->prot_version <= HSR_V1)
++	    (port->priv->prot_version <= HSR_V1) &&
++	    (!priv->rx_offloaded))
+ 		goto finish_pass;
+ 
+ 	/* Frame is a HSR or PRP frame or frame form a SAN. For
+-- 
+1.9.1
+
