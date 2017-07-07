@@ -1,6 +1,4 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
 
 IMAGE_INSTALL_append_ti43x = " packagegroup-arago-tisdk-graphics"
 IMAGE_INSTALL_append_ti33x = " packagegroup-arago-tisdk-graphics"
-
-IMAGE_INSTALL_append = " packagegroup-arago-tisdk-matrix-extra"
