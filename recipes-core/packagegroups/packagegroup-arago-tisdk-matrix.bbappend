@@ -1,6 +1,4 @@
-PR_append = "-tisdk50"
-
-PACKAGES =+ "${PN}-extra"
+PR_append = "-tisdk51"
 
 MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -23,8 +21,3 @@ MATRIX_APPS_append_ti43x = " \
 
 MATRIX_TOUCH_APPS_keystone = ""
 MATRIX_TOUCH_APPS_omapl138 = ""
-
-RDEPENDS_${PN}_remove = "${MATRIX_OPENCV_OPENCL_APPS}"
-RDEPENDS_${PN}-extra = " \
-    ${@bb.utils.contains('MACHINE_FEATURES','dsp',"${MATRIX_OPENCV_OPENCL_APPS}",'',d)} \
-"
