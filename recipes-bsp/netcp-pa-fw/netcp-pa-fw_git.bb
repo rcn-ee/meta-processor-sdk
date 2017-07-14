@@ -1,7 +1,6 @@
 require recipes-bsp/pa-lld/pa-lld.inc
-require recipes-bsp/pa-lld/pa-lld-3.0.2.inc
 
-PR = "${INC_PR}.3"
+PR = "${INC_PR}.4"
 
 do_compile() {
     :
