@@ -1,6 +1,6 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:${THISDIR}/files:"
 
 SRC_URI_append = " \
     file://0001-IEC-62439-3-add-initial-support-for-hsr-prp-mib-supp.patch \
