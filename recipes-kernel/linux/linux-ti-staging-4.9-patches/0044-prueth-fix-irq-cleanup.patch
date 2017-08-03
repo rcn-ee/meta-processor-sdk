@@ -1,0 +1,40 @@
+From d0f4c94fbf845182dd931dee8a0ed9c2b846b1d2 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 18 Jul 2017 11:15:30 -0400
+Subject: [PATCH 44/44] prueth: fix irq cleanup
+
+When prueth device is stopped, the irq is freed only for the
+last device. This results in irq request still pending for the
+first device. This patch fixes the issue.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 9ae2949..7b917e2 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -2551,6 +2551,8 @@ static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
+ 	struct prueth *prueth = emac->prueth;
+ 
+ 	prueth->emac_configured &= ~BIT(emac->port_id);
++	free_irq(emac->tx_irq, emac->ndev);
++	free_irq(emac->rx_irq, emac->ndev);
+ 
+ 	/* another emac is still in use, don't stop the PRUs */
+ 	if (prueth->emac_configured)
+@@ -2561,8 +2563,6 @@ static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
+ 	/* disable and free rx and tx interrupts */
+ 	disable_irq(emac->tx_irq);
+ 	disable_irq(emac->rx_irq);
+-	free_irq(emac->tx_irq, ndev);
+-	free_irq(emac->rx_irq, ndev);
+ 	emac_lre_get_stats(emac, &emac->prueth->lre_stats);
+ 
+ 	if (PRUETH_HAS_RED(emac->prueth)) {
+-- 
+1.9.1
+

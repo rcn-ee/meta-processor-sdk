@@ -1,4 +1,4 @@
-PR_append = ".p9"
+PR_append = ".p10"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -48,4 +48,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0041-hsr-add-mode-T-support-for-HSR-in-offload-case.patch \
     file://0042-net-prueth-add-support-of-hsr-prp-vlan-pcp-to-rx-que.patch \
     file://0043-arm-dts-am57xx-idk-common-add-support-of-hsr-prp-vla.patch \
+    file://0044-prueth-fix-irq-cleanup.patch \
 "
