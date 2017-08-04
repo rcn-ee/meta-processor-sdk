@@ -39,6 +39,11 @@ MKUBIFS_ARGS_am57xx-hs-evm  = "-F -m 2048 -e 126976 -c 12288"
 MKUBIFS_ARGS_dra7xx-evm     = "-F -m 2048 -e 126976 -c 12288"
 MKUBIFS_ARGS_dra7xx-hs-evm  = "-F -m 2048 -e 126976 -c 12288"
 
+# By default, do not include OPTEE for any HS platform
+# Comment the OPTEEMACHINE and OPTEEFLAVOR line for a
+# to build Processor SDK with OPTEE
+OPTEEMACHINE = ""
+OPTEEFLAVOR = ""
 
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
