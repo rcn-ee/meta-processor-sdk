@@ -8,19 +8,6 @@ ifneq ($(TI_RTOS_PATH),)
 
   TI_RTOS_PATH_ABS := $(realpath $(TI_RTOS_PATH))
 
-  ifneq ($(TI_CCS_PATH),)
-    TI_IPC_TARGETS += ti-ipc-linux-examples
-
-    TI_CCS_PATH_ABS := $(realpath $(TI_CCS_PATH))
-  else
-    ifneq ($(wildcard $(TI_RTOS_PATH_ABS)/ccsv6),)
-      TI_IPC_TARGETS += ti-ipc-linux-examples
-
-      TI_CCS_PATH_ABS = $(TI_RTOS_PATH_ABS)/ccsv6
-    else
-      TI_IPC_TARGETS += ti-ipc-ccs-missing
-    endif
-  endif
 else
   TI_IPC_TARGETS = ti-ipc-rtos-missing
 endif
@@ -38,13 +25,6 @@ ti-ipc-rtos-missing ti-ipc-rtos-missing_clean ti-ipc-rtos-missing_install:
 	@echo     If you wish to build IPC, please install
 	@echo     Processor SDK RTOS $(TISDK_VERSION) for $(PLATFORM)
 	@echo     and set TI_RTOS_PATH in Rules.make
-	@echo ===========================================================
-
-ti-ipc-ccs-missing ti-ipc-ccs-missing_clean ti-ipc-ccs-missing_install:
-	@echo
-	@echo ===========================================================
-	@echo     If you wish to build IPC Examples, please install CCSv6
-	@echo     and set TI_CCS_PATH in Rules.make
 	@echo ===========================================================
 
 ti-ipc-rtos-path-check:
@@ -68,7 +48,7 @@ ti-ipc-linux-config: ti-ipc-rtos-path-check
 	@echo =================================
 	@echo     Configuring IPC
 	@echo =================================
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	. $(ENV_SETUP); \
 	cd $${IPC_INSTALL_PATH}; \
         ./configure $${CONFIGURE_FLAGS} \
@@ -82,7 +62,7 @@ ti-ipc-linux: ti-ipc-rtos-path-check linux ti-ipc-linux-config
 	@echo =================================
 	@echo     Building IPC
 	@echo =================================
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}
 
@@ -90,7 +70,7 @@ ti-ipc-linux_clean: ti-ipc-rtos-path-check ti-ipc-linux-config
 	@echo =================================
 	@echo     Cleaning IPC
 	@echo =================================
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH} clean
 
@@ -103,7 +83,7 @@ ti-ipc-linux_install: ti-ipc-rtos-path-check ti-ipc-linux
 		echo "Please run setup.sh in the SDK's root directory and then try again."; \
 		exit 1; \
 	fi
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH} install DESTDIR=$(DESTDIR)
 
@@ -111,7 +91,7 @@ ti-ipc-linux-examples: ti-ipc-rtos-path-check
 	@echo =================================
 	@echo     Building the IPC Examples
 	@echo =================================
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}/examples \
 		HOSTOS="linux" \
@@ -134,7 +114,7 @@ ti-ipc-linux-examples_install: ti-ipc-rtos-path-check ti-ipc-linux-examples
 		echo "Please run setup.sh in the SDK's root directory and then try again."; \
 		exit 1; \
 	fi
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}/examples install \
 		HOSTOS="linux" \
@@ -145,7 +125,7 @@ ti-ipc-linux-examples_clean: ti-ipc-rtos-path-check
 	@echo =================================
 	@echo     Cleaning the IPC Examples
 	@echo =================================
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) TOOLS_INSTALL_PATH=$(TI_CCS_PATH_ABS)/.. source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
+	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
 	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}/examples clean \
 		HOSTOS="linux" \
