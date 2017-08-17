@@ -1,0 +1,32 @@
+From 6698eea315c8eeef41baa7ebb45424ef2b014ffd Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 4 Aug 2017 18:17:52 -0400
+Subject: [PATCH 47/50] prueth: remove NETIF_F_HW_L2FW_DOFFLOAD requirement for
+ PRP
+
+For PRP offload, there is no need to have NETIF_F_HW_L2FW_DOFFLOAD.
+So remove this requirement from the Ethernet device driver for
+PRP mode.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 7b917e2..769a7dd 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -3147,8 +3147,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
+ 				   NETIF_F_HW_L2FW_DOFFLOAD);
+ 	else if (PRUETH_IS_PRP(prueth))
+-		ndev->features |= (NETIF_F_HW_PRP_RX_OFFLOAD |
+-				   NETIF_F_HW_L2FW_DOFFLOAD);
++		ndev->features |= NETIF_F_HW_PRP_RX_OFFLOAD;
+ 
+ 	ndev->netdev_ops = &emac_netdev_ops;
+ 	ndev->ethtool_ops = &emac_ethtool_ops;
+-- 
+1.9.1
+

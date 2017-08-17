@@ -1,4 +1,4 @@
-PR_append = ".p10"
+PR_append = ".p11"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -49,4 +49,10 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0042-net-prueth-add-support-of-hsr-prp-vlan-pcp-to-rx-que.patch \
     file://0043-arm-dts-am57xx-idk-common-add-support-of-hsr-prp-vla.patch \
     file://0044-prueth-fix-irq-cleanup.patch \
+    file://0045-prueth-fix-incorrect-OCMC_RAM_SIZE-in-the-driver.patch \
+    file://0046-prp-remove-NETIF_F_HW_L2FW_DOFFLOAD-requirement.patch \
+    file://0047-prueth-remove-NETIF_F_HW_L2FW_DOFFLOAD-requirement-f.patch \
+    file://0048-hsr-prp-do-sanity-check-for-offload-before-creating-.patch \
+    file://0049-prueth-preparatory-patch-to-add-run-time-protocol-ch.patch \
+    file://0050-prueth-support-run-time-change-of-protocol-at-pru-Et.patch \
 "

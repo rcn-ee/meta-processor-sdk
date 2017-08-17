@@ -1,0 +1,51 @@
+From 2ae647b7d094fe731ce2031578328ebb6c6e3b52 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 28 Jul 2017 12:26:46 -0400
+Subject: [PATCH 45/50] prueth: fix incorrect OCMC_RAM_SIZE in the driver
+
+The logic to set the OCMC ram size is flipped and causes a PRU Ethernet
+driver crash on AM335x. Following crash trace is seen on this device
+during boot up
+
+ [   11.359677] Unable to handle kernel NULL pointer dereference at
+ virtual address 00000000
+ [   11.367831] pgd = ce158000
+ [   11.470791] [00000000] *pgd=00000000
+ [   11.474416] Internal error: Oops: 805 [#1] PREEMPT ARM
+ [   11.474482] Modules linked in: prueth(+) xfrm4_tunnel ipcomp
+ xfrm_ipcomp pru_rproc esp4 ah4 af_key xfrm_algo wkup_m3_rproc pm33xx pruss
+ pruss_intc wkup_m3_ipc omap_aes_driver remoteproc omap_sham crypto_engine
+ ti_emif_sram pruss_soc_bus gpio_pisosr gpio_pca953x gpio_tpic2810 rtc_omap
+ omap_wdt ti_am335x_tscadc gpio_decoder input_polldev sch_fq_codel
+ uio_module_drv(O) uio cryptodev(O)
+ [   11.474496] CPU: 0 PID: 171 Comm: systemd-udevd Tainted: G
+    O    4.9.28-rt16-g786e64041b #1
+ [   11.474499] Hardware name: Generic AM33XX (Flattened Device Tree)
+ [   11.474505] task: ce132080 task.stack: ce154000
+ [   11.474526] PC is at memset+0x30/0xe0
+ [   11.474532] LR is at 0x0
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 7b917e2..1d11c18 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -3939,9 +3939,9 @@ static int prueth_probe(struct platform_device *pdev)
+ 	prueth_init_mmap_configs(prueth);
+ 
+ 	if (PRUETH_HAS_SWITCH(prueth))
+-		prueth->ocmc_ram_size = OCMC_RAM_SIZE;
+-	else
+ 		prueth->ocmc_ram_size = OCMC_RAM_SIZE_SWITCH;
++	else
++		prueth->ocmc_ram_size = OCMC_RAM_SIZE;
+ 
+ 	/* OCMC_RAM1 */
+ 	prueth->sram_pool = of_gen_pool_get(np, "sram", 0);
+-- 
+1.9.1
+
