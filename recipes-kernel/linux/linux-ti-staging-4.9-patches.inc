@@ -1,4 +1,4 @@
-PR_append = ".p11"
+PR_append = ".p12"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -55,4 +55,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0048-hsr-prp-do-sanity-check-for-offload-before-creating-.patch \
     file://0049-prueth-preparatory-patch-to-add-run-time-protocol-ch.patch \
     file://0050-prueth-support-run-time-change-of-protocol-at-pru-Et.patch \
+    file://0051-arm-dts-am57xx-allow-mt9t111-support-in-the-default-.patch \
 "
