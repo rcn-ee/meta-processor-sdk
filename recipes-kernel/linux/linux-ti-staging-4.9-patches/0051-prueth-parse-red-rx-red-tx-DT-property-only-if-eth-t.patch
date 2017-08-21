@@ -1,0 +1,59 @@
+From f92e52b4b05a4a0027a2ed79a259aec5e461fc07 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 18 Aug 2017 13:53:30 -0400
+Subject: [PATCH 51/51] prueth: parse red-rx/red-tx DT property only if eth
+ type is switch
+
+Currently prueth driver parser the red-tx/red-rx DT property always
+causing issues on platforms that don't support switch. Fix this by
+adding a conditional check to see if the device type is switch and
+then parse the checking if the driver is working as switch and parse
+the red-rx/red-tx DT property.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index abd3e17..b7dbae3 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -3927,19 +3927,21 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 		goto free;
+ 	}
+ 
+-	emac->sw_rx_irq = of_irq_get_byname(eth_node, "red-rx");
+-	if (emac->sw_rx_irq < 0) {
+-		ret = emac->sw_rx_irq;
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(prueth->dev, "could not get switch rx irq\n");
+-		goto free;
+-	}
+-	emac->sw_tx_irq = of_irq_get_byname(eth_node, "red-tx");
+-	if (emac->sw_tx_irq < 0) {
+-		ret = emac->sw_tx_irq;
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(prueth->dev, "could not get switch tx irq\n");
+-		goto free;
++	if (PRUETH_HAS_SWITCH(prueth)) {
++		emac->sw_rx_irq = of_irq_get_byname(eth_node, "red-rx");
++		if (emac->sw_rx_irq < 0) {
++			ret = emac->sw_rx_irq;
++			if (ret != -EPROBE_DEFER)
++				dev_err(prueth->dev, "could not get switch rx irq\n");
++			goto free;
++		}
++		emac->sw_tx_irq = of_irq_get_byname(eth_node, "red-tx");
++		if (emac->sw_tx_irq < 0) {
++			ret = emac->sw_tx_irq;
++			if (ret != -EPROBE_DEFER)
++				dev_err(prueth->dev, "could not get switch tx irq\n");
++			goto free;
++		}
+ 	}
+ 
+ 	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
+-- 
+1.9.1
+
