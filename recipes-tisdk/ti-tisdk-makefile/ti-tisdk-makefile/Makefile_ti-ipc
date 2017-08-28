@@ -1,7 +1,7 @@
 TISDK_VERSION=__TISDK_VERSION__
 
 PRSDK_VERSION=$(shell echo $(TISDK_VERSION) | sed -e 's|^0||' -e 's|\.|_|g')
-PRSDK_PLATFORM=$(shell echo $(PLATFORM) | sed -e 's|-evm$$||')
+PRSDK_PLATFORM=$(shell echo $(PLATFORM) | sed -e 's|-evm$$||' | sed -e 's|-lcdk$$||')
 
 ifneq ($(TI_RTOS_PATH),)
   TI_IPC_TARGETS = ti-ipc-linux
