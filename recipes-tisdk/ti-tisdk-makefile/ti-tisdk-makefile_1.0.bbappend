@@ -1,4 +1,4 @@
-PR_append = ".tisdk42"
+PR_append = ".tisdk43"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -9,6 +9,8 @@ SRC_URI_append = "\
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
+
+MAKEFILES_MATRIX_GUI_omapl138 = ""
 
 MAKEFILES_append_keystone = " ti-ipc"
 
@@ -23,7 +25,11 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
 "
 
 MAKEFILES_append_omapl138 = " ti-ipc \
+                              linux-dtbs \
+                              u-boot-spl \
 "
+MAKEFILES_remove_omapl138 = "pru"
+MAKEFILES_remove_omapl138 = "u-boot-legacy"
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
 
