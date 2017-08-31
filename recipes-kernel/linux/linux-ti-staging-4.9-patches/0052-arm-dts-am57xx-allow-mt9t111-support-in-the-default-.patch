@@ -1,9 +1,11 @@
-From b4216aa074346d518b0b248a0fa4d4ed8471a2e1 Mon Sep 17 00:00:00 2001
+From a2395dc963b5b0aed52e4a9864684d16a02a4682 Mon Sep 17 00:00:00 2001
 From: Hongmei Gou <h-gou@ti.com>
 Date: Fri, 18 Aug 2017 18:30:51 -0400
-Subject: [PATCH] arm: dts: am57xx: allow mt9t111 support in the default dtbs
+Subject: [PATCH 52/54] arm: dts: am57xx: allow mt9t111 support in the default
+ dtbs
 
 Signed-off-by: Hongmei Gou <h-gou@ti.com>
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  arch/arm/boot/dts/am57xx-evm-base.dts              | 24 ++++++++++++
  arch/arm/boot/dts/am57xx-evm-cam-mt9t111.dts       |  2 +-
