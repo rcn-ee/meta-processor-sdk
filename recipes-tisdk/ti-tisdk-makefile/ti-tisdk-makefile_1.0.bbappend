@@ -1,4 +1,4 @@
-PR_append = ".tisdk44"
+PR_append = ".tisdk45"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -50,6 +50,14 @@ KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb ${@base_conditi
 KERNEL_DEVICETREE_append_ti43x = " ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am437x-idk-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am571x-idk-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_k2g-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' keystone-k2g-ice-pru-excl-uio.dtb', '', d)}"
+
+KERNEL_DEVICETREE_append_am57xx-evm = " \
+    am572x-evm-jailhouse.dtb \
+    am572x-idk-jailhouse.dtb \
+    am572x-idk-lcd-osd101t2045-jh.dtb \
+    am572x-idk-lcd-osd101t2587-jh.dtb \
+"
+
 
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\${C6X_GEN_INSTALL_PATH}""
 IPC_TOOLS_PATHS_M4  = "ti.targets.arm.elf.M4="\$\${TOOLCHAIN_PATH_M4}" ti.targets.arm.elf.M4F="\$\${TOOLCHAIN_PATH_M4}""
