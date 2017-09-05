@@ -1,5 +1,9 @@
 PR_append = ".tisdk13"
 
+IMAGE_INSTALL_append = " \                                                                                                                   
+      packagegroup-arago-tisdk-hmi-sdk-host \ 
+ "
+
 # The following FITIMAGE vars are copied from kernel-fitimage.bbclass.
 #
 # We need to get these into the prebuilt-images. We don't want to inherit the
