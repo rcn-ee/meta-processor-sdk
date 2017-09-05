@@ -22,6 +22,7 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               image-gallery \
                               ti-ipc \
                               big-data-ipc-demo \
+			      evse-hmi \
 "
 
 MAKEFILES_append_omapl138 = " ti-ipc \
@@ -33,7 +34,13 @@ MAKEFILES_remove_omapl138 = "u-boot-legacy"
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
 
-MAKEFILES_append_ti43x = " cmem-mod"
+MAKEFILES_append_ti43x = " cmem-mod \
+			   evse-hmi \
+"
+
+MAKEFILES_append_ti33x = " evse-hmi \
+			   protection-relays-hmi \
+"
 
 MAKEFILES_append_am57xx-evm = " jailhouse"
 

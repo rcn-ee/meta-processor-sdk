@@ -1,0 +1,24 @@
+#Protection Relays HMI build targets
+protection-relays-hmi:
+	@echo ================================
+	@echo    Building Protection Relays HMI Demo
+	@echo ================================
+	@cd example-applications; cd `find . -name "*protection-relays-hmi*"`; make -f Makefile.build
+
+protection-relays-hmi_clean:
+	@echo ================================
+	@echo    Building Protection Relays HMI Demo
+	@echo ================================
+	@cd example-applications; cd `find . -name "*protection-relays-hmi*"`; make -f Makefile.build clean
+
+protection-relays-hmi_install:
+	@echo ===================================================
+	@echo   Installing Protection Relays HMI Demo - Release version
+	@echo ===================================================
+	@cd example-applications; cd `find . -name "*protection-relays-hmi*"`; make -f Makefile.build install
+
+protection-relays-hmi_install_debug:
+	@echo =================================================
+	@echo   Installing Protection Relays HMI Demo - Debug version
+	@echo =================================================
+	@cd example-applications; cd `find . -name "*protection-relays-hmi*"`; make -f Makefile.build install_debug
