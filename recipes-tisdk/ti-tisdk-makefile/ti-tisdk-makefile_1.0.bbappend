@@ -6,6 +6,8 @@ SRC_URI_append = "\
     file://Makefile_ti-ipc \
     file://Makefile_video-graphics-test \
     file://Makefile_jailhouse \
+    file://Makefile_evse-hmi \
+    file://Makefile_protection-relays-hmi \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
