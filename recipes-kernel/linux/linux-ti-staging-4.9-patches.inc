@@ -1,4 +1,4 @@
-PR_append = ".p14"
+PR_append = ".p15"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -59,4 +59,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0052-arm-dts-am57xx-allow-mt9t111-support-in-the-default-.patch \
     file://0053-arm-dts-rename-am572x-idk-jailhouse.dts-to-dtsi.patch \
     file://0054-arm-dtb-am572x-idk-add-dts-files-to-support-jailhous.patch \
+    file://0055-Add-support-to-enable-disable-promiscuous-mode.patch \
 "

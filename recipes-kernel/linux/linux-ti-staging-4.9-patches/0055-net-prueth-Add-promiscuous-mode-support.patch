@@ -1,0 +1,109 @@
+From b87971bfb0f3b2e3d87e113a38123f5fe1938f3f Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 6 Sep 2017 13:45:04 -0400
+Subject: [PATCH 55/55] net: prueth: Add promiscuous mode support
+
+Add support to enable/disable promiscuous mode.
+
+There shouldn't be firmware compatibility breakage as
+we're not using RELEASE version and HOST_Q1_RX_CONTEXT_OFFSET remains
+unchanged while adding the PROMISCUOUS_MODE control.
+
+Although Ethernet will work with existing firmware,
+a firmware update is required for promiscuous mode to work.
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/icss_switch.h |  9 +++++++
+ drivers/net/ethernet/ti/prueth.c      | 47 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/icss_switch.h b/drivers/net/ethernet/ti/icss_switch.h
+index 25bada7..beed0a7 100644
+--- a/drivers/net/ethernet/ti/icss_switch.h
++++ b/drivers/net/ethernet/ti/icss_switch.h
+@@ -215,6 +215,15 @@
+ /* Shared RAM offsets for EMAC */
+ #define EMAC_P0_Q1_DESC_OFFSET_AFTER_BD	72
+ 
++/* Promiscuous mode control */
++#define EMAC_P1_PROMISCUOUS_BIT		BIT(0)
++#define EMAC_P2_PROMISCUOUS_BIT		BIT(1)
++/* EMAC_PROMISCUOUS_MODE_OFFSET is relative to EOF_48K_BUFFER_BD. Since
++ * we calculate the offsets dynamically, define it as 4 relative to
++ * eof_48k_buffer_bd in prueth_mmap_sram_cfg
++ */
++#define EMAC_PROMISCUOUS_MODE_OFFSET	4
++
+ /* Shared RAM offsets for both Switch and EMAC */
+ #define P0_Q1_BD_OFFSET		SRAM_START_OFFSET
+ 
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index b7dbae3..74c3622 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -3639,6 +3639,52 @@ static int emac_ndo_set_features(struct net_device *ndev,
+ 	return 0;
+ }
+ 
++/**
++ * emac_ndo_set_rx_mode - EMAC set receive mode function
++ * @ndev: The EMAC network adapter
++ *
++ * Called when system wants to set the receive mode of the device.
++ *
++ */
++static void emac_ndo_set_rx_mode(struct net_device *ndev)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
++	struct prueth *prueth = emac->prueth;
++	struct prueth_mmap_sram_cfg *s = &prueth->mmap_sram_cfg;
++	void __iomem *sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
++	u32 reg, mask;
++
++	if (PRUETH_HAS_SWITCH(prueth)) {
++		netdev_err(ndev,
++			   "%s: promisc mode not supported for switch\n",
++			   __func__);
++		return;
++	}
++
++	reg = readl(sram + s->eof_48k_buffer_bd + EMAC_PROMISCUOUS_MODE_OFFSET);
++	switch (emac->port_id) {
++	case PRUETH_PORT_MII0:
++		mask = EMAC_P1_PROMISCUOUS_BIT;
++		break;
++	case PRUETH_PORT_MII1:
++		mask = EMAC_P2_PROMISCUOUS_BIT;
++		break;
++	default:
++		netdev_err(ndev, "%s: invalid port\n", __func__);
++		return;
++	}
++
++	if (ndev->flags & IFF_PROMISC) {
++		/* Enable promiscuous mode */
++		reg |= mask;
++	} else {
++		/* Disable promiscuous mode */
++		reg &= ~mask;
++	}
++
++	writel(reg, sram + s->eof_48k_buffer_bd + EMAC_PROMISCUOUS_MODE_OFFSET);
++}
++
+ static const struct net_device_ops emac_netdev_ops = {
+ 	.ndo_open = emac_ndo_open,
+ 	.ndo_stop = emac_ndo_stop,
+@@ -3648,6 +3694,7 @@ static int emac_ndo_set_features(struct net_device *ndev,
+ 	.ndo_change_mtu	= eth_change_mtu,
+ 	.ndo_tx_timeout = emac_ndo_tx_timeout,
+ 	.ndo_get_stats = emac_ndo_get_stats,
++	.ndo_set_rx_mode = emac_ndo_set_rx_mode,
+ 	.ndo_set_features = emac_ndo_set_features,
+ 	.ndo_fix_features = emac_ndo_fix_features,
+ 	/* +++TODO: implement .ndo_setup_tc */
+-- 
+1.9.1
+
