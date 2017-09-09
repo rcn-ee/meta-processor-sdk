@@ -10,7 +10,7 @@ PR = "r0"
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/sitara-linux/evse-hmi.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "a257dfc05db311c74cb50838ff5b9e2cfb87dbfe"
+SRCREV = "ce093e76faddce78dbaa3e22af6d252f57d5f700"
 
 S = "${WORKDIR}/git"
 
