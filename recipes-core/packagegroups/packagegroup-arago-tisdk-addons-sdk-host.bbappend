@@ -1,4 +1,4 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
 EXTRA_LIBS_append_omap-a15 = " \
     uio-module-drv-src \
@@ -15,6 +15,10 @@ EXTRA_LIBS_append_ti43x = " \
 
 EXTRA_LIBS_append_am57xx-evm = " \
     jailhouse-src \
+"
+
+EXTRA_LIBS_append_keystone = " \
+    ipsecmgr-mod-src \
 "
 
 UTILS_append_k2g = " \

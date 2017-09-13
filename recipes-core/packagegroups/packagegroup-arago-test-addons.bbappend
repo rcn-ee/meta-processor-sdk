@@ -1,6 +1,21 @@
-PR_append = ".tisdk5"
+PR_append = ".tisdk6"
 
-TEST_ADDONS_TI_append_keystone = " mmap-lld-test"
+TEST_ADDONS_TI_append_keystone = " \
+    mmap-lld-test \
+    ipsecmgr \
+"
+
+TEST_ADDONS_TI_append_k2hk-evm = " \
+    netapi-test \
+"
+
+TEST_ADDONS_TI_append_k2l-evm = " \
+    netapi-test \
+"
+
+TEST_ADDONS_TI_append_k2e-evm = " \
+    netapi-test \
+"
 
 TEST_ADDONS_TI_append_am57xx-evm = " \
     osal-test \
