@@ -1,0 +1,26 @@
+From 6b3c6acfc68f0897655c6d25a41a71dee10852ca Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Thu, 7 Sep 2017 14:41:48 -0400
+Subject: [PATCH] replace nl-xfrm library by nl-xfrm-3
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ ti/runtime/netapi/applications/ipsec_offload/ipsecmgr/build/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ti/runtime/netapi/applications/ipsec_offload/ipsecmgr/build/Makefile b/ti/runtime/netapi/applications/ipsec_offload/ipsecmgr/build/Makefile
+index 916e9ce..f7df29e 100755
+--- a/ti/runtime/netapi/applications/ipsec_offload/ipsecmgr/build/Makefile
++++ b/ti/runtime/netapi/applications/ipsec_offload/ipsecmgr/build/Makefile
+@@ -80,7 +80,7 @@ ROOT_DIR = ..
+ IPSECMGR_UTIL_IFACE_DIR?= ../../../utils/iface
+ IPSECMGR_IFACE_DIR?= ../
+ 
+-LIBNL_LD_OPTS = -lnl-3 -lnl-xfrm -lnl-route-3
++LIBNL_LD_OPTS = -lnl-3 -lnl-xfrm-3 -lnl-route-3
+ 
+ LD_OPTS += -pthread -lrt
+ 
+-- 
+2.7.4
+
