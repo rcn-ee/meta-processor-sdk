@@ -1,4 +1,4 @@
-PR_append = ".tisdk6"
+PR_append = ".tisdk7"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
@@ -20,3 +20,4 @@ KERNEL_DEVICETREE_append_am57xx-evm = " \
 "
 
 RDEPENDS_kernel-base_append_am57xx-evm = " pruhsr-fw pruprp-fw"
+RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
