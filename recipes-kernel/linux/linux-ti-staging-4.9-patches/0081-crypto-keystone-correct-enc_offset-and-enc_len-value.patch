@@ -1,0 +1,64 @@
+From 24349eabda4cf91f9196d10367566b714d323677 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Tue, 12 Sep 2017 08:25:38 -0400
+Subject: [PATCH 81/82] crypto: keystone: correct enc_offset and enc_len values
+
+Correct calculated values of enc_offset and enc_len because the associated
+authentication data scatterlist in aead_request, which was a separate
+scatterlist in kernel 3.10, is now the first SG entry of the src
+scatterlist in kernel 4.4. The associated auth data SG entry contains
+the IV.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/crypto/keystone-sa-utils.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/crypto/keystone-sa-utils.c b/drivers/crypto/keystone-sa-utils.c
+index 03eed2d..303a0ac 100644
+--- a/drivers/crypto/keystone-sa-utils.c
++++ b/drivers/crypto/keystone-sa-utils.c
+@@ -1016,8 +1016,8 @@ void sa_rx_desc_process(struct keystone_crypto_data *dev_data,
+ 		ivsize = crypto_aead_ivsize(tfm);
+ 
+ 		if (req_sub_type == SA_REQ_SUBTYPE_ENC) {
+-			enc_offset = req->assoclen + ivsize;
+-			enc_len = req->cryptlen - ivsize;
++			enc_offset = req->assoclen;
++			enc_len = req->cryptlen;
+ 			enc = 1;
+ 		} else if (req_sub_type == SA_REQ_SUBTYPE_DEC) {
+ 			enc_offset = req->assoclen;
+@@ -1179,7 +1179,6 @@ static int sa_aead_perform(struct aead_request *req, u8 *iv, bool enc)
+ 	dma_addr_t desc_dma_addr;
+ 	struct keystone_crypto_data *pdata = dev_get_drvdata(sa_ks2_dev);
+ 	struct sa_dma_req_ctx *req_ctx = NULL;
+-	unsigned int ivsize = crypto_aead_ivsize(tfm);
+ 	u8 enc_offset;
+ 	int sg_nents;
+ 	int psdata_offset, ret = 0;
+@@ -1196,9 +1195,9 @@ static int sa_aead_perform(struct aead_request *req, u8 *iv, bool enc)
+ 			GFP_KERNEL : GFP_ATOMIC;
+ 
+ 	if (enc) {
+-		iv = (u8 *)(sg_virt(req->src) + req->assoclen);
+-		enc_offset = req->assoclen + ivsize;
+-		enc_len = req->cryptlen - ivsize;
++		iv = req->iv;
++		enc_offset = req->assoclen;
++		enc_len = req->cryptlen;
+ 		auth_len = req->assoclen + req->cryptlen;
+ 	} else {
+ 		enc_offset = req->assoclen;
+@@ -1208,7 +1207,7 @@ static int sa_aead_perform(struct aead_request *req, u8 *iv, bool enc)
+ 	}
+ 
+ 	/* Allocate descriptor & submit packet */
+-	sg_nents = sg_count(req->src, enc_len);
++	sg_nents = sg_count(req->src, auth_len);
+ 
+ 	if (unlikely(atomic_sub_return(sg_nents, &pdata->tx_dma_desc_cnt)
+ 		     < 0)) {
+-- 
+1.9.1
+

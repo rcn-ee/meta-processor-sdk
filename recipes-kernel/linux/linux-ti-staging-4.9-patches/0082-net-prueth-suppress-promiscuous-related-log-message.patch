@@ -1,0 +1,32 @@
+From 4f94cd60e3484e5d8ec3abe01543d5a9faa3b0ce Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Thu, 14 Sep 2017 16:25:59 -0400
+Subject: [PATCH 82/82] net: prueth: suppress promiscuous related log message
+
+Recent changes to support promiscuous mode has introduced a log message
+'prueth pruss2_eth eth3: emac_ndo_set_rx_mode: promisc mode not supported
+for switch' which gets displayed many times when hsr/prp interface is
+created or link goes down and is unnecessary. Convert the log to a debug
+message instead of error message
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index fc98f56..a4f06a3 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -3496,7 +3496,7 @@ static void emac_ndo_set_rx_mode(struct net_device *ndev)
+ 	u32 reg, mask;
+ 
+ 	if (PRUETH_HAS_SWITCH(prueth)) {
+-		netdev_err(ndev,
++		netdev_dbg(ndev,
+ 			   "%s: promisc mode not supported for switch\n",
+ 			   __func__);
+ 		return;
+-- 
+1.9.1
+

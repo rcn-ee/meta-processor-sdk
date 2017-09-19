@@ -1,0 +1,42 @@
+From e2fdf3b5cd7a0173df6b3fdf109e3dda6f266ff6 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Tue, 12 Sep 2017 08:19:53 -0400
+Subject: [PATCH 79/82] crypto: keystone: fix crypto selftests
+
+Load firmware before registering algs. Without this change, encryption
+selftest 1 would fail for authenc(hmac(sha1),cbc(aes))-keystone-sa,
+followed by a WARNING/stack traces of crypto_wait_for_test, followed
+by error prints about the failure to load firmware on the SA, and that
+task cryptomgr_test was hung/blocked.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/crypto/keystone-sa.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/crypto/keystone-sa.c b/drivers/crypto/keystone-sa.c
+index b66062a..566b383 100644
+--- a/drivers/crypto/keystone-sa.c
++++ b/drivers/crypto/keystone-sa.c
+@@ -850,15 +850,15 @@ static int keystone_crypto_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_3;
+ 
+-	/* Register crypto algorithms */
+-	sa_register_algos(dev);
+-
+ 	ret = sa_request_firmware(dev);
+ 	if (ret < 0)
+ 		goto err_3;
+ 
+ 	platform_set_drvdata(pdev, dev_data);
+ 
++	/* Register crypto algorithms */
++	sa_register_algos(dev);
++
+ 	dev_info(dev, "crypto accelerator enabled\n");
+ 	return 0;
+ 
+-- 
+1.9.1
+

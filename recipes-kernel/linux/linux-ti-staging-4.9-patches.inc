@@ -1,4 +1,4 @@
-PR_append = ".p17"
+PR_append = ".p18"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -67,4 +67,22 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0062-net-prueth-fix-incorrect-reporting-of-packet-drop-at.patch \
     file://0063-net-prueth-remove-unnecessary-logs-and-code-comment.patch \
     file://0064-hsr-prp-improvements-to-lre-statistics-handling.patch \
+    file://0065-soc-ti-add-missing-include-to-knav_dma.h.patch \
+    file://0066-arm-move-aes_glue.h-to-the-arch-arm-include-asm-dire.patch \
+    file://0067-Documentation-devicetree-bindings-arm-keystone-keyst.patch \
+    file://0068-crypto-add-stub-keystone-crypto-accelerator-driver.patch \
+    file://0069-crypto-ks2-add-SA-crypto-accelerator-definitions.patch \
+    file://0070-crypto-ks2-read-driver-configuration-parameters-from.patch \
+    file://0071-crypto-ks2-add-dma-resources-allocation-code.patch \
+    file://0072-crypto-ks2-add-low-level-crypto-hardware-interface-c.patch \
+    file://0073-crypto-ks2-add-command-label-functions.patch \
+    file://0074-crypto-ks2-add-processing-functions-and-aead-algorit.patch \
+    file://0075-ARM-dts-k2hk-add-device-binding-for-crypto-accelerat.patch \
+    file://0076-ARM-dts-k2e-add-device-binding-for-crypto-accelerato.patch \
+    file://0077-ARM-dts-k2l-add-device-binding-for-crypto-accelerato.patch \
+    file://0078-crypto-keystone-add-driver-statistics.patch \
+    file://0079-crypto-keystone-fix-crypto-selftests.patch \
+    file://0080-crypto-keystone-enable-EVICT-flag-by-default.patch \
+    file://0081-crypto-keystone-correct-enc_offset-and-enc_len-value.patch \
+    file://0082-net-prueth-suppress-promiscuous-related-log-message.patch \
 "
