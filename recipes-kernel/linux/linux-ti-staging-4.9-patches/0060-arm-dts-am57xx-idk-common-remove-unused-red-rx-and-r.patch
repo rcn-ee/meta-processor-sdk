@@ -1,0 +1,48 @@
+From 7fa897138dbe20a39e4ef3aeae238ea407f5307c Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 8 Sep 2017 12:52:47 -0400
+Subject: [PATCH 60/82] arm: dts: am57xx-idk-common: remove unused red-rx and
+ red-tx irq properties
+
+Based on latest update to PRU Ethernet driver, for switch case also same
+rx interrupts are used as in EMAC case. So remove the red-tx/rx DT
+properties from the DTS file.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ arch/arm/boot/dts/am57xx-idk-common.dtsi | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+index ea2ef8e..d0a8e05 100644
+--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+@@ -171,10 +171,8 @@
+ 		pruss2_emac0: ethernet-mii0 {
+ 			phy-handle = <&pruss2_eth0_phy>;
+ 			phy-mode = "mii";
+-			interrupts = <20>, <22>,
+-				     <20>, <22>;
+-			interrupt-names = "rx", "tx",
+-					  "red-rx", "red-tx";
++			interrupts = <20>, <22>;
++			interrupt-names = "rx", "tx";
+ 			/* Filled in by bootloader */
+ 			local-mac-address = [00 00 00 00 00 00];
+ 			/*tx-queue-size = /bits/ 16 <97 97 97 97 48>;*/
+@@ -183,10 +181,8 @@
+ 		pruss2_emac1: ethernet-mii1 {
+ 			phy-handle = <&pruss2_eth1_phy>;
+ 			phy-mode = "mii";
+-			interrupts = <21>, <23>,
+-				     <20>, <22>;
+-			interrupt-names = "rx", "tx",
+-					  "red-rx", "red-tx";
++			interrupts = <21>, <23>;
++			interrupt-names = "rx", "tx";
+ 			/* Filled in by bootloader */
+ 			local-mac-address = [00 00 00 00 00 00];
+ 			/*tx-queue-size = /bits/ 16 <97 97 97 97 48>;*/
+-- 
+1.9.1
+

@@ -1,4 +1,4 @@
-PR_append = ".p16"
+PR_append = ".p17"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -60,4 +60,11 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0053-arm-dts-rename-am572x-idk-jailhouse.dts-to-dtsi.patch \
     file://0054-arm-dtb-am572x-idk-add-dts-files-to-support-jailhous.patch \
     file://0055-net-prueth-Add-promiscuous-mode-support.patch \
+    file://0058-net-prueth-update-to-support-2-queues-per-port-at-in.patch \
+    file://0059-net-prueth-remove-collision-queue-support-at-ingress.patch \
+    file://0060-arm-dts-am57xx-idk-common-remove-unused-red-rx-and-r.patch \
+    file://0061-net-prueth-change-rx-packet-processing-to-use-irq-th.patch \
+    file://0062-net-prueth-fix-incorrect-reporting-of-packet-drop-at.patch \
+    file://0063-net-prueth-remove-unnecessary-logs-and-code-comment.patch \
+    file://0064-hsr-prp-improvements-to-lre-statistics-handling.patch \
 "
