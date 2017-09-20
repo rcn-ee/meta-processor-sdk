@@ -1,4 +1,4 @@
-PR_append = "-tisdk38"
+PR_append = "-tisdk39"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -28,6 +28,8 @@ UTILS_append_ti43x = " uio-module-drv-test \
 UTILS_append_ti33x = " uio-module-drv-test \
                        uio-test-pruss \
 "
+
+UTILS_append_k2g = " uio-test-pruss"
 
 EXTRA_PACKAGES_append_omap-a15 = " big-data-ipc-demo-linux \
                                    big-data-ipc-demo-linux-firmware \
