@@ -1,4 +1,4 @@
-PR_append = "-tisdk25"
+PR_append = "-tisdk26"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -37,6 +37,11 @@ EXTRA_LIBS_append_k2l-evm = " \
 EXTRA_LIBS_append_k2e-evm = " \
     netapi-dev \
     netapi-staticdev \
+"
+
+EXTRA_LIBS_append_k2g-evm = " \
+    icss-emac-lld-dev \
+    icss-emac-lld-staticdev \
 "
 
 EXTRA_LIBS_append_am57xx-evm = " \

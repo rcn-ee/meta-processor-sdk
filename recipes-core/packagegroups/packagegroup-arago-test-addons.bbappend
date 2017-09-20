@@ -1,4 +1,4 @@
-PR_append = ".tisdk6"
+PR_append = ".tisdk7"
 
 TEST_ADDONS_TI_append_keystone = " \
     mmap-lld-test \
@@ -29,3 +29,4 @@ TEST_ADDONS_TI_append_ti43x  = " \
 
 TEST_ADDONS_TI_append_am335x-evm  = " icss-emac-lld-test"
 TEST_ADDONS_TI_append_am437x-evm  = " icss-emac-lld-test"
+TEST_ADDONS_TI_append_k2g-evm  = " icss-emac-lld-test"
