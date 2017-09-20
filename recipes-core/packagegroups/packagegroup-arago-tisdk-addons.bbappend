@@ -1,4 +1,4 @@
-PR_append = "-tisdk39"
+PR_append = "-tisdk40"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -8,7 +8,7 @@ EXTRA_PACKAGES_remove_k2hk-hs-evm = "opencv"
 
 EXTRA_PACKAGES_append_am57xx-evm = " jailhouse-examples"
 
-EXTRA_PACKAGES_append = " zbar hidapi"
+EXTRA_PACKAGES_append = " zbar hidapi ccief-basic"
 
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
