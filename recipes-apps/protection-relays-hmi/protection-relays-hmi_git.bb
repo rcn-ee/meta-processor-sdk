@@ -10,7 +10,7 @@ PR = "r0"
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/sitara-linux/protection-relays-hmi.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "c8764aaba365302090179b6720cbfc994e169842"
+SRCREV = "b116b5628a68ba3b6db88435023cf034504655d3"
 
 S = "${WORKDIR}/git"
 
