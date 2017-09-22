@@ -75,3 +75,9 @@ EXTRA_LIBS_append_ti43x = "\
     cmem-dev \
     cmem-staticdev \
 "
+
+EXTRA_LIBS_append_dra7xx = " \
+    tiovx-lib-host-dev \
+    tiovx-lib-host-staticdev \
+    tiovx-sys-iface \
+"
