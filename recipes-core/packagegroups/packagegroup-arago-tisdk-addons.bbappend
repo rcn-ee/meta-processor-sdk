@@ -34,3 +34,5 @@ UTILS_append_k2g = " uio-test-pruss"
 EXTRA_PACKAGES_append_omap-a15 = " big-data-ipc-demo-linux \
                                    big-data-ipc-demo-linux-firmware \
 "
+
+EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host "
