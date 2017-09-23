@@ -8,9 +8,9 @@ require recipes-ti/includes/tisdk-paths.inc
 require tiovx-sys.inc
 
 DEPENDS = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem "
-RDEPENDS_${PN} = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem "
+RDEPENDS_${PN} = " tiovx-sys-iface tiovx-sys-iface-firmware tiovx-lib-host ti-ipc cmem "
 
-PR = "r1"
+PR = "r2"
 
 COMPATIBLE_MACHINE = "dra7xx"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
