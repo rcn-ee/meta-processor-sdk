@@ -1,4 +1,4 @@
-PR_append = ".p18"
+PR_append = ".p19"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -85,4 +85,6 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0080-crypto-keystone-enable-EVICT-flag-by-default.patch \
     file://0081-crypto-keystone-correct-enc_offset-and-enc_len-value.patch \
     file://0082-net-prueth-suppress-promiscuous-related-log-message.patch \
+    file://0083-net-prueth-fix-compiler-warning-of-unused-variable.patch \
+    file://0084-net-prueth-add-debug-stats-counters.patch \
 "

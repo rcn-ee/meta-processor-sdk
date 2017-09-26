@@ -1,0 +1,38 @@
+From c6597bbeee9dff7441d101b1d74274ce895925c1 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 26 Sep 2017 10:10:25 -0400
+Subject: [PATCH 83/84] net: prueth: fix compiler warning of unused variable
+
+This patch fixes the compiler warnings for unused variables,
+dram1 and colq_desc that was introduced by an earlier commit to
+clean up rx collision queue usage in the driver.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index a4f06a3..22fac6e 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -2139,7 +2139,7 @@ static irqreturn_t emac_rx_thread(int irq, void *dev_id)
+ {
+ 	struct net_device *ndev = (struct net_device *)dev_id;
+ 	struct prueth_emac *emac = netdev_priv(ndev);
+-	struct prueth_queue_desc __iomem *queue_desc, *colq_desc;
++	struct prueth_queue_desc __iomem *queue_desc;
+ 	const struct prueth_queue_info *rxqueue;
+ 	struct prueth *prueth;
+ 	u8 overflow_cnt;
+@@ -2147,7 +2147,6 @@ static irqreturn_t emac_rx_thread(int irq, void *dev_id)
+ 	u16 bd_rd_ptr, bd_wr_ptr, update_rd_ptr;
+ 	u32 rd_buf_desc;
+ 	void __iomem *shared_ram = emac->prueth->mem[PRUETH_MEM_SHARED_RAM].va;
+-	void __iomem *dram1 = emac->prueth->mem[PRUETH_MEM_DRAM1].va;
+ 	struct prueth_packet_info pkt_info;
+ 	struct net_device_stats *ndevstats = &emac->ndev->stats;
+ 	int i, j, ret;
+-- 
+1.9.1
+
