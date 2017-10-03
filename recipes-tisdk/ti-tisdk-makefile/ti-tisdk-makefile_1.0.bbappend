@@ -1,4 +1,4 @@
-PR_append = ".tisdk47"
+PR_append = ".tisdk48"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -8,11 +8,18 @@ SRC_URI_append = "\
     file://Makefile_jailhouse \
     file://Makefile_evse-hmi \
     file://Makefile_protection-relays-hmi \
+    file://Makefile_ti-xsgx-ddk-km \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 
 MAKEFILES_MATRIX_GUI_omapl138 = ""
+
+MAKEFILES_remove = "\
+    ${@bb.utils.contains("MACHINE_FEATURES", 'sgx', '', 'ti-sgx-ddk-km', d)} \
+    ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', 'dual-camera-demo image-gallery', '', d)} \
+    ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', 'qt-opencv-opencl-opengl-multithreaded barcode-roi', '', d)} \
+"
 
 MAKEFILES_append_keystone = " ti-ipc"
 
@@ -20,11 +27,14 @@ MAKEFILES_append_k2g = " opencl-examples \
                          openmpacc-examples \
 "
 
-MAKEFILES_append_omap-a15 = " dual-camera-demo \
-                              image-gallery \
+MAKEFILES_append_omap-a15 = "\
                               ti-ipc \
                               big-data-ipc-demo \
-			      evse-hmi \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'dual-camera-demo', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'image-gallery', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'evse-hmi', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'video-graphics-test', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', 'ti-xsgx-ddk-km', '', d)} \
 "
 
 MAKEFILES_append_omapl138 = " ti-ipc \
@@ -34,22 +44,21 @@ MAKEFILES_append_omapl138 = " ti-ipc \
 MAKEFILES_remove_omapl138 = "pru"
 MAKEFILES_remove_omapl138 = "u-boot-legacy"
 
-MAKEFILES_append_omap-a15 = " video-graphics-test"
-
 MAKEFILES_append_ti43x = " cmem-mod \
-			   evse-hmi \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'evse-hmi', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', 'ti-xsgx-ddk-km', '', d)} \
 "
 
-MAKEFILES_append_ti33x = " evse-hmi \
-			   protection-relays-hmi \
+MAKEFILES_append_ti33x = " \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'evse-hmi', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', '', 'protection-relays-hmi', d)} \
+               ${@bb.utils.contains("MACHINE_FEATURES", 'xsgx', 'ti-xsgx-ddk-km', '', d)} \
 "
 
 MAKEFILES_append_am57xx-evm = " jailhouse"
 
 MAKEFILES_append_k2g = " pru-icss"
 
-MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
-MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 
 PRU_ICSS_INSTALL_TARGET_k2g = "pru-icss_install_k2g"
 
