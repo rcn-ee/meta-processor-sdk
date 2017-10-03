@@ -1,6 +1,6 @@
 SUMMARY = "Task to add HMI related packages"
 LICENSE = "MIT"
-PR = "r0"
+PR = "r1"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -11,16 +11,16 @@ HMI = " \
 
 
 HMI_append_ti33x = " \
-    evse-hmi \
-    protection-relays-hmi \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'evse-hmi', d)} \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'protection-relays-hmi', d)} \
 "
 
 HMI_append_ti43x = " \
-    evse-hmi \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'evse-hmi', d)} \
 "
 
 HMI_append_omap-a15 = " \
-    evse-hmi \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'evse-hmi', d)} \
 "
 
 

@@ -1,6 +1,6 @@
 SUMMARY = "Task to add HMI related sources into the SDK"
 LICENSE = "MIT"
-PR = "r0"
+PR = "r1"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -9,17 +9,17 @@ inherit packagegroup
 HMI = ""
 
 HMI_append_ti43x = " \
-    evse-hmi-src \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'evse-hmi-src', d)} \
 "
 
 HMI_append_ti33x = " \
-    evse-hmi-src \ 
-    protection-relays-hmi-src \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'evse-hmi-src', d)} \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'protection-relays-hmi-src', d)} \
 "
 
 
 HMI_append_omap-a15 = " \
-    evse-hmi-src \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', 'evse-hmi-src', d)} \
 "
 
 RDEPENDS_${PN} = "\
