@@ -1,7 +1,9 @@
-PR_append = ".tisdk13"
+PR_append = ".tisdk14"
 
 IMAGE_INSTALL_append = " \                                                                                                                   
       packagegroup-arago-tisdk-hmi-sdk-host \ 
+      ${@bb.utils.contains('MACHINE_FEATURES','xsgx','packagegroup-arago-tisdk-qte-sdk-host','',d)} \
+      ${@bb.utils.contains('MACHINE_FEATURES','xsgx','packagegroup-arago-tisdk-graphics-sdk-host','',d)} \
  "
 
 # The following FITIMAGE vars are copied from kernel-fitimage.bbclass.
