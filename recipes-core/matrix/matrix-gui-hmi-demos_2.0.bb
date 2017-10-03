@@ -15,8 +15,9 @@ HMI_RDEPENDS += "matrix-gui-apps-images matrix-gui-submenus-hmi"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-PACKAGES = "matrix-hmi-demo-evse \
-	    matrix-hmi-demo-protection-relays\
+
+PACKAGES = "${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', "matrix-hmi-demo-evse", d)} \
+	    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', "matrix-hmi-demo-protection-relays", d)} \
 "
 
 RDEPENDS_matrix-hmi-demo-evse = " \
