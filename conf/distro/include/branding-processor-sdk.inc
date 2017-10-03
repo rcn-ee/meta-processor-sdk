@@ -11,8 +11,18 @@ PREFERRED_PROVIDER_virtual/kernel_omapl137 = "linux-dummy"
 #PREFERRED_PROVIDER_virtual/kernel_keystone = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
 PREFERRED_VERSION_linux-processor-sdk = "4.4%"
 
+# Use xsgx-ddk for X11 build
+PREFERRED_PROVIDER_virtual/egl = "${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', 'ti-xsgx-ddk-um', 'ti-sgx-ddk-um', d)}"
+PREFERRED_PROVIDER_virtual/libgles1 = "${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', 'ti-xsgx-ddk-um', 'ti-sgx-ddk-um', d)}"
+PREFERRED_PROVIDER_virtual/libgles2 = "${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', 'ti-xsgx-ddk-um', 'ti-sgx-ddk-um', d)}"
+
 # Remove wayland from keystone DISTRO_FEATURES.
 DISTRO_FEATURES_remove_keystone = "wayland opengl"
+
+# Set X11 as default build
+DISTRO_FEATURES_remove = "wayland"
+MACHINE_FEATURES_remove = "sgx"
+MACHINE_FEATURES_append = " xsgx"
 
 # CMEM reserved memory
 RESERVE_CMEM_dra7xx = "1"
@@ -96,3 +106,6 @@ SRCIPK_SHALLOW_DEPTH_pn-linux-ti-staging-rt = "400"
 
 SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-u-boot-ti-staging = "${SRCIPK_GIT_COMMIT_MESSAGE}"
+
+CREATE_SRCIPK_pn-ti-xsgx-ddk-km = "1"
+SRCIPK_INSTALL_DIR_pn-ti-xsgx-ddk-km = "board-support/extra-drivers/${PN}-${PV}"
