@@ -1,4 +1,6 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
+
+GRAPHICS_RDEPENDS = "${@bb.utils.contains("MACHINE_FEATURES", "xsgx", "ti-xsgx-ddk-km-src", "ti-sgx-ddk-km-src", d)}"
 
 GRAPHICS_GC320_RDEPENDS = "ti-gc320-driver-src"
 
