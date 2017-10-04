@@ -1,4 +1,4 @@
-PR_append = ".tisdk7"
+PR_append = ".tisdk8"
 
 TEST_ADDONS_TI_append_keystone = " \
     mmap-lld-test \
@@ -30,3 +30,6 @@ TEST_ADDONS_TI_append_ti43x  = " \
 TEST_ADDONS_TI_append_am335x-evm  = " icss-emac-lld-test"
 TEST_ADDONS_TI_append_am437x-evm  = " icss-emac-lld-test"
 TEST_ADDONS_TI_append_k2g-evm  = " icss-emac-lld-test"
+TEST_ADDONS_TI_remove_omap-a15 = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', 'omapdrmtest', '', d)} \
+    "
