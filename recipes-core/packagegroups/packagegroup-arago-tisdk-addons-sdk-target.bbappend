@@ -1,15 +1,17 @@
-PR_append = "-tisdk26"
+PR_append = "-tisdk27"
+
+EXTRA_PACKAGES_remove = "${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', 'voxelsdk-dev', '', d)}"
 
 UTILS_append_ti33x = " \
-    opencv-dev \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', "opencv-dev", d)} \
 "
 
 UTILS_append_ti43x = " \
-    opencv-dev \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', "opencv-dev", d)} \
 "
 
 UTILS_append_omap-a15 = " \
-    opencv-dev \
+    ${@bb.utils.contains("MACHINE_FEATURES", "xsgx", '', "opencv-dev", d)} \
 "
 
 UTILS_append_keystone = " \

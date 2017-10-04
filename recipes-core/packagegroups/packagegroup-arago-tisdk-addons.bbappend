@@ -1,8 +1,9 @@
-PR_append = "-tisdk40"
+PR_append = "-tisdk41"
 
-EXTRA_PACKAGES_append_ti33x = " opencv"
-EXTRA_PACKAGES_append_ti43x = " opencv"
-EXTRA_PACKAGES_append_omap-a15 = " opencv"
+EXTRA_PACKAGES_remove = "${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', 'voxelsdk', '', d)}"
+EXTRA_PACKAGES_append_ti33x = " ${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', '', ' opencv', d)}"
+EXTRA_PACKAGES_append_ti43x = " ${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', '', ' opencv', d)}"
+EXTRA_PACKAGES_append_omap-a15 = "${@bb.utils.contains('MACHINE_FEATURES', 'xsgx', '', ' opencv', d)}"
 EXTRA_PACKAGES_append_keystone = " opencv"
 EXTRA_PACKAGES_remove_k2hk-hs-evm = "opencv"
 
@@ -29,6 +30,7 @@ UTILS_append_ti33x = " uio-module-drv-test \
                        uio-test-pruss \
 "
 
+UTILS_remove_dra7xx = "${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '', 'glsdk-example-apps', d)}"
 UTILS_append_k2g = " uio-test-pruss"
 
 EXTRA_PACKAGES_append_omap-a15 = " big-data-ipc-demo-linux \
