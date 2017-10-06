@@ -1,0 +1,40 @@
+#!/bin/sh
+
+x_start()
+{
+
+	# Start the X Server. 
+	#
+	/usr/local/XSGX/bin/X -config /usr/local/XSGX/etc/xorg.conf > /dev/null 2>&1 &
+
+	echo "Starting Xorg"
+	return 0;
+}
+
+x_stop()
+{
+
+
+	# Stop the X Server.
+	#
+	[ -f /tmp/.X0-lock ] && read XPID < /tmp/.X0-lock && [ -n "$XPID" ] && kill $XPID && while [ -e /proc/$XPID ] ; do sleep 1; done
+
+	echo "Stopping Xorg"
+	return 0;
+}
+
+
+# Deal with the type of invocation we get.
+#
+case "$1" in
+start)
+	x_start
+	;;
+stop)
+    x_stop
+	;;
+*)
+	echo "$0: unknown argument $1." >&2;
+	;;
+esac
+

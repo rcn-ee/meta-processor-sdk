@@ -10,6 +10,8 @@ BRANCH = "ti-img-sgx/${PV}"
 SRC_URI = "git://git.ti.com/processor-sdk/omap5-sgx-ddk-um-linux-x11-experimental.git;protocol=git;branch=${BRANCH}"
 SRCREV = "c00eb002f624cddac4956c901314c07d83a13260"
 
+SRC_URI += " file://xorg"
+
 # There's only hardfp version available
 python __anonymous() {
     tunes = bb.data.getVar("TUNE_FEATURES", d, 1)
@@ -31,7 +33,7 @@ INITSCRIPT_PARAMS = "defaults 8"
 
 inherit update-rc.d
 
-PR = "r0"
+PR = "r1"
 PROVIDES += "virtual/egl virtual/libgles1 virtual/libgles2 omap5-xsgx-ddk-um-linux"
 
 DEPENDS += "udev"
@@ -54,6 +56,7 @@ S = "${WORKDIR}/git"
 
 do_install () {
     oe_runmake install DESTDIR=${D} TARGET_PRODUCT=${TARGET_PRODUCT}
+    install -m 0644 ${WORKDIR}/xorg ${D}${sysconfdir}/init.d/
 }
 
 SYSROOT_DIRS_append = "/usr/local"
