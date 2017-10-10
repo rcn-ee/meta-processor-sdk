@@ -1,4 +1,4 @@
-PR_append = "-tisdk52"
+PR_append = "-tisdk53"
 
 MATRIX_SGX_DEMOS_remove_omap-a15 = " \
     matrix-3d-demo-kmscubevideo \
@@ -7,22 +7,10 @@ MATRIX_SGX_DEMOS_remove_omap-a15 = " \
 MATRIX_COMMON_APPS_remove = " \
     matrix-gui-oprofile-demos \
 "
-MATRIX_APPS_append_ti33x = " \
-    matrix-hmi-demo-evse            \
-    matrix-hmi-demo-protection-relays \
-"
-
 
 MATRIX_APPS_append_omap-a15 = " \
     matrix-gui-apps-dual-camera \
     matrix-gui-apps-image-gallery \
-    matrix-multimedia-demo-audiocapture \
-    matrix-hmi-demo-evse            \
-"
-
-MATRIX_APPS_append_ti43x = " \
-    matrix-multimedia-demo-audiocapture \
-    matrix-hmi-demo-evse            \
 "
 
 MATRIX_TOUCH_APPS_keystone = ""
