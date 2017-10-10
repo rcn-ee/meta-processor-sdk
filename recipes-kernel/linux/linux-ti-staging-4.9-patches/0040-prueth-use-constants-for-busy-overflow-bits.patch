@@ -1,7 +1,7 @@
-From 57ca0f187062ecf5582eebc0628717f94f482514 Mon Sep 17 00:00:00 2001
+From f56c66b4bbc1ac1c6abe929642903eb6695a0b82 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 7 Jun 2017 16:36:17 -0400
-Subject: [PATCH 40/43] prueth: use constants for busy/overflow bits
+Subject: [PATCH 40/86] prueth: use constants for busy/overflow bits
 
 Instead of hardcoded values, use constants for the status/overflow
 bits.
@@ -14,7 +14,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  2 files changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 85f5d9d..d9c440c 100644
+index 50435b2..22f15e4 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
 @@ -1812,7 +1812,7 @@ static int prueth_tx_enqueue(struct prueth_emac *emac, struct sk_buff *skb,

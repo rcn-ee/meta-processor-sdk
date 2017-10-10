@@ -1,7 +1,7 @@
-From f04b5865e64f25e3d17c0cfcaa1250105fb0b6f7 Mon Sep 17 00:00:00 2001
+From 54499edd9d65935712d889e5aaf79865cc558189 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 11 Sep 2017 13:59:39 -0400
-Subject: [PATCH 77/82] ARM: dts: k2l: add device binding for crypto
+Subject: [PATCH 75/86] ARM: dts: k2l: add device binding for crypto
  accelerator
 
 This patch enables K2L HW crypto accelerator by adding device binding

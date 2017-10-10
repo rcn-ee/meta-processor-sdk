@@ -1,7 +1,7 @@
-From 7107c7716f6abd3a7d4ebb34a141535e26199b67 Mon Sep 17 00:00:00 2001
+From 77078c22001105f48b2f5ea13146da7690d7282a Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Mon, 27 Mar 2017 18:05:39 -0400
-Subject: [PATCH 38/43] arm: dts: am57xx-idk-common: add prueth HSR PRP
+Subject: [PATCH 38/86] arm: dts: am57xx-idk-common: add prueth HSR PRP
  bindings
 
 Syntax:
@@ -36,7 +36,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-index 183e7bf..408d7cfd 100644
+index af3d10d6..10b6620 100644
 --- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
 +++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
 @@ -163,23 +163,31 @@

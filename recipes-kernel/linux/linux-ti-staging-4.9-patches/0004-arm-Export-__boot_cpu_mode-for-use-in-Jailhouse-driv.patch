@@ -1,7 +1,7 @@
-From d6d6a84011096cf7ae07072eeb430551d312eeb1 Mon Sep 17 00:00:00 2001
+From 99a2048f4934a6bed1d9cbf4644dcfdef6f40b3b Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Fri, 12 May 2017 09:00:16 -0400
-Subject: [PATCH 04/43] arm: Export __boot_cpu_mode for use in Jailhouse driver
+Subject: [PATCH 04/86] arm: Export __boot_cpu_mode for use in Jailhouse driver
  module
 
 Onlining a CPU while Jailhouse was running sets BOOT_CPU_MODE_MISMATCH

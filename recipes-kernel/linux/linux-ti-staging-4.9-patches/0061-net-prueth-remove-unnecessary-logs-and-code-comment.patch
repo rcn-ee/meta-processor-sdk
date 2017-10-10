@@ -1,7 +1,7 @@
-From e490e4621fa8542cb6e57ce42dc3786fa401d196 Mon Sep 17 00:00:00 2001
+From 333bf56992305548e9419331e5ca641004564329 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 15 Sep 2017 16:12:33 -0400
-Subject: [PATCH 63/82] net: prueth: remove unnecessary logs and code comment
+Subject: [PATCH 61/86] net: prueth: remove unnecessary logs and code comment
 
 The pcp-rxq-map is now not configurable and is static. First 4 levels
 of PCP are mapped to first queue and others to the second queue. So

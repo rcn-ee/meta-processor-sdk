@@ -1,7 +1,7 @@
-From 2ae647b7d094fe731ce2031578328ebb6c6e3b52 Mon Sep 17 00:00:00 2001
+From 3129356c29cb02ebd4fb8c52667aa7e42ae10f2c Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 28 Jul 2017 12:26:46 -0400
-Subject: [PATCH 45/50] prueth: fix incorrect OCMC_RAM_SIZE in the driver
+Subject: [PATCH 45/86] prueth: fix incorrect OCMC_RAM_SIZE in the driver
 
 The logic to set the OCMC ram size is flipped and causes a PRU Ethernet
 driver crash on AM335x. Following crash trace is seen on this device
@@ -31,10 +31,10 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 7b917e2..1d11c18 100644
+index 3e28973..707170e 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
-@@ -3939,9 +3939,9 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -3977,9 +3977,9 @@ static int prueth_probe(struct platform_device *pdev)
  	prueth_init_mmap_configs(prueth);
  
  	if (PRUETH_HAS_SWITCH(prueth))

@@ -1,7 +1,7 @@
-From 6166016f6e37e9eb00fe7fe1fa77f4e6eda14127 Mon Sep 17 00:00:00 2001
+From 094d58632315b9f9d2892d67d35d2121f5323d62 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 14 Feb 2017 15:00:34 -0500
-Subject: [PATCH 10/43] hsr: add tx stats for master interface
+Subject: [PATCH 10/86] hsr: add tx stats for master interface
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---

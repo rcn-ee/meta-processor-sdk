@@ -1,7 +1,7 @@
-From 305d82e008ed401976b570efe8ce2f4fd4c15061 Mon Sep 17 00:00:00 2001
+From cdf4853ad47a2974b8efb04c94b6cd2b861ec908 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 17:22:38 -0500
-Subject: [PATCH 19/43] prp: add supervision frame generation and handling
+Subject: [PATCH 19/86] prp: add supervision frame generation and handling
  support
 
 Add support for sending and handling supervision frames. For PRP,

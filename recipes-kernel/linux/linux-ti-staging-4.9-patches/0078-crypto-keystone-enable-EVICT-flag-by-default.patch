@@ -1,7 +1,7 @@
-From b5d74989c8278c20d463701f8f39804596579dd8 Mon Sep 17 00:00:00 2001
+From 2fe33557712fa5d8eacb98a5d15b7fb1de3835a1 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Sep 2017 08:22:40 -0400
-Subject: [PATCH 80/82] crypto: keystone: enable EVICT flag by default
+Subject: [PATCH 78/86] crypto: keystone: enable EVICT flag by default
 
 Enable the EVICT flag by default to allow the key to be changed for
 an AEAD (crypto_aead_setkey called more than once), like what is done

@@ -1,7 +1,7 @@
-From d0f4c94fbf845182dd931dee8a0ed9c2b846b1d2 Mon Sep 17 00:00:00 2001
+From e7d13efaa69c621e649274ba13519226fe6ef386 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 18 Jul 2017 11:15:30 -0400
-Subject: [PATCH 44/44] prueth: fix irq cleanup
+Subject: [PATCH 44/86] prueth: fix irq cleanup
 
 When prueth device is stopped, the irq is freed only for the
 last device. This results in irq request still pending for the
@@ -14,7 +14,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 9ae2949..7b917e2 100644
+index 1be1214..3e28973 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
 @@ -2551,6 +2551,8 @@ static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)

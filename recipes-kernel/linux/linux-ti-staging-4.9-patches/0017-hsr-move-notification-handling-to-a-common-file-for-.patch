@@ -1,7 +1,7 @@
-From ff5a40c42808e375bed2944ed7ae715535349de1 Mon Sep 17 00:00:00 2001
+From ad1d3896e721a50a86c806cba1bf7d76ba767b4a Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 15:02:41 -0500
-Subject: [PATCH 17/43] hsr: move notification handling to a common file for
+Subject: [PATCH 17/86] hsr: move notification handling to a common file for
  re-use
 
 Move the code for handling interface notification to a common file

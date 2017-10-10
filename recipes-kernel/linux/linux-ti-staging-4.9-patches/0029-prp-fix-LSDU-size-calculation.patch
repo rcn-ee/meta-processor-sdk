@@ -1,7 +1,7 @@
-From 59768f1148cc2cb6fea22ab5a2109e0965716c30 Mon Sep 17 00:00:00 2001
+From cde1ed44f86c3521b7f058c7a7476e423a1a1511 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 23 Mar 2017 18:30:39 -0400
-Subject: [PATCH 29/43] prp: fix LSDU size calculation
+Subject: [PATCH 29/86] prp: fix LSDU size calculation
 
 Currently, driver includes the Tag size twice in the calculation
 of LSDU size. This patch fixes the same.

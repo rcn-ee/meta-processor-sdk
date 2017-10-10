@@ -1,7 +1,7 @@
-From b0f339e7ea8056d13f25b7387aeb6e50ea574cfe Mon Sep 17 00:00:00 2001
+From e4198674d00ed1eae212995c1dab77d32c02fabb Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 15 Sep 2017 15:53:31 -0400
-Subject: [PATCH 58/82] net: prueth: update to support 2 queues per port at
+Subject: [PATCH 56/86] net: prueth: update to support 2 queues per port at
  ingress/egress
 
 One of the issue present in the current version of the firmware is that

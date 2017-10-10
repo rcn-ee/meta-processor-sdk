@@ -1,7 +1,7 @@
-From e1a7f490e519160234814d235554724b5bddb1d1 Mon Sep 17 00:00:00 2001
+From 06f995acd21a63cacecf8bda1b0642c2bc49634f Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 4 Aug 2017 16:23:38 -0400
-Subject: [PATCH 48/50] hsr/prp: do sanity check for offload before creating
+Subject: [PATCH 48/86] hsr/prp: do sanity check for offload before creating
  the interface
 
 Add more sanity check before creating the offloaded hsr/prp interface.

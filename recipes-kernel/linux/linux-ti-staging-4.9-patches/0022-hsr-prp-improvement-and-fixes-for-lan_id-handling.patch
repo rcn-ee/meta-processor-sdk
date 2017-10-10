@@ -1,7 +1,7 @@
-From 85e2cefb4937c92b9a4b2b62fed3d3ca8c8e87fb Mon Sep 17 00:00:00 2001
+From 8c34822075a0b4017ec90b9dabd81f1536b11fed Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 21 Feb 2017 16:37:08 -0500
-Subject: [PATCH 22/43] hsr/prp: improvement and fixes for lan_id handling
+Subject: [PATCH 22/86] hsr/prp: improvement and fixes for lan_id handling
 
 Currently lan id is not set in supervisor frames. Also do a sanity
 check for frames at the ingress for proper lan_id and update the

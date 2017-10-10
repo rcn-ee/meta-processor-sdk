@@ -1,7 +1,7 @@
-From 2c6b90bacc2837f1c442bbe3121935e4ebae1d4a Mon Sep 17 00:00:00 2001
+From 086a614c956652ff5d2e4e7ed9d854ccf7fe4b5c Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 12 Apr 2017 17:16:09 -0400
-Subject: [PATCH 31/43] hsr/prp: fix protocol version number setting error
+Subject: [PATCH 31/86] hsr/prp: fix protocol version number setting error
 
 The protocol version number needs to be set before it is used. Otherwise
 the behavior is undetermined. For example, in the case of PRP, the RCT

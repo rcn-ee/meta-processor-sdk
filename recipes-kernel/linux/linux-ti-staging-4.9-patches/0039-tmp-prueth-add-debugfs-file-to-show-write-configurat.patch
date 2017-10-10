@@ -1,7 +1,7 @@
-From 7630e9c2786e695ab53c0339fb23adf5d4b200a4 Mon Sep 17 00:00:00 2001
+From a2dc2c083d8b1523c69bffd58c9b8956abc7cdac Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 25 May 2017 10:36:19 -0400
-Subject: [PATCH 39/43] tmp: prueth: add debugfs file to show/write
+Subject: [PATCH 39/86] tmp: prueth: add debugfs file to show/write
  configuration parameters
 
 Add a debugfs interface to configure the configuration parameter MIBs
@@ -21,7 +21,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 448 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index a1baa16..85f5d9d 100644
+index 812793c..50435b2 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
 @@ -227,7 +227,7 @@ struct prueth_emac {
@@ -541,7 +541,7 @@ index a1baa16..85f5d9d 100644
  		overflow_cnt = readb(&queue_desc->overflow_cnt);
  		if (overflow_cnt > 0) {
  			emac->ndev->stats.rx_over_errors += overflow_cnt;
-@@ -2477,14 +2923,6 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
+@@ -2515,14 +2961,6 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
  	}
  }
  
@@ -556,7 +556,7 @@ index a1baa16..85f5d9d 100644
  static void emac_get_ethtool_stats(struct net_device *ndev,
  				   struct ethtool_stats *stats, u64 *data)
  {
-@@ -2515,9 +2953,6 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
+@@ -2553,9 +2991,6 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
  			data[lre_start + i] = val;
  		}
  	}

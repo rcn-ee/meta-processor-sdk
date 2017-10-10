@@ -1,7 +1,7 @@
-From 13a35d15d2a04cbd8cb44f31f6c8df1076fbd559 Mon Sep 17 00:00:00 2001
+From bc5dd05a5cd3e03d5c39976e32339f183d859b22 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 9 Mar 2017 16:33:13 -0500
-Subject: [PATCH 24/43] hsr/prp: bail out if skb data not pointing to mac
+Subject: [PATCH 24/86] hsr/prp: bail out if skb data not pointing to mac
  header
 
 Currently if hsr/prp driver receives a packet and the mac

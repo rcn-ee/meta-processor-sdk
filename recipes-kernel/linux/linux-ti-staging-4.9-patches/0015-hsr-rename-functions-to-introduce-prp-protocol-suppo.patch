@@ -1,7 +1,7 @@
-From a31ab2fc4644a32393457977aa266aa5b588aaf2 Mon Sep 17 00:00:00 2001
+From 4b83c9393975abc596fc64689fc5a8a60dd549a8 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 12:12:58 -0500
-Subject: [PATCH 15/43] hsr: rename functions to introduce prp protocol support
+Subject: [PATCH 15/86] hsr: rename functions to introduce prp protocol support
 
 There are many similarities between a DAN-H (using HSR protocol) and
 DAN-P (using PRP protocol) node. So the code can be re-used across

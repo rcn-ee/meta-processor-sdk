@@ -1,7 +1,7 @@
-From 6698eea315c8eeef41baa7ebb45424ef2b014ffd Mon Sep 17 00:00:00 2001
+From 2dbfddfabd99430622e75e667f50e0a58116aeac Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 4 Aug 2017 18:17:52 -0400
-Subject: [PATCH 47/50] prueth: remove NETIF_F_HW_L2FW_DOFFLOAD requirement for
+Subject: [PATCH 47/86] prueth: remove NETIF_F_HW_L2FW_DOFFLOAD requirement for
  PRP
 
 For PRP offload, there is no need to have NETIF_F_HW_L2FW_DOFFLOAD.
@@ -14,10 +14,10 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 7b917e2..769a7dd 100644
+index 707170e..ab30ccb 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
-@@ -3147,8 +3147,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -3185,8 +3185,7 @@ static int prueth_netdev_init(struct prueth *prueth,
  		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
  				   NETIF_F_HW_L2FW_DOFFLOAD);
  	else if (PRUETH_IS_PRP(prueth))

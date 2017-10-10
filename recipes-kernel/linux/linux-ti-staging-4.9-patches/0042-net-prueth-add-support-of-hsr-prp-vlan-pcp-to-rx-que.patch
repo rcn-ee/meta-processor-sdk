@@ -1,7 +1,7 @@
-From 94fbac7d5c3432e166658981cd54144890a903ca Mon Sep 17 00:00:00 2001
+From 2b6d2bebeff72eaa52d443ffa98d23e8f5525826 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 22 Jun 2017 09:46:36 -0400
-Subject: [PATCH 42/43] net: prueth: add support of hsr/prp vlan pcp to rx
+Subject: [PATCH 42/86] net: prueth: add support of hsr/prp vlan pcp to rx
  queue map
 
 Usage: in dts/pruss2_eth{} node, add property
@@ -52,7 +52,7 @@ index 4ccc465..b8c7b1d 100644
   * Starts after PTP.
   */
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index d9c440c..9ae2949 100644
+index 22f15e4..1be1214 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
 @@ -120,7 +120,8 @@ enum pruss_ethtype {
@@ -160,7 +160,7 @@ index d9c440c..9ae2949 100644
  	}
  
  	/* search host queues for packets */
-@@ -3714,6 +3739,69 @@ static int prueth_of_get_queue_sizes(struct prueth *prueth,
+@@ -3752,6 +3777,69 @@ static int prueth_of_get_queue_sizes(struct prueth *prueth,
  	return 0;
  }
  
@@ -230,7 +230,7 @@ index d9c440c..9ae2949 100644
  static int prueth_init_mmap_configs(struct prueth *prueth)
  {
  	if (PRUETH_HAS_SWITCH(prueth)) {
-@@ -3845,6 +3933,9 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -3883,6 +3971,9 @@ static int prueth_probe(struct platform_device *pdev)
  	if (eth_node)
  		prueth_of_get_queue_sizes(prueth, eth_node, PRUETH_PORT_MII1);
  
@@ -240,7 +240,7 @@ index d9c440c..9ae2949 100644
  	prueth_init_mmap_configs(prueth);
  
  	if (PRUETH_HAS_SWITCH(prueth))
-@@ -3955,6 +4046,13 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -3993,6 +4084,13 @@ static int prueth_probe(struct platform_device *pdev)
  		 prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST].queue_size[3],
  		 prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST].col_queue_size);
  

@@ -1,7 +1,7 @@
-From 24349eabda4cf91f9196d10367566b714d323677 Mon Sep 17 00:00:00 2001
+From 9a6a5edae1677078fdac52f5b1560d1815b42b65 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Sep 2017 08:25:38 -0400
-Subject: [PATCH 81/82] crypto: keystone: correct enc_offset and enc_len values
+Subject: [PATCH 79/86] crypto: keystone: correct enc_offset and enc_len values
 
 Correct calculated values of enc_offset and enc_len because the associated
 authentication data scatterlist in aead_request, which was a separate

@@ -1,7 +1,7 @@
-From a9f20d1418eccc0340f517aeb782a40d457156a2 Mon Sep 17 00:00:00 2001
+From ab46bb56208e4712f49e2ef49362dd4fe51863f1 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 17:42:40 -0500
-Subject: [PATCH 20/43] prp: add packet handling support
+Subject: [PATCH 20/86] prp: add packet handling support
 
 DAN-P nodes are to receive traditional ip packets as well
 PRP (Parallel Redundancy Protocol) tagged (trailor) packets.

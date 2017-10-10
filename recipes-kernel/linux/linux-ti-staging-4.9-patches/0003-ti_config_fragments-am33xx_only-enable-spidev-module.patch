@@ -1,7 +1,7 @@
-From 504f40497d37ac0b9f2657728ea1020c94a3c9f2 Mon Sep 17 00:00:00 2001
+From 31e4aadf15d20bccaf6598a03a99e113a1e3deee Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Thu, 8 Dec 2016 09:52:02 -0500
-Subject: [PATCH 03/43] ti_config_fragments: am33xx_only: enable spidev module
+Subject: [PATCH 03/86] ti_config_fragments: am33xx_only: enable spidev module
 
 * The spidev module is to be used to manage the spi0 interface in the
   am335x-boneblack-iot-cape device tree.

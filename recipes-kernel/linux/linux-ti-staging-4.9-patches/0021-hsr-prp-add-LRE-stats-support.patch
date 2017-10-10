@@ -1,7 +1,7 @@
-From 6e949cb4317b37a818575954fae9d873f9141e00 Mon Sep 17 00:00:00 2001
+From e091681b6b52fbcfc6504333d7a58607ced387d3 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 21 Feb 2017 16:23:36 -0500
-Subject: [PATCH 21/43] hsr:prp: add LRE stats support
+Subject: [PATCH 21/86] hsr:prp: add LRE stats support
 
 Add LRE stats struct to hsr/prp device node private data to allow
 update of various stats at the slave interfaces and master interface

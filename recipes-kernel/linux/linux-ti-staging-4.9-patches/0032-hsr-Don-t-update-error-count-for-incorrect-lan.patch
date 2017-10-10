@@ -1,7 +1,7 @@
-From 9539e86aa49456491b8e59d0d31f1cc08868957f Mon Sep 17 00:00:00 2001
+From 487b4a63f10e375739792673697de0de70ca87ac Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 17 Apr 2017 14:41:28 -0400
-Subject: [PATCH 32/43] hsr: Don't update error count for incorrect lan
+Subject: [PATCH 32/86] hsr: Don't update error count for incorrect lan
 
 The LRE stats for incorrect LAN is applicable only for PRP. So remove
 the same for hsr case.

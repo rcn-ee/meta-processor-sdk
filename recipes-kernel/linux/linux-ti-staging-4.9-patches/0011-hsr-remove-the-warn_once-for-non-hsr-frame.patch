@@ -1,7 +1,7 @@
-From 258524ab41bdfb7a3646d2ee81a62632a5c8501e Mon Sep 17 00:00:00 2001
+From e6f8e4ed5a9dc82fee7bb930f6464c61e288f017 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 15 Feb 2017 11:55:08 -0500
-Subject: [PATCH 11/43] hsr: remove the warn_once for non hsr frame
+Subject: [PATCH 11/86] hsr: remove the warn_once for non hsr frame
 
 Remove the annoying WARN_ONCE() which happens while the hsr
 interface is being setup. Also check the validity of mac B

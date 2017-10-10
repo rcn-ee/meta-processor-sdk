@@ -1,7 +1,7 @@
-From 46dc6535bc7b39888f84679e795087148c526cd0 Mon Sep 17 00:00:00 2001
+From bde2c253966dd409293fc923fb7b8b5d0bc7b62b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 16 Feb 2017 16:04:49 -0500
-Subject: [PATCH 18/43] hsr: add netlink interface to create prp device
+Subject: [PATCH 18/86] hsr: add netlink interface to create prp device
 
 This patch adds a netlink interface to create a prp device similar in
 line with hsr. Also add a notifier for the same.

@@ -1,7 +1,7 @@
-From c6597bbeee9dff7441d101b1d74274ce895925c1 Mon Sep 17 00:00:00 2001
+From e6d207f1f03083006caaa8c0a301da317ddbe494 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 26 Sep 2017 10:10:25 -0400
-Subject: [PATCH 83/84] net: prueth: fix compiler warning of unused variable
+Subject: [PATCH 81/86] net: prueth: fix compiler warning of unused variable
 
 This patch fixes the compiler warnings for unused variables,
 dram1 and colq_desc that was introduced by an earlier commit to

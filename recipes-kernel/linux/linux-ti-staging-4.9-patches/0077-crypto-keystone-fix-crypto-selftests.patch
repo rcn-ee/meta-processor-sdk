@@ -1,7 +1,7 @@
-From e2fdf3b5cd7a0173df6b3fdf109e3dda6f266ff6 Mon Sep 17 00:00:00 2001
+From b8ac2979107b90f6c67010e80e0fb4b08c026f70 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Sep 2017 08:19:53 -0400
-Subject: [PATCH 79/82] crypto: keystone: fix crypto selftests
+Subject: [PATCH 77/86] crypto: keystone: fix crypto selftests
 
 Load firmware before registering algs. Without this change, encryption
 selftest 1 would fail for authenc(hmac(sha1),cbc(aes))-keystone-sa,

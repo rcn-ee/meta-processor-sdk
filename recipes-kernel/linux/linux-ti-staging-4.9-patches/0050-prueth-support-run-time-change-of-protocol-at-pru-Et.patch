@@ -1,7 +1,7 @@
-From 6aba0d9445bf1d689ffd6e0acc5fa13785e26ca9 Mon Sep 17 00:00:00 2001
+From 9c6f1252c9c05a08e0a4f29bc62aa2b3ebcc6b44 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 4 Aug 2017 17:22:09 -0400
-Subject: [PATCH 50/50] prueth: support run time change of protocol at pru
+Subject: [PATCH 50/86] prueth: support run time change of protocol at pru
  Ethernet device
 
 The ICSS PRU is capable of running different firmware to support
@@ -62,7 +62,7 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  1 file changed, 295 insertions(+), 121 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 1a80598..a0ee0e7 100644
+index 25d769c..9c85b95 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
 @@ -217,8 +217,12 @@ struct prueth_emac {
@@ -391,11 +391,10 @@ index 1a80598..a0ee0e7 100644
  
  	/* save stats */
  	emac_get_stats(emac, &emac->stats);
-@@ -3389,6 +3553,92 @@ static struct net_device_stats *emac_ndo_get_stats(struct net_device *ndev)
- 	return stats;
+@@ -3390,6 +3554,92 @@ static struct net_device_stats *emac_ndo_get_stats(struct net_device *ndev)
  }
  
-+/**
+ /**
 + * emac_ndo_fix_features - function to fix up feature flag
 + * @ndev: The network adapter device
 + *
@@ -481,19 +480,20 @@ index 1a80598..a0ee0e7 100644
 +	return 0;
 +}
 +
- static const struct net_device_ops emac_netdev_ops = {
- 	.ndo_open = emac_ndo_open,
- 	.ndo_stop = emac_ndo_stop,
-@@ -3398,6 +3648,8 @@ static struct net_device_stats *emac_ndo_get_stats(struct net_device *ndev)
++/**
+  * emac_ndo_set_rx_mode - EMAC set receive mode function
+  * @ndev: The EMAC network adapter
+  *
+@@ -3436,6 +3686,8 @@ static void emac_ndo_set_rx_mode(struct net_device *ndev)
  	.ndo_change_mtu	= eth_change_mtu,
  	.ndo_tx_timeout = emac_ndo_tx_timeout,
  	.ndo_get_stats = emac_ndo_get_stats,
 +	.ndo_set_features = emac_ndo_set_features,
 +	.ndo_fix_features = emac_ndo_fix_features,
- 	/* +++TODO: implement .ndo_setup_tc */
+ 	.ndo_set_rx_mode = emac_ndo_set_rx_mode,
  };
  
-@@ -3638,17 +3890,10 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
+@@ -3676,17 +3928,10 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
  static int prueth_netdev_init(struct prueth *prueth,
  			      struct device_node *eth_node)
  {
@@ -511,7 +511,7 @@ index 1a80598..a0ee0e7 100644
  	int ret;
  
  	port = prueth_node_port(eth_node);
-@@ -3667,73 +3912,38 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -3705,73 +3950,38 @@ static int prueth_netdev_init(struct prueth *prueth,
  	emac->ndev = ndev;
  	emac->port_id = port;
  
@@ -603,7 +603,7 @@ index 1a80598..a0ee0e7 100644
  	/* get mac address from DT and set private and netdev addr */
  	mac_addr = of_get_mac_address(eth_node);
  	if (mac_addr)
-@@ -3776,10 +3986,14 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -3814,10 +4024,14 @@ static int prueth_netdev_init(struct prueth *prueth,
  
  	if (PRUETH_IS_HSR(prueth))
  		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
@@ -619,7 +619,7 @@ index 1a80598..a0ee0e7 100644
  	ndev->netdev_ops = &emac_netdev_ops;
  	ndev->ethtool_ops = &emac_ethtool_ops;
  
-@@ -3845,6 +4059,7 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -3883,6 +4097,7 @@ static int prueth_probe(struct platform_device *pdev)
  
  	prueth->dev = dev;
  	prueth->fw_data = match->data;
@@ -627,7 +627,7 @@ index 1a80598..a0ee0e7 100644
  
  	pruss = pruss_get(dev, &prueth->pruss_id);
  	if (IS_ERR(pruss)) {
-@@ -3918,26 +4133,6 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -3956,26 +4171,6 @@ static int prueth_probe(struct platform_device *pdev)
  			prueth->hsr_mode = hsr_mode2;
  	}
  
@@ -652,9 +652,9 @@ index 1a80598..a0ee0e7 100644
 -	prueth_init_mmap_configs(prueth);
 -
  	if (PRUETH_HAS_SWITCH(prueth))
- 		prueth->ocmc_ram_size = OCMC_RAM_SIZE;
+ 		prueth->ocmc_ram_size = OCMC_RAM_SIZE_SWITCH;
  	else
-@@ -3975,6 +4170,7 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -4013,6 +4208,7 @@ static int prueth_probe(struct platform_device *pdev)
  		ret = -ENODEV;
  		goto free_pool;
  	}
@@ -662,7 +662,7 @@ index 1a80598..a0ee0e7 100644
  	ret = prueth_netdev_init(prueth, eth_node);
  	if (ret) {
  		if (ret != -EPROBE_DEFER) {
-@@ -4003,12 +4199,6 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -4041,12 +4237,6 @@ static int prueth_probe(struct platform_device *pdev)
  		prueth->eth_node[PRUETH_PORT_MII1] = eth_node;
  	}
  
@@ -675,7 +675,7 @@ index 1a80598..a0ee0e7 100644
  	/* register the network devices */
  	for (i = 0; i < PRUETH_PORT_MAX; i++) {
  		enum prueth_port port;
-@@ -4031,27 +4221,11 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -4069,27 +4259,11 @@ static int prueth_probe(struct platform_device *pdev)
  		prueth->registered_netdevs[i] = prueth->emac[port]->ndev;
  	}
  

@@ -1,7 +1,7 @@
-From e9d23206b187cdfd0fc6c3bf93128c6cf7ee3874 Mon Sep 17 00:00:00 2001
+From ded22ab97111e273b81839122ffa1e92126af0f3 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 17 Mar 2017 17:36:56 -0400
-Subject: [PATCH 26/43] hsr/prp: Remove self node from node table list for
+Subject: [PATCH 26/86] hsr/prp: Remove self node from node table list for
  query
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>

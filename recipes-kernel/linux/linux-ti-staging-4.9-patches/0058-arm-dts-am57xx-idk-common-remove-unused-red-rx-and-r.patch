@@ -1,7 +1,7 @@
-From 7fa897138dbe20a39e4ef3aeae238ea407f5307c Mon Sep 17 00:00:00 2001
+From 2f71e8748895d3c055852b92d616eb5d7d1c0c4f Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 8 Sep 2017 12:52:47 -0400
-Subject: [PATCH 60/82] arm: dts: am57xx-idk-common: remove unused red-rx and
+Subject: [PATCH 58/86] arm: dts: am57xx-idk-common: remove unused red-rx and
  red-tx irq properties
 
 Based on latest update to PRU Ethernet driver, for switch case also same
@@ -14,7 +14,7 @@ Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
  1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-index ea2ef8e..d0a8e05 100644
+index bce3c5e..effd7ad 100644
 --- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
 +++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
 @@ -171,10 +171,8 @@

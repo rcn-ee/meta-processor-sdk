@@ -1,7 +1,7 @@
-From 131df7c9c7097be864bc46ff29ac65ac3466a276 Mon Sep 17 00:00:00 2001
+From 6edf04dc182a36f284d3da461169b38e3033c7de Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 19 Jun 2017 10:43:42 -0400
-Subject: [PATCH 41/43] hsr: add mode T support for HSR in offload case
+Subject: [PATCH 41/86] hsr: add mode T support for HSR in offload case
 
 For HSR, add support for mode T which is transparent mode. In this
 mode, the hsr device just duplicate the packets and send it over

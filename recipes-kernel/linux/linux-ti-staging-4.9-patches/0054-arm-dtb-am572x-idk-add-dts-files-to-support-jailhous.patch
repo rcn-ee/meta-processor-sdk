@@ -1,7 +1,7 @@
-From aaf1e8bbc2a4a8bf433949ad489e319e719b99f2 Mon Sep 17 00:00:00 2001
+From 63187bca9ce8888090fc4a73135f56bd927b9ee0 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 28 Aug 2017 17:17:38 -0400
-Subject: [PATCH 54/54] arm: dtb: am572x-idk: add dts files to support
+Subject: [PATCH 54/86] arm: dtb: am572x-idk: add dts files to support
  jailhouse inmates
 
 This commit adds dts files to support jailhouse inmate on am572x-idk

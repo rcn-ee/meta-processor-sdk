@@ -1,7 +1,7 @@
-From ef45012adea2b4ff4e3c529fdb568ff2a335fd1b Mon Sep 17 00:00:00 2001
+From 0cb3b5e94a0998baf2620c0f905baf53efb7dd50 Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Mon, 28 Aug 2017 17:04:22 -0400
-Subject: [PATCH 53/54] arm: dts: rename am572x-idk-jailhouse.dts to dtsi
+Subject: [PATCH 53/86] arm: dts: rename am572x-idk-jailhouse.dts to dtsi
 
 We need to create two more dts files for IDK with LCD support.
 This commit renames jailhouse dts to dtsi, which will be included to all

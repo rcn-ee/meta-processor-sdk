@@ -1,7 +1,7 @@
-From 1c3d4eb9692c5873008befc0dcb1235594ee08fb Mon Sep 17 00:00:00 2001
+From ab17774ff628bdd3cdc45d8cfc6e939e39d2487b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 15 Sep 2017 15:57:35 -0400
-Subject: [PATCH 59/82] net: prueth: remove collision queue support at ingress
+Subject: [PATCH 57/86] net: prueth: remove collision queue support at ingress
 
 At ingress, the firmware no more use collision queue. So remove the
 associated code from the driver.

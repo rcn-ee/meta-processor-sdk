@@ -1,7 +1,7 @@
-From b0dcf7c362815c16024f83b65c96fb22b0061815 Mon Sep 17 00:00:00 2001
+From 1de30a7a6b9fb579b4fa70c3a3b70a291ec13c03 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Fri, 31 Mar 2017 14:03:09 -0400
-Subject: [PATCH 34/43] hsr: fix filling up hsr tag error
+Subject: [PATCH 34/86] hsr: fix filling up hsr tag error
 
 When filling in the fields of hsr tag, current implementation
 incorrectly places the hsr tag in front of the vlan tag (if

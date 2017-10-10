@@ -1,7 +1,7 @@
-From 4d215db2b743b648958dbee13bc689530d58f97f Mon Sep 17 00:00:00 2001
+From b32c4a54cff2c8fd9cbb8e2a5a3f20cbde06d80a Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Thu, 7 Jul 2016 13:06:43 -0400
-Subject: [PATCH 70/82] crypto: ks2: read driver configuration parameters from
+Subject: [PATCH 68/86] crypto: ks2: read driver configuration parameters from
  dtb
 
 This commit adds configuration fields such tx and rx queue numbers,

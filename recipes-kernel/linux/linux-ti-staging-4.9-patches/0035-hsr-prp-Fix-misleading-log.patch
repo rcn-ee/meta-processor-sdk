@@ -1,7 +1,7 @@
-From 1d515b60a9332c856a5459e1f72c0b8022a54cf2 Mon Sep 17 00:00:00 2001
+From ee10e894d3a02cbc168d3a8ea2c1126675e93c3e Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 26 Apr 2017 11:45:27 -0400
-Subject: [PATCH 35/43] hsr/prp: Fix misleading log.
+Subject: [PATCH 35/86] hsr/prp: Fix misleading log.
 
 Current log is misleading as driver is re-used for PRP.
 Also avoid checkpatch warning.

@@ -1,7 +1,7 @@
-From 5ccf59fe532c1ef6b26cd642b9602d997eb6f2cf Mon Sep 17 00:00:00 2001
+From dd5824ee7dca59d4bba3295ed1d46bfe0f4b2f22 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 4 Aug 2017 16:50:59 -0400
-Subject: [PATCH 49/50] prueth: preparatory patch to add run time protocol
+Subject: [PATCH 49/86] prueth: preparatory patch to add run time protocol
  change support
 
 The run time change of protocol requires moving some of the initialization
@@ -17,14 +17,14 @@ moved around.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 ---
- drivers/net/ethernet/ti/prueth.c | 2187 +++++++++++++++++++-------------------
- 1 file changed, 1094 insertions(+), 1093 deletions(-)
+ drivers/net/ethernet/ti/prueth.c | 2255 +++++++++++++++++++-------------------
+ 1 file changed, 1128 insertions(+), 1127 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 769a7dd..1a80598 100644
+index ab30ccb..25d769c 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
-@@ -2464,1356 +2464,1357 @@ static int emac_set_boot_pru(struct prueth_emac *emac, struct net_device *ndev)
+@@ -2464,1394 +2464,1395 @@ static int emac_set_boot_pru(struct prueth_emac *emac, struct net_device *ndev)
  	return ret;
  }
  
@@ -318,22 +318,15 @@ index 769a7dd..1a80598 100644
 -		sw_emac_pru_stop(emac, ndev);
 -	else
 -		emac_pru_stop(emac, ndev);
--
--	/* save stats */
--	emac_get_stats(emac, &emac->stats);
--
--	if (netif_msg_drv(emac))
--		dev_notice(&ndev->dev, "stopped\n");
--
--	return 0;
 +	/* (0 <= p <= 2) and (QUEUE1 < q <= QUEUE4)
 +	 * continuous BDs within 1 port
 +	 */
 +	return port_queue_bd_offset(prueth, p, q - 1) +
 +	       port_queue_size(prueth, p, q - 1) * BD_SIZE;
- }
++}
  
--static u16 prueth_get_tx_queue_id(struct prueth *prueth, struct sk_buff *skb)
+-	/* save stats */
+-	emac_get_stats(emac, &emac->stats);
 +/**
 + * For both EMAC and Switch, all Px Qy buffers are in OCMC RAM
 + * Regular Q buffer offsets depends only on P0_Q1_BUFFER_OFFSET
@@ -352,35 +345,69 @@ index 769a7dd..1a80598 100644
 + * that non-continuous may have impact on fw performance.
 + */
 +static u16 port_queue_buffer_offset(struct prueth *prueth, int p, int q)
- {
--	u16 vlan_tci, pcp;
--	int err;
--
--	if (!PRUETH_HAS_SWITCH(prueth))
--		return PRUETH_QUEUE4;
++{
 +	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1 ||
 +	    q < PRUETH_QUEUE1    || q > PRUETH_QUEUE4)
 +		return 0xffff;
  
--	err = vlan_get_tag(skb, &vlan_tci);
--	if (likely(err))
--		return PRUETH_QUEUE4;
+-	if (netif_msg_drv(emac))
+-		dev_notice(&ndev->dev, "stopped\n");
 +	if (p == PRUETH_PORT_HOST && q == PRUETH_QUEUE1)
 +		return prueth->mmap_port_cfg_basis[p].queue1_buff_offset;
  
--	pcp = (vlan_tci & VLAN_PRIO_MASK) >> VLAN_PRIO_SHIFT;
+-	return 0;
 +	if (p > PRUETH_PORT_HOST   &&
 +	    p <= PRUETH_PORT_MII1  &&
 +	    q == PRUETH_QUEUE1)
 +		return port_queue_buffer_offset(prueth, p - 1, PRUETH_QUEUE4) +
 +		       port_queue_size(prueth, p - 1, PRUETH_QUEUE4) *
 +		       ICSS_BLOCK_SIZE;
- 
--	return sw_pcp_tx_priority_queue_map[pcp];
++
 +	/* case (0 <= p <= 2) and (QUEUE1 < q <= QUEUE4) */
 +	return port_queue_buffer_offset(prueth, p, q - 1) +
 +	       port_queue_size(prueth, p, q - 1) * ICSS_BLOCK_SIZE;
  }
+ 
+-static u16 prueth_get_tx_queue_id(struct prueth *prueth, struct sk_buff *skb)
++static void prueth_sw_mmap_port_cfg_basis_fixup(struct prueth *prueth)
+ {
+-	u16 vlan_tci, pcp;
+-	int err;
++	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
++	u16 eof_48k_buffer_bd;
+ 
+-	if (!PRUETH_HAS_SWITCH(prueth))
+-		return PRUETH_QUEUE4;
++	/** HOST port **/
++	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
++	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
++	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
++	pb->queue1_desc_offset    = P0_QUEUE_DESC_OFFSET,
++	/* Collision queues */
++	pb->col_buff_offset       = P0_COL_BUFFER_OFFSET,
++	pb->col_queue_desc_offset = P0_COL_QUEUE_DESC_OFFSET;
+ 
+-	err = vlan_get_tag(skb, &vlan_tci);
+-	if (likely(err))
+-		return PRUETH_QUEUE4;
++	/* This calculation recurrsively depends on
++	 * [PRUETH_PORT_HOST].queue1_bd_offset.
++	 * So can only be done after
++	 * [PRUETH_PORT_HOST].queue1_bd_offset is set
++	 */
++	eof_48k_buffer_bd =
++		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
++		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
++		BD_SIZE;
+ 
+-	pcp = (vlan_tci & VLAN_PRIO_MASK) >> VLAN_PRIO_SHIFT;
++	pb->col_bd_offset = eof_48k_buffer_bd;
+ 
+-	return sw_pcp_tx_priority_queue_map[pcp];
+-}
++	/** PORT_MII0 **/
++	prev_pb = pb;
++	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
  
 -/**
 - * emac_ndo_start_xmit - EMAC Transmit function
@@ -393,13 +420,13 @@ index 769a7dd..1a80598 100644
 - * Returns success(NETDEV_TX_OK) or error code (typically out of desc's)
 - */
 -static int emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static void prueth_sw_mmap_port_cfg_basis_fixup(struct prueth *prueth)
- {
+-{
 -	struct prueth_emac *emac = netdev_priv(ndev);
 -	int ret = 0;
 -	u16 qid;
-+	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
-+	u16 eof_48k_buffer_bd;
++	pb->queue1_buff_offset =
++		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
++					 PRUETH_QUEUE1);
  
 -	if (unlikely(!emac->link)) {
 -		if (netif_msg_tx_err(emac) && net_ratelimit())
@@ -407,14 +434,8 @@ index 769a7dd..1a80598 100644
 -		ret = -ENOLINK;
 -		goto fail_tx;
 -	}
-+	/** HOST port **/
-+	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
-+	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
-+	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
-+	pb->queue1_desc_offset    = P0_QUEUE_DESC_OFFSET,
-+	/* Collision queues */
-+	pb->col_buff_offset       = P0_COL_BUFFER_OFFSET,
-+	pb->col_queue_desc_offset = P0_COL_QUEUE_DESC_OFFSET;
++	pb->queue1_bd_offset =
++		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
  
 -	qid = prueth_get_tx_queue_id(emac->prueth, skb);
 -	if (emac->port_id == PRUETH_PORT_MII0) {
@@ -428,15 +449,9 @@ index 769a7dd..1a80598 100644
 -	} else {
 -		goto fail_tx; /* switch mode not supported yet */
 -	}
-+	/* This calculation recurrsively depends on
-+	 * [PRUETH_PORT_HOST].queue1_bd_offset.
-+	 * So can only be done after
-+	 * [PRUETH_PORT_HOST].queue1_bd_offset is set
-+	 */
-+	eof_48k_buffer_bd =
-+		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
-+		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
-+		BD_SIZE;
++	pb->queue1_desc_offset =
++		prev_pb->queue1_desc_offset +
++		NUM_QUEUES * QDESC_SIZE;
  
 -	if (ret) {
 -		if (ret != -ENOBUFS && ret != -EBUSY &&
@@ -444,27 +459,29 @@ index 769a7dd..1a80598 100644
 -			netdev_err(ndev, "packet queue failed: %d\n", ret);
 -		goto fail_tx;
 -	}
-+	pb->col_bd_offset = eof_48k_buffer_bd;
++	pb->col_buff_offset =
++		prev_pb->col_buff_offset +
++		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
  
 -	ndev->stats.tx_packets++;
 -	ndev->stats.tx_bytes += skb->len;
 -	dev_kfree_skb_any(skb);
-+	/** PORT_MII0 **/
-+	prev_pb = pb;
-+	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
++	pb->col_bd_offset =
++		prev_pb->col_bd_offset +
++		prev_pb->col_queue_size * BD_SIZE;
  
 -	return NETDEV_TX_OK;
-+	pb->queue1_buff_offset =
-+		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
-+					 PRUETH_QUEUE1);
++	pb->col_queue_desc_offset =
++		prev_pb->col_queue_desc_offset + QDESC_SIZE;
  
 -fail_tx:
 -	/* error */
 -	ndev->stats.tx_dropped++;
 -	return NETDEV_TX_BUSY;
 -}
-+	pb->queue1_bd_offset =
-+		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
++	/** PORT_MII1 **/
++	prev_pb = pb;
++	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
  
 -/**
 - * emac_ndo_tx_timeout - EMAC Transmit timeout function
@@ -477,25 +494,31 @@ index 769a7dd..1a80598 100644
 -static void emac_ndo_tx_timeout(struct net_device *ndev)
 -{
 -	struct prueth_emac *emac = netdev_priv(ndev);
-+	pb->queue1_desc_offset =
-+		prev_pb->queue1_desc_offset +
-+		NUM_QUEUES * QDESC_SIZE;
++	pb->queue1_buff_offset =
++		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
++					 PRUETH_QUEUE1);
  
 -	if (netif_msg_tx_err(emac))
 -		netdev_err(ndev, "xmit timeout");
++	pb->queue1_bd_offset =
++		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
+ 
+-	ndev->stats.tx_errors++;
++	pb->queue1_desc_offset =
++		prev_pb->queue1_desc_offset + NUM_QUEUES * QDESC_SIZE;
+ 
+-	/* TODO: can we recover or need to reboot firmware? */
 +	pb->col_buff_offset =
 +		prev_pb->col_buff_offset +
 +		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
- 
--	ndev->stats.tx_errors++;
++
 +	pb->col_bd_offset =
 +		prev_pb->col_bd_offset +
 +		prev_pb->col_queue_size * BD_SIZE;
- 
--	/* TODO: can we recover or need to reboot firmware? */
--}
++
 +	pb->col_queue_desc_offset =
 +		prev_pb->col_queue_desc_offset + QDESC_SIZE;
+ }
  
 -/**
 - * emac_ndo_getstats - EMAC get statistics function
@@ -506,26 +529,81 @@ index 769a7dd..1a80598 100644
 - * We return the statistics in net_device_stats structure pulled from emac
 - */
 -static struct net_device_stats *emac_ndo_get_stats(struct net_device *ndev)
--{
++static u16 port_queue1_desc_offset(struct prueth *prueth, int p)
+ {
 -	struct prueth_emac *emac = netdev_priv(ndev);
 -	struct port_statistics pstats;
 -	struct net_device_stats *stats = &ndev->stats;
-+	/** PORT_MII1 **/
-+	prev_pb = pb;
-+	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
- 
+-
 -	emac_get_stats(emac, &pstats);
 -	stats->collisions = pstats.late_coll + pstats.single_coll +
 -			    pstats.multi_coll + pstats.excess_coll;
 -	stats->multicast = pstats.rx_mcast;
-+	pb->queue1_buff_offset =
-+		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
-+					 PRUETH_QUEUE1);
++	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1)
++		return 0xffff;
  
 -	return stats;
--}
-+	pb->queue1_bd_offset =
-+		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
++	return prueth->mmap_port_cfg_basis[p].queue1_desc_offset;
+ }
+ 
+-/**
+- * emac_ndo_set_rx_mode - EMAC set receive mode function
+- * @ndev: The EMAC network adapter
+- *
+- * Called when system wants to set the receive mode of the device.
+- *
+- */
+-static void emac_ndo_set_rx_mode(struct net_device *ndev)
++static void prueth_init_host_port_queue_info(
++	struct prueth *prueth,
++	struct prueth_queue_info queue_infos[][NUM_QUEUES],
++	struct prueth_mmap_port_cfg_basis *basis
++)
+ {
+-	struct prueth_emac *emac = netdev_priv(ndev);
+-	struct prueth *prueth = emac->prueth;
+-	void __iomem *sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
+-	u32 reg = readl(sram + EMAC_PROMISCUOUS_MODE_OFFSET);
+-	u32 mask;
++	int p = PRUETH_PORT_HOST, q;
++	struct prueth_queue_info *qi = queue_infos[p];
+ 
+-	switch (emac->port_id) {
+-	case PRUETH_PORT_MII0:
+-		mask = EMAC_P1_PROMISCUOUS_BIT;
+-		break;
+-	case PRUETH_PORT_MII1:
+-		mask = EMAC_P2_PROMISCUOUS_BIT;
+-		break;
+-	default:
+-		netdev_err(ndev, "%s: invalid port\n", __func__);
+-		return;
+-	}
++	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
++	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
++		qi[q].buffer_offset =
++			port_queue_buffer_offset(prueth, p, q);
+ 
+-	if (ndev->flags & IFF_PROMISC) {
+-		/* Enable promiscuous mode */
+-		reg |= mask;
+-	} else {
+-		/* Disable promiscuous mode */
+-		reg &= ~mask;
+-	}
++		qi[q].queue_desc_offset =
++			port_queue1_desc_offset(prueth, p) +
++			q * QDESC_SIZE;
+ 
+-	writel(reg, sram + EMAC_PROMISCUOUS_MODE_OFFSET);
++		qi[q].buffer_desc_offset =
++			port_queue_bd_offset(prueth, p, q);
++
++		qi[q].buffer_desc_end =
++			qi[q].buffer_desc_offset +
++			(port_queue_size(prueth, p, q) - 1) * BD_SIZE;
++	}
+ }
  
 -static const struct net_device_ops emac_netdev_ops = {
 -	.ndo_open = emac_ndo_open,
@@ -536,11 +614,9 @@ index 769a7dd..1a80598 100644
 -	.ndo_change_mtu	= eth_change_mtu,
 -	.ndo_tx_timeout = emac_ndo_tx_timeout,
 -	.ndo_get_stats = emac_ndo_get_stats,
--	/* +++TODO: implement .ndo_setup_tc */
+-	.ndo_set_rx_mode = emac_ndo_set_rx_mode,
 -};
-+	pb->queue1_desc_offset =
-+		prev_pb->queue1_desc_offset + NUM_QUEUES * QDESC_SIZE;
- 
+-
 -/**
 - * emac_get_drvinfo - Get EMAC driver information
 - * @ndev: The network adapter
@@ -554,10 +630,7 @@ index 769a7dd..1a80598 100644
 -	strlcpy(info->driver, PRUETH_MODULE_DESCRIPTION, sizeof(info->driver));
 -	strlcpy(info->version, PRUETH_MODULE_VERSION, sizeof(info->version));
 -}
-+	pb->col_buff_offset =
-+		prev_pb->col_buff_offset +
-+		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
- 
+-
 -/**
 - * emac_get_settings - Get EMAC settings
 - * @ndev: The network adapter
@@ -568,18 +641,13 @@ index 769a7dd..1a80598 100644
 -static int emac_get_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
 -{
 -	struct prueth_emac *emac = netdev_priv(ndev);
-+	pb->col_bd_offset =
-+		prev_pb->col_bd_offset +
-+		prev_pb->col_queue_size * BD_SIZE;
- 
+-
 -	if (emac->phydev)
 -		return phy_ethtool_gset(emac->phydev, ecmd);
 -	else
 -		return -EOPNOTSUPP;
-+	pb->col_queue_desc_offset =
-+		prev_pb->col_queue_desc_offset + QDESC_SIZE;
- }
- 
+-}
+-
 -/**
 - * emac_set_settings - Set EMAC settings
 - * @ndev: The EMAC network adapter
@@ -588,19 +656,21 @@ index 769a7dd..1a80598 100644
 - * Executes ethool set command
 - */
 -static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
-+static u16 port_queue1_desc_offset(struct prueth *prueth, int p)
++static void prueth_init_port_tx_queue_info(
++	struct prueth *prueth,
++	struct prueth_queue_info queue_infos[][NUM_QUEUES],
++	struct prueth_mmap_port_cfg_basis *basis,
++	int p
++)
  {
 -	struct prueth_emac *emac = netdev_priv(ndev);
-+	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1)
-+		return 0xffff;
- 
+-
 -	if (emac->phydev)
 -		return phy_ethtool_sset(emac->phydev, ecmd);
 -	else
 -		return -EOPNOTSUPP;
-+	return prueth->mmap_port_cfg_basis[p].queue1_desc_offset;
- }
- 
+-}
+-
 -#define PRUETH_STAT_OFFSET(m) offsetof(struct port_statistics, m)
 -
 -static const struct {
@@ -615,43 +685,26 @@ index 769a7dd..1a80598 100644
 -	{"rxMcast", PRUETH_STAT_OFFSET(rx_mcast)},
 -	{"rxUcast", PRUETH_STAT_OFFSET(rx_ucast)},
 -	{"rxOctets", PRUETH_STAT_OFFSET(rx_octets)},
-+static void prueth_init_host_port_queue_info(
-+	struct prueth *prueth,
-+	struct prueth_queue_info queue_infos[][NUM_QUEUES],
-+	struct prueth_mmap_port_cfg_basis *basis
-+)
-+{
-+	int p = PRUETH_PORT_HOST, q;
-+	struct prueth_queue_info *qi = queue_infos[p];
- 
+-
 -	{"tx64byte", PRUETH_STAT_OFFSET(tx64byte)},
 -	{"tx65_127byte", PRUETH_STAT_OFFSET(tx65_127byte)},
 -	{"tx128_255byte", PRUETH_STAT_OFFSET(tx128_255byte)},
 -	{"tx256_511byte", PRUETH_STAT_OFFSET(tx256_511byte)},
 -	{"tx512_1023byte", PRUETH_STAT_OFFSET(tx512_1023byte)},
 -	{"tx1024byte", PRUETH_STAT_OFFSET(tx1024byte)},
-+	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
-+	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
-+		qi[q].buffer_offset =
-+			port_queue_buffer_offset(prueth, p, q);
- 
+-
 -	{"rx64byte", PRUETH_STAT_OFFSET(rx64byte)},
 -	{"rx65_127byte", PRUETH_STAT_OFFSET(rx65_127byte)},
 -	{"rx128_255byte", PRUETH_STAT_OFFSET(rx128_255byte)},
 -	{"rx256_511byte", PRUETH_STAT_OFFSET(rx256_511byte)},
 -	{"rx512_1023byte", PRUETH_STAT_OFFSET(rx512_1023byte)},
 -	{"rx1024byte", PRUETH_STAT_OFFSET(rx1024byte)},
-+		qi[q].queue_desc_offset =
-+			port_queue1_desc_offset(prueth, p) +
-+			q * QDESC_SIZE;
- 
+-
 -	{"lateColl", PRUETH_STAT_OFFSET(late_coll)},
 -	{"singleColl", PRUETH_STAT_OFFSET(single_coll)},
 -	{"multiColl", PRUETH_STAT_OFFSET(multi_coll)},
 -	{"excessColl", PRUETH_STAT_OFFSET(excess_coll)},
-+		qi[q].buffer_desc_offset =
-+			port_queue_bd_offset(prueth, p, q);
- 
+-
 -	{"rxMisAlignmentFrames", PRUETH_STAT_OFFSET(rx_misalignment_frames)},
 -	{"stormPrevCounter", PRUETH_STAT_OFFSET(stormprev_counter)},
 -	{"macRxError", PRUETH_STAT_OFFSET(mac_rxerror)},
@@ -662,22 +715,10 @@ index 769a7dd..1a80598 100644
 -	{"rxUnderSizedFrames", PRUETH_STAT_OFFSET(rx_undersized_frames)},
 -	{"rxCRCFrames", PRUETH_STAT_OFFSET(rx_crc_frames)},
 -	{"droppedPackets", PRUETH_STAT_OFFSET(dropped_packets)},
-+		qi[q].buffer_desc_end =
-+			qi[q].buffer_desc_offset +
-+			(port_queue_size(prueth, p, q) - 1) * BD_SIZE;
-+	}
-+}
- 
+-
 -	{"txHWQOverFlow", PRUETH_STAT_OFFSET(tx_hwq_overflow)},
 -	{"txHWQUnderFlow", PRUETH_STAT_OFFSET(tx_hwq_underflow)},
 -};
-+static void prueth_init_port_tx_queue_info(
-+	struct prueth *prueth,
-+	struct prueth_queue_info queue_infos[][NUM_QUEUES],
-+	struct prueth_mmap_port_cfg_basis *basis,
-+	int p
-+)
-+{
 +	struct prueth_queue_info *qi = queue_infos[p];
 +	int q;
  
@@ -992,9 +1033,7 @@ index 769a7dd..1a80598 100644
 -	emac->prueth = prueth;
 -	emac->ndev = ndev;
 -	emac->port_id = port;
-+	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
-+	u16 eof_48k_buffer_bd;
- 
+-
 -	if (PRUETH_HAS_SWITCH(prueth)) {
 -		rx_int = "red-rx";
 -		tx_int = "red-tx";
@@ -1002,11 +1041,7 @@ index 769a7dd..1a80598 100644
 -		rx_int = "rx";
 -		tx_int = "tx";
 -	}
-+	/** HOST port **/
-+	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
-+	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
-+	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
- 
+-
 -	emac->rx_irq = of_irq_get_byname(eth_node, rx_int);
 -	if (emac->rx_irq < 0) {
 -		ret = emac->rx_irq;
@@ -1021,18 +1056,15 @@ index 769a7dd..1a80598 100644
 -			dev_err(prueth->dev, "could not get tx irq\n");
 -		goto free;
 -	}
-+	/* this calculation recurrsively depends on queue1_bd_offset,
-+	 * so can only be done after queue1_bd_offset is set
-+	 */
-+	eof_48k_buffer_bd =
-+		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
-+		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
-+		BD_SIZE;
++	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
++	u16 eof_48k_buffer_bd;
  
 -	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
 -	spin_lock_init(&emac->lock);
-+	pb->queue1_desc_offset = eof_48k_buffer_bd +
-+					EMAC_P0_Q1_DESC_OFFSET_AFTER_BD;
++	/** HOST port **/
++	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
++	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
++	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
  
 -	pb0 = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
 -	pb  = &prueth->mmap_port_cfg_basis[port];
@@ -1074,9 +1106,13 @@ index 769a7dd..1a80598 100644
 -		ret = -EINVAL;
 -		goto free;
 -	}
-+	/** PORT_MII0 **/
-+	prev_pb = pb;
-+	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
++	/* this calculation recurrsively depends on queue1_bd_offset,
++	 * so can only be done after queue1_bd_offset is set
++	 */
++	eof_48k_buffer_bd =
++		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
++		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
++		BD_SIZE;
  
 -	/* get mac address from DT and set private and netdev addr */
 -	mac_addr = of_get_mac_address(eth_node);
@@ -1088,9 +1124,8 @@ index 769a7dd..1a80598 100644
 -			 port, ndev->dev_addr);
 -	}
 -	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
-+	pb->queue1_buff_offset =
-+		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
-+					 PRUETH_QUEUE1);
++	pb->queue1_desc_offset = eof_48k_buffer_bd +
++					EMAC_P0_Q1_DESC_OFFSET_AFTER_BD;
  
 -	emac->phy_node = of_parse_phandle(eth_node, "phy-handle", 0);
 -	if (!emac->phy_node) {
@@ -1098,8 +1133,9 @@ index 769a7dd..1a80598 100644
 -		ret = -ENODEV;
 -		goto free;
 -	}
-+	pb->queue1_bd_offset =
-+		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
++	/** PORT_MII0 **/
++	prev_pb = pb;
++	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
  
 -	emac->phy_if = of_get_phy_mode(eth_node);
 -	if (emac->phy_if < 0) {
@@ -1107,7 +1143,9 @@ index 769a7dd..1a80598 100644
 -		ret = emac->phy_if;
 -		goto free;
 -	}
-+	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
++	pb->queue1_buff_offset =
++		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
++					 PRUETH_QUEUE1);
  
 -	/* connect PHY */
 -	emac->phydev = of_phy_connect(ndev, emac->phy_node,
@@ -1118,49 +1156,53 @@ index 769a7dd..1a80598 100644
 -		ret = -EPROBE_DEFER;
 -		goto free;
 -	}
-+	/** PORT_MII1 **/
-+	prev_pb = pb;
-+	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
++	pb->queue1_bd_offset =
++		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
  
 -	emac->phydev->advertising &= ~(ADVERTISED_1000baseT_Full |
 -			ADVERTISED_1000baseT_Half);
 -	emac->phydev->supported &= ~(SUPPORTED_1000baseT_Full |
 -			SUPPORTED_1000baseT_Half);
-+	pb->queue1_buff_offset =
-+		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
-+					 PRUETH_QUEUE1);
++	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
  
 -	if (PRUETH_IS_HSR(prueth))
 -		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
 -				   NETIF_F_HW_L2FW_DOFFLOAD);
 -	else if (PRUETH_IS_PRP(prueth))
 -		ndev->features |= NETIF_F_HW_PRP_RX_OFFLOAD;
-+	pb->queue1_bd_offset =
-+		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
++	/** PORT_MII1 **/
++	prev_pb = pb;
++	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
  
 -	ndev->netdev_ops = &emac_netdev_ops;
 -	ndev->ethtool_ops = &emac_ethtool_ops;
++	pb->queue1_buff_offset =
++		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
++					 PRUETH_QUEUE1);
+ 
+-	netif_napi_add(ndev, &emac->napi, emac_napi_poll, EMAC_POLL_WEIGHT);
++	pb->queue1_bd_offset =
++		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
+ 
+-	return 0;
 +	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
 +}
  
--	netif_napi_add(ndev, &emac->napi, emac_napi_poll, EMAC_POLL_WEIGHT);
+-free:
+-	free_netdev(ndev);
+-	prueth->emac[port] = NULL;
 +static int prueth_emac_init_mmap_port_cfg(struct prueth *prueth)
 +{
 +	struct prueth_mmap_port_cfg_basis *b = &prueth->mmap_port_cfg_basis[0];
  
+-	return ret;
 +	prueth_init_host_port_queue_info(prueth, queue_infos, b);
 +	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
 +				       PRUETH_PORT_QUEUE_MII0);
 +	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
 +				       PRUETH_PORT_QUEUE_MII1);
 +	prueth_init_queue_descs(prueth, queue_descs, b);
- 	return 0;
--
--free:
--	free_netdev(ndev);
--	prueth->emac[port] = NULL;
--
--	return ret;
++	return 0;
  }
  
 -static void prueth_netdev_exit(struct prueth *prueth,
@@ -1211,15 +1253,9 @@ index 769a7dd..1a80598 100644
 -	netif_napi_del(&emac->napi);
 -	free_netdev(emac->ndev);
 -	prueth->emac[port] = NULL;
--}
 +	loc += 4;
 +	emac->icss_emac_firmware_release_2_offset = loc;
- 
--static u16 port_queue_size(struct prueth *prueth, int p, int q)
--{
--	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1 ||
--	    q < PRUETH_QUEUE1    || q > PRUETH_QUEUE4)
--		return 0xffff;
++
 +	loc += 4;
 +	emac->host_q1_rx_context_offset = loc;
 +	loc += 8;
@@ -1228,8 +1264,7 @@ index 769a7dd..1a80598 100644
 +	emac->host_q3_rx_context_offset = loc;
 +	loc += 8;
 +	emac->host_q4_rx_context_offset = loc;
- 
--	return prueth->mmap_port_cfg_basis[p].queue_size[q];
++
 +	loc += 8;
 +	emac->host_queue_descriptor_offset_addr = loc;
 +	loc += 8;
@@ -1240,24 +1275,7 @@ index 769a7dd..1a80598 100644
 +	emac->host_queue_desc_offset = loc;
  }
  
--/**
-- * For both EMAC and Switch, all Px Qy buffers are in OCMC RAM
-- * Regular Q buffer offsets depends only on P0_Q1_BUFFER_OFFSET
-- * and Q sizes. Thus all such offsets can be derived from the
-- * P0_Q1_BUFFER_OFFSET defined and Q sizes chosen.
-- *
-- * For Switch, COLQ buffers are treated differently:
-- * based on P0_COL_BUFFER_OFFSET defined.
-- *
-- * This recurrsive function assumes buffers for 1 port is in
-- * one continuous block of mem and buffers for 2 consecutive ports
-- * are in one continuous block of mem as well.
-- *
-- * If buffers for 2 consecutive ports are not in one continuous block,
-- * just modify the case where q == PRUETH_QUEUE1. But keep in mind
-- * that non-continuous may have impact on fw performance.
-- */
--static u16 port_queue_buffer_offset(struct prueth *prueth, int p, int q)
+-static u16 port_queue_size(struct prueth *prueth, int p, int q)
 +static void prueth_init_mmap_ocmc_cfg(struct prueth *prueth)
  {
 -	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1 ||
@@ -1266,8 +1284,7 @@ index 769a7dd..1a80598 100644
 +	struct prueth_mmap_ocmc_cfg *oc = &prueth->mmap_ocmc_cfg;
 +	int p, q;
  
--	if (p == PRUETH_PORT_HOST && q == PRUETH_QUEUE1)
--		return prueth->mmap_port_cfg_basis[p].queue1_buff_offset;
+-	return prueth->mmap_port_cfg_basis[p].queue_size[q];
 +	for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
 +		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++) {
 +			oc->buffer_offset[p][q] =
@@ -1275,13 +1292,7 @@ index 769a7dd..1a80598 100644
 +		}
 +	}
 +}
- 
--	if (p > PRUETH_PORT_HOST   &&
--	    p <= PRUETH_PORT_MII1  &&
--	    q == PRUETH_QUEUE1)
--		return port_queue_buffer_offset(prueth, p - 1, PRUETH_QUEUE4) +
--		       port_queue_size(prueth, p - 1, PRUETH_QUEUE4) *
--		       ICSS_BLOCK_SIZE;
++
 +static int prueth_init_mmap_configs(struct prueth *prueth)
 +{
 +	if (PRUETH_HAS_SWITCH(prueth)) {
@@ -1291,34 +1302,34 @@ index 769a7dd..1a80598 100644
 +		prueth_emac_mmap_port_cfg_basis_fixup(prueth);
 +		prueth_emac_init_mmap_port_cfg(prueth);
 +	}
- 
--	/* case (0 <= p <= 2) and (QUEUE1 < q <= QUEUE4) */
--	return port_queue_buffer_offset(prueth, p, q - 1) +
--	       port_queue_size(prueth, p, q - 1) * ICSS_BLOCK_SIZE;
++
 +	prueth_init_mmap_sram_cfg(prueth);
 +	prueth_init_mmap_ocmc_cfg(prueth);
 +	return 0;
  }
  
  /**
-- * For both Switch and EMAC, all Px Qy BDs are in SRAM
-- * Regular BD offsets depends on P0_Q1_BD_OFFSET and Q sizes.
-- * Thus all can be calculated based on P0_Q1_BD_OFFSET defined and
-- * Q sizes chosen.
+- * For both EMAC and Switch, all Px Qy buffers are in OCMC RAM
+- * Regular Q buffer offsets depends only on P0_Q1_BUFFER_OFFSET
+- * and Q sizes. Thus all such offsets can be derived from the
+- * P0_Q1_BUFFER_OFFSET defined and Q sizes chosen.
+- *
+- * For Switch, COLQ buffers are treated differently:
+- * based on P0_COL_BUFFER_OFFSET defined.
 + * emac_ndo_open - EMAC device open
 + * @ndev: network adapter device
   *
-- * This recurrsive function assumes BDs for 1 port is in
-- * one continuous block of mem and BDs for 2 consecutive ports
-- * are in one continuous block of mem also.
+- * This recurrsive function assumes buffers for 1 port is in
+- * one continuous block of mem and buffers for 2 consecutive ports
+- * are in one continuous block of mem as well.
 + * Called when system wants to start the interface.
   *
-- * If BDs for 2 consecutive ports are not in one continuous block,
+- * If buffers for 2 consecutive ports are not in one continuous block,
 - * just modify the case where q == PRUETH_QUEUE1. But keep in mind
-- * that non-continuity may have impact on fw performance.
+- * that non-continuous may have impact on fw performance.
 + * Returns 0 for a successful open, or appropriate error code
   */
--static u16 port_queue_bd_offset(struct prueth *prueth, int p, int q)
+-static u16 port_queue_buffer_offset(struct prueth *prueth, int p, int q)
 +static int emac_ndo_open(struct net_device *ndev)
  {
 -	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1 ||
@@ -1328,20 +1339,10 @@ index 769a7dd..1a80598 100644
 +	struct prueth *prueth = emac->prueth;
 +	unsigned long flags = (IRQF_TRIGGER_HIGH | IRQF_ONESHOT);
 +	int ret;
- 
--	if (p == PRUETH_PORT_HOST && q == PRUETH_QUEUE1)
--		return prueth->mmap_port_cfg_basis[p].queue1_bd_offset;
++
 +	if (PRUETH_HAS_SWITCH(prueth))
 +		flags |= IRQF_SHARED;
- 
--	/* continuous BDs between ports
--	 */
--	if (p > PRUETH_PORT_HOST   &&
--	    p <= PRUETH_PORT_MII1  &&
--	    q == PRUETH_QUEUE1)
--		return port_queue_bd_offset(prueth, p - 1, PRUETH_QUEUE4) +
--		       port_queue_size(prueth, p - 1, PRUETH_QUEUE4) *
--		       BD_SIZE;
++
 +	ret = request_irq(emac->rx_irq, emac_rx_hardirq, flags,
 +			  ndev->name, ndev);
 +	if (ret) {
@@ -1354,6 +1355,108 @@ index 769a7dd..1a80598 100644
 +		netdev_err(ndev, "unable to request TX IRQ\n");
 +		goto free_rx_irq;
 +	}
++
++	/* set h/w MAC as user might have re-configured */
++	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
++
++	netif_carrier_off(ndev);
++
++	/* reset and start PRU firmware */
++	if (PRUETH_HAS_SWITCH(prueth))
++		prueth_sw_emac_config(prueth, emac);
++	else
++		prueth_emac_config(prueth, emac);
++
++	if (PRUETH_HAS_RED(prueth)) {
++		prueth_init_red_table_timer(prueth);
++		prueth_hsr_prp_config(prueth);
++	}
++
++	/* restore stats */
++	emac_set_stats(emac, &emac->stats);
++
++	if (PRUETH_HAS_SWITCH(prueth))
++		ret = sw_emac_set_boot_pru(emac, ndev);
++	else
++		ret = emac_set_boot_pru(emac, ndev);
++
++	if (ret)
++		goto free_irq;
++
++	/* start PHY */
++	phy_start(emac->phydev);
++	napi_enable(&emac->napi);
++
++	/* enable the port */
++	prueth_port_enable(prueth, emac->port_id, true);
++
++	if (netif_msg_drv(emac))
++		dev_notice(&ndev->dev, "started\n");
++
++	if (PRUETH_HAS_RED(prueth))
++		prueth_start_red_table_timer(prueth);
+ 
+-	if (p == PRUETH_PORT_HOST && q == PRUETH_QUEUE1)
+-		return prueth->mmap_port_cfg_basis[p].queue1_buff_offset;
++	prueth->emac_configured |= BIT(emac->port_id);
++	return 0;
+ 
+-	if (p > PRUETH_PORT_HOST   &&
+-	    p <= PRUETH_PORT_MII1  &&
+-	    q == PRUETH_QUEUE1)
+-		return port_queue_buffer_offset(prueth, p - 1, PRUETH_QUEUE4) +
+-		       port_queue_size(prueth, p - 1, PRUETH_QUEUE4) *
+-		       ICSS_BLOCK_SIZE;
++free_irq:
++	free_irq(emac->tx_irq, ndev);
++free_rx_irq:
++	free_irq(emac->rx_irq, ndev);
+ 
+-	/* case (0 <= p <= 2) and (QUEUE1 < q <= QUEUE4) */
+-	return port_queue_buffer_offset(prueth, p, q - 1) +
+-	       port_queue_size(prueth, p, q - 1) * ICSS_BLOCK_SIZE;
++	return ret;
+ }
+ 
+-/**
+- * For both Switch and EMAC, all Px Qy BDs are in SRAM
+- * Regular BD offsets depends on P0_Q1_BD_OFFSET and Q sizes.
+- * Thus all can be calculated based on P0_Q1_BD_OFFSET defined and
+- * Q sizes chosen.
+- *
+- * This recurrsive function assumes BDs for 1 port is in
+- * one continuous block of mem and BDs for 2 consecutive ports
+- * are in one continuous block of mem also.
+- *
+- * If BDs for 2 consecutive ports are not in one continuous block,
+- * just modify the case where q == PRUETH_QUEUE1. But keep in mind
+- * that non-continuity may have impact on fw performance.
+- */
+-static u16 port_queue_bd_offset(struct prueth *prueth, int p, int q)
++static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
+ {
+-	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1 ||
+-	    q < PRUETH_QUEUE1    || q > PRUETH_QUEUE4)
+-		return 0xffff;
++	struct prueth *prueth = emac->prueth;
+ 
+-	if (p == PRUETH_PORT_HOST && q == PRUETH_QUEUE1)
+-		return prueth->mmap_port_cfg_basis[p].queue1_bd_offset;
++	prueth->emac_configured &= ~BIT(emac->port_id);
++	free_irq(emac->tx_irq, emac->ndev);
++	free_irq(emac->rx_irq, emac->ndev);
+ 
+-	/* continuous BDs between ports
+-	 */
+-	if (p > PRUETH_PORT_HOST   &&
+-	    p <= PRUETH_PORT_MII1  &&
+-	    q == PRUETH_QUEUE1)
+-		return port_queue_bd_offset(prueth, p - 1, PRUETH_QUEUE4) +
+-		       port_queue_size(prueth, p - 1, PRUETH_QUEUE4) *
+-		       BD_SIZE;
++	/* another emac is still in use, don't stop the PRUs */
++	if (prueth->emac_configured)
++		return 0;
  
 -	/* (0 <= p <= 2) and (QUEUE1 < q <= QUEUE4)
 -	 * continuous BDs within 1 port
@@ -1361,146 +1464,6 @@ index 769a7dd..1a80598 100644
 -	return port_queue_bd_offset(prueth, p, q - 1) +
 -	       port_queue_size(prueth, p, q - 1) * BD_SIZE;
 -}
-+	/* set h/w MAC as user might have re-configured */
-+	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
- 
--static u16 port_queue1_desc_offset(struct prueth *prueth, int p)
--{
--	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1)
--		return 0xffff;
-+	netif_carrier_off(ndev);
- 
--	return prueth->mmap_port_cfg_basis[p].queue1_desc_offset;
--}
-+	/* reset and start PRU firmware */
-+	if (PRUETH_HAS_SWITCH(prueth))
-+		prueth_sw_emac_config(prueth, emac);
-+	else
-+		prueth_emac_config(prueth, emac);
- 
--static void prueth_init_host_port_queue_info(
--	struct prueth *prueth,
--	struct prueth_queue_info queue_infos[][NUM_QUEUES],
--	struct prueth_mmap_port_cfg_basis *basis
--)
--{
--	int p = PRUETH_PORT_HOST, q;
--	struct prueth_queue_info *qi = queue_infos[p];
-+	if (PRUETH_HAS_RED(prueth)) {
-+		prueth_init_red_table_timer(prueth);
-+		prueth_hsr_prp_config(prueth);
-+	}
- 
--	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
--	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
--		qi[q].buffer_offset =
--			port_queue_buffer_offset(prueth, p, q);
-+	/* restore stats */
-+	emac_set_stats(emac, &emac->stats);
- 
--		qi[q].queue_desc_offset =
--			port_queue1_desc_offset(prueth, p) +
--			q * QDESC_SIZE;
-+	if (PRUETH_HAS_SWITCH(prueth))
-+		ret = sw_emac_set_boot_pru(emac, ndev);
-+	else
-+		ret = emac_set_boot_pru(emac, ndev);
- 
--		qi[q].buffer_desc_offset =
--			port_queue_bd_offset(prueth, p, q);
-+	if (ret)
-+		goto free_irq;
- 
--		qi[q].buffer_desc_end =
--			qi[q].buffer_desc_offset +
--			(port_queue_size(prueth, p, q) - 1) * BD_SIZE;
--	}
--}
-+	/* start PHY */
-+	phy_start(emac->phydev);
-+	napi_enable(&emac->napi);
- 
--static void prueth_init_port_tx_queue_info(
--	struct prueth *prueth,
--	struct prueth_queue_info queue_infos[][NUM_QUEUES],
--	struct prueth_mmap_port_cfg_basis *basis,
--	int p
--)
--{
--	struct prueth_queue_info *qi = queue_infos[p];
--	int q;
-+	/* enable the port */
-+	prueth_port_enable(prueth, emac->port_id, true);
- 
--	if (p < PRUETH_PORT_QUEUE_MII0 || p > PRUETH_PORT_QUEUE_MII1)
--		return;
-+	if (netif_msg_drv(emac))
-+		dev_notice(&ndev->dev, "started\n");
- 
--	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
--	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
--		qi[q].buffer_offset =
--			port_queue_buffer_offset(prueth, p, q);
-+	if (PRUETH_HAS_RED(prueth))
-+		prueth_start_red_table_timer(prueth);
- 
--		/* this is actually buffer offset end for tx ports */
--		qi[q].queue_desc_offset =
--			qi[q].buffer_offset +
--			(port_queue_size(prueth, p, q) - 1) * ICSS_BLOCK_SIZE;
-+	prueth->emac_configured |= BIT(emac->port_id);
-+	return 0;
- 
--		qi[q].buffer_desc_offset =
--			port_queue_bd_offset(prueth, p, q);
-+free_irq:
-+	free_irq(emac->tx_irq, ndev);
-+free_rx_irq:
-+	free_irq(emac->rx_irq, ndev);
- 
--		qi[q].buffer_desc_end =
--			qi[q].buffer_desc_offset +
--			(port_queue_size(prueth, p, q) - 1) * BD_SIZE;
--	}
-+	return ret;
- }
- 
--static void prueth_init_port_rx_queue_info(
--	struct prueth *prueth,
--	struct prueth_queue_info queue_infos[][NUM_QUEUES],
--	struct prueth_mmap_port_cfg_basis *basis,
--	int p_rx
--)
-+static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
- {
--	struct prueth_queue_info *qi = queue_infos[p_rx];
--	int basisp, q;
--
--	if (p_rx == PRUETH_PORT_QUEUE_MII0_RX)
--		basisp = PRUETH_PORT_QUEUE_MII0;
--	else if (p_rx == PRUETH_PORT_QUEUE_MII1_RX)
--		basisp = PRUETH_PORT_QUEUE_MII1;
--	else
--		return;
-+	struct prueth *prueth = emac->prueth;
- 
--	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
--	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
--		qi[q].buffer_offset =
--			port_queue_buffer_offset(prueth, basisp, q);
-+	prueth->emac_configured &= ~BIT(emac->port_id);
-+	free_irq(emac->tx_irq, emac->ndev);
-+	free_irq(emac->rx_irq, emac->ndev);
- 
--		qi[q].queue_desc_offset =
--			port_queue1_desc_offset(prueth, basisp) +
--			q * QDESC_SIZE;
-+	/* another emac is still in use, don't stop the PRUs */
-+	if (prueth->emac_configured)
-+		return 0;
- 
--		qi[q].buffer_desc_offset =
--			port_queue_bd_offset(prueth, basisp, q);
 +	rproc_shutdown(prueth->pru0);
 +	rproc_shutdown(prueth->pru1);
 +	/* disable and free rx and tx interrupts */
@@ -1508,37 +1471,45 @@ index 769a7dd..1a80598 100644
 +	disable_irq(emac->rx_irq);
 +	emac_lre_get_stats(emac, &emac->prueth->lre_stats);
  
--		qi[q].buffer_desc_end =
--			qi[q].buffer_desc_offset +
--			(port_queue_size(prueth, basisp, q) - 1) * BD_SIZE;
+-static u16 port_queue1_desc_offset(struct prueth *prueth, int p)
+-{
+-	if (p < PRUETH_PORT_HOST || p > PRUETH_PORT_MII1)
+-		return 0xffff;
 +	if (PRUETH_HAS_RED(emac->prueth)) {
 +		del_timer_sync(&prueth->tbl_check_timer);
 +		prueth->tbl_check_period = 0;
- 	}
-+
++	}
+ 
+-	return prueth->mmap_port_cfg_basis[p].queue1_desc_offset;
 +	return 0;
  }
  
--static void
--prueth_init_tx_colq_info(struct prueth *prueth,
--			 struct prueth_queue_info *tx_colq_infos,
--			 struct prueth_mmap_port_cfg_basis *sw_basis)
+-static void prueth_init_host_port_queue_info(
+-	struct prueth *prueth,
+-	struct prueth_queue_info queue_infos[][NUM_QUEUES],
+-	struct prueth_mmap_port_cfg_basis *basis
+-)
 +static int emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
  {
--	struct prueth_mmap_port_cfg_basis *pb;
--	struct prueth_queue_info *cqi;
--	int p;
+-	int p = PRUETH_PORT_HOST, q;
+-	struct prueth_queue_info *qi = queue_infos[p];
 -
--	for (p = PRUETH_PORT_QUEUE_MII0; p <= PRUETH_PORT_QUEUE_MII1; p++) {
--		pb = &sw_basis[p];
--		cqi = &tx_colq_infos[p];
+-	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
+-	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
+-		qi[q].buffer_offset =
+-			port_queue_buffer_offset(prueth, p, q);
+-
+-		qi[q].queue_desc_offset =
+-			port_queue1_desc_offset(prueth, p) +
+-			q * QDESC_SIZE;
+-
+-		qi[q].buffer_desc_offset =
+-			port_queue_bd_offset(prueth, p, q);
 +	struct prueth *prueth = emac->prueth;
  
--		cqi->buffer_offset      = pb->col_buff_offset;
--		cqi->queue_desc_offset  = pb->col_queue_desc_offset;
--		cqi->buffer_desc_offset = pb->col_bd_offset;
--		cqi->buffer_desc_end    =
--			pb->col_bd_offset + (pb->col_queue_size - 1) * BD_SIZE;
+-		qi[q].buffer_desc_end =
+-			qi[q].buffer_desc_offset +
+-			(port_queue_size(prueth, p, q) - 1) * BD_SIZE;
 +	switch (emac->port_id) {
 +	case PRUETH_PORT_MII0:
 +		rproc_shutdown(prueth->pru0);
@@ -1559,10 +1530,12 @@ index 769a7dd..1a80598 100644
 +	return 0;
  }
  
--static void
--prueth_init_col_tx_context_info(struct prueth *prueth,
--				struct prueth_col_tx_context_info *ctx_infos,
--				struct prueth_mmap_port_cfg_basis *sw_basis)
+-static void prueth_init_port_tx_queue_info(
+-	struct prueth *prueth,
+-	struct prueth_queue_info queue_infos[][NUM_QUEUES],
+-	struct prueth_mmap_port_cfg_basis *basis,
+-	int p
+-)
 +/**
 + * emac_ndo_stop - EMAC device stop
 + * @ndev: network adapter device
@@ -1571,134 +1544,101 @@ index 769a7dd..1a80598 100644
 + */
 +static int emac_ndo_stop(struct net_device *ndev)
  {
--	struct prueth_mmap_port_cfg_basis *pb;
--	struct prueth_col_tx_context_info *cti;
--	int p;
--
--	for (p = PRUETH_PORT_QUEUE_MII0; p <= PRUETH_PORT_QUEUE_MII1; p++) {
--		pb = &sw_basis[p];
--		cti = &ctx_infos[p];
+-	struct prueth_queue_info *qi = queue_infos[p];
+-	int q;
 +	struct prueth_emac *emac = netdev_priv(ndev);
  
--		cti->buffer_offset      = pb->col_buff_offset;
--		cti->buffer_offset2     = pb->col_buff_offset;
--		cti->buffer_offset_end  =
--			pb->col_buff_offset +
--			(pb->col_queue_size - 1) * ICSS_BLOCK_SIZE;
--	}
--}
+-	if (p < PRUETH_PORT_QUEUE_MII0 || p > PRUETH_PORT_QUEUE_MII1)
+-		return;
 +	/* inform the upper layers. */
 +	netif_stop_queue(ndev);
 +	napi_disable(&emac->napi);
 +	netif_carrier_off(ndev);
  
--static void
--prueth_init_col_rx_context_info(struct prueth *prueth,
--				struct prueth_col_rx_context_info *ctx_infos,
--				struct prueth_mmap_port_cfg_basis *sw_basis)
--{
--	struct prueth_mmap_port_cfg_basis *pb;
--	struct prueth_col_rx_context_info *cti;
--	int p;
+-	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
+-	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
+-		qi[q].buffer_offset =
+-			port_queue_buffer_offset(prueth, p, q);
 +	/* stop PHY */
 +	phy_stop(emac->phydev);
  
--	for (p = PRUETH_PORT_QUEUE_HOST; p <= PRUETH_PORT_QUEUE_MII1; p++) {
--		cti = &ctx_infos[p];
--		pb = &sw_basis[p];
+-		/* this is actually buffer offset end for tx ports */
+-		qi[q].queue_desc_offset =
+-			qi[q].buffer_offset +
+-			(port_queue_size(prueth, p, q) - 1) * ICSS_BLOCK_SIZE;
 +	/* disable the mac port */
 +	prueth_port_enable(emac->prueth, emac->port_id, 0);
  
--		cti->buffer_offset      = pb->col_buff_offset;
--		cti->buffer_offset2     = pb->col_buff_offset;
--		cti->queue_desc_offset  = pb->col_queue_desc_offset;
--		cti->buffer_desc_offset = pb->col_bd_offset;
--		cti->buffer_desc_end    =
--			pb->col_bd_offset +
--			(pb->col_queue_size - 1) * BD_SIZE;
--	}
--}
+-		qi[q].buffer_desc_offset =
+-			port_queue_bd_offset(prueth, p, q);
 +	/* stop PRU firmware */
 +	if (PRUETH_HAS_SWITCH(emac->prueth))
 +		sw_emac_pru_stop(emac, ndev);
 +	else
 +		emac_pru_stop(emac, ndev);
  
--static void
--prueth_init_queue_descs(struct prueth *prueth,
--			struct prueth_queue_desc queue_descs[][NUM_QUEUES + 1],
--			struct prueth_mmap_port_cfg_basis *basis)
--{
--	struct prueth_queue_desc *d;
--	int p, q;
+-		qi[q].buffer_desc_end =
+-			qi[q].buffer_desc_offset +
+-			(port_queue_size(prueth, p, q) - 1) * BD_SIZE;
+-	}
 +	/* save stats */
 +	emac_get_stats(emac, &emac->stats);
- 
--	for (p = PRUETH_PORT_QUEUE_HOST; p <= PRUETH_PORT_QUEUE_MII1; p++) {
--		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++) {
--			d = &queue_descs[p][q];
--			d->rd_ptr = port_queue_bd_offset(prueth, p, q);
--			d->wr_ptr = d->rd_ptr;
--		}
++
 +	if (netif_msg_drv(emac))
 +		dev_notice(&ndev->dev, "stopped\n");
- 
--		/* EMAC does not have colq and this will
--		 * just set the rd_ptr and wr_ptr to 0
--		 */
--		d = &queue_descs[p][q];
--		d->rd_ptr = basis[p].col_bd_offset;
--		d->wr_ptr = d->rd_ptr;
--	}
++
 +	return 0;
  }
  
--static void prueth_sw_mmap_port_cfg_basis_fixup(struct prueth *prueth)
+-static void prueth_init_port_rx_queue_info(
+-	struct prueth *prueth,
+-	struct prueth_queue_info queue_infos[][NUM_QUEUES],
+-	struct prueth_mmap_port_cfg_basis *basis,
+-	int p_rx
+-)
 +static u16 prueth_get_tx_queue_id(struct prueth *prueth, struct sk_buff *skb)
  {
--	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
--	u16 eof_48k_buffer_bd;
+-	struct prueth_queue_info *qi = queue_infos[p_rx];
+-	int basisp, q;
 -
--	/** HOST port **/
--	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
--	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
--	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
--	pb->queue1_desc_offset    = P0_QUEUE_DESC_OFFSET,
--	pb->col_buff_offset       = P0_COL_BUFFER_OFFSET,
--	pb->col_queue_desc_offset = P0_COL_QUEUE_DESC_OFFSET;
+-	if (p_rx == PRUETH_PORT_QUEUE_MII0_RX)
+-		basisp = PRUETH_PORT_QUEUE_MII0;
+-	else if (p_rx == PRUETH_PORT_QUEUE_MII1_RX)
+-		basisp = PRUETH_PORT_QUEUE_MII1;
+-	else
+-		return;
 +	u16 vlan_tci, pcp;
 +	int err;
  
--	/* This calculation recurrsively depends on
--	 * [PRUETH_PORT_HOST].queue1_bd_offset.
--	 * So can only be done after
--	 * [PRUETH_PORT_HOST].queue1_bd_offset is set
--	 */
--	eof_48k_buffer_bd =
--		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
--		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
--		BD_SIZE;
+-	/* PRUETH_QUEUE1 = 0, PRUETH_QUEUE2 = 1, ... */
+-	for (q = PRUETH_QUEUE1; q < NUM_QUEUES; q++) {
+-		qi[q].buffer_offset =
+-			port_queue_buffer_offset(prueth, basisp, q);
 +	if (!PRUETH_HAS_SWITCH(prueth))
 +		return PRUETH_QUEUE4;
  
--	pb->col_bd_offset = eof_48k_buffer_bd;
+-		qi[q].queue_desc_offset =
+-			port_queue1_desc_offset(prueth, basisp) +
+-			q * QDESC_SIZE;
 +	err = vlan_get_tag(skb, &vlan_tci);
 +	if (likely(err))
 +		return PRUETH_QUEUE4;
  
--	/** PORT_MII0 **/
--	prev_pb = pb;
--	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
+-		qi[q].buffer_desc_offset =
+-			port_queue_bd_offset(prueth, basisp, q);
 +	pcp = (vlan_tci & VLAN_PRIO_MASK) >> VLAN_PRIO_SHIFT;
  
--	pb->queue1_buff_offset =
--		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
--					 PRUETH_QUEUE1);
+-		qi[q].buffer_desc_end =
+-			qi[q].buffer_desc_offset +
+-			(port_queue_size(prueth, basisp, q) - 1) * BD_SIZE;
+-	}
 +	return sw_pcp_tx_priority_queue_map[pcp];
-+}
+ }
  
--	pb->queue1_bd_offset =
--		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
+-static void
+-prueth_init_tx_colq_info(struct prueth *prueth,
+-			 struct prueth_queue_info *tx_colq_infos,
+-			 struct prueth_mmap_port_cfg_basis *sw_basis)
 +/**
 + * emac_ndo_start_xmit - EMAC Transmit function
 + * @skb: SKB pointer
@@ -1710,14 +1650,17 @@ index 769a7dd..1a80598 100644
 + * Returns success(NETDEV_TX_OK) or error code (typically out of desc's)
 + */
 +static int emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+{
+ {
+-	struct prueth_mmap_port_cfg_basis *pb;
+-	struct prueth_queue_info *cqi;
+-	int p;
 +	struct prueth_emac *emac = netdev_priv(ndev);
 +	int ret = 0;
 +	u16 qid;
  
--	pb->queue1_desc_offset =
--		prev_pb->queue1_desc_offset +
--		NUM_QUEUES * QDESC_SIZE;
+-	for (p = PRUETH_PORT_QUEUE_MII0; p <= PRUETH_PORT_QUEUE_MII1; p++) {
+-		pb = &sw_basis[p];
+-		cqi = &tx_colq_infos[p];
 +	if (unlikely(!emac->link)) {
 +		if (netif_msg_tx_err(emac) && net_ratelimit())
 +			netdev_err(ndev, "No link to transmit");
@@ -1725,9 +1668,11 @@ index 769a7dd..1a80598 100644
 +		goto fail_tx;
 +	}
  
--	pb->col_buff_offset =
--		prev_pb->col_buff_offset +
--		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
+-		cqi->buffer_offset      = pb->col_buff_offset;
+-		cqi->queue_desc_offset  = pb->col_queue_desc_offset;
+-		cqi->buffer_desc_offset = pb->col_bd_offset;
+-		cqi->buffer_desc_end    =
+-			pb->col_bd_offset + (pb->col_queue_size - 1) * BD_SIZE;
 +	qid = prueth_get_tx_queue_id(emac->prueth, skb);
 +	if (emac->port_id == PRUETH_PORT_MII0) {
 +		/* packet sent on MII0 */
@@ -1740,55 +1685,48 @@ index 769a7dd..1a80598 100644
 +	} else {
 +		goto fail_tx; /* switch mode not supported yet */
 +	}
- 
--	pb->col_bd_offset =
--		prev_pb->col_bd_offset +
--		prev_pb->col_queue_size * BD_SIZE;
++
 +	if (ret) {
 +		if (ret != -ENOBUFS && ret != -EBUSY &&
 +		    netif_msg_tx_err(emac) && net_ratelimit())
 +			netdev_err(ndev, "packet queue failed: %d\n", ret);
 +		goto fail_tx;
-+	}
+ 	}
+-}
  
--	pb->col_queue_desc_offset =
--		prev_pb->col_queue_desc_offset + QDESC_SIZE;
+-static void
+-prueth_init_col_tx_context_info(struct prueth *prueth,
+-				struct prueth_col_tx_context_info *ctx_infos,
+-				struct prueth_mmap_port_cfg_basis *sw_basis)
+-{
+-	struct prueth_mmap_port_cfg_basis *pb;
+-	struct prueth_col_tx_context_info *cti;
+-	int p;
 +	ndev->stats.tx_packets++;
 +	ndev->stats.tx_bytes += skb->len;
 +	dev_kfree_skb_any(skb);
  
--	/** PORT_MII1 **/
--	prev_pb = pb;
--	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
+-	for (p = PRUETH_PORT_QUEUE_MII0; p <= PRUETH_PORT_QUEUE_MII1; p++) {
+-		pb = &sw_basis[p];
+-		cti = &ctx_infos[p];
 +	return NETDEV_TX_OK;
  
--	pb->queue1_buff_offset =
--		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
--					 PRUETH_QUEUE1);
--
--	pb->queue1_bd_offset =
--		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
--
--	pb->queue1_desc_offset =
--		prev_pb->queue1_desc_offset + NUM_QUEUES * QDESC_SIZE;
--
--	pb->col_buff_offset =
--		prev_pb->col_buff_offset +
--		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
--
--	pb->col_bd_offset =
--		prev_pb->col_bd_offset +
--		prev_pb->col_queue_size * BD_SIZE;
--
--	pb->col_queue_desc_offset =
--		prev_pb->col_queue_desc_offset + QDESC_SIZE;
+-		cti->buffer_offset      = pb->col_buff_offset;
+-		cti->buffer_offset2     = pb->col_buff_offset;
+-		cti->buffer_offset_end  =
+-			pb->col_buff_offset +
+-			(pb->col_queue_size - 1) * ICSS_BLOCK_SIZE;
+-	}
 +fail_tx:
 +	/* error */
 +	ndev->stats.tx_dropped++;
 +	return NETDEV_TX_BUSY;
  }
  
--static void prueth_emac_mmap_port_cfg_basis_fixup(struct prueth *prueth)
+-static void
+-prueth_init_col_rx_context_info(struct prueth *prueth,
+-				struct prueth_col_rx_context_info *ctx_infos,
+-				struct prueth_mmap_port_cfg_basis *sw_basis)
 +/**
 + * emac_ndo_tx_timeout - EMAC Transmit timeout function
 + * @ndev: The EMAC network adapter
@@ -1799,43 +1737,34 @@ index 769a7dd..1a80598 100644
 + */
 +static void emac_ndo_tx_timeout(struct net_device *ndev)
  {
--	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
--	u16 eof_48k_buffer_bd;
--
--	/** HOST port **/
--	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
--	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
--	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
--
--	/* this calculation recurrsively depends on queue1_bd_offset,
--	 * so can only be done after queue1_bd_offset is set
--	 */
--	eof_48k_buffer_bd =
--		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
--		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
--		BD_SIZE;
--
--	pb->queue1_desc_offset = eof_48k_buffer_bd +
--					EMAC_P0_Q1_DESC_OFFSET_AFTER_BD;
+-	struct prueth_mmap_port_cfg_basis *pb;
+-	struct prueth_col_rx_context_info *cti;
+-	int p;
 +	struct prueth_emac *emac = netdev_priv(ndev);
  
--	/** PORT_MII0 **/
--	prev_pb = pb;
--	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
+-	for (p = PRUETH_PORT_QUEUE_HOST; p <= PRUETH_PORT_QUEUE_MII1; p++) {
+-		cti = &ctx_infos[p];
+-		pb = &sw_basis[p];
 +	if (netif_msg_tx_err(emac))
 +		netdev_err(ndev, "xmit timeout");
  
--	pb->queue1_buff_offset =
--		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
--					 PRUETH_QUEUE1);
+-		cti->buffer_offset      = pb->col_buff_offset;
+-		cti->buffer_offset2     = pb->col_buff_offset;
+-		cti->queue_desc_offset  = pb->col_queue_desc_offset;
+-		cti->buffer_desc_offset = pb->col_bd_offset;
+-		cti->buffer_desc_end    =
+-			pb->col_bd_offset +
+-			(pb->col_queue_size - 1) * BD_SIZE;
+-	}
 +	ndev->stats.tx_errors++;
- 
--	pb->queue1_bd_offset =
--		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
++
 +	/* TODO: can we recover or need to reboot firmware? */
-+}
+ }
  
--	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
+-static void
+-prueth_init_queue_descs(struct prueth *prueth,
+-			struct prueth_queue_desc queue_descs[][NUM_QUEUES + 1],
+-			struct prueth_mmap_port_cfg_basis *basis)
 +/**
 + * emac_ndo_getstats - EMAC get statistics function
 + * @ndev: The EMAC network adapter
@@ -1845,27 +1774,95 @@ index 769a7dd..1a80598 100644
 + * We return the statistics in net_device_stats structure pulled from emac
 + */
 +static struct net_device_stats *emac_ndo_get_stats(struct net_device *ndev)
-+{
+ {
+-	struct prueth_queue_desc *d;
+-	int p, q;
 +	struct prueth_emac *emac = netdev_priv(ndev);
 +	struct port_statistics pstats;
 +	struct net_device_stats *stats = &ndev->stats;
  
--	/** PORT_MII1 **/
--	prev_pb = pb;
--	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
+-	for (p = PRUETH_PORT_QUEUE_HOST; p <= PRUETH_PORT_QUEUE_MII1; p++) {
+-		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++) {
+-			d = &queue_descs[p][q];
+-			d->rd_ptr = port_queue_bd_offset(prueth, p, q);
+-			d->wr_ptr = d->rd_ptr;
+-		}
 +	emac_get_stats(emac, &pstats);
 +	stats->collisions = pstats.late_coll + pstats.single_coll +
 +			    pstats.multi_coll + pstats.excess_coll;
 +	stats->multicast = pstats.rx_mcast;
  
--	pb->queue1_buff_offset =
--		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
--					 PRUETH_QUEUE1);
+-		/* EMAC does not have colq and this will
+-		 * just set the rd_ptr and wr_ptr to 0
+-		 */
+-		d = &queue_descs[p][q];
+-		d->rd_ptr = basis[p].col_bd_offset;
+-		d->wr_ptr = d->rd_ptr;
+-	}
 +	return stats;
+ }
+ 
+-static void prueth_sw_mmap_port_cfg_basis_fixup(struct prueth *prueth)
++/**
++ * emac_ndo_set_rx_mode - EMAC set receive mode function
++ * @ndev: The EMAC network adapter
++ *
++ * Called when system wants to set the receive mode of the device.
++ *
++ */
++static void emac_ndo_set_rx_mode(struct net_device *ndev)
+ {
+-	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
+-	u16 eof_48k_buffer_bd;
++	struct prueth_emac *emac = netdev_priv(ndev);
++	struct prueth *prueth = emac->prueth;
++	void __iomem *sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
++	u32 reg = readl(sram + EMAC_PROMISCUOUS_MODE_OFFSET);
++	u32 mask;
+ 
+-	/** HOST port **/
+-	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
+-	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
+-	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
+-	pb->queue1_desc_offset    = P0_QUEUE_DESC_OFFSET,
+-	pb->col_buff_offset       = P0_COL_BUFFER_OFFSET,
+-	pb->col_queue_desc_offset = P0_COL_QUEUE_DESC_OFFSET;
++	switch (emac->port_id) {
++	case PRUETH_PORT_MII0:
++		mask = EMAC_P1_PROMISCUOUS_BIT;
++		break;
++	case PRUETH_PORT_MII1:
++		mask = EMAC_P2_PROMISCUOUS_BIT;
++		break;
++	default:
++		netdev_err(ndev, "%s: invalid port\n", __func__);
++		return;
++	}
+ 
+-	/* This calculation recurrsively depends on
+-	 * [PRUETH_PORT_HOST].queue1_bd_offset.
+-	 * So can only be done after
+-	 * [PRUETH_PORT_HOST].queue1_bd_offset is set
+-	 */
+-	eof_48k_buffer_bd =
+-		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
+-		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
+-		BD_SIZE;
++	if (ndev->flags & IFF_PROMISC) {
++		/* Enable promiscuous mode */
++		reg |= mask;
++	} else {
++		/* Disable promiscuous mode */
++		reg &= ~mask;
++	}
+ 
+-	pb->col_bd_offset = eof_48k_buffer_bd;
++	writel(reg, sram + EMAC_PROMISCUOUS_MODE_OFFSET);
 +}
  
--	pb->queue1_bd_offset =
--		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
+-	/** PORT_MII0 **/
+-	prev_pb = pb;
+-	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
 +static const struct net_device_ops emac_netdev_ops = {
 +	.ndo_open = emac_ndo_open,
 +	.ndo_stop = emac_ndo_stop,
@@ -1875,10 +1872,12 @@ index 769a7dd..1a80598 100644
 +	.ndo_change_mtu	= eth_change_mtu,
 +	.ndo_tx_timeout = emac_ndo_tx_timeout,
 +	.ndo_get_stats = emac_ndo_get_stats,
-+	/* +++TODO: implement .ndo_setup_tc */
++	.ndo_set_rx_mode = emac_ndo_set_rx_mode,
 +};
  
--	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
+-	pb->queue1_buff_offset =
+-		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
+-					 PRUETH_QUEUE1);
 +/**
 + * emac_get_drvinfo - Get EMAC driver information
 + * @ndev: The network adapter
@@ -1891,9 +1890,10 @@ index 769a7dd..1a80598 100644
 +{
 +	strlcpy(info->driver, PRUETH_MODULE_DESCRIPTION, sizeof(info->driver));
 +	strlcpy(info->version, PRUETH_MODULE_VERSION, sizeof(info->version));
- }
++}
  
--static int prueth_emac_init_mmap_port_cfg(struct prueth *prueth)
+-	pb->queue1_bd_offset =
+-		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
 +/**
 + * emac_get_settings - Get EMAC settings
 + * @ndev: The network adapter
@@ -1902,24 +1902,21 @@ index 769a7dd..1a80598 100644
 + * Executes ethool get command
 + */
 +static int emac_get_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
- {
--	struct prueth_mmap_port_cfg_basis *b = &prueth->mmap_port_cfg_basis[0];
++{
 +	struct prueth_emac *emac = netdev_priv(ndev);
  
--	prueth_init_host_port_queue_info(prueth, queue_infos, b);
--	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
--				       PRUETH_PORT_QUEUE_MII0);
--	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
--				       PRUETH_PORT_QUEUE_MII1);
--	prueth_init_queue_descs(prueth, queue_descs, b);
--	return 0;
+-	pb->queue1_desc_offset =
+-		prev_pb->queue1_desc_offset +
+-		NUM_QUEUES * QDESC_SIZE;
 +	if (emac->phydev)
 +		return phy_ethtool_gset(emac->phydev, ecmd);
 +	else
 +		return -EOPNOTSUPP;
- }
++}
  
--static int prueth_sw_init_mmap_port_cfg(struct prueth *prueth)
+-	pb->col_buff_offset =
+-		prev_pb->col_buff_offset +
+-		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
 +/**
 + * emac_set_settings - Set EMAC settings
 + * @ndev: The EMAC network adapter
@@ -1928,9 +1925,217 @@ index 769a7dd..1a80598 100644
 + * Executes ethool set command
 + */
 +static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
+ 
+-	pb->col_bd_offset =
+-		prev_pb->col_bd_offset +
+-		prev_pb->col_queue_size * BD_SIZE;
++	if (emac->phydev)
++		return phy_ethtool_sset(emac->phydev, ecmd);
++	else
++		return -EOPNOTSUPP;
++}
+ 
+-	pb->col_queue_desc_offset =
+-		prev_pb->col_queue_desc_offset + QDESC_SIZE;
++#define PRUETH_STAT_OFFSET(m) offsetof(struct port_statistics, m)
+ 
+-	/** PORT_MII1 **/
+-	prev_pb = pb;
+-	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
++static const struct {
++	char string[ETH_GSTRING_LEN];
++	u32 offset;
++} prueth_ethtool_stats[] = {
++	{"txBcast", PRUETH_STAT_OFFSET(tx_bcast)},
++	{"txMcast", PRUETH_STAT_OFFSET(tx_mcast)},
++	{"txUcast", PRUETH_STAT_OFFSET(tx_ucast)},
++	{"txOctets", PRUETH_STAT_OFFSET(tx_octets)},
++	{"rxBcast", PRUETH_STAT_OFFSET(rx_bcast)},
++	{"rxMcast", PRUETH_STAT_OFFSET(rx_mcast)},
++	{"rxUcast", PRUETH_STAT_OFFSET(rx_ucast)},
++	{"rxOctets", PRUETH_STAT_OFFSET(rx_octets)},
+ 
+-	pb->queue1_buff_offset =
+-		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
+-					 PRUETH_QUEUE1);
++	{"tx64byte", PRUETH_STAT_OFFSET(tx64byte)},
++	{"tx65_127byte", PRUETH_STAT_OFFSET(tx65_127byte)},
++	{"tx128_255byte", PRUETH_STAT_OFFSET(tx128_255byte)},
++	{"tx256_511byte", PRUETH_STAT_OFFSET(tx256_511byte)},
++	{"tx512_1023byte", PRUETH_STAT_OFFSET(tx512_1023byte)},
++	{"tx1024byte", PRUETH_STAT_OFFSET(tx1024byte)},
++
++	{"rx64byte", PRUETH_STAT_OFFSET(rx64byte)},
++	{"rx65_127byte", PRUETH_STAT_OFFSET(rx65_127byte)},
++	{"rx128_255byte", PRUETH_STAT_OFFSET(rx128_255byte)},
++	{"rx256_511byte", PRUETH_STAT_OFFSET(rx256_511byte)},
++	{"rx512_1023byte", PRUETH_STAT_OFFSET(rx512_1023byte)},
++	{"rx1024byte", PRUETH_STAT_OFFSET(rx1024byte)},
+ 
+-	pb->queue1_bd_offset =
+-		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
++	{"lateColl", PRUETH_STAT_OFFSET(late_coll)},
++	{"singleColl", PRUETH_STAT_OFFSET(single_coll)},
++	{"multiColl", PRUETH_STAT_OFFSET(multi_coll)},
++	{"excessColl", PRUETH_STAT_OFFSET(excess_coll)},
+ 
+-	pb->queue1_desc_offset =
+-		prev_pb->queue1_desc_offset + NUM_QUEUES * QDESC_SIZE;
++	{"rxMisAlignmentFrames", PRUETH_STAT_OFFSET(rx_misalignment_frames)},
++	{"stormPrevCounter", PRUETH_STAT_OFFSET(stormprev_counter)},
++	{"macRxError", PRUETH_STAT_OFFSET(mac_rxerror)},
++	{"SFDError", PRUETH_STAT_OFFSET(sfd_error)},
++	{"defTx", PRUETH_STAT_OFFSET(def_tx)},
++	{"macTxError", PRUETH_STAT_OFFSET(mac_txerror)},
++	{"rxOverSizedFrames", PRUETH_STAT_OFFSET(rx_oversized_frames)},
++	{"rxUnderSizedFrames", PRUETH_STAT_OFFSET(rx_undersized_frames)},
++	{"rxCRCFrames", PRUETH_STAT_OFFSET(rx_crc_frames)},
++	{"droppedPackets", PRUETH_STAT_OFFSET(dropped_packets)},
+ 
+-	pb->col_buff_offset =
+-		prev_pb->col_buff_offset +
+-		prev_pb->col_queue_size * ICSS_BLOCK_SIZE;
++	{"txHWQOverFlow", PRUETH_STAT_OFFSET(tx_hwq_overflow)},
++	{"txHWQUnderFlow", PRUETH_STAT_OFFSET(tx_hwq_underflow)},
++};
+ 
+-	pb->col_bd_offset =
+-		prev_pb->col_bd_offset +
+-		prev_pb->col_queue_size * BD_SIZE;
++#define PRUETH_LRE_STAT_OFS(m) offsetof(struct lre_statistics, m)
++static const struct {
++	char string[ETH_GSTRING_LEN];
++	u32 offset;
++} prueth_ethtool_lre_stats[] = {
++	{"lreTxA", PRUETH_LRE_STAT_OFS(cnt_tx_a)},
++	{"lreTxB", PRUETH_LRE_STAT_OFS(cnt_tx_b)},
++	{"lreTxC", PRUETH_LRE_STAT_OFS(cnt_tx_c)},
+ 
+-	pb->col_queue_desc_offset =
+-		prev_pb->col_queue_desc_offset + QDESC_SIZE;
+-}
++	{"lreErrWrongLanA", PRUETH_LRE_STAT_OFS(cnt_errwronglan_a)},
++	{"lreErrWrongLanB", PRUETH_LRE_STAT_OFS(cnt_errwronglan_b)},
++	{"lreErrWrongLanC", PRUETH_LRE_STAT_OFS(cnt_errwronglan_c)},
+ 
+-static void prueth_emac_mmap_port_cfg_basis_fixup(struct prueth *prueth)
+-{
+-	struct prueth_mmap_port_cfg_basis *pb, *prev_pb;
+-	u16 eof_48k_buffer_bd;
++	{"lreRxA", PRUETH_LRE_STAT_OFS(cnt_rx_a)},
++	{"lreRxB", PRUETH_LRE_STAT_OFS(cnt_rx_b)},
++	{"lreRxC", PRUETH_LRE_STAT_OFS(cnt_rx_c)},
+ 
+-	/** HOST port **/
+-	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
+-	pb->queue1_buff_offset    = P0_Q1_BUFFER_OFFSET,
+-	pb->queue1_bd_offset      = P0_Q1_BD_OFFSET;
++	{"lreErrorsA", PRUETH_LRE_STAT_OFS(cnt_errors_a)},
++	{"lreErrorsB", PRUETH_LRE_STAT_OFS(cnt_errors_b)},
++	{"lreErrorsC", PRUETH_LRE_STAT_OFS(cnt_errors_c)},
+ 
+-	/* this calculation recurrsively depends on queue1_bd_offset,
+-	 * so can only be done after queue1_bd_offset is set
+-	 */
+-	eof_48k_buffer_bd =
+-		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) +
+-		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
+-		BD_SIZE;
++	{"lreNodes", PRUETH_LRE_STAT_OFS(cnt_nodes)},
++	{"lreProxyNodes", PRUETH_LRE_STAT_OFS(cnt_proxy_nodes)},
+ 
+-	pb->queue1_desc_offset = eof_48k_buffer_bd +
+-					EMAC_P0_Q1_DESC_OFFSET_AFTER_BD;
++	{"lreUniqueRxA", PRUETH_LRE_STAT_OFS(cnt_unique_rx_a)},
++	{"lreUniqueRxB", PRUETH_LRE_STAT_OFS(cnt_unique_rx_b)},
++	{"lreUniqueRxC", PRUETH_LRE_STAT_OFS(cnt_unique_rx_c)},
+ 
+-	/** PORT_MII0 **/
+-	prev_pb = pb;
+-	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII0];
++	{"lreDuplicateRxA", PRUETH_LRE_STAT_OFS(cnt_duplicate_rx_a)},
++	{"lreDuplicateRxB", PRUETH_LRE_STAT_OFS(cnt_duplicate_rx_b)},
++	{"lreDuplicateRxC", PRUETH_LRE_STAT_OFS(cnt_duplicate_rx_c)},
+ 
+-	pb->queue1_buff_offset =
+-		port_queue_buffer_offset(prueth, PRUETH_PORT_MII0,
+-					 PRUETH_QUEUE1);
++	{"lreMultiRxA", PRUETH_LRE_STAT_OFS(cnt_multiple_rx_a)},
++	{"lreMultiRxB", PRUETH_LRE_STAT_OFS(cnt_multiple_rx_b)},
++	{"lreMultiRxC", PRUETH_LRE_STAT_OFS(cnt_multiple_rx_c)},
+ 
+-	pb->queue1_bd_offset =
+-		port_queue_bd_offset(prueth, PRUETH_PORT_MII0, PRUETH_QUEUE1);
++	{"lreOwnRxA", PRUETH_LRE_STAT_OFS(cnt_own_rx_a)},
++	{"lreOwnRxB", PRUETH_LRE_STAT_OFS(cnt_own_rx_b)},
+ 
+-	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
++	{"lreDuplicateDiscard", PRUETH_LRE_STAT_OFS(duplicate_discard)},
++	{"lreTransRecept", PRUETH_LRE_STAT_OFS(transparent_reception)},
+ 
+-	/** PORT_MII1 **/
+-	prev_pb = pb;
+-	pb = &prueth->mmap_port_cfg_basis[PRUETH_PORT_MII1];
++	{"lreNtLookupErrA", PRUETH_LRE_STAT_OFS(node_table_lookup_error_a)},
++	{"lreNtLookupErrB", PRUETH_LRE_STAT_OFS(node_table_lookup_error_b)},
++	{"lreNodeTableFull", PRUETH_LRE_STAT_OFS(node_table_full)},
++};
+ 
+-	pb->queue1_buff_offset =
+-		port_queue_buffer_offset(prueth, PRUETH_PORT_MII1,
+-					 PRUETH_QUEUE1);
++static int emac_get_sset_count(struct net_device *ndev, int stringset)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
++	int a_size;
+ 
+-	pb->queue1_bd_offset =
+-		port_queue_bd_offset(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE1);
++	switch (stringset) {
++	case ETH_SS_STATS:
++		a_size = ARRAY_SIZE(prueth_ethtool_stats);
+ 
+-	pb->queue1_desc_offset = PORT_QUEUE_DESC_OFFSET;
++		if (PRUETH_HAS_RED(emac->prueth))
++			a_size += ARRAY_SIZE(prueth_ethtool_lre_stats);
++
++		return a_size;
++	default:
++		return -EOPNOTSUPP;
++	}
+ }
+ 
+-static int prueth_emac_init_mmap_port_cfg(struct prueth *prueth)
++static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
  {
 -	struct prueth_mmap_port_cfg_basis *b = &prueth->mmap_port_cfg_basis[0];
 +	struct prueth_emac *emac = netdev_priv(ndev);
++	u8 *p = data;
++	int i;
+ 
+-	prueth_init_host_port_queue_info(prueth, queue_infos, b);
+-	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
+-				       PRUETH_PORT_QUEUE_MII0);
+-	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
+-				       PRUETH_PORT_QUEUE_MII1);
+-	prueth_init_queue_descs(prueth, queue_descs, b);
+-	return 0;
+-}
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (i = 0; i < ARRAY_SIZE(prueth_ethtool_stats); i++) {
++			memcpy(p, prueth_ethtool_stats[i].string,
++			       ETH_GSTRING_LEN);
++			p += ETH_GSTRING_LEN;
++		}
+ 
+-static int prueth_sw_init_mmap_port_cfg(struct prueth *prueth)
+-{
+-	struct prueth_mmap_port_cfg_basis *b = &prueth->mmap_port_cfg_basis[0];
++		if (!PRUETH_HAS_RED(emac->prueth))
++			break;
  
 -	prueth_init_host_port_queue_info(prueth, queue_infos, b);
 -	prueth_init_port_tx_queue_info(prueth, queue_infos, b,
@@ -1946,226 +2151,6 @@ index 769a7dd..1a80598 100644
 -	prueth_init_col_rx_context_info(prueth, &col_rx_context_infos[0], b);
 -	prueth_init_queue_descs(prueth, queue_descs, b);
 -	return 0;
-+	if (emac->phydev)
-+		return phy_ethtool_sset(emac->phydev, ecmd);
-+	else
-+		return -EOPNOTSUPP;
- }
- 
--static void prueth_init_mmap_sram_cfg(struct prueth *prueth)
--{
--	struct prueth_mmap_sram_cfg *s = &prueth->mmap_sram_cfg;
--	struct prueth_mmap_sram_emac *emac;
--	int p, q;
--	u16 loc;
--
--	/* SRAM common for both EMAC and SWITCH */
--	for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
--		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++)
--			s->bd_offset[p][q] = port_queue_bd_offset(prueth, p, q);
--	}
-+#define PRUETH_STAT_OFFSET(m) offsetof(struct port_statistics, m)
- 
--	/* A MARKER in SRAM */
--	s->eof_48k_buffer_bd =
--		s->bd_offset[PRUETH_PORT_MII1][PRUETH_QUEUE4] +
--		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
--		BD_SIZE;
-+static const struct {
-+	char string[ETH_GSTRING_LEN];
-+	u32 offset;
-+} prueth_ethtool_stats[] = {
-+	{"txBcast", PRUETH_STAT_OFFSET(tx_bcast)},
-+	{"txMcast", PRUETH_STAT_OFFSET(tx_mcast)},
-+	{"txUcast", PRUETH_STAT_OFFSET(tx_ucast)},
-+	{"txOctets", PRUETH_STAT_OFFSET(tx_octets)},
-+	{"rxBcast", PRUETH_STAT_OFFSET(rx_bcast)},
-+	{"rxMcast", PRUETH_STAT_OFFSET(rx_mcast)},
-+	{"rxUcast", PRUETH_STAT_OFFSET(rx_ucast)},
-+	{"rxOctets", PRUETH_STAT_OFFSET(rx_octets)},
- 
--	if (PRUETH_HAS_SWITCH(prueth)) {
--		/* SRAM SWITCH specific */
--		for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
--			s->mmap_sram_sw.col_bd_offset[p] =
--				prueth->mmap_port_cfg_basis[p].col_bd_offset;
--		}
--		return;
--	}
-+	{"tx64byte", PRUETH_STAT_OFFSET(tx64byte)},
-+	{"tx65_127byte", PRUETH_STAT_OFFSET(tx65_127byte)},
-+	{"tx128_255byte", PRUETH_STAT_OFFSET(tx128_255byte)},
-+	{"tx256_511byte", PRUETH_STAT_OFFSET(tx256_511byte)},
-+	{"tx512_1023byte", PRUETH_STAT_OFFSET(tx512_1023byte)},
-+	{"tx1024byte", PRUETH_STAT_OFFSET(tx1024byte)},
- 
--	/* SRAM EMAC specific */
--	emac = &s->mmap_sram_emac;
-+	{"rx64byte", PRUETH_STAT_OFFSET(rx64byte)},
-+	{"rx65_127byte", PRUETH_STAT_OFFSET(rx65_127byte)},
-+	{"rx128_255byte", PRUETH_STAT_OFFSET(rx128_255byte)},
-+	{"rx256_511byte", PRUETH_STAT_OFFSET(rx256_511byte)},
-+	{"rx512_1023byte", PRUETH_STAT_OFFSET(rx512_1023byte)},
-+	{"rx1024byte", PRUETH_STAT_OFFSET(rx1024byte)},
- 
--	loc = s->eof_48k_buffer_bd;
--	emac->icss_emac_firmware_release_1_offset = loc;
-+	{"lateColl", PRUETH_STAT_OFFSET(late_coll)},
-+	{"singleColl", PRUETH_STAT_OFFSET(single_coll)},
-+	{"multiColl", PRUETH_STAT_OFFSET(multi_coll)},
-+	{"excessColl", PRUETH_STAT_OFFSET(excess_coll)},
- 
--	loc += 4;
--	emac->icss_emac_firmware_release_2_offset = loc;
-+	{"rxMisAlignmentFrames", PRUETH_STAT_OFFSET(rx_misalignment_frames)},
-+	{"stormPrevCounter", PRUETH_STAT_OFFSET(stormprev_counter)},
-+	{"macRxError", PRUETH_STAT_OFFSET(mac_rxerror)},
-+	{"SFDError", PRUETH_STAT_OFFSET(sfd_error)},
-+	{"defTx", PRUETH_STAT_OFFSET(def_tx)},
-+	{"macTxError", PRUETH_STAT_OFFSET(mac_txerror)},
-+	{"rxOverSizedFrames", PRUETH_STAT_OFFSET(rx_oversized_frames)},
-+	{"rxUnderSizedFrames", PRUETH_STAT_OFFSET(rx_undersized_frames)},
-+	{"rxCRCFrames", PRUETH_STAT_OFFSET(rx_crc_frames)},
-+	{"droppedPackets", PRUETH_STAT_OFFSET(dropped_packets)},
- 
--	loc += 4;
--	emac->host_q1_rx_context_offset = loc;
--	loc += 8;
--	emac->host_q2_rx_context_offset = loc;
--	loc += 8;
--	emac->host_q3_rx_context_offset = loc;
--	loc += 8;
--	emac->host_q4_rx_context_offset = loc;
-+	{"txHWQOverFlow", PRUETH_STAT_OFFSET(tx_hwq_overflow)},
-+	{"txHWQUnderFlow", PRUETH_STAT_OFFSET(tx_hwq_underflow)},
-+};
- 
--	loc += 8;
--	emac->host_queue_descriptor_offset_addr = loc;
--	loc += 8;
--	emac->host_queue_offset_addr = loc;
--	loc += 8;
--	emac->host_queue_size_addr = loc;
--	loc += 16;
--	emac->host_queue_desc_offset = loc;
--}
-+#define PRUETH_LRE_STAT_OFS(m) offsetof(struct lre_statistics, m)
-+static const struct {
-+	char string[ETH_GSTRING_LEN];
-+	u32 offset;
-+} prueth_ethtool_lre_stats[] = {
-+	{"lreTxA", PRUETH_LRE_STAT_OFS(cnt_tx_a)},
-+	{"lreTxB", PRUETH_LRE_STAT_OFS(cnt_tx_b)},
-+	{"lreTxC", PRUETH_LRE_STAT_OFS(cnt_tx_c)},
- 
--static void prueth_init_mmap_ocmc_cfg(struct prueth *prueth)
-+	{"lreErrWrongLanA", PRUETH_LRE_STAT_OFS(cnt_errwronglan_a)},
-+	{"lreErrWrongLanB", PRUETH_LRE_STAT_OFS(cnt_errwronglan_b)},
-+	{"lreErrWrongLanC", PRUETH_LRE_STAT_OFS(cnt_errwronglan_c)},
-+
-+	{"lreRxA", PRUETH_LRE_STAT_OFS(cnt_rx_a)},
-+	{"lreRxB", PRUETH_LRE_STAT_OFS(cnt_rx_b)},
-+	{"lreRxC", PRUETH_LRE_STAT_OFS(cnt_rx_c)},
-+
-+	{"lreErrorsA", PRUETH_LRE_STAT_OFS(cnt_errors_a)},
-+	{"lreErrorsB", PRUETH_LRE_STAT_OFS(cnt_errors_b)},
-+	{"lreErrorsC", PRUETH_LRE_STAT_OFS(cnt_errors_c)},
-+
-+	{"lreNodes", PRUETH_LRE_STAT_OFS(cnt_nodes)},
-+	{"lreProxyNodes", PRUETH_LRE_STAT_OFS(cnt_proxy_nodes)},
-+
-+	{"lreUniqueRxA", PRUETH_LRE_STAT_OFS(cnt_unique_rx_a)},
-+	{"lreUniqueRxB", PRUETH_LRE_STAT_OFS(cnt_unique_rx_b)},
-+	{"lreUniqueRxC", PRUETH_LRE_STAT_OFS(cnt_unique_rx_c)},
-+
-+	{"lreDuplicateRxA", PRUETH_LRE_STAT_OFS(cnt_duplicate_rx_a)},
-+	{"lreDuplicateRxB", PRUETH_LRE_STAT_OFS(cnt_duplicate_rx_b)},
-+	{"lreDuplicateRxC", PRUETH_LRE_STAT_OFS(cnt_duplicate_rx_c)},
-+
-+	{"lreMultiRxA", PRUETH_LRE_STAT_OFS(cnt_multiple_rx_a)},
-+	{"lreMultiRxB", PRUETH_LRE_STAT_OFS(cnt_multiple_rx_b)},
-+	{"lreMultiRxC", PRUETH_LRE_STAT_OFS(cnt_multiple_rx_c)},
-+
-+	{"lreOwnRxA", PRUETH_LRE_STAT_OFS(cnt_own_rx_a)},
-+	{"lreOwnRxB", PRUETH_LRE_STAT_OFS(cnt_own_rx_b)},
-+
-+	{"lreDuplicateDiscard", PRUETH_LRE_STAT_OFS(duplicate_discard)},
-+	{"lreTransRecept", PRUETH_LRE_STAT_OFS(transparent_reception)},
-+
-+	{"lreNtLookupErrA", PRUETH_LRE_STAT_OFS(node_table_lookup_error_a)},
-+	{"lreNtLookupErrB", PRUETH_LRE_STAT_OFS(node_table_lookup_error_b)},
-+	{"lreNodeTableFull", PRUETH_LRE_STAT_OFS(node_table_full)},
-+};
-+
-+static int emac_get_sset_count(struct net_device *ndev, int stringset)
- {
--	struct prueth_mmap_ocmc_cfg *oc = &prueth->mmap_ocmc_cfg;
--	int p, q;
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	int a_size;
- 
--	for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
--		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++) {
--			oc->buffer_offset[p][q] =
--				port_queue_buffer_offset(prueth, p, q);
--		}
-+	switch (stringset) {
-+	case ETH_SS_STATS:
-+		a_size = ARRAY_SIZE(prueth_ethtool_stats);
-+
-+		if (PRUETH_HAS_RED(emac->prueth))
-+			a_size += ARRAY_SIZE(prueth_ethtool_lre_stats);
-+
-+		return a_size;
-+	default:
-+		return -EOPNOTSUPP;
- 	}
- }
- 
--static int prueth_of_get_queue_sizes(struct prueth *prueth,
--				     struct device_node *np,
--				     u16 port)
-+static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
- {
--	struct prueth_mmap_port_cfg_basis *pb;
--	u16 sw_rxq_size_defaults[NUM_QUEUES + 1]   = {254, 134, 134, 254, 48};
--	u16 emac_rxq_size_defaults[NUM_QUEUES + 1] = {194, 194, 194, 194, 48};
--	u16 txq_size_defaults[NUM_QUEUES + 1]      = { 97,  97,  97,  97, 48};
--	u16 *queue_sizes;
--	int num_queues, i;
--	char *propname;
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	u8 *p = data;
-+	int i;
- 
--	if (port == PRUETH_PORT_HOST) {
--		propname = "rx-queue-size";
--		if (PRUETH_HAS_SWITCH(prueth)) {
--			num_queues = NUM_QUEUES + 1;
--			queue_sizes = sw_rxq_size_defaults;
--		} else {
--			num_queues = NUM_QUEUES;
--			queue_sizes = emac_rxq_size_defaults;
-+	switch (stringset) {
-+	case ETH_SS_STATS:
-+		for (i = 0; i < ARRAY_SIZE(prueth_ethtool_stats); i++) {
-+			memcpy(p, prueth_ethtool_stats[i].string,
-+			       ETH_GSTRING_LEN);
-+			p += ETH_GSTRING_LEN;
- 		}
--	} else if (port <= PRUETH_PORT_MII1) {
--		propname = "tx-queue-size";
--		queue_sizes = txq_size_defaults;
--		if (PRUETH_HAS_SWITCH(prueth))
--			num_queues = NUM_QUEUES + 1;
--		else
--			num_queues = NUM_QUEUES;
--	} else {
--		return -EINVAL;
-+
-+		if (!PRUETH_HAS_RED(emac->prueth))
-+			break;
-+
 +		for (i = 0; i < ARRAY_SIZE(prueth_ethtool_lre_stats); i++) {
 +			memcpy(p, prueth_ethtool_lre_stats[i].string,
 +			       ETH_GSTRING_LEN);
@@ -2174,17 +2159,17 @@ index 769a7dd..1a80598 100644
 +		break;
 +	default:
 +		break;
- 	}
-+}
++	}
+ }
  
--	/* Even the read fails, default values will be retained.
--	 * Hence don't check return value and continue to move
--	 * queue sizes (default or new) to port_cfg_basis
--	 */
--	of_property_read_u16_array(np, propname, queue_sizes, num_queues);
+-static void prueth_init_mmap_sram_cfg(struct prueth *prueth)
 +static void emac_get_ethtool_stats(struct net_device *ndev,
 +				   struct ethtool_stats *stats, u64 *data)
-+{
+ {
+-	struct prueth_mmap_sram_cfg *s = &prueth->mmap_sram_cfg;
+-	struct prueth_mmap_sram_emac *emac;
+-	int p, q;
+-	u16 loc;
 +	struct prueth_emac *emac = netdev_priv(ndev);
 +	struct port_statistics pstats;
 +	u32 val;
@@ -2193,13 +2178,18 @@ index 769a7dd..1a80598 100644
 +	struct lre_statistics lre_stats;
 +	int lre_start;
  
--	pb = &prueth->mmap_port_cfg_basis[port];
--	for (i = PRUETH_QUEUE1; i <= PRUETH_QUEUE4; i++)
--		pb->queue_size[i] = queue_sizes[i];
+-	/* SRAM common for both EMAC and SWITCH */
+-	for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
+-		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++)
+-			s->bd_offset[p][q] = port_queue_bd_offset(prueth, p, q);
+-	}
 +	emac_get_stats(emac, &pstats);
  
--	if (PRUETH_HAS_SWITCH(prueth))
--		pb->col_queue_size = queue_sizes[i];
+-	/* A MARKER in SRAM */
+-	s->eof_48k_buffer_bd =
+-		s->bd_offset[PRUETH_PORT_MII1][PRUETH_QUEUE4] +
+-		port_queue_size(prueth, PRUETH_PORT_MII1, PRUETH_QUEUE4) *
+-		BD_SIZE;
 +	for (i = 0; i < ARRAY_SIZE(prueth_ethtool_stats); i++) {
 +		ptr = &pstats;
 +		ptr += prueth_ethtool_stats[i].offset;
@@ -2207,7 +2197,11 @@ index 769a7dd..1a80598 100644
 +		data[i] = val;
 +	}
  
--	return 0;
+-	if (PRUETH_HAS_SWITCH(prueth)) {
+-		/* SRAM SWITCH specific */
+-		for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
+-			s->mmap_sram_sw.col_bd_offset[p] =
+-				prueth->mmap_port_cfg_basis[p].col_bd_offset;
 +	if (PRUETH_HAS_RED(emac->prueth)) {
 +		lre_start = ARRAY_SIZE(prueth_ethtool_stats);
 +		emac_lre_get_stats(emac, &lre_stats);
@@ -2216,12 +2210,13 @@ index 769a7dd..1a80598 100644
 +			ptr += prueth_ethtool_lre_stats[i].offset;
 +			val = *(u32 *)ptr;
 +			data[lre_start + i] = val;
-+		}
-+	}
- }
+ 		}
+-		return;
+ 	}
++}
  
--static void prueth_of_get_pcp_rxq_map(struct prueth *prueth,
--				      struct device_node *np)
+-	/* SRAM EMAC specific */
+-	emac = &s->mmap_sram_emac;
 +/* Ethtool support for EMAC adapter */
 +static const struct ethtool_ops emac_ethtool_ops = {
 +	.get_drvinfo = emac_get_drvinfo,
@@ -2233,13 +2228,12 @@ index 769a7dd..1a80598 100644
 +	.get_strings = emac_get_strings,
 +	.get_ethtool_stats = emac_get_ethtool_stats,
 +};
-+
+ 
+-	loc = s->eof_48k_buffer_bd;
+-	emac->icss_emac_firmware_release_1_offset = loc;
 +static int prueth_netdev_init(struct prueth *prueth,
 +			      struct device_node *eth_node)
- {
--	struct prueth_mmap_port_cfg_basis *pb;
--	int q, j, next_pcp, ret;
--	u8 rxq_mask = 0;
++{
 +	struct prueth_mmap_sram_cfg *s = &prueth->mmap_sram_cfg;
 +	struct prueth_mmap_sram_emac *emac_sram = &s->mmap_sram_emac;
 +	struct prueth_mmap_port_cfg_basis *pb0, *pb;
@@ -2252,6 +2246,198 @@ index 769a7dd..1a80598 100644
 +	const u8 *mac_addr;
 +	char *rx_int, *tx_int;
 +	int ret;
+ 
+-	loc += 4;
+-	emac->icss_emac_firmware_release_2_offset = loc;
++	port = prueth_node_port(eth_node);
++	if (port < 0)
++		return -EINVAL;
+ 
+-	loc += 4;
+-	emac->host_q1_rx_context_offset = loc;
+-	loc += 8;
+-	emac->host_q2_rx_context_offset = loc;
+-	loc += 8;
+-	emac->host_q3_rx_context_offset = loc;
+-	loc += 8;
+-	emac->host_q4_rx_context_offset = loc;
++	/* +++TODO: use alloc_etherdev_mqs() */
++	ndev = alloc_etherdev(sizeof(*emac));
++	if (!ndev)
++		return -ENOMEM;
+ 
+-	loc += 8;
+-	emac->host_queue_descriptor_offset_addr = loc;
+-	loc += 8;
+-	emac->host_queue_offset_addr = loc;
+-	loc += 8;
+-	emac->host_queue_size_addr = loc;
+-	loc += 16;
+-	emac->host_queue_desc_offset = loc;
+-}
++	SET_NETDEV_DEV(ndev, prueth->dev);
++	emac = netdev_priv(ndev);
++	prueth->emac[port] = emac;
++	emac->prueth = prueth;
++	emac->ndev = ndev;
++	emac->port_id = port;
+ 
+-static void prueth_init_mmap_ocmc_cfg(struct prueth *prueth)
+-{
+-	struct prueth_mmap_ocmc_cfg *oc = &prueth->mmap_ocmc_cfg;
+-	int p, q;
++	if (PRUETH_HAS_SWITCH(prueth)) {
++		rx_int = "red-rx";
++		tx_int = "red-tx";
++	} else {
++		rx_int = "rx";
++		tx_int = "tx";
++	}
+ 
+-	for (p = PRUETH_PORT_HOST; p <= PRUETH_PORT_MII1; p++) {
+-		for (q = PRUETH_QUEUE1; q <= PRUETH_QUEUE4; q++) {
+-			oc->buffer_offset[p][q] =
+-				port_queue_buffer_offset(prueth, p, q);
+-		}
++	emac->rx_irq = of_irq_get_byname(eth_node, rx_int);
++	if (emac->rx_irq < 0) {
++		ret = emac->rx_irq;
++		if (ret != -EPROBE_DEFER)
++			dev_err(prueth->dev, "could not get rx irq\n");
++		goto free;
++	}
++	emac->tx_irq = of_irq_get_byname(eth_node, tx_int);
++	if (emac->tx_irq < 0) {
++		ret = emac->tx_irq;
++		if (ret != -EPROBE_DEFER)
++			dev_err(prueth->dev, "could not get tx irq\n");
++		goto free;
+ 	}
+-}
+ 
+-static int prueth_of_get_queue_sizes(struct prueth *prueth,
+-				     struct device_node *np,
+-				     u16 port)
+-{
+-	struct prueth_mmap_port_cfg_basis *pb;
+-	u16 sw_rxq_size_defaults[NUM_QUEUES + 1]   = {254, 134, 134, 254, 48};
+-	u16 emac_rxq_size_defaults[NUM_QUEUES + 1] = {194, 194, 194, 194, 48};
+-	u16 txq_size_defaults[NUM_QUEUES + 1]      = { 97,  97,  97,  97, 48};
+-	u16 *queue_sizes;
+-	int num_queues, i;
+-	char *propname;
++	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
++	spin_lock_init(&emac->lock);
+ 
+-	if (port == PRUETH_PORT_HOST) {
+-		propname = "rx-queue-size";
++	pb0 = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
++	pb  = &prueth->mmap_port_cfg_basis[port];
++	switch (port) {
++	case PRUETH_PORT_MII0:
+ 		if (PRUETH_HAS_SWITCH(prueth)) {
+-			num_queues = NUM_QUEUES + 1;
+-			queue_sizes = sw_rxq_size_defaults;
++			emac->rx_queue_descs =
++				dram1 + pb0->queue1_desc_offset;
++			emac->rx_colq_descs  =
++				dram1 + pb0->col_queue_desc_offset;
++			emac->tx_queue_descs =
++				dram1 + pb->queue1_desc_offset;
++			emac->tx_colq_descs  =
++				dram1 + pb->col_queue_desc_offset;
+ 		} else {
+-			num_queues = NUM_QUEUES;
+-			queue_sizes = emac_rxq_size_defaults;
++			emac->rx_queue_descs =
++				sram + emac_sram->host_queue_desc_offset;
++			emac->tx_queue_descs = dram0 + PORT_QUEUE_DESC_OFFSET;
+ 		}
+-	} else if (port <= PRUETH_PORT_MII1) {
+-		propname = "tx-queue-size";
+-		queue_sizes = txq_size_defaults;
+-		if (PRUETH_HAS_SWITCH(prueth))
+-			num_queues = NUM_QUEUES + 1;
+-		else
+-			num_queues = NUM_QUEUES;
+-	} else {
+-		return -EINVAL;
++		break;
++	case PRUETH_PORT_MII1:
++		if (PRUETH_HAS_SWITCH(prueth)) {
++			emac->rx_queue_descs =
++				dram1 + pb0->queue1_desc_offset;
++			emac->rx_colq_descs  =
++				dram1 + pb0->col_queue_desc_offset;
++			emac->tx_queue_descs =
++				dram1 + pb->queue1_desc_offset;
++			emac->tx_colq_descs  =
++				dram1 + pb->col_queue_desc_offset;
++		} else {
++			emac->rx_queue_descs =
++				sram + emac_sram->host_queue_desc_offset;
++			emac->tx_queue_descs = dram1 + PORT_QUEUE_DESC_OFFSET;
++		}
++		break;
++	default:
++		dev_err(prueth->dev, "invalid port ID\n");
++		ret = -EINVAL;
++		goto free;
+ 	}
+ 
+-	/* Even the read fails, default values will be retained.
+-	 * Hence don't check return value and continue to move
+-	 * queue sizes (default or new) to port_cfg_basis
+-	 */
+-	of_property_read_u16_array(np, propname, queue_sizes, num_queues);
+-
+-	pb = &prueth->mmap_port_cfg_basis[port];
+-	for (i = PRUETH_QUEUE1; i <= PRUETH_QUEUE4; i++)
+-		pb->queue_size[i] = queue_sizes[i];
++	/* get mac address from DT and set private and netdev addr */
++	mac_addr = of_get_mac_address(eth_node);
++	if (mac_addr)
++		ether_addr_copy(ndev->dev_addr, mac_addr);
++	if (!is_valid_ether_addr(ndev->dev_addr)) {
++		eth_hw_addr_random(ndev);
++		dev_warn(prueth->dev, "port %d: using random MAC addr: %pM\n",
++			 port, ndev->dev_addr);
++	}
++	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
+ 
+-	if (PRUETH_HAS_SWITCH(prueth))
+-		pb->col_queue_size = queue_sizes[i];
++	emac->phy_node = of_parse_phandle(eth_node, "phy-handle", 0);
++	if (!emac->phy_node) {
++		dev_err(prueth->dev, "couldn't find phy-handle\n");
++		ret = -ENODEV;
++		goto free;
++	}
+ 
+-	return 0;
+-}
++	emac->phy_if = of_get_phy_mode(eth_node);
++	if (emac->phy_if < 0) {
++		dev_err(prueth->dev, "could not get phy-mode property\n");
++		ret = emac->phy_if;
++		goto free;
++	}
+ 
+-static void prueth_of_get_pcp_rxq_map(struct prueth *prueth,
+-				      struct device_node *np)
+-{
+-	struct prueth_mmap_port_cfg_basis *pb;
+-	int q, j, next_pcp, ret;
+-	u8 rxq_mask = 0;
++	/* connect PHY */
++	emac->phydev = of_phy_connect(ndev, emac->phy_node,
++				      &emac_adjust_link, 0, emac->phy_if);
++	if (!emac->phydev) {
++		dev_dbg(prueth->dev, "couldn't connect to phy %s\n",
++			emac->phy_node->full_name);
++		ret = -EPROBE_DEFER;
++		goto free;
++	}
  
 -	ret = of_property_read_u8_array(np, "pcp-rxq-map",
 -					prueth->pcp_rxq_map, NUM_VLAN_PCP);
@@ -2272,17 +2458,19 @@ index 769a7dd..1a80598 100644
 -			 */
 -			if (pb->queue_size[q] < 2)
 -				continue;
-+	port = prueth_node_port(eth_node);
-+	if (port < 0)
-+		return -EINVAL;
++	emac->phydev->advertising &= ~(ADVERTISED_1000baseT_Full |
++			ADVERTISED_1000baseT_Half);
++	emac->phydev->supported &= ~(SUPPORTED_1000baseT_Full |
++			SUPPORTED_1000baseT_Half);
  
 -			/* Map next_pcp and all lower pcp's to q */
 -			for (j = next_pcp; j >= 0; j--)
 -				prueth->pcp_rxq_map[j] = q;
-+	/* +++TODO: use alloc_etherdev_mqs() */
-+	ndev = alloc_etherdev(sizeof(*emac));
-+	if (!ndev)
-+		return -ENOMEM;
++	if (PRUETH_IS_HSR(prueth))
++		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
++				   NETIF_F_HW_L2FW_DOFFLOAD);
++	else if (PRUETH_IS_PRP(prueth))
++		ndev->features |= NETIF_F_HW_PRP_RX_OFFLOAD;
  
 -			/* Prepare next pcp to map, ie. 2 lower than current
 -			 * Thus if there is an eligible queue to map to, all
@@ -2290,112 +2478,27 @@ index 769a7dd..1a80598 100644
 -			 * will be mapped to that queue.
 -			 */
 -			next_pcp -= 2;
-+	SET_NETDEV_DEV(ndev, prueth->dev);
-+	emac = netdev_priv(ndev);
-+	prueth->emac[port] = emac;
-+	emac->prueth = prueth;
-+	emac->ndev = ndev;
-+	emac->port_id = port;
-+
-+	if (PRUETH_HAS_SWITCH(prueth)) {
-+		rx_int = "red-rx";
-+		tx_int = "red-tx";
-+	} else {
-+		rx_int = "rx";
-+		tx_int = "tx";
-+	}
-+
-+	emac->rx_irq = of_irq_get_byname(eth_node, rx_int);
-+	if (emac->rx_irq < 0) {
-+		ret = emac->rx_irq;
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(prueth->dev, "could not get rx irq\n");
-+		goto free;
-+	}
-+	emac->tx_irq = of_irq_get_byname(eth_node, tx_int);
-+	if (emac->tx_irq < 0) {
-+		ret = emac->tx_irq;
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(prueth->dev, "could not get tx irq\n");
-+		goto free;
-+	}
-+
-+	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
-+	spin_lock_init(&emac->lock);
-+
-+	pb0 = &prueth->mmap_port_cfg_basis[PRUETH_PORT_HOST];
-+	pb  = &prueth->mmap_port_cfg_basis[port];
-+	switch (port) {
-+	case PRUETH_PORT_MII0:
-+		if (PRUETH_HAS_SWITCH(prueth)) {
-+			emac->rx_queue_descs =
-+				dram1 + pb0->queue1_desc_offset;
-+			emac->rx_colq_descs  =
-+				dram1 + pb0->col_queue_desc_offset;
-+			emac->tx_queue_descs =
-+				dram1 + pb->queue1_desc_offset;
-+			emac->tx_colq_descs  =
-+				dram1 + pb->col_queue_desc_offset;
-+		} else {
-+			emac->rx_queue_descs =
-+				sram + emac_sram->host_queue_desc_offset;
-+			emac->tx_queue_descs = dram0 + PORT_QUEUE_DESC_OFFSET;
-+		}
-+		break;
-+	case PRUETH_PORT_MII1:
-+		if (PRUETH_HAS_SWITCH(prueth)) {
-+			emac->rx_queue_descs =
-+				dram1 + pb0->queue1_desc_offset;
-+			emac->rx_colq_descs  =
-+				dram1 + pb0->col_queue_desc_offset;
-+			emac->tx_queue_descs =
-+				dram1 + pb->queue1_desc_offset;
-+			emac->tx_colq_descs  =
-+				dram1 + pb->col_queue_desc_offset;
-+		} else {
-+			emac->rx_queue_descs =
-+				sram + emac_sram->host_queue_desc_offset;
-+			emac->tx_queue_descs = dram1 + PORT_QUEUE_DESC_OFFSET;
- 		}
-+		break;
-+	default:
-+		dev_err(prueth->dev, "invalid port ID\n");
-+		ret = -EINVAL;
-+		goto free;
- 	}
+-		}
+-	}
++	ndev->netdev_ops = &emac_netdev_ops;
++	ndev->ethtool_ops = &emac_ethtool_ops;
  
 -	for (j = 0; j < NUM_VLAN_PCP; j++) {
 -		if (prueth->pcp_rxq_map[j] > PRUETH_QUEUE4)
 -			prueth->pcp_rxq_map[j] = PRUETH_QUEUE4;
-+	/* get mac address from DT and set private and netdev addr */
-+	mac_addr = of_get_mac_address(eth_node);
-+	if (mac_addr)
-+		ether_addr_copy(ndev->dev_addr, mac_addr);
-+	if (!is_valid_ether_addr(ndev->dev_addr)) {
-+		eth_hw_addr_random(ndev);
-+		dev_warn(prueth->dev, "port %d: using random MAC addr: %pM\n",
-+			 port, ndev->dev_addr);
-+	}
-+	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
++	netif_napi_add(ndev, &emac->napi, emac_napi_poll, EMAC_POLL_WEIGHT);
  
 -		rxq_mask |= BIT(prueth->pcp_rxq_map[j]);
-+	emac->phy_node = of_parse_phandle(eth_node, "phy-handle", 0);
-+	if (!emac->phy_node) {
-+		dev_err(prueth->dev, "couldn't find phy-handle\n");
-+		ret = -ENODEV;
-+		goto free;
- 	}
+-	}
++	return 0;
  
 -	/* make sure the default lowest priority queue
 -	 * is included
 -	 */
 -	rxq_mask |= BIT(PRUETH_QUEUE4);
-+	emac->phy_if = of_get_phy_mode(eth_node);
-+	if (emac->phy_if < 0) {
-+		dev_err(prueth->dev, "could not get phy-mode property\n");
-+		ret = emac->phy_if;
-+		goto free;
-+	}
++free:
++	free_netdev(ndev);
++	prueth->emac[port] = NULL;
  
 -	/* Update the rx queue ids array */
 -	j = 0;
@@ -2404,39 +2507,8 @@ index 769a7dd..1a80598 100644
 -			sw_port_rx_priority_queue_ids[j] = q;
 -			j++;
 -		}
-+	/* connect PHY */
-+	emac->phydev = of_phy_connect(ndev, emac->phy_node,
-+				      &emac_adjust_link, 0, emac->phy_if);
-+	if (!emac->phydev) {
-+		dev_dbg(prueth->dev, "couldn't connect to phy %s\n",
-+			emac->phy_node->full_name);
-+		ret = -EPROBE_DEFER;
-+		goto free;
- 	}
+-	}
 -	sw_num_rx_queues = j;
-+
-+	emac->phydev->advertising &= ~(ADVERTISED_1000baseT_Full |
-+			ADVERTISED_1000baseT_Half);
-+	emac->phydev->supported &= ~(SUPPORTED_1000baseT_Full |
-+			SUPPORTED_1000baseT_Half);
-+
-+	if (PRUETH_IS_HSR(prueth))
-+		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
-+				   NETIF_F_HW_L2FW_DOFFLOAD);
-+	else if (PRUETH_IS_PRP(prueth))
-+		ndev->features |= NETIF_F_HW_PRP_RX_OFFLOAD;
-+
-+	ndev->netdev_ops = &emac_netdev_ops;
-+	ndev->ethtool_ops = &emac_ethtool_ops;
-+
-+	netif_napi_add(ndev, &emac->napi, emac_napi_poll, EMAC_POLL_WEIGHT);
-+
-+	return 0;
-+
-+free:
-+	free_netdev(ndev);
-+	prueth->emac[port] = NULL;
-+
 +	return ret;
  }
  

@@ -1,7 +1,7 @@
-From 5bcad633df6f7c7b85333691351ccdd89101c86f Mon Sep 17 00:00:00 2001
+From c7a7451a7587b7e1f036f9525d6d07e798fc2ad9 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Thu, 9 Mar 2017 17:27:03 -0500
-Subject: [PATCH 25/43] hsr/prp: add sanity check to accept only configured
+Subject: [PATCH 25/86] hsr/prp: add sanity check to accept only configured
  protocol packets
 
 When DAN is configured for HSR, discard PRP packets and vice-versa.

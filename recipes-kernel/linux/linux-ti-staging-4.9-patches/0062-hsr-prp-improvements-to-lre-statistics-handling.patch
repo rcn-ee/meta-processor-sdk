@@ -1,7 +1,7 @@
-From 570fca3692964f2c47099ac65dcc7c8cf4c87d54 Mon Sep 17 00:00:00 2001
+From 0ba67341ef24a63b841251bc5ae2e69d055d65c0 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 12 Sep 2017 11:28:53 -0400
-Subject: [PATCH 64/82] hsr/prp: improvements to lre statistics handling
+Subject: [PATCH 62/86] hsr/prp: improvements to lre statistics handling
 
 Add a statistics for number of supervisor frames send by the driver
 so that better accounting can be done for number of supervisor frames

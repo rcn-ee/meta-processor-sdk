@@ -1,7 +1,7 @@
-From 88cd235f8f2d9a2fab74ddf64b92376fea9ef08d Mon Sep 17 00:00:00 2001
+From 7b93ed68da4d6ae6c65f996bc714eea00c8fa0bb Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 26 Sep 2017 10:14:36 -0400
-Subject: [PATCH 84/84] net: prueth: add debug stats counters
+Subject: [PATCH 82/86] net: prueth: add debug stats counters
 
 During the packet loss investigation, additional debug counters were
 added to root cause the issue. Make these part of the ethtool stats

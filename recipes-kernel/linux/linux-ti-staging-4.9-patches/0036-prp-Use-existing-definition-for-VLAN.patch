@@ -1,7 +1,7 @@
-From e443f4be9f426322402e8e756894faffe8e5949c Mon Sep 17 00:00:00 2001
+From ce79b55ff4b092a50128aa7693bccc1404611e21 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 26 Apr 2017 12:18:02 -0400
-Subject: [PATCH 36/43] prp: Use existing definition for VLAN
+Subject: [PATCH 36/86] prp: Use existing definition for VLAN
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>

@@ -1,7 +1,7 @@
-From 0ec63a686ed86727b4a274015e5fe4591242fa49 Mon Sep 17 00:00:00 2001
+From b5980b9321f60d198db8cfd055af8384af2dd91b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 15 Feb 2017 15:55:20 -0500
-Subject: [PATCH 13/43] hsr: cleanup to fix coding style and checkpatch issues
+Subject: [PATCH 13/86] hsr: cleanup to fix coding style and checkpatch issues
 
 Fix camel case usage and checkpatch related issues in the code
 as a preparatory patch before adding more code to add support

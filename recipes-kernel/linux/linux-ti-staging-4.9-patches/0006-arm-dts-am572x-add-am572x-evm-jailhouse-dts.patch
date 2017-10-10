@@ -1,7 +1,7 @@
-From 45a9db5bf22555d4a40ccd430cc37ed005f28af3 Mon Sep 17 00:00:00 2001
+From fdf4ac05e3b237e407ca11dedb88d550ad08aabb Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Wed, 17 May 2017 09:40:04 -0400
-Subject: [PATCH 06/43] arm: dts: am572x: add am572x-evm-jailhouse dts
+Subject: [PATCH 06/86] arm: dts: am572x: add am572x-evm-jailhouse dts
 
 This commit add the am572x-evm-jailhouse.dts which is extension of the
 am57xx-evm-reva3.dts. It allows to demonstrate Jailhouse hypervisor and run

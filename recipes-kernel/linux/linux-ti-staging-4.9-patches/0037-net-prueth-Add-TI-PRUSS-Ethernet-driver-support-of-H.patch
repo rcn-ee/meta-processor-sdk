@@ -1,7 +1,7 @@
-From 3ec93d34eb151ea7e3919c2283ecfaaa015d8d3d Mon Sep 17 00:00:00 2001
+From 35ee94d6a30e7f8883f41b7509a0b30d8cacd031 Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Sun, 26 Mar 2017 23:20:00 -0400
-Subject: [PATCH 37/43] net: prueth: Add TI PRUSS Ethernet driver support of
+Subject: [PATCH 37/86] net: prueth: Add TI PRUSS Ethernet driver support of
  HSR PRP
 
 This patch adds the Ethernet driver support of HSR (High-availability
@@ -32,10 +32,10 @@ Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---
  drivers/net/ethernet/ti/hsr_prp_firmware.h |  264 ++++
- drivers/net/ethernet/ti/icss_switch.h      |  165 +-
- drivers/net/ethernet/ti/prueth.c           | 2279 +++++++++++++++++++++++++---
+ drivers/net/ethernet/ti/icss_switch.h      |  167 +-
+ drivers/net/ethernet/ti/prueth.c           | 2278 +++++++++++++++++++++++++---
  drivers/net/ethernet/ti/prueth.h           |   94 +-
- 4 files changed, 2478 insertions(+), 324 deletions(-)
+ 4 files changed, 2477 insertions(+), 326 deletions(-)
  create mode 100644 drivers/net/ethernet/ti/hsr_prp_firmware.h
 
 diff --git a/drivers/net/ethernet/ti/hsr_prp_firmware.h b/drivers/net/ethernet/ti/hsr_prp_firmware.h
@@ -309,7 +309,7 @@ index 0000000..4ccc465
 +
 +#endif /* __ICSS_SWITCH_HSR_PRP_H */
 diff --git a/drivers/net/ethernet/ti/icss_switch.h b/drivers/net/ethernet/ti/icss_switch.h
-index 42b4657..25bada7 100644
+index 3b3f5d9..25bada7 100644
 --- a/drivers/net/ethernet/ti/icss_switch.h
 +++ b/drivers/net/ethernet/ti/icss_switch.h
 @@ -21,24 +21,12 @@
@@ -444,7 +444,7 @@ index 42b4657..25bada7 100644
  /* DRAM Offsets for EMAC
   * Present on Both DRAM0 and DRAM1
   */
-@@ -141,71 +213,14 @@
+@@ -141,73 +213,14 @@
  #define ICSS_EMAC_TTS_BASE_OFFSET	DRAM_START_OFFSET
  
  /* Shared RAM offsets for EMAC */
@@ -472,11 +472,13 @@ index 42b4657..25bada7 100644
 -#define HOST_Q4_RX_CONTEXT_OFFSET	(HOST_Q3_RX_CONTEXT_OFFSET + 8)
 -#define HOST_Q3_RX_CONTEXT_OFFSET	(HOST_Q2_RX_CONTEXT_OFFSET + 8)
 -#define HOST_Q2_RX_CONTEXT_OFFSET	(HOST_Q1_RX_CONTEXT_OFFSET + 8)
--#define HOST_Q1_RX_CONTEXT_OFFSET	(ICSS_EMAC_FIRMWARE_RELEASE_2_OFFSET + 4)
+-#define HOST_Q1_RX_CONTEXT_OFFSET	(EMAC_PROMISCUOUS_MODE_OFFSET + 4)
 -
--/* EMAC Firmware Version Information */
--#define ICSS_EMAC_FIRMWARE_RELEASE_2_OFFSET	(ICSS_EMAC_FIRMWARE_RELEASE_1_OFFSET + 4)
--#define ICSS_EMAC_FIRMWARE_RELEASE_1_OFFSET	EOF_48K_BUFFER_BD
+-/* Promiscuous mode control */
+-#define EMAC_P1_PROMISCUOUS_BIT		BIT(0)
+-#define EMAC_P2_PROMISCUOUS_BIT		BIT(1)
+-#define EMAC_PROMISCUOUS_MODE_OFFSET	(EMAC_RESERVED + 4)
+-#define EMAC_RESERVED			EOF_48K_BUFFER_BD
 -
 -/* allow for max 48k buffer which spans the descriptors up to 0x1800 6kB */
 -#define EOF_48K_BUFFER_BD	(P0_BUFFER_DESC_OFFSET + HOST_BD_SIZE + PORT_BD_SIZE)
@@ -521,7 +523,7 @@ index 42b4657..25bada7 100644
  
  #endif /* __ICSS_SWITCH_H */
 diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
-index 111d2f6..a1baa16 100644
+index a03e955..812793c 100644
 --- a/drivers/net/ethernet/ti/prueth.c
 +++ b/drivers/net/ethernet/ti/prueth.c
 @@ -29,16 +29,21 @@
@@ -2368,15 +2370,7 @@ index 111d2f6..a1baa16 100644
  	return NETDEV_TX_BUSY;
  }
  
-@@ -1302,6 +2284,7 @@ static struct net_device_stats *emac_ndo_get_stats(struct net_device *ndev)
- 	.ndo_change_mtu	= eth_change_mtu,
- 	.ndo_tx_timeout = emac_ndo_tx_timeout,
- 	.ndo_get_stats = emac_ndo_get_stats,
-+	/* +++TODO: implement .ndo_setup_tc */
- };
- 
- /**
-@@ -1373,6 +2356,7 @@ static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
+@@ -1412,6 +2394,7 @@ static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
  	{"tx256_511byte", PRUETH_STAT_OFFSET(tx256_511byte)},
  	{"tx512_1023byte", PRUETH_STAT_OFFSET(tx512_1023byte)},
  	{"tx1024byte", PRUETH_STAT_OFFSET(tx1024byte)},
@@ -2384,7 +2378,7 @@ index 111d2f6..a1baa16 100644
  	{"rx64byte", PRUETH_STAT_OFFSET(rx64byte)},
  	{"rx65_127byte", PRUETH_STAT_OFFSET(rx65_127byte)},
  	{"rx128_255byte", PRUETH_STAT_OFFSET(rx128_255byte)},
-@@ -1400,11 +2384,66 @@ static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
+@@ -1439,11 +2422,66 @@ static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
  	{"txHWQUnderFlow", PRUETH_STAT_OFFSET(tx_hwq_underflow)},
  };
  
@@ -2452,7 +2446,7 @@ index 111d2f6..a1baa16 100644
  	default:
  		return -EOPNOTSUPP;
  	}
-@@ -1412,6 +2451,7 @@ static int emac_get_sset_count(struct net_device *ndev, int stringset)
+@@ -1451,6 +2489,7 @@ static int emac_get_sset_count(struct net_device *ndev, int stringset)
  
  static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
  {
@@ -2460,7 +2454,7 @@ index 111d2f6..a1baa16 100644
  	u8 *p = data;
  	int i;
  
-@@ -1422,12 +2462,29 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
+@@ -1461,12 +2500,29 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
  			       ETH_GSTRING_LEN);
  			p += ETH_GSTRING_LEN;
  		}
@@ -2490,7 +2484,7 @@ index 111d2f6..a1baa16 100644
  static void emac_get_ethtool_stats(struct net_device *ndev,
  				   struct ethtool_stats *stats, u64 *data)
  {
-@@ -1436,6 +2493,8 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
+@@ -1475,6 +2531,8 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
  	u32 val;
  	int i;
  	void *ptr;
@@ -2499,7 +2493,7 @@ index 111d2f6..a1baa16 100644
  
  	emac_get_stats(emac, &pstats);
  
-@@ -1445,6 +2504,20 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
+@@ -1484,6 +2542,20 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
  		val = *(u32 *)ptr;
  		data[i] = val;
  	}
@@ -2520,7 +2514,7 @@ index 111d2f6..a1baa16 100644
  }
  
  /* Ethtool support for EMAC adapter */
-@@ -1473,6 +2546,9 @@ static int prueth_node_port(struct device_node *eth_node)
+@@ -1512,6 +2584,9 @@ static int prueth_node_port(struct device_node *eth_node)
  static int prueth_netdev_init(struct prueth *prueth,
  			      struct device_node *eth_node)
  {
@@ -2530,7 +2524,7 @@ index 111d2f6..a1baa16 100644
  	enum prueth_port port;
  	struct net_device *ndev;
  	struct prueth_emac *emac;
-@@ -1480,12 +2556,14 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -1519,12 +2594,14 @@ static int prueth_netdev_init(struct prueth *prueth,
  	void __iomem *dram0 = prueth->mem[PRUETH_MEM_DRAM0].va;
  	void __iomem *dram1 = prueth->mem[PRUETH_MEM_DRAM1].va;
  	const u8 *mac_addr;
@@ -2545,7 +2539,7 @@ index 111d2f6..a1baa16 100644
  	ndev = alloc_etherdev(sizeof(*emac));
  	if (!ndev)
  		return -ENOMEM;
-@@ -1497,14 +2575,22 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -1536,14 +2613,22 @@ static int prueth_netdev_init(struct prueth *prueth,
  	emac->ndev = ndev;
  	emac->port_id = port;
  
@@ -2570,7 +2564,7 @@ index 111d2f6..a1baa16 100644
  	if (emac->tx_irq < 0) {
  		ret = emac->tx_irq;
  		if (ret != -EPROBE_DEFER)
-@@ -1515,14 +2601,40 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -1554,14 +2639,40 @@ static int prueth_netdev_init(struct prueth *prueth,
  	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
  	spin_lock_init(&emac->lock);
  
@@ -2615,7 +2609,7 @@ index 111d2f6..a1baa16 100644
  		break;
  	default:
  		dev_err(prueth->dev, "invalid port ID\n");
-@@ -1570,6 +2682,13 @@ static int prueth_netdev_init(struct prueth *prueth,
+@@ -1609,6 +2720,13 @@ static int prueth_netdev_init(struct prueth *prueth,
  	emac->phydev->supported &= ~(SUPPORTED_1000baseT_Full |
  			SUPPORTED_1000baseT_Half);
  
@@ -2629,7 +2623,7 @@ index 111d2f6..a1baa16 100644
  	ndev->netdev_ops = &emac_netdev_ops;
  	ndev->ethtool_ops = &emac_ethtool_ops;
  
-@@ -1607,6 +2726,573 @@ static void prueth_netdev_exit(struct prueth *prueth,
+@@ -1646,6 +2764,573 @@ static void prueth_netdev_exit(struct prueth *prueth,
  	prueth->emac[port] = NULL;
  }
  
@@ -3203,7 +3197,7 @@ index 111d2f6..a1baa16 100644
  static const struct of_device_id prueth_dt_match[];
  
  static int prueth_probe(struct platform_device *pdev)
-@@ -1617,6 +3303,7 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -1656,6 +3341,7 @@ static int prueth_probe(struct platform_device *pdev)
  	struct device_node *eth_node;
  	const struct of_device_id *match;
  	struct pruss *pruss;
@@ -3211,7 +3205,7 @@ index 111d2f6..a1baa16 100644
  	int i, ret;
  
  	if (!np)
-@@ -1680,6 +3367,56 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -1719,6 +3405,56 @@ static int prueth_probe(struct platform_device *pdev)
  		}
  	}
  
@@ -3268,7 +3262,7 @@ index 111d2f6..a1baa16 100644
  	prueth->sram_pool = of_gen_pool_get(np, "sram", 0);
  	if (!prueth->sram_pool) {
  		dev_err(dev, "unable to get SRAM pool\n");
-@@ -1689,7 +3426,7 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -1728,7 +3464,7 @@ static int prueth_probe(struct platform_device *pdev)
  	}
  	prueth->mem[PRUETH_MEM_OCMC].va =
  			(void __iomem *)gen_pool_alloc(prueth->sram_pool,
@@ -3277,7 +3271,7 @@ index 111d2f6..a1baa16 100644
  	if (IS_ERR(prueth->mem[PRUETH_MEM_OCMC].va)) {
  		ret = PTR_ERR(prueth->mem[PRUETH_MEM_OCMC].va);
  		dev_err(dev, "unable to allocate OCMC resource\n");
-@@ -1698,7 +3435,7 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -1737,7 +3473,7 @@ static int prueth_probe(struct platform_device *pdev)
  	prueth->mem[PRUETH_MEM_OCMC].pa =
  			gen_pool_virt_to_phys(prueth->sram_pool,
  			(unsigned long)prueth->mem[PRUETH_MEM_OCMC].va);
@@ -3286,7 +3280,7 @@ index 111d2f6..a1baa16 100644
  	dev_dbg(dev, "ocmc: pa %pa va %p size %#x\n",
  		&prueth->mem[PRUETH_MEM_OCMC].pa,
  		prueth->mem[PRUETH_MEM_OCMC].va,
-@@ -1767,7 +3504,20 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -1806,7 +3542,20 @@ static int prueth_probe(struct platform_device *pdev)
  		prueth->registered_netdevs[i] = prueth->emac[port]->ndev;
  	}
  
@@ -3308,7 +3302,7 @@ index 111d2f6..a1baa16 100644
  
  	return 0;
  
-@@ -1790,7 +3540,8 @@ static int prueth_probe(struct platform_device *pdev)
+@@ -1829,7 +3578,8 @@ static int prueth_probe(struct platform_device *pdev)
  
  free_pool:
  	gen_pool_free(prueth->sram_pool,
@@ -3318,7 +3312,7 @@ index 111d2f6..a1baa16 100644
  
  put_mem:
  	for (i = PRUETH_MEM_DRAM0; i < PRUETH_MEM_OCMC; i++) {
-@@ -1813,6 +3564,10 @@ static int prueth_remove(struct platform_device *pdev)
+@@ -1852,6 +3602,10 @@ static int prueth_remove(struct platform_device *pdev)
  	struct prueth *prueth = platform_get_drvdata(pdev);
  	int i;
  
@@ -3329,7 +3323,7 @@ index 111d2f6..a1baa16 100644
  	for (i = 0; i < PRUETH_PORT_MAX; i++) {
  		if (!prueth->registered_netdevs[i])
  			continue;
-@@ -1830,7 +3585,7 @@ static int prueth_remove(struct platform_device *pdev)
+@@ -1869,7 +3623,7 @@ static int prueth_remove(struct platform_device *pdev)
  
  	gen_pool_free(prueth->sram_pool,
  		      (unsigned long)prueth->mem[PRUETH_MEM_OCMC].va,
@@ -3338,7 +3332,7 @@ index 111d2f6..a1baa16 100644
  
  	for (i = PRUETH_MEM_DRAM0; i < PRUETH_MEM_OCMC; i++) {
  		if (prueth->mem[i].va)
-@@ -1903,26 +3658,70 @@ static int prueth_resume(struct device *dev)
+@@ -1942,26 +3696,70 @@ static int prueth_resume(struct device *dev)
  
  /* AM33xx SoC-specific firmware data */
  static struct prueth_private_data am335x_prueth_pdata = {

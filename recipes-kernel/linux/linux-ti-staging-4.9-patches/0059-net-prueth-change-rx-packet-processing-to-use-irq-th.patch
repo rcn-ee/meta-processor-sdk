@@ -1,7 +1,7 @@
-From 2103b6729f263eb466abde5a1893586ea248d219 Mon Sep 17 00:00:00 2001
+From 5de8c820b496d66a2cd423aa137e5f74c0a6fc16 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 15 Sep 2017 16:11:07 -0400
-Subject: [PATCH 61/82] net: prueth: change rx packet processing to use irq
+Subject: [PATCH 59/86] net: prueth: change rx packet processing to use irq
  thread instead of NAPI
 
 NAPI requires typically more buffers (some example shows about 10 buffers

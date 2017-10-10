@@ -1,7 +1,7 @@
-From 809c7ccda5e20856f2f2670b92761e1433525935 Mon Sep 17 00:00:00 2001
+From 9e1d060c0e476ca89a9052cd5bf5ea4e49ad0fde Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 10 Feb 2017 17:34:03 -0500
-Subject: [PATCH 08/43] hsr: introduce rx offload feature flags for HSR and PRP
+Subject: [PATCH 08/86] hsr: introduce rx offload feature flags for HSR and PRP
 
 This patch introduces the HSR/PRP rx offload flag to allow offload
 of LRE rx side processing such as duplicate detect/drop, node_table,
@@ -39,7 +39,7 @@ index 9c6c8ef..7450b2d 100644
  #define for_each_netdev_feature(mask_addr, bit)	\
  	for_each_set_bit(bit, (unsigned long *)mask_addr, NETDEV_FEATURE_COUNT)
 diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-index 072c1f4..8dd7106 100644
+index e9989b8..acde1b8 100644
 --- a/net/core/ethtool.c
 +++ b/net/core/ethtool.c
 @@ -104,6 +104,8 @@ int ethtool_op_get_ts_info(struct net_device *dev, struct ethtool_ts_info *info)

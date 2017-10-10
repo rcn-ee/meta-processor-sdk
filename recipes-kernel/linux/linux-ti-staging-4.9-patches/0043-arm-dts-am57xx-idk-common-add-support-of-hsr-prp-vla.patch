@@ -1,7 +1,7 @@
-From 63fa7444e9c9a1f830079bf5df6603f9f4bfd8da Mon Sep 17 00:00:00 2001
+From 21ef17318f46c4336771b91588b2bfa82308ce1f Mon Sep 17 00:00:00 2001
 From: WingMan Kwok <w-kwok2@ti.com>
 Date: Thu, 22 Jun 2017 09:28:31 -0400
-Subject: [PATCH 43/43] arm: dts: am57xx-idk-common: add support of hsr/prp
+Subject: [PATCH 43/86] arm: dts: am57xx-idk-common: add support of hsr/prp
  vlan pcp to rx queue map"
 
 Usage:
@@ -38,7 +38,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
-index 408d7cfd..d0b9e09 100644
+index 10b6620..bce3c5e 100644
 --- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
 +++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
 @@ -165,6 +165,8 @@

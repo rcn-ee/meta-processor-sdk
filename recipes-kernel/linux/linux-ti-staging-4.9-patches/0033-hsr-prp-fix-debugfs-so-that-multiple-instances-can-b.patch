@@ -1,7 +1,7 @@
-From ce05123e7a35cc1c80b464feb51427353ff79e0a Mon Sep 17 00:00:00 2001
+From cbd88b77f0a62e6a936affae184f5d847433e644 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 18 Apr 2017 13:50:15 -0400
-Subject: [PATCH 33/43] hsr/prp: fix debugfs so that multiple instances can be
+Subject: [PATCH 33/86] hsr/prp: fix debugfs so that multiple instances can be
  supported
 
 Use the netdev name to create the debugfs file for hsr and prp so that

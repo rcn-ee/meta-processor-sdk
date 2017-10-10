@@ -1,7 +1,7 @@
-From f2ccb96fed8850363ddaeabf832c34ce4fee8710 Mon Sep 17 00:00:00 2001
+From 086883d811f19edfbb91a09486d8bc6caff4222b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Fri, 8 Sep 2017 13:45:40 -0400
-Subject: [PATCH 62/82] net: prueth: fix incorrect reporting of packet drop at
+Subject: [PATCH 60/86] net: prueth: fix incorrect reporting of packet drop at
  egress for emac
 
 When the xmit function runs out of buffer, the right procedure is

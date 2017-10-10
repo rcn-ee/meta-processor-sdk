@@ -1,7 +1,7 @@
-From 9e5c96f9845bc005389108890bed516219670911 Mon Sep 17 00:00:00 2001
+From 5c6d4e37a14029158f727f3dbd7c7acb5976b13b Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 21 Mar 2017 16:52:18 -0400
-Subject: [PATCH 27/43] hsr: handle untagged frame at the ingress
+Subject: [PATCH 27/86] hsr: handle untagged frame at the ingress
 
 Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
 ---

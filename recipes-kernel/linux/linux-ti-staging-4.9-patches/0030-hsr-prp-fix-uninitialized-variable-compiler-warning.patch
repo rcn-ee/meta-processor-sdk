@@ -1,7 +1,7 @@
-From 518f5e7f1b39fc2bc637ca322daf19b3f182126e Mon Sep 17 00:00:00 2001
+From fc8778cd386f7775117304d6fc2515f02d3c069f Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Mon, 3 Apr 2017 17:47:59 -0400
-Subject: [PATCH 30/43] hsr/prp: fix uninitialized variable compiler warning
+Subject: [PATCH 30/86] hsr/prp: fix uninitialized variable compiler warning
 
 Initialize the node table entry to fix the compiler
 warning of uninitialized variable.

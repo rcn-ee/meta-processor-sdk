@@ -1,7 +1,7 @@
-From 069825a448bd0d7ac4a16c4b293d2063da0dd2ec Mon Sep 17 00:00:00 2001
+From 80ad5dcafe61ee4fbd2f70150db87b95c505dbbf Mon Sep 17 00:00:00 2001
 From: Vitaly Andrianov <vitalya@ti.com>
 Date: Tue, 12 Jul 2016 14:17:24 -0400
-Subject: [PATCH 74/82] crypto: ks2: add processing functions and aead
+Subject: [PATCH 72/86] crypto: ks2: add processing functions and aead
  algorithms
 
 This commit adds security contexts and packet processing functions, which

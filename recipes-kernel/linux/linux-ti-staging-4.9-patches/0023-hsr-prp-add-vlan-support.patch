@@ -1,7 +1,7 @@
-From 4230efe088ce9a5d9c1c560a13319b36d1dc12ea Mon Sep 17 00:00:00 2001
+From 248e0dea90d185f093b5ffc4c228c70b6b62502d Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Wed, 22 Feb 2017 13:07:39 -0500
-Subject: [PATCH 23/43] hsr/prp: add vlan support
+Subject: [PATCH 23/86] hsr/prp: add vlan support
 
 This patch add support for creating vlan interfaces
 over hsr/prp interface.

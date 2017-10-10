@@ -1,7 +1,7 @@
-From c4cb5ecc1e68fc06d4e3318f8d6a5bc8979b956f Mon Sep 17 00:00:00 2001
+From 9cab569ff09a67b097f4b6100998f1520b95d6c5 Mon Sep 17 00:00:00 2001
 From: Murali Karicheri <m-karicheri2@ti.com>
 Date: Tue, 14 Mar 2017 16:28:22 -0400
-Subject: [PATCH 28/43] prp: offload LRE functions at RX to firmware/hardware
+Subject: [PATCH 28/86] prp: offload LRE functions at RX to firmware/hardware
 
 The hardware/firmware will do LRE rx processing and forward
 only one frame to Linux network interface. This patch checks if
