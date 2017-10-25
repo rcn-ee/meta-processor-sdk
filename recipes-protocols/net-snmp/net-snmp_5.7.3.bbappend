@@ -1,4 +1,4 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:${THISDIR}/files:"
 
@@ -17,6 +17,7 @@ SRC_URI_append = " \
     file://0012-IEC-62439-3-MIB-Fix-index-issue-in-table-implementat.patch \
     file://0013-IEC-62439-3-MIB-Add-command-to-set-HSR-mode.patch \
     file://0014-IEC-62439-3-MIB-add-license-header-to-sources.patch \
+    file://0001-IEC-62439-3-MIB-fix-lreManufacturerName-displaying-d.patch \
 "
 
 PACKAGECONFIG[iec-62439-3-mib] = "--with-mib-modules=iec-62439-3-mib,,,"
