@@ -1,0 +1,66 @@
+From cd9c7fafb750d87f6ca1dc41a68785a68e518f8f Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 23 Oct 2017 15:02:16 -0400
+Subject: [PATCH 87/87] prueth: emac: add a workaround to fix netdev watchdog
+ issue
+
+When pru Ethernet interface is loaded, say at 95Mbps, NETDEV WATCHDOG
+timer fires with following trace:-
+
+[ 1642.085826] WARNING: CPU: 0 PID: 4 at net/sched/sch_generic.c:316
+dev_watchdog+0x258/0x25c
+[ 1642.094128] NETDEV WATCHDOG: eth2 (prueth): transmit queue 0 timed out
+
+Currently driver stops the queue when buffer overflow is detected at
+the egress and wake up the queue when a tx interrupt is received from
+PRU. Watchdog is fired since queue is not woken up for an extended
+period of time. This is suspected to be due to tx interrupt event being
+lost. For now, add a workaround to fix this by not stopping the queue
+when overflow happens.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 57136d7..fc3246d 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -3296,7 +3296,6 @@ static u16 prueth_get_tx_queue_id(struct prueth *prueth, struct sk_buff *skb)
+ static int emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct prueth_emac *emac = netdev_priv(ndev);
+-	struct prueth *prueth = emac->prueth;
+ 	int ret = 0;
+ 	u16 qid;
+ 
+@@ -3319,21 +3318,12 @@ static int emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	}
+ 
+ 	if (ret) {
+-		if (ret != -ENOBUFS && ret != -EBUSY &&
+-		    netif_msg_tx_err(emac) && net_ratelimit()) {
+-			netdev_err(ndev, "packet queue failed: %d\n", ret);
++		if (ret != -ENOBUFS && ret != -EBUSY) {
++			if (netif_msg_tx_err(emac) && net_ratelimit())
++				netdev_err(ndev,
++					   "packet queue failed: %d\n", ret);
+ 			goto fail_tx;
+ 		} else {
+-			/* out of buffer or collision. stop queue and
+-			 * return NETDEV_TX_BUSY. Core will re-send the
+-			 * packet when queue is woke up by tx interrupt.
+-			 * Right now we don't have tx interrupt generated
+-			 * for switch firmware. So return NETDEV_TX_BUSY
+-			 * for now and change it later once support is
+-			 * available .
+-			 */
+-			if (!PRUETH_HAS_SWITCH(prueth))
+-				netif_stop_queue(ndev);
+ 			return NETDEV_TX_BUSY;
+ 		}
+ 	}
+-- 
+1.9.1
+

@@ -1,4 +1,4 @@
-PR_append = ".p20"
+PR_append = ".p21"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -91,4 +91,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0084-arm-dts-k2hk-add-dts-node-for-netcp-sa-driver.patch \
     file://0085-arm-dts-k2l-add-dts-node-for-netcp-sa-driver.patch \
     file://0086-arm-dts-k2e-add-dts-node-for-netcp-sa-driver.patch \
+    file://0087-prueth-emac-add-a-workaround-to-fix-netdev-watchdog-.patch \
 "
