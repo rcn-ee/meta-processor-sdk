@@ -1,4 +1,4 @@
-PR_append = ".p21"
+PR_append = ".p22"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -92,4 +92,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0085-arm-dts-k2l-add-dts-node-for-netcp-sa-driver.patch \
     file://0086-arm-dts-k2e-add-dts-node-for-netcp-sa-driver.patch \
     file://0087-prueth-emac-add-a-workaround-to-fix-netdev-watchdog-.patch \
+    file://0088-crypto-keystone-Add-support-for-authenc-hmac-sha1-ec.patch \
+    file://0089-crypto-keystone-add-support-for-AES-GCM.patch \
+    file://0090-crypto-keystone-add-support-for-GMAC.patch \
+    file://0091-crypto-keystone-add-support-for-SHA2.patch \
+    file://0092-crypto-keystone-add-support-for-ESN.patch \
 "
