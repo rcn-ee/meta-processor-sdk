@@ -21,6 +21,9 @@ RESERVE_CMEM_keystone = "1"
 # Enable TI UIO devices
 ENABLE_TI_UIO_DEVICES = "1"
 
+# Configure ROS to use python3
+ROS_USE_PYTHON3 = "yes"
+
 # Additional moules to autoload
 KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
