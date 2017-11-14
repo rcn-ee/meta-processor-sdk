@@ -30,14 +30,14 @@ PACKAGECONFIG_pn-weston = "kms launch clients"
 PACKAGECONFIG_append_pn-weston = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', ' egl', ' fbdev', d)}"
 
 # Override MKUBIFS_ARGS when our image size exceeds upstream limits
-MKUBIFS_ARGS_am335x-evm     = "-F -m 2048 -e 126976 -c 7200"
-MKUBIFS_ARGS_am335x-hs-evm  = "-F -m 2048 -e 126976 -c 7200"
-MKUBIFS_ARGS_am437x-evm     = "-F -m 4096 -e 253952 -c 4000"
-MKUBIFS_ARGS_am437x-hs-evm  = "-F -m 4096 -e 253952 -c 4000"
-MKUBIFS_ARGS_am57xx-evm     = "-F -m 2048 -e 126976 -c 12288"
-MKUBIFS_ARGS_am57xx-hs-evm  = "-F -m 2048 -e 126976 -c 12288"
-MKUBIFS_ARGS_dra7xx-evm     = "-F -m 2048 -e 126976 -c 12288"
-MKUBIFS_ARGS_dra7xx-hs-evm  = "-F -m 2048 -e 126976 -c 12288"
+MKUBIFS_ARGS_am335x-evm     = "-F -m 2048 -e 126976 -c 9000"
+MKUBIFS_ARGS_am335x-hs-evm  = "-F -m 2048 -e 126976 -c 9000"
+MKUBIFS_ARGS_am437x-evm     = "-F -m 4096 -e 253952 -c 5000"
+MKUBIFS_ARGS_am437x-hs-evm  = "-F -m 4096 -e 253952 -c 5000"
+MKUBIFS_ARGS_am57xx-evm     = "-F -m 2048 -e 126976 -c 15000"
+MKUBIFS_ARGS_am57xx-hs-evm  = "-F -m 2048 -e 126976 -c 15000"
+MKUBIFS_ARGS_dra7xx-evm     = "-F -m 2048 -e 126976 -c 15000"
+MKUBIFS_ARGS_dra7xx-hs-evm  = "-F -m 2048 -e 126976 -c 15000"
 MKUBIFS_ARGS_k2hk           = "-F -m 2048 -e 126976 -c 4100"
 
 # By default, do not include OPTEE for any HS platform
