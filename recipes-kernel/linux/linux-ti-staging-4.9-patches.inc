@@ -1,4 +1,4 @@
-PR_append = ".p22"
+PR_append = ".p23"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -97,4 +97,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0090-crypto-keystone-add-support-for-GMAC.patch \
     file://0091-crypto-keystone-add-support-for-SHA2.patch \
     file://0092-crypto-keystone-add-support-for-ESN.patch \
+    file://0093-prueth-hsr-prp-fix-incorrect-timeout-for-table-check.patch \
+    file://0094-prueth-hsr-prp-fix-priority-queue-map-configuration-.patch \
+    file://0095-hsr-fix-incorrect-lsdu-size-in-the-tag-of-HSR-frames.patch \
+    file://0096-prueth-add-per-queue-debug-statistics-for-egress-and.patch \
+    file://0097-crypto-ks2-add-KNAV_QUEUE-SHARED-to-tx-queue.patch \
 "
