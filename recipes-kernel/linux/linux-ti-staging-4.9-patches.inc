@@ -1,4 +1,4 @@
-PR_append = ".p23"
+PR_append = ".p24"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -102,4 +102,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0095-hsr-fix-incorrect-lsdu-size-in-the-tag-of-HSR-frames.patch \
     file://0096-prueth-add-per-queue-debug-statistics-for-egress-and.patch \
     file://0097-crypto-ks2-add-KNAV_QUEUE-SHARED-to-tx-queue.patch \
+    file://0098-net-ethenet-ti-prueth-introducing-ptp-time-stamping-.patch \
+    file://0099-Documentation-dt-net-Add-TI-PRUeth-PRP-PTP-bindings.patch \
+    file://0100-net-ethernet-ti-prueth-HACK-configure-ptp-master-mac.patch \
+    file://0101-ARM-dts-am57xx-idk-common-add-prueth-ptp-time-stampi.patch \
+    file://0102-net-ethernet-ti-prueth-add-support-of-pps-in-pru-ptp.patch \
 "
