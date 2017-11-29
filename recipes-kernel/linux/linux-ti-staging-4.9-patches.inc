@@ -1,4 +1,4 @@
-PR_append = ".p24"
+PR_append = ".p25"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -107,4 +107,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0100-net-ethernet-ti-prueth-HACK-configure-ptp-master-mac.patch \
     file://0101-ARM-dts-am57xx-idk-common-add-prueth-ptp-time-stampi.patch \
     file://0102-net-ethernet-ti-prueth-add-support-of-pps-in-pru-ptp.patch \
+    file://0103-hsr-prp-fix-duplicate-discard-mode-handling-for-PRP.patch \
 "
