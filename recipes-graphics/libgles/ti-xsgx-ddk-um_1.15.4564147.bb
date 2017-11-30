@@ -8,7 +8,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 BRANCH = "ti-img-sgx/${PV}"
 
 SRC_URI = "git://git.ti.com/processor-sdk/omap5-sgx-ddk-um-linux-x11-experimental.git;protocol=git;branch=${BRANCH}"
-SRCREV = "c00eb002f624cddac4956c901314c07d83a13260"
+SRCREV = "bc642ce08c6056906eac4c7e257e856bb22d8cbb"
 
 SRC_URI += " file://xorg"
 
@@ -33,7 +33,7 @@ INITSCRIPT_PARAMS = "defaults 8"
 
 inherit update-rc.d
 
-PR = "r1"
+PR = "r2"
 PROVIDES += "virtual/egl virtual/libgles1 virtual/libgles2 omap5-xsgx-ddk-um-linux"
 
 DEPENDS += "udev"
@@ -71,7 +71,7 @@ FILES_${PN}-plugins += "/usr/local/XSGX/lib/dri/*.so /usr/local/XSGX/lib/xorg/mo
 FILES_${PN}-staticdev += "/usr/local/XSGX/lib/dri/*.so /usr/local/XSGX/lib/xorg/modules/*.so /usr/local/XSGX/lib/xorg/modules/drivers/*.so /usr/local/XSGX/lib/xorg/modules/extensions/*.so /usr/local/XSGX/lib/xorg/modules/input/*.so"
 RDEPENDS_${PN} += "${PN}-plugins"
 
-SYSROOT_DIRS_BLACKLIST_append = " /usr/local/XSGX/lib/libpng12.a /usr/local/XSGX/lib/libpng12.so /usr/local/XSGX/lib/libpng12.so.0  /usr/local/XSGX/lib/libpng12.so.0.56.0"
+SYSROOT_DIRS_BLACKLIST_append = " /usr/local/XSGX/lib/libpng.a /usr/local/XSGX/lib/libpng.so"
 
 
 ALLOW_EMPTY_${PN}-plugins = "1"
