@@ -1,4 +1,4 @@
-PR_append = ".p25"
+PR_append = ".p26"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -108,4 +108,15 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0101-ARM-dts-am57xx-idk-common-add-prueth-ptp-time-stampi.patch \
     file://0102-net-ethernet-ti-prueth-add-support-of-pps-in-pru-ptp.patch \
     file://0103-hsr-prp-fix-duplicate-discard-mode-handling-for-PRP.patch \
+    file://0104-arm-cpts-add-timer16-to-cpts-driver.patch \
+    file://0105-arm-cpts-add-ts_adjustment-algorithm.patch \
+    file://0106-arm-cpts-use-pinmux-control-to-filter-9-out-of-10-pu.patch \
+    file://0107-arm-dts-am572x-add-timer16-to-generate-1pps-signal-S.patch \
+    file://0108-arm-dts-am572x-add-1pps-pinmux-definitions.patch \
+    file://0109-arm-cpts-reconstruct-to-ptp-pps-framework.patch \
+    file://0110-arm-dts-am571x-add-1pps-definitions.patch \
+    file://0111-arm-cpts-add-use_1pps-flag.patch \
+    file://0112-arch-cpts-fix-ks2-compilation-bug.patch \
+    file://0113-HACK-ARM-dts-dra7xx-program-timer16-to-run-at-100MHz.patch \
+    file://0114-arm-cpts-enhance-ts_adjustment-algorithm-to-support-.patch \
 "

@@ -1,0 +1,43 @@
+From 3f28bf6f650a6ef7266922357e4a33bee604487d Mon Sep 17 00:00:00 2001
+From: Tero Kristo <t-kristo@ti.com>
+Date: Wed, 11 Oct 2017 10:56:19 +0300
+Subject: [PATCH 113/114] HACK: ARM: dts: dra7xx: program timer16 to run at
+ 100MHz source clock
+
+Re-program abe_dpll_ck to run at 50MHz, and select the source for
+timer16 to be abe_giclk. This makes the timer run at 100MHz.
+
+The patch should be applied under the board file which requires this
+setup to be used, doing this under the generic dra7xx-clocks.dtsi is
+only done for demonstration purposes.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/boot/dts/dra7xx-clocks.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+index cf229df..cf52837 100644
+--- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
++++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+@@ -201,6 +201,8 @@
+ 		compatible = "ti,omap4-dpll-m4xen-clock";
+ 		clocks = <&abe_dpll_clk_mux>, <&abe_dpll_bypass_clk_mux>;
+ 		reg = <0x01e0>, <0x01e4>, <0x01ec>, <0x01e8>;
++		assigned-clocks = <&dpll_abe_ck>;
++		assigned-clock-rates = <50000000>;
+ 	};
+ 
+ 	dpll_abe_x2_ck: dpll_abe_x2_ck {
+@@ -2043,6 +2045,8 @@
+ 		clocks = <&timer_sys_clk_div>, <&sys_32k_ck>, <&sys_clkin2>, <&ref_clkin0_ck>, <&ref_clkin1_ck>, <&ref_clkin2_ck>, <&ref_clkin3_ck>, <&abe_giclk_div>, <&video1_div_clk>, <&video2_div_clk>, <&hdmi_div_clk>;
+ 		ti,bit-shift = <24>;
+ 		reg = <0x1830>;
++		assigned-clocks = <&timer16_gfclk_mux>;
++		assigned-clock-parents = <&abe_giclk_div>;
+ 	};
+ 
+ 	timer2_gfclk_mux: timer2_gfclk_mux@1738 {
+-- 
+1.9.1
+

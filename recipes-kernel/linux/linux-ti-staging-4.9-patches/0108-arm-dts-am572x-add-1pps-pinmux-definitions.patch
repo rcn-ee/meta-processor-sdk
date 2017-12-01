@@ -1,0 +1,39 @@
+From 12ced640a913f3f75b6d5b12193168ba270addb9 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Thu, 2 Nov 2017 13:44:41 -0400
+Subject: [PATCH 108/114] arm: dts: am572x: add 1pps pinmux definitions
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ arch/arm/boot/dts/am572x-idk.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am572x-idk.dts b/arch/arm/boot/dts/am572x-idk.dts
+index 23d9c45..9bd8c52 100644
+--- a/arch/arm/boot/dts/am572x-idk.dts
++++ b/arch/arm/boot/dts/am572x-idk.dts
+@@ -46,4 +46,21 @@
+ &mac {
+ 	/* cptr pps1 generator properties */
+ 	timers = <&timer16>;
++	pinctrl-names = "pwm_off", "pwm_on";
++	pinctrl-0 = <&pps1_timer16_pwm_off>;
++	pinctrl-1 = <&pps1_timer16_pwm_on>;
++};
++
++&dra7_pmx_core {
++	pps1_timer16_pwm_on: pps1_timer16_pwm_on {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x36a0, PIN_OUTPUT | MUX_MODE10)
++		>;
++	};
++
++	pps1_timer16_pwm_off: pps1_timer16_pwm_off {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x36a0, PIN_OUTPUT | MUX_MODE15)
++		>;
++	};
+ };
+-- 
+1.9.1
+

@@ -1,0 +1,45 @@
+From 0013a2938113f41bea770b70a89d88ec9c4e7b37 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Wed, 15 Nov 2017 08:12:21 -0500
+Subject: [PATCH 110/114] arm: dts: am571x: add 1pps definitions
+
+This commit ads timer16 and pinmux definitions to generate 1pps signal
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ arch/arm/boot/dts/am571x-idk.dts | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index fe1dbc8..793f99f 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -284,3 +284,25 @@
+ 		spi-max-frequency = <76800000>;
+ 	};
+ };
++
++&mac {
++	/* cptr pps1 generator properties */
++	timers = <&timer16>;
++	pinctrl-names = "pwm_off", "pwm_on";
++	pinctrl-0 = <&pps1_timer16_pwm_off>;
++	pinctrl-1 = <&pps1_timer16_pwm_on>;
++};
++
++&dra7_pmx_core {
++	pps1_timer16_pwm_on: pps1_timer16_pwm_on {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x36a0, PIN_OUTPUT | MUX_MODE10)
++		>;
++	};
++
++	pps1_timer16_pwm_off: pps1_timer16_pwm_off {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x36a0, PIN_OUTPUT | MUX_MODE15)
++		>;
++	};
++};
+-- 
+1.9.1
+

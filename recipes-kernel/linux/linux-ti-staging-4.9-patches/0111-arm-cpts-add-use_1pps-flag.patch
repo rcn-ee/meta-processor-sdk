@@ -1,0 +1,66 @@
+From 9f2645330f8f0432783419e5a97a6fd1db692493 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Wed, 15 Nov 2017 09:51:31 -0500
+Subject: [PATCH 111/114] arm: cpts: add use_1pps flag
+
+If dts doesn't have 1pps definitions the drives exits with an error. But it
+is not always necessary to have 1pps in the driver and not having its
+definition is appropriate.
+This commit adds the flag to control 1pps functionality depending on
+presence 1pps nodes in the dts.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/cpts.c | 14 ++++++++------
+ drivers/net/ethernet/ti/cpts.h |  1 +
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index 03e5882..bb43ff1 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -849,8 +849,8 @@ static int cpts_of_parse(struct cpts *cpts, struct device_node *node)
+ 
+ 	/* get timer for 1PPS */
+ 	ret = cpts_of_1pps_parse(cpts, node);
+-	if (ret)
+-		goto of_error;
++	cpts->use_1pps = (ret == 0);
++
+ 	return 0;
+ 
+ of_error:
+@@ -911,12 +911,14 @@ struct cpts *cpts_create(struct device *dev, void __iomem *regs,
+ 		}
+ 	}
+ 
+-	ret = cpts_pps_init(cpts);
++	if (cpts->use_1pps) {
++		ret = cpts_pps_init(cpts);
+ 
+-	if (ret < 0) {
+-		dev_err(dev, "unable to init PPS resource (%d)\n",
++		if (ret < 0) {
++			dev_err(dev, "unable to init PPS resource (%d)\n",
+ 				ret);
+-		return ERR_PTR(ret);
++			return ERR_PTR(ret);
++		}
+ 	}
+ 
+ 	return cpts;
+diff --git a/drivers/net/ethernet/ti/cpts.h b/drivers/net/ethernet/ti/cpts.h
+index 5892756..5bbedd7 100644
+--- a/drivers/net/ethernet/ti/cpts.h
++++ b/drivers/net/ethernet/ti/cpts.h
+@@ -141,6 +141,7 @@ struct cpts {
+ 	u32 caps;
+ 	struct sk_buff_head txq;
+ 
++	bool use_1pps;
+ 	int pps_enable;
+ 	int pps_state;
+ 	struct omap_dm_timer *odt;/* timer for 1PPS generator */
+-- 
+1.9.1
+
