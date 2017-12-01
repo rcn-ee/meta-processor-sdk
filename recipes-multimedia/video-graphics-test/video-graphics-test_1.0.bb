@@ -9,7 +9,7 @@ DEPENDS += "libdrm"
 PR = "r0"
 
 BRANCH = "master"
-SRCREV = "ebc7ab44d05fc726b0ddc7f4b45d71d7509313f5"
+SRCREV = "3b3007680845d39784146396a2dd2a68aa1a2283"
 
 SRC_URI = "git://git.ti.com/sitara-linux/video-graphics-test.git;protocol=git;branch=${BRANCH} \
 "
