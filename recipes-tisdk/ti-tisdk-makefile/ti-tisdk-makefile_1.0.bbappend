@@ -85,3 +85,34 @@ do_install_append() {
 EXEC_DIR=__EXEC_DIR__
 __EOF__
 }
+
+# Populate UBOOT_MACHINE when UBOOT_CONFIG is used
+# (see uboot-config.bbclass)
+python() {
+    ubootmachine = d.getVar("UBOOT_MACHINE", True)
+    ubootconfigflags = d.getVarFlags('UBOOT_CONFIG')
+    # The "doc" varflag is special, we don't want to see it here
+    ubootconfigflags.pop('doc', None)
+
+    if ubootmachine and ubootconfigflags:
+        bb.warn('UBOOT_MACHINE = "%s", UBOOT_CONFIG(flags) = "%s"' % (ubootmachine, ubootconfigflags))
+        raise bb.parse.SkipPackage("You cannot use UBOOT_MACHINE and UBOOT_CONFIG at the same time.")
+
+    if not ubootconfigflags:
+        return
+
+    ubootconfig = (d.getVar('UBOOT_CONFIG', True) or "").split()
+    if len(ubootconfig) > 0:
+        for config in ubootconfig:
+            for f, v in ubootconfigflags.items():
+                if config == f:
+                    items = v.split(',')
+                    if items[0] and len(items) > 3:
+                        raise bb.parse.SkipPackage('Only config,images,binary can be specified!')
+                    # From u-boot-ti.inc, the last config is the default
+                    # So keep overwriting UBOOT_MACHINE to get to the default
+                    d.setVar('UBOOT_MACHINE', items[0])
+                    break
+    elif len(ubootconfig) == 0:
+       raise bb.parse.SkipPackage('You must set a default in UBOOT_CONFIG.')
+}
