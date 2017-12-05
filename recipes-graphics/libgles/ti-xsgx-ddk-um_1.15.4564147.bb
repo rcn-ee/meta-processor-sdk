@@ -33,7 +33,7 @@ INITSCRIPT_PARAMS = "defaults 8"
 
 inherit update-rc.d
 
-PR = "r2"
+PR = "r3"
 PROVIDES += "virtual/egl virtual/libgles1 virtual/libgles2 omap5-xsgx-ddk-um-linux"
 
 DEPENDS += "udev"
@@ -56,7 +56,7 @@ S = "${WORKDIR}/git"
 
 do_install () {
     oe_runmake install DESTDIR=${D} TARGET_PRODUCT=${TARGET_PRODUCT}
-    install -m 0644 ${WORKDIR}/xorg ${D}${sysconfdir}/init.d/
+    install -m 0755 ${WORKDIR}/xorg ${D}${sysconfdir}/init.d/
 }
 
 SYSROOT_DIRS_append = "/usr/local"
