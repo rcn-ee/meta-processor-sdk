@@ -1,4 +1,4 @@
-PR_append = ".p26"
+PR_append = ".p27"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -119,4 +119,6 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0112-arch-cpts-fix-ks2-compilation-bug.patch \
     file://0113-HACK-ARM-dts-dra7xx-program-timer16-to-run-at-100MHz.patch \
     file://0114-arm-cpts-enhance-ts_adjustment-algorithm-to-support-.patch \
+    file://0115-prueth-improve-debugfs-clean-up-code-using-existing-.patch \
+    file://0116-prueth-prp-add-emac-mode-support.patch \
 "
