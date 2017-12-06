@@ -98,3 +98,5 @@ tisdk_image_cleanup() {
         fi
     done
 }
+
+require arago-core-tisdk-image-sw-manifest.inc
