@@ -1,5 +1,7 @@
 ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_KERNEL_SUFFIX}-image"
 
+INHERIT += "recipe-data"
+
 # For TI devices with only baremetal/TI RTOS support
 PREFERRED_PROVIDER_virtual/kernel_c66x = "linux-dummy"
 PREFERRED_PROVIDER_virtual/kernel_omapl137 = "linux-dummy"
