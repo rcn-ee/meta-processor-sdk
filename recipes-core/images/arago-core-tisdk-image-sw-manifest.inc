@@ -1,3 +1,9 @@
+# Use the recipe-data class to collect SRC_URI for the manifest.
+#
+# While this will need to be globally INHERIT'd to work properly, inherit
+# locally so that parsing does not fail.
+inherit recipe-data
+
 # Instead of re-adding the do_rootfs task, re-add the do_emit_recipe_data_all
 #  task to run before do_rootfs.
 deltask do_emit_recipe_data_all
