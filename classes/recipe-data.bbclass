@@ -6,7 +6,7 @@
 RECIPE_DATA_FILE ?= "${TMPDIR}/recipe_data.conf"
 
 # Variables to record
-RECIPE_DATA_VARS ?= "PV SRC_URI"
+RECIPE_DATA_VARS ?= "PV SRC_URI FILE"
 
 
 # Helper to load the data from the conf file

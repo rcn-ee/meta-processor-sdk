@@ -15,7 +15,22 @@ addtask emit_recipe_data_all after do_emit_recipe_data before do_install
 get_sources_from_recipe(){
     [ ! -z "$1" ] || return 0
 
-    pn=$(echo "$1" | sed -e 's|_.*$||')
+    # Check if a full URL is given (e.g. ipks from sourceipk class)
+    if [ $(echo "$1" | grep -c '://') -gt 0 ]
+    then
+        echo "$1"
+        return 0
+    fi
+
+    # Now assume that this was created by the package_ipk class
+
+    # Cannot assume that recipe filename is ${PN}_${PV}.bb
+    # This is easily seen with BBCLASSEXTEND recipes.
+    for pn in $(sed -ne 's|FILE_pn-\([^ \t=]*\)[ \t]*=[ \t]*".*/'$1'".*|\1|p' "${RECIPE_DATA_FILE}")
+    do
+        # Only need a single PN incase there are native, nativesdk, target variants.
+        break
+    done
 
     recipe_data_get_var_sh "$pn" "SRC_URI"
 }
