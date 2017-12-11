@@ -16,4 +16,4 @@ EXTRA_LIBS_append_ti43x = " \
     cmem \
 "
 
-EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host "
+EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host kaldi"
