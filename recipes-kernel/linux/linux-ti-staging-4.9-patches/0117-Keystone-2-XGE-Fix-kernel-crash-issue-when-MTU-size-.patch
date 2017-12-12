@@ -1,0 +1,31 @@
+From 11fcc0acafbc360f9e270b75888b46240b91d300 Mon Sep 17 00:00:00 2001
+From: Rex Chang <a0850461@uda0850461>
+Date: Wed, 6 Dec 2017 23:30:06 +0000
+Subject: [PATCH 117/120] Keystone-2: XGE: Fix kernel crash issue when MTU size
+ is greater than 1500
+
+In the receive queue for 4096 bytes fragments, the page address
+set in the SW data0 field of the descriptor is not the one we got
+when doing the reassembly in receive. The page structure was retrieved
+from the wrong descriptor into SW data0 which is then causing a
+page fault when UDP checksum is accessing data above 1500.
+---
+ drivers/net/ethernet/ti/netcp_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index ff3f7a4..e513669 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -618,7 +618,7 @@ static int netcp_process_one_rx_packet(struct netcp_intf *netcp)
+ 		/* warning!!!! We are retrieving the virtual ptr in the sw_data
+ 		 * field as a 32bit value. Will not work on 64bit machines
+ 		 */
+-		page = (struct page *)KNAV_DMA_GET_SW_DATA0(desc);
++		page = (struct page *)KNAV_DMA_GET_SW_DATA0(ndesc);
+ 
+ 		if (likely(dma_buff && buf_len && page)) {
+ 			dma_unmap_page(netcp->dev, dma_buff, PAGE_SIZE,
+-- 
+1.9.1
+

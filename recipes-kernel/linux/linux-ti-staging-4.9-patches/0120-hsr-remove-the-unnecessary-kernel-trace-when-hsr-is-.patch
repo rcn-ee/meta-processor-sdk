@@ -1,0 +1,41 @@
+From ff63af4c9fe6ef3aa164ce3ad79c6455d61b3e29 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Mon, 11 Dec 2017 17:31:59 -0500
+Subject: [PATCH 120/120] hsr: remove the unnecessary kernel trace when hsr is
+ offloaded
+
+When hsr is offloaded, the offloaded h/w or f/w is expected to
+consume the supervision frame. However there is no need for a
+kernel trace here and frame should be silently discarded. Fix
+this by removing the WARN_ONCE() and replace it with a comment
+in the code.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ net/hsr-prp/hsr_prp_forward.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 736e6d4..4c32189 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -516,12 +516,12 @@ static int hsr_prp_fill_frame_info(struct hsr_prp_frame_info *frame,
+ 
+ 	memset(frame, 0, sizeof(*frame));
+ 	frame->is_supervision = is_supervision_frame(priv, skb);
++	/* When offloaded, don't expect Supervision frame which
++	 * is terminated at h/w or f/w that offload the LRE
++	 */
+ 	if (frame->is_supervision && priv->rx_offloaded &&
+-	    (port->type != HSR_PRP_PT_MASTER)) {
+-		WARN_ONCE(1,
+-			  "HSR: unexpected rx supervisor frame when offloaded");
++	    (port->type != HSR_PRP_PT_MASTER))
+ 		return -1;
+-	}
+ 
+ 	/* For Offloaded case, there is no need for node list since
+ 	 * firmware/hardware implements LRE function.
+-- 
+1.9.1
+

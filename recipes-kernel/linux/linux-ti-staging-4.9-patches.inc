@@ -1,4 +1,4 @@
-PR_append = ".p27"
+PR_append = ".p28"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -121,4 +121,8 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0114-arm-cpts-enhance-ts_adjustment-algorithm-to-support-.patch \
     file://0115-prueth-improve-debugfs-clean-up-code-using-existing-.patch \
     file://0116-prueth-prp-add-emac-mode-support.patch \
+    file://0117-Keystone-2-XGE-Fix-kernel-crash-issue-when-MTU-size-.patch \
+    file://0118-prueth-fix-debugfs-directory-to-include-pruss-id.patch \
+    file://0119-ARM-dts-am571x-idk-enable-prp-and-ptp-on-ICSS1.patch \
+    file://0120-hsr-remove-the-unnecessary-kernel-trace-when-hsr-is-.patch \
 "
