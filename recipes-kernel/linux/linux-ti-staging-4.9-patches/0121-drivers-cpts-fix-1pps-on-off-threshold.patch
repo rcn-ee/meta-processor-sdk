@@ -1,0 +1,34 @@
+From e5b04954b18a2d1ea7c2fc080e2fb336c5c6e7f6 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Tue, 12 Dec 2017 08:53:27 -0500
+Subject: [PATCH 121/127] drivers: cpts: fix 1pps on/off threshold
+
+The original thresholds were designed for poll mode with up to
+10 asynchronous polls every 100ms, but they are too big for interrupt mode
+such that the 1pps PWM  may fail to be turned on if the task schedule
+delay is short.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/net/ethernet/ti/cpts.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index 2ce0e2d..20de18e 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -1042,9 +1042,9 @@ static void cpts_tmr_init(struct cpts *cpts)
+ 
+ static void inline cpts_turn_on_off_1pps_output(struct cpts *cpts, u64 ts)
+ {
+-	if (ts > 915000000)
++	if (ts > 905000000)
+ 		pinctrl_select_state(cpts->pins, cpts->pin_state_pwm_on);
+-	else if ((ts < 100000000) && (ts >= 10000000))
++	else if ((ts < 100000000) && (ts >= 5000000))
+ 		pinctrl_select_state(cpts->pins, cpts->pin_state_pwm_off);
+ }
+ 
+-- 
+1.9.1
+

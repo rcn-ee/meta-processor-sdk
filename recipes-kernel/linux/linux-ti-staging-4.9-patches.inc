@@ -1,4 +1,4 @@
-PR_append = ".p28"
+PR_append = ".p29"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -125,4 +125,11 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0118-prueth-fix-debugfs-directory-to-include-pruss-id.patch \
     file://0119-ARM-dts-am571x-idk-enable-prp-and-ptp-on-ICSS1.patch \
     file://0120-hsr-remove-the-unnecessary-kernel-trace-when-hsr-is-.patch \
+    file://0121-drivers-cpts-fix-1pps-on-off-threshold.patch \
+    file://0122-drivers-cpts-add-1pps-reference-pulse-ptp-period-out.patch \
+    file://0123-arm-dts-add-cpts-1pps-reference-output-pins.patch \
+    file://0124-drivers-cpts-add-ptp-1pps-latch-support.patch \
+    file://0125-arm-dts-add-cpts-1pps-latch-input-pins.patch \
+    file://0126-drivers-cpts-enable-1pps-features-per-device-tree.patch \
+    file://0127-arm-dts-am571x-idk-add-pruss_eth-sync-latch-control-.patch \
 "

@@ -1,0 +1,97 @@
+From 3d4993a874a7da9bcffebd75cfefa5c3193741e0 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Tue, 12 Dec 2017 13:39:08 -0500
+Subject: [PATCH 125/127] arm: dts: add cpts 1pps latch input pins
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ arch/arm/boot/dts/am571x-idk.dts | 21 ++++++++++++++++++---
+ arch/arm/boot/dts/am572x-idk.dts | 22 +++++++++++++++++++---
+ 2 files changed, 37 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index 280cc8f..4ff6f0c 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -286,13 +286,16 @@
+ };
+ 
+ &mac {
+-	/* cptr pps1 generator properties */
+-	timers = <&timer16>;
+-	pinctrl-names = "pwm_off", "pwm_on", "ref_off", "ref_on";
++	/* cptr pps1 generator and latch properties */
++	timers = <&timer16>, <&timer15>;
++	pinctrl-names = "pwm_off", "pwm_on", "ref_off", "ref_on",
++			"latch_on", "latch_off";
+ 	pinctrl-0 = <&pps1_timer16_pwm_off>;
+ 	pinctrl-1 = <&pps1_timer16_pwm_on>;
+ 	pinctrl-2 = <&pps1_timer16_pwm2_off>;
+ 	pinctrl-3 = <&pps1_timer16_pwm2_on>;
++	pinctrl-4 = <&pps1_timer15_latch_on>;
++	pinctrl-5 = <&pps1_timer15_latch_off>;
+ };
+ 
+ &dra7_pmx_core {
+@@ -320,4 +323,16 @@
+ 		>;
+ 	};
+ 
++	pps1_timer15_latch_on: pps1_timer15_latch_on {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x3684, PIN_INPUT | MUX_MODE7)
++		>;
++	};
++
++	pps1_timer15_latch_off: pps1_timer15_latch_off {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x3684, PIN_INPUT | MUX_MODE15)
++		>;
++	};
++
+ };
+diff --git a/arch/arm/boot/dts/am572x-idk.dts b/arch/arm/boot/dts/am572x-idk.dts
+index 400008e..bcb8dbc 100644
+--- a/arch/arm/boot/dts/am572x-idk.dts
++++ b/arch/arm/boot/dts/am572x-idk.dts
+@@ -44,13 +44,16 @@
+ };
+ 
+ &mac {
+-	/* cptr pps1 generator properties */
+-	timers = <&timer16>;
+-	pinctrl-names = "pwm_off", "pwm_on", "ref_off", "ref_on";
++	/* cptr pps1 generator and latch properties */
++	timers = <&timer16>, <&timer15>;
++	pinctrl-names = "pwm_off", "pwm_on", "ref_off", "ref_on",
++			"latch_on", "latch_off";
+ 	pinctrl-0 = <&pps1_timer16_pwm_off>;
+ 	pinctrl-1 = <&pps1_timer16_pwm_on>;
+ 	pinctrl-2 = <&pps1_timer16_pwm2_off>;
+ 	pinctrl-3 = <&pps1_timer16_pwm2_on>;
++	pinctrl-4 = <&pps1_timer15_latch_on>;
++	pinctrl-5 = <&pps1_timer15_latch_off>;
+ };
+ 
+ &dra7_pmx_core {
+@@ -77,4 +80,17 @@
+ 			DRA7XX_CORE_IOPAD(0x3680, PIN_OUTPUT | MUX_MODE15)
+ 		>;
+ 	};
++
++	pps1_timer15_latch_on: pps1_timer15_latch_on {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x3684, PIN_INPUT | MUX_MODE7)
++		>;
++	};
++
++	pps1_timer15_latch_off: pps1_timer15_latch_off {
++		pinctrl-single,pins = <
++			DRA7XX_CORE_IOPAD(0x3684, PIN_INPUT | MUX_MODE15)
++		>;
++	};
++
+ };
+-- 
+1.9.1
+
