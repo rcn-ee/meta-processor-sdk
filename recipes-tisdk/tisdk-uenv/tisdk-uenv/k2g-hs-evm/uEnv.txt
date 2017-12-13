@@ -1,0 +1,13 @@
+# This uEnv.txt file can contain additional environment settings that you
+# want to set in U-Boot at boot time.  This can be simple variables such
+# as the serverip or custom variables.  The format of this file is:
+#    variable=value
+# NOTE: This file will be evaluated after the bootcmd is run and the
+#       bootcmd must be set to load this file if it exists (this is the
+#       default on all newer U-Boot images.  This also means that some
+#       variables such as bootdelay cannot be changed by this file since
+#       it is not evaluated until the bootcmd is run.
+set_kern_mode=if test -z "${kern_mode}"; then setenv kern_mode ${boot}; fi
+set_fs_mode=if test -z "${fs_mode}"; then setenv fs_mode ${boot}; fi
+
+uenvcmd=run set_kern_mode; run set_fs_mode; run run_mon_hs; run init_${fs_mode}; run set_name_pmmc get_pmmc_${kern_mode} run_pmmc; run get_fit_${kern_mode}; bootm ${fit_loadaddr}#${name_fdt}
