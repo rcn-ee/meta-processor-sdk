@@ -10,4 +10,15 @@
 set_kern_mode=if test -z "${kern_mode}"; then setenv kern_mode ${boot}; fi
 set_fs_mode=if test -z "${fs_mode}"; then setenv fs_mode ${boot}; fi
 
-uenvcmd=run set_kern_mode; run set_fs_mode; run run_mon_hs; run init_${fs_mode}; run set_name_pmmc get_pmmc_${kern_mode} run_pmmc; run get_fit_${kern_mode}; bootm ${fit_loadaddr}#${name_fdt}
+# Potential conflict with mixing boot modes.
+# The get_*_net helper commands use the built-in dhcp command to fetch. If we
+# wish to mount the rootfs over NFS, then the init_nfs helper will set
+# "autoload=no". This causes the "dhcp" built-in to only obtain the IP address
+# and not load the file, and thus the get_*_net helpers do not work as expected.
+#
+# Work around this by using "tftp" instead of "dhcp", and set autoload=no and
+# manually trigger dhcp.
+get_fit_net=tftp ${fit_loadaddr} ${tftp_root}/${fit_bootfile}
+get_pmmc_net=tftp ${loadaddr} ${tftp_root}/${name_pmmc}
+
+uenvcmd=run set_kern_mode; run set_fs_mode; run run_mon_hs; setenv autoload no; dhcp; run init_${fs_mode}; run set_name_pmmc get_pmmc_${kern_mode} run_pmmc; run get_fit_${kern_mode}; bootm ${fit_loadaddr}#${name_fdt}
