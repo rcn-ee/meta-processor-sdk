@@ -102,3 +102,6 @@ SRCIPK_SHALLOW_DEPTH_pn-linux-ti-staging-rt = "400"
 
 SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-u-boot-ti-staging = "${SRCIPK_GIT_COMMIT_MESSAGE}"
+
+TI_PDK_LIMIT_SOCS_append_am57xx-evm = " am574x"
+TI_PDK_LIMIT_BOARDS_append_am57xx-evm = " idkAM574x"
