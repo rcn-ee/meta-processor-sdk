@@ -1,7 +1,7 @@
-# Below commit ID corresponds to "DEV.EMAC_LLD.01.00.03.08"
-EMAC_LLD_SRCREV = "20b30c9dd37ae1f899e93b560dce41f804e43317"
+# Below commit ID corresponds to "DEV.EMAC_LLD.01.00.03.08A"
+EMAC_LLD_SRCREV = "20a21b3c25fcfebbc0450e88397a4be135ff703b"
 
-PV = "01.00.03.08"
+PV = "01.00.03.08A"
 PR = "r0"
 
 # Build with make instead of XDC
