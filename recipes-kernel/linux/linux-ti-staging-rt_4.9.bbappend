@@ -1,12 +1,12 @@
-PR_append = ".tisdk12"
+PR_append = ".tisdk13"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
-require linux-ti-staging-4.9-patches.inc
+#require linux-ti-staging-4.9-patches.inc
 
-#KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
-#BRANCH = "processor-sdk-linux-rt-04.01.00"
-#SRCREV = "c038d21a22548eb8517f0f8c4c77429dbadd8d9a"
+KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
+BRANCH = "processor-sdk-linux-rt-04.02.00"
+SRCREV = "25656fb6a0ebf9158e7c40bd782a81c842c0fc13"
 
 SRC_URI_append = " file://jailhouse.cfg"
 
