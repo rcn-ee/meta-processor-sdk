@@ -1,5 +1,7 @@
 require recipes-bsp/edma3-lld/edma3-lld-2.12.05.30B.inc
 
+COMPATIBLE_MACHINE_append = "|c66x|omapl1"
+
 PLATFORMLIST_append_dra7xx-evm = " \
         tda3xx-evm \
 "
