@@ -1,4 +1,4 @@
-PR_append = ".p29"
+PR_append = ".p30"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -132,4 +132,17 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0125-arm-dts-add-cpts-1pps-latch-input-pins.patch \
     file://0126-drivers-cpts-enable-1pps-features-per-device-tree.patch \
     file://0127-arm-dts-am571x-idk-add-pruss_eth-sync-latch-control-.patch \
+    file://0128-net-ti-iep-rename-function-iep_enable-to-iep_ptp_fea.patch \
+    file://0129-net-ethernet-ti-iep-add-support-of-multiple-pru-iep-.patch \
+    file://0130-net-ethernet-ti-iep-add-support-of-pru-iep-n_per_out.patch \
+    file://0131-net-ethernet-ti-iep-add-support-of-pru-iep-latch.patch \
+    file://0132-net-ethernet-ti-iep-use-pinmux-control-to-configure-.patch \
+    file://0133-arm-dts-am572x-add-pru-sync-latch-pinmux-bindings.patch \
+    file://0134-arm-dts-am571x-add-off-state-for-pru-sync-latch-pinm.patch \
+    file://0135-Documentation-dt-net-Add-TI-PTP-BC-bindings.patch \
+    file://0136-net-ethernet-ti-introduce-ptp-boundary-clock-interna.patch \
+    file://0137-net-ethernet-ti-iep-add-boundary-clock-internal-sync.patch \
+    file://0138-net-ethernet-ti-cpts-add-boundary-clock-internal-syn.patch \
+    file://0139-arm-dts-am57xx-ptp-boundary-clock-dt-bindings.patch \
+    file://0140-ti_config_fragments-dra7_only.cfg-enable-TI_PTP_BC.patch \
 "

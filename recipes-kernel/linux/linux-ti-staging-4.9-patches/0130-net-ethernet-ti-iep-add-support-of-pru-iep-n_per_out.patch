@@ -1,0 +1,67 @@
+From 240812fed1a506ad8db0ad5c5deaafe09d2dc425 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Thu, 30 Nov 2017 20:26:39 -0500
+Subject: [PATCH 130/140] net: ethernet: ti: iep: add support of pru iep
+ n_per_out
+
+This patch adds support of 1 periodic out pin.
+This pin is used for external pps for measurement.
+Thus period must be 1 sec and start time will be
+ignored. The first 1 sec periodic pulse starts from
+the next second boundary of iep time.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ drivers/net/ethernet/ti/iep.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/iep.c b/drivers/net/ethernet/ti/iep.c
+index e30159e..c1068dc 100644
+--- a/drivers/net/ethernet/ti/iep.c
++++ b/drivers/net/ethernet/ti/iep.c
+@@ -414,11 +414,32 @@ static int iep_ptp_feature_enable(struct ptp_clock_info *ptp,
+ 				  struct ptp_clock_request *rq, int on)
+ {
+ 	struct iep *iep = container_of(ptp, struct iep, info);
++	struct timespec64 ts;
++	s64 ns;
+ 
+ 	switch (rq->type) {
+ 	case PTP_CLK_REQ_PPS:
+-		/* command line only enables the one for measurement */
++		/* command line only enables the one for internal sync */
++		return iep_pps_enable(iep, IEP_PPS_INTERNAL, on);
++	case PTP_CLK_REQ_PEROUT:
++		/* this enables a pps for external measurement */
++		if (rq->perout.index != 0)
++			return -EINVAL;
++
++		if (on) {
++			ts.tv_sec = rq->perout.period.sec;
++			ts.tv_nsec = rq->perout.period.nsec;
++			ns = timespec64_to_ns(&ts);
++			if (ns != NSEC_PER_SEC) {
++				dev_err(iep->dev,
++					"Unsupported period %llu ns. Device supports only 1 sec period.\n",
++					ns);
++				return -EOPNOTSUPP;
++			}
++		}
++
+ 		return iep_pps_enable(iep, IEP_PPS_EXTERNAL, on);
++
+ 	default:
+ 		break;
+ 	}
+@@ -586,7 +607,7 @@ static long iep_overflow_check(struct ptp_clock_info *ptp)
+ 	.name		= "PRUSS timer",
+ 	.max_adj	= 1000000,
+ 	.n_ext_ts	= 0,
+-	.n_pins		= 0,
++	.n_per_out	= 0,
+ 	.pps		= 0,
+ 	.adjfreq	= iep_adjfreq,
+ 	.adjtime	= iep_adjtime,
+-- 
+1.9.1
+

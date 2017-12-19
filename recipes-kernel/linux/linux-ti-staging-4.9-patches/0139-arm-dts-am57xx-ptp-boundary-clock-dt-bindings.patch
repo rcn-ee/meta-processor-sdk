@@ -1,0 +1,57 @@
+From d5be46143bbb60cc0fcc2ff9b3fb9c1353962a65 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Wed, 13 Dec 2017 19:51:43 -0500
+Subject: [PATCH 139/140] arm: dts: am57xx ptp boundary clock dt bindings
+
+Added PTP boundary clock default dt bindings for AM571x and AM572x.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ arch/arm/boot/dts/am571x-idk.dts         | 4 ++++
+ arch/arm/boot/dts/am572x-idk.dts         | 4 ++++
+ arch/arm/boot/dts/am57xx-idk-common.dtsi | 5 +++++
+ 3 files changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index c40d790..7a36232 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -399,3 +399,7 @@
+ 		>;
+ 	};
+ };
++
++&ptp_bc {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/am572x-idk.dts b/arch/arm/boot/dts/am572x-idk.dts
+index f87bab3..e623fa1 100644
+--- a/arch/arm/boot/dts/am572x-idk.dts
++++ b/arch/arm/boot/dts/am572x-idk.dts
+@@ -140,3 +140,7 @@
+ 		>;
+ 	};
+ };
++
++&ptp_bc {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+index af9c6b0..04d1766 100644
+--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+@@ -188,6 +188,11 @@
+ 			/*tx-queue-size = /bits/ 16 <97 97 97 97 48>;*/
+ 		};
+ 	};
++
++	ptp_bc: ptp_bc {
++		compatible = "ti,am57-bc";
++		status = "disabled";
++	};
+ };
+ 
+ &dra7_pmx_core {
+-- 
+1.9.1
+

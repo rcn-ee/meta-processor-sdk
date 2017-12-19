@@ -1,4 +1,4 @@
-PR_append = ".tisdk13"
+PR_append = ".tisdk14"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
@@ -6,7 +6,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
 KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
 BRANCH = "processor-sdk-linux-04.02.00"
-SRCREV = "6f69861be063d9f3b457d09d0c99d49f4bf88ab7"
+SRCREV = "d80546dfc270e1632ba0465f97896248e01aad64"
 
 SRC_URI_append = " file://jailhouse.cfg"
 
