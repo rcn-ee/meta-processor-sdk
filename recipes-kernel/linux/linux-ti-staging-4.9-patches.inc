@@ -1,4 +1,4 @@
-PR_append = ".p30"
+PR_append = ".p31"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -145,4 +145,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0138-net-ethernet-ti-cpts-add-boundary-clock-internal-syn.patch \
     file://0139-arm-dts-am57xx-ptp-boundary-clock-dt-bindings.patch \
     file://0140-ti_config_fragments-dra7_only.cfg-enable-TI_PTP_BC.patch \
+    file://0141-net-ethernet-ti-prueth-modify-IEP-ptp-clock-info-nam.patch \
+    file://0142-net-ethernet-ti-iep-release-iep-pinctrl-resource-whe.patch \
+    file://0143-net-ethernet-ti-iep-unregister-from-ptp-boundary-clo.patch \
 "

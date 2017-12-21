@@ -1,0 +1,158 @@
+From d2ec53e4eb986a4c00b01b63135b7529b9200f84 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Wed, 20 Dec 2017 08:44:24 -0500
+Subject: [PATCH 143/143] net: ethernet: ti: iep: unregister from ptp boundary
+ clock monitoring module
+
+When iep is unregistered, it should unregister itself from
+being part of a ptp boundary clock from the ptp boundary clock
+monitoring module.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ drivers/net/ethernet/ti/iep.c    |  1 +
+ drivers/net/ethernet/ti/ptp_bc.c | 60 ++++++++++++++++++++++++++++++++++------
+ drivers/net/ethernet/ti/ptp_bc.h |  5 ++++
+ 3 files changed, 57 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/iep.c b/drivers/net/ethernet/ti/iep.c
+index cb66388..bd461a1 100644
+--- a/drivers/net/ethernet/ti/iep.c
++++ b/drivers/net/ethernet/ti/iep.c
+@@ -910,6 +910,7 @@ void iep_unregister(struct iep *iep)
+ 	iep_time_sync_stop(iep);
+ 	ptp_clock_unregister(iep->ptp_clock);
+ 	iep->ptp_clock = NULL;
++	ptp_bc_clock_unregister(iep->bc_clkid);
+ }
+ 
+ /* Get the pps (sync) and extts (latch) on/off pinctrl
+diff --git a/drivers/net/ethernet/ti/ptp_bc.c b/drivers/net/ethernet/ti/ptp_bc.c
+index f95b396..989a1b7 100644
+--- a/drivers/net/ethernet/ti/ptp_bc.c
++++ b/drivers/net/ethernet/ti/ptp_bc.c
+@@ -18,22 +18,53 @@
+ #include "ptp_bc.h"
+ 
+ #define PTP_BC_MAGIC 0x1ffffff
++#define MAX_CLKS 3
+ 
+ static unsigned int bc_clocks_registered;
+ static u32 bc_clk_sync_enabled;
+ static spinlock_t bc_sync_lock; /* protects bc var */
+ static bool ptp_bc_initialized;
+ 
++static inline int bc_clock_is_registered(int clkid)
++{
++	return (bc_clocks_registered & BIT(clkid));
++}
++
++static int ptp_bc_alloc_clk_id(void)
++{
++	int i;
++
++	for (i = 0; i < MAX_CLKS; i++) {
++		if (!bc_clock_is_registered(i)) {
++			bc_clocks_registered |= BIT(i);
++			return i;
++		}
++	}
++
++	return -1;
++}
++
++static void ptp_bc_free_clk_id(int clkid)
++{
++	if (clkid >= 0 && clkid < MAX_CLKS)
++		bc_clocks_registered &= ~BIT(clkid);
++}
++
+ bool ptp_bc_clock_sync_enable(int clkid, int enable)
+ {
+ 	unsigned long flags;
+ 	bool allow = false;
+ 
+-	if (clkid < 0 || clkid >= bc_clocks_registered)
++	if (clkid < 0 || clkid >= MAX_CLKS)
+ 		return false;
+ 
+ 	spin_lock_irqsave(&bc_sync_lock, flags);
+ 
++	if (!bc_clock_is_registered(clkid)) {
++		spin_unlock_irqrestore(&bc_sync_lock, flags);
++		return false;
++	}
++
+ 	if (enable) {
+ 		if (bc_clk_sync_enabled) {
+ 			/* request to enable but someone has already enabled
+@@ -74,24 +105,35 @@ int ptp_bc_clock_register(void)
+ 	}
+ 
+ 	spin_lock_irqsave(&bc_sync_lock, flags);
+-	if (bc_clocks_registered >= 3) {
+-		pr_err("ptp_bc error: max clocks allowed %d\n", 3);
+-		goto out;
+-	}
++	id = ptp_bc_alloc_clk_id();
++	spin_unlock_irqrestore(&bc_sync_lock, flags);
+ 
+-	id = bc_clocks_registered++;
++	if (id < 0)
++		pr_err("ptp_bc register error: max clocks allowed %d\n",
++		       MAX_CLKS);
+ 
+-out:
+-	spin_unlock_irqrestore(&bc_sync_lock, flags);
+ 	return id;
+ }
+ EXPORT_SYMBOL_GPL(ptp_bc_clock_register);
+ 
++void ptp_bc_clock_unregister(int clkid)
++{
++	unsigned long flags;
++
++	if (!ptp_bc_initialized)
++		return;
++
++	spin_lock_irqsave(&bc_sync_lock, flags);
++	ptp_bc_free_clk_id(clkid);
++	spin_unlock_irqrestore(&bc_sync_lock, flags);
++}
++EXPORT_SYMBOL_GPL(ptp_bc_clock_unregister);
++
+ static int ptp_bc_probe(struct platform_device *pdev)
+ {
+ 	spin_lock_init(&bc_sync_lock);
+ 	bc_clk_sync_enabled = 0;
+-	bc_clk_sync_enabled = 0;
++	bc_clocks_registered = 0;
+ 	ptp_bc_initialized  = true;
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/ti/ptp_bc.h b/drivers/net/ethernet/ti/ptp_bc.h
+index a33b3fc..1d8eadc 100644
+--- a/drivers/net/ethernet/ti/ptp_bc.h
++++ b/drivers/net/ethernet/ti/ptp_bc.h
+@@ -17,6 +17,7 @@
+ 
+ #if IS_ENABLED(CONFIG_TI_PTP_BC)
+ int ptp_bc_clock_register(void);
++void ptp_bc_clock_unregister(int clkid);
+ bool ptp_bc_clock_sync_enable(int clkid, int enable);
+ #else
+ static int ptp_bc_clock_register(void)
+@@ -24,6 +25,10 @@ static int ptp_bc_clock_register(void)
+ 	return -1;
+ }
+ 
++static int ptp_bc_clock_unregister(int clkid)
++{
++}
++
+ static bool ptp_bc_clock_sync_enable(int clkid, int enable)
+ {
+ 	return true;
+-- 
+1.9.1
+
