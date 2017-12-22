@@ -1,0 +1,963 @@
+From a08110659d22f3808deb7be9a168fadcb55dee4f Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Fri, 22 Dec 2017 10:44:00 -0500
+Subject: [PATCH 145/146] net: ti: prueth: add node table
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/Makefile           |   2 +-
+ drivers/net/ethernet/ti/hsr_prp_firmware.h |   2 +
+ drivers/net/ethernet/ti/icss_switch.h      |   3 +
+ drivers/net/ethernet/ti/prueth.c           | 102 +++++-
+ drivers/net/ethernet/ti/prueth.h           |  15 +
+ drivers/net/ethernet/ti/pruss_node_tbl.c   | 503 +++++++++++++++++++++++++++++
+ drivers/net/ethernet/ti/pruss_node_tbl.h   | 110 +++++++
+ 7 files changed, 735 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/pruss_node_tbl.c
+ create mode 100644 drivers/net/ethernet/ti/pruss_node_tbl.h
+
+diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
+index 80ed944..1d075ad 100644
+--- a/drivers/net/ethernet/ti/Makefile
++++ b/drivers/net/ethernet/ti/Makefile
+@@ -30,4 +30,4 @@ obj-$(CONFIG_TI_KEYSTONE_NETCP_SA) += keystone_netcp_sa.o
+ keystone_netcp_sa-y := netcp_sa.o
+ 
+ obj-$(CONFIG_TI_PRUETH) += ti_prueth.o
+-ti_prueth-y := prueth.o iep.o
++ti_prueth-y := prueth.o iep.o pruss_node_tbl.o
+diff --git a/drivers/net/ethernet/ti/hsr_prp_firmware.h b/drivers/net/ethernet/ti/hsr_prp_firmware.h
+index b8df94a..35fccc1 100644
+--- a/drivers/net/ethernet/ti/hsr_prp_firmware.h
++++ b/drivers/net/ethernet/ti/hsr_prp_firmware.h
+@@ -244,6 +244,8 @@
+ #define NODE_TABLE_LAST_ENTRY             0x2fC0 /* last not count guard */
+ #define NODE_TABLE_END                    0x2fE0
+ 
++#define NODE_TABLE_NEW			  0x3000
++
+ #define NT_REM_NODE_TYPE_MASK     0x1F
+ #define NT_REM_NODE_TYPE_SHIFT    0x00
+ 
+diff --git a/drivers/net/ethernet/ti/icss_switch.h b/drivers/net/ethernet/ti/icss_switch.h
+index 83c9121..874f093 100644
+--- a/drivers/net/ethernet/ti/icss_switch.h
++++ b/drivers/net/ethernet/ti/icss_switch.h
+@@ -68,6 +68,9 @@
+ #define PRUETH_BD_SUP_HSR_FRAME_MASK	BIT(5)
+ #define PRUETH_BD_SUP_HSR_FRAME_SHIFT	5
+ 
++#define PRUETH_BD_LOOKUP_SUCCESS_MASK	BIT(6)
++#define PRUETH_BD_LOOKUP_SUCCESS_SHIFT	6
++
+ #define	PRUETH_BD_SHADOW_MASK		BIT(14)
+ #define	PRUETH_BD_SHADOW_SHIFT		14
+ 
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index e2d844d..2bcaa8d 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -21,6 +21,7 @@
+ #include <linux/hrtimer.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
++#include <linux/kthread.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+@@ -40,6 +41,7 @@
+ #include "icss_switch.h"
+ #include "hsr_prp_firmware.h"
+ #include "iep.h"
++#include "pruss_node_tbl.h"
+ 
+ #define PRUETH_MODULE_VERSION "0.2"
+ #define PRUETH_MODULE_DESCRIPTION "PRUSS Ethernet driver"
+@@ -1052,6 +1054,24 @@ int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+ 	}
+ 	prueth->error_stats_file = de;
+ 
++	de = debugfs_create_file("new_nt_index", S_IFREG | 0444,
++				 prueth->root_dir, prueth->nt,
++				 &prueth_new_nt_index_fops);
++	if (!de) {
++		dev_err(dev, "Cannot create new_nt_index file\n");
++		return rc;
++	}
++	prueth->new_nt_index = de;
++
++	de = debugfs_create_file("new_nt_bins", S_IFREG | 0444,
++				 prueth->root_dir, prueth->nt,
++				 &prueth_new_nt_bins_fops);
++	if (!de) {
++		dev_err(dev, "Cannot create new_nt_indexes file\n");
++		return rc;
++	}
++	prueth->new_nt_bins = de;
++
+ 	return 0;
+ }
+ 
+@@ -1095,6 +1115,11 @@ int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+ 	prueth->tr_file = NULL;
+ 	prueth->error_stats_file = NULL;
+ 	prueth->root_dir = NULL;
++
++	debugfs_remove(prueth->new_nt_index);
++	prueth->new_nt_index = NULL;
++	debugfs_remove(prueth->new_nt_bins);
++	prueth->new_nt_bins = NULL;
+ }
+ #else
+ static inline int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+@@ -1646,6 +1671,20 @@ static int prueth_hsr_prp_host_table_init(struct prueth *prueth)
+ 	return 0;
+ }
+ 
++static void nt_updater(struct kthread_work *work)
++{
++	struct prueth *prueth = container_of(work, struct prueth, nt_work);
++
++	pop_queue_process(prueth, &prueth->nt_lock);
++
++	node_table_update_time(prueth->nt);
++	if (++prueth->rem_cnt >= 100) {
++		node_table_check_and_remove(prueth->nt,
++					    NODE_FORGET_TIME_60000_MS);
++		prueth->rem_cnt = 0;
++	}
++}
++
+ static int prueth_hsr_prp_node_table_init(struct prueth *prueth)
+ {
+ 	void __iomem *dram0 = prueth->mem[PRUETH_MEM_DRAM0].va;
+@@ -1674,6 +1713,13 @@ static int prueth_hsr_prp_node_table_init(struct prueth *prueth)
+ 	writel(MASTER_SLAVE_BUSY_BITS_CLEAR, dram1 + NODE_TABLE_ARBITRATION);
+ 	writel(NODE_FORGET_TIME_60000_MS,    dram1 + NODE_FORGET_TIME);
+ 	writel(TABLE_CHECK_RESOLUTION_10_MS, dram1 + NODETABLE_CHECK_RESO);
++
++	prueth->nt = prueth->mem[PRUETH_MEM_SHARED_RAM].va + NODE_TABLE_NEW;
++	node_table_init(prueth);
++	spin_lock_init(&prueth->nt_lock);
++	kthread_init_work(&prueth->nt_work, nt_updater);
++	prueth->nt_kworker = kthread_create_worker(0, "prueth_nt");
++
+ 	return 0;
+ }
+ 
+@@ -1753,6 +1799,10 @@ static enum hrtimer_restart prueth_red_table_timer(struct hrtimer *timer)
+ 		prueth->tbl_check_mask &= ~HOST_TIMER_NODE_TABLE_CLEAR_BIT;
+ 	}
+ 
++
++	/* schedule work here */
++	kthread_queue_work(prueth->nt_kworker, &prueth->nt_work);
++
+ 	writel(prueth->tbl_check_mask, dram1 + HOST_TIMER_CHECK_FLAGS);
+ 	return HRTIMER_RESTART;
+ }
+@@ -1783,6 +1833,7 @@ static int prueth_start_red_table_timer(struct prueth *prueth)
+ 		return 0;
+ 
+ 	writel(prueth->tbl_check_mask, dram1 + HOST_TIMER_CHECK_FLAGS);
++
+ 	hrtimer_start(&prueth->tbl_check_timer,
+ 		      ktime_set(0, prueth->tbl_check_period),
+ 		      HRTIMER_MODE_REL);
+@@ -2174,6 +2225,10 @@ static void parse_packet_info(struct prueth *prueth, u32 buffer_descriptor,
+ 			   PRUETH_BD_LENGTH_SHIFT;
+ 	pkt_info->broadcast = !!(buffer_descriptor & PRUETH_BD_BROADCAST_MASK);
+ 	pkt_info->error = !!(buffer_descriptor & PRUETH_BD_ERROR_MASK);
++	pkt_info->sv_frame = !!(buffer_descriptor &
++				PRUETH_BD_SUP_HSR_FRAME_MASK);
++	pkt_info->lookup_success = !!(buffer_descriptor &
++				      PRUETH_BD_LOOKUP_SUCCESS_MASK);
+ }
+ 
+ /* get packet from queue
+@@ -2185,12 +2240,15 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ {
+ 	struct prueth_mmap_port_cfg_basis *pb;
+ 	struct net_device *ndev = emac->ndev;
++	struct prueth *prueth = emac->prueth;
+ 	int read_block, update_block, pkt_block_size;
+ 	unsigned int buffer_desc_count;
+ 	bool buffer_wrapped = false;
+ 	struct sk_buff *skb;
+ 	void *src_addr;
+ 	void *dst_addr;
++	void *nt_dst_addr;
++	u8 macid[6];
+ 	/* OCMC RAM is not cached and read order is not important */
+ 	void *ocmc_ram = (__force void *)emac->prueth->mem[PRUETH_MEM_OCMC].va;
+ 	unsigned int actual_pkt_len;
+@@ -2227,6 +2285,7 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ 		return -ENOMEM;
+ 	}
+ 	dst_addr = skb->data;
++	nt_dst_addr = dst_addr;
+ 
+ 	/* Get the start address of the first buffer from
+ 	 * the read buffer description
+@@ -2262,7 +2321,6 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ 
+ 		/* copy non-wrapped part */
+ 		memcpy(dst_addr, src_addr, bytes);
+-
+ 		/* copy wrapped part */
+ 		dst_addr += bytes;
+ 		remaining = actual_pkt_len - bytes;
+@@ -2275,6 +2333,27 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ 		memcpy(dst_addr, src_addr, actual_pkt_len);
+ 	}
+ 
++	if (PRUETH_HAS_RED(prueth) && !pkt_info.lookup_success) {
++		if (PRUETH_HAS_PRP(prueth)) {
++			memcpy(macid,
++			       ((pkt_info.sv_frame) ? nt_dst_addr + 20 :
++				src_addr),
++			       6);
++
++			node_table_insert(prueth, macid, emac->port_id,
++					  pkt_info.sv_frame, RED_PROTO_PRP,
++					  &prueth->nt_lock);
++
++		} else if (pkt_info.sv_frame) {
++			memcpy(macid, nt_dst_addr + 20, 6);
++			node_table_insert(prueth, macid, emac->port_id,
++					  pkt_info.sv_frame, RED_PROTO_HSR,
++					  &prueth->nt_lock);
++		}
++	}
++
++	if (!pkt_info.sv_frame) {
++
+ 	skb_put(skb, pkt_info.length);
+ 
+ 	if (PRUETH_HAS_PTP(emac->prueth))
+@@ -2284,6 +2363,9 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ 	skb->protocol = eth_type_trans(skb, ndev);
+ 	netif_rx(skb);
+ 
++	} else
++		dev_kfree_skb_any(skb);
++
+ 	/* update stats */
+ 	ndev->stats.rx_bytes += pkt_info.length;
+ 	ndev->stats.rx_packets++;
+@@ -3256,6 +3338,8 @@ static int emac_ndo_open(struct net_device *ndev)
+ 	 * sizes are fundamental to the remaining configuration
+ 	 * calculations.
+ 	 */
++	prueth->nt = prueth->mem[PRUETH_MEM_SHARED_RAM].va + NODE_TABLE_NEW;
++
+ 	if (!prueth->emac_configured) {
+ 		if (PRUETH_HAS_HSR(prueth))
+ 			prueth->hsr_mode = MODEH;
+@@ -3285,6 +3369,17 @@ static int emac_ndo_open(struct net_device *ndev)
+ 			dev_err(&ndev->dev, "hostinit failed: %d\n", ret);
+ 			goto free_ptp_irq;
+ 		}
++
++		if (PRUETH_HAS_RED(prueth)) {
++			prueth->mac_queue = kmalloc(sizeof(struct nt_queue_t),
++						    GFP_KERNEL);
++			if (!prueth->mac_queue) {
++				dev_err(&ndev->dev,
++					"cannot allocate mac queue\n");
++				goto free_ptp_irq;
++			}
++		}
++
+ 		if (PRUETH_HAS_RED(prueth)) {
+ 			ret = prueth_hsr_prp_debugfs_init(prueth);
+ 			if (ret)
+@@ -3378,6 +3473,11 @@ static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
+ 	if (PRUETH_HAS_RED(emac->prueth)) {
+ 		hrtimer_cancel(&prueth->tbl_check_timer);
+ 		prueth->tbl_check_period = 0;
++
++		if (prueth->mac_queue) {
++			kfree(prueth->mac_queue);
++			prueth->mac_queue = NULL;
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/net/ethernet/ti/prueth.h b/drivers/net/ethernet/ti/prueth.h
+index f21ba8e..5114aa8 100644
+--- a/drivers/net/ethernet/ti/prueth.h
++++ b/drivers/net/ethernet/ti/prueth.h
+@@ -16,7 +16,11 @@
+ #ifndef __NET_TI_PRUETH_H
+ #define __NET_TI_PRUETH_H
+ 
++#include <linux/hrtimer.h>
++#include <linux/kthread.h>
++#include <linux/pruss.h>
+ #include "icss_switch.h"
++#include "icss_time_sync.h"
+ 
+ /**
+  * struct prueth_queue_desc - Queue descriptor
+@@ -84,6 +88,7 @@ struct prueth_col_tx_context_info {
+  * @length: length of packet
+  * @broadcast: this packet is a broadcast packet
+  * @error: this packet has an error
++ * @sv_frame: this packet is a supper frame
+  */
+ struct prueth_packet_info {
+ 	bool start_offset;
+@@ -92,6 +97,8 @@ struct prueth_packet_info {
+ 	unsigned int length;
+ 	bool broadcast;
+ 	bool error;
++	bool sv_frame;
++	bool lookup_success;
+ 	u32 bd; /* +++WMK: dbg only: original bd */
+ };
+ 
+@@ -571,7 +578,15 @@ struct prueth {
+ 	struct dentry *dd_file;
+ 	struct dentry *tr_file;
+ 	struct dentry *error_stats_file;
++	struct dentry *new_nt_index;
++	struct dentry *new_nt_bins;
+ #endif
++	struct node_tbl	*nt;
++	struct nt_queue_t *mac_queue;
++	struct kthread_worker *nt_kworker;
++	struct kthread_work    nt_work;
++	u32		rem_cnt;
++	spinlock_t	nt_lock;
+ };
+ 
+ #endif /* __NET_TI_PRUETH_H */
+diff --git a/drivers/net/ethernet/ti/pruss_node_tbl.c b/drivers/net/ethernet/ti/pruss_node_tbl.c
+new file mode 100644
+index 0000000..5ec269fa
+--- /dev/null
++++ b/drivers/net/ethernet/ti/pruss_node_tbl.c
+@@ -0,0 +1,503 @@
++/*
++ * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/debugfs.h>
++#include <linux/string.h>
++#include <linux/spinlock_types.h>
++#include "pruss_node_tbl.h"
++
++#define IND_BINOFS(x) nt->index_tbl[x].bin_offset
++#define IND_BIN_NO(x) nt->index_tbl[x].bin_no_entries
++#define BIN_NODEOFS(x) nt->bin_tbl[x].node_tbl_offset
++
++static void pru2host_mac(u8 *mac)
++{
++	swap(mac[0], mac[3]);
++	swap(mac[1], mac[2]);
++	swap(mac[4], mac[5]);
++}
++
++static u16 get_hash(u8 *mac)
++{
++	int j;
++	u16 hash;
++
++	for (j = 0, hash = 0; j < ETHER_ADDR_LEN; j++)
++		hash ^= mac[j];
++
++	return hash;
++}
++
++/* TODO: ??? 2 PRUs can use the same lock2 */
++static void get_lock(struct node_tbl *nt)
++{
++	while (1) {
++		nt->lock = 1;
++		if (!nt->lock2)
++			break;
++		nt->lock = 0;
++	}
++}
++
++int node_table_insert(struct prueth *prueth, u8 *mac, int port, int sv_frame,
++		      int proto, spinlock_t *lock)
++{
++	struct nt_queue_t *q = prueth->mac_queue;
++	unsigned long flags;
++	int ret = RED_OK;
++
++	spin_lock_irqsave(lock, flags);
++	if (q->full) {
++		ret = RED_ERR;
++	} else {
++		memcpy(q->nt_queue[q->wr_ind].mac, mac, ETHER_ADDR_LEN);
++		q->nt_queue[q->wr_ind].sv_frame = sv_frame;
++		q->nt_queue[q->wr_ind].port_id = port;
++		q->nt_queue[q->wr_ind].proto = proto;
++
++		q->wr_ind++;
++		q->wr_ind &= (MAC_QUEUE_MAX - 1);
++		if (q->wr_ind == q->rd_ind)
++			q->full = true;
++	}
++	spin_unlock_irqrestore(lock, flags);
++
++	return ret;
++}
++
++static inline void lre_cnt_nodes_clear(struct node_tbl *nt)
++{
++	u32 *lre_cnt_nodes = (u32 *)((void *)nt + 192 - 0x3000);
++	*lre_cnt_nodes = 0;
++}
++
++static inline void lre_cnt_nodes_inc(struct node_tbl *nt)
++{
++	u32 *lre_cnt_nodes = (u32 *)((void *)nt + 192 - 0x3000);
++	*lre_cnt_nodes += 1;
++}
++
++static inline void lre_cnt_nodes_dec(struct node_tbl *nt)
++{
++	u32 *lre_cnt_nodes = (u32 *)((void *)nt + 192 - 0x3000);
++	*lre_cnt_nodes -= 1;
++}
++
++static inline bool node_expired(struct node_tbl *nt, u16 node, u16 forget_time)
++{
++	return ((nt->node_tbl[node].time_last_seen_s > forget_time ||
++		 nt->node_tbl[node].status & NT_REM_NODE_TYPE_SANAB) &&
++		nt->node_tbl[node].time_last_seen_a > forget_time &&
++		nt->node_tbl[node].time_last_seen_b > forget_time);
++}
++
++void node_table_init(struct prueth *prueth)
++{
++	int	j;
++	struct node_tbl *nt = prueth->nt;
++	struct nt_queue_t *q = prueth->mac_queue;
++
++	lre_cnt_nodes_clear(nt);
++	memset(nt, 0, sizeof(struct node_tbl));
++
++	for (j = 0; j < INDEX_TBL_MAX_ENTRIES; j++)
++		IND_BINOFS(j) = BIN_TBL_MAX_ENTRIES;
++
++	for (j = 0; j < BIN_TBL_MAX_ENTRIES; j++)
++		BIN_NODEOFS(j) = NODE_TBL_MAX_ENTRIES;
++
++	for (j = 0; j < NODE_TBL_MAX_ENTRIES; j++)
++		nt->node_tbl[j].entry_state = NODE_FREE;
++
++	q->rd_ind = 0;
++	q->wr_ind = 0;
++	q->full = false;
++}
++
++static u16 find_free_bin(struct node_tbl *nt)
++{
++	u16 j;
++
++	for (j = 0; j < BIN_TBL_MAX_ENTRIES; j++)
++		if (BIN_NODEOFS(j) == NODE_TBL_MAX_ENTRIES)
++			break;
++
++	return j;
++}
++
++/* find first free node table slot and write it to the next_free_slot */
++static u16 next_free_slot_update(struct node_tbl *nt)
++{
++	int j;
++
++	nt->next_free_slot = NODE_TBL_MAX_ENTRIES;
++	for (j = 0; j < NODE_TBL_MAX_ENTRIES; j++) {
++		if (nt->node_tbl[j].entry_state == NODE_FREE) {
++			nt->next_free_slot = j;
++			break;
++		}
++	}
++
++	return nt->next_free_slot;
++}
++
++static void inc_time(u16 *t)
++{
++	*t += 1;
++	if (*t > MAX_FORGET_TIME)
++		*t = MAX_FORGET_TIME;
++}
++
++void node_table_update_time(struct node_tbl *nt)
++{
++	int j;
++	u16 ofs;
++
++	for (j = 0; j < BIN_TBL_MAX_ENTRIES; j++) {
++		ofs = nt->bin_tbl[j].node_tbl_offset;
++		if (ofs < NODE_TBL_MAX_ENTRIES) {
++			inc_time(&nt->node_tbl[ofs].time_last_seen_a);
++			inc_time(&nt->node_tbl[ofs].time_last_seen_b);
++			/* increment time_last_seen_s if nod is not SAN */
++			if ((nt->node_tbl[ofs].status & NT_REM_NODE_TYPE_SANAB)
++			    == 0)
++				inc_time(&nt->node_tbl[ofs].time_last_seen_s);
++		}
++	}
++}
++
++static void write2node_slot(struct node_tbl *nt, u16 node, int port,
++			    int sv_frame, int proto)
++{
++	memset(&nt->node_tbl[node], 0, sizeof(struct node_tbl_t));
++	nt->node_tbl[node].entry_state = NODE_TAKEN;
++
++	if (port == 0x01) {
++		nt->node_tbl[node].status = NT_REM_NODE_TYPE_SANA;
++		nt->node_tbl[node].cnt_ra = 1;
++		if (sv_frame)
++			nt->node_tbl[node].cnt_rx_sup_a = 1;
++	} else {
++		nt->node_tbl[node].status = NT_REM_NODE_TYPE_SANB;
++		nt->node_tbl[node].cnt_rb = 1;
++		if (sv_frame)
++			nt->node_tbl[node].cnt_rx_sup_b = 1;
++	}
++
++	if (sv_frame) {
++		nt->node_tbl[node].status = (proto == RED_PROTO_PRP) ?
++			NT_REM_NODE_TYPE_DAN :
++			NT_REM_NODE_TYPE_DAN | NT_REM_NODE_HSR_BIT;
++	}
++}
++
++/* We assume that the _start_ cannot point to middle of a bin */
++static void update_indexes(u16 start, u16 end, struct node_tbl *nt)
++{
++	u16 hash, hash_prev;
++
++	hash_prev = 0xffff; /* invalid hash */
++	for (; start <= end; start++) {
++		hash = get_hash(nt->bin_tbl[start].src_mac_id);
++		if (hash != hash_prev)
++			IND_BINOFS(hash) = start;
++		hash_prev = hash;
++	}
++}
++
++/* start > end */
++static void move_up(u16 start, u16 end, struct node_tbl *nt,
++		    bool update)
++{
++	u16 j = end;
++
++	get_lock(nt);
++
++	for (; j < start; j++)
++		memcpy(&nt->bin_tbl[j], &nt->bin_tbl[j + 1],
++		       sizeof(struct bin_tbl_t));
++
++	BIN_NODEOFS(start) = NODE_TBL_MAX_ENTRIES;
++
++	if (update)
++		update_indexes(end, start + 1, nt);
++
++	nt->lock = 0;
++}
++
++/* start < end */
++static void move_down(u16 start, u16 end, struct node_tbl *nt,
++		      bool update)
++{
++	u16 j = end;
++
++	get_lock(nt);
++
++	for (; j > start; j--)
++		memcpy(&nt->bin_tbl[j], &nt->bin_tbl[j - 1],
++		       sizeof(struct bin_tbl_t));
++
++	nt->bin_tbl[start].node_tbl_offset = NODE_TBL_MAX_ENTRIES;
++
++	if (update)
++		update_indexes(start + 1, end, nt);
++
++	nt->lock = 0;
++}
++
++static int node_table_insert_from_queue(struct node_tbl *nt,
++					struct nt_queue_entry *entry)
++{
++	u8 macid[ETHER_ADDR_LEN];
++	u16 hash;
++	u16 index;
++	u16 free_node;
++	bool not_found;
++	u16 empty_slot;
++
++	if (!nt)
++		return RED_ERR;
++
++	memcpy(macid, entry->mac, ETHER_ADDR_LEN);
++	pru2host_mac(macid);
++
++	hash = get_hash(macid);
++
++	not_found = 1;
++	if (IND_BIN_NO(hash) == 0) {
++		/* there is no bin for this hash, create one */
++		index = find_free_bin(nt);
++		if (index == BIN_TBL_MAX_ENTRIES)
++			return RED_ERR;
++
++		IND_BINOFS(hash) = index;
++	} else {
++		for (index = IND_BINOFS(hash);
++		     index < IND_BINOFS(hash) + IND_BIN_NO(hash); index++) {
++			if ((memcmp(nt->bin_tbl[index].src_mac_id,
++				    macid, ETHER_ADDR_LEN) == 0)) {
++				not_found = 0;
++				break;
++			}
++		}
++	}
++
++	if (not_found) {
++		free_node = next_free_slot_update(nt);
++
++		/* at this point we might create a new bin and set
++		 * bin_offset at the index table. It was only possible
++		 * if we found a free slot in the bin table.
++		 * So, it also must be a free slot in the node table
++		 * and we will not exit here in this case.
++		 * So, be don't have to take care about fixing IND_BINOFS()
++		 * on return RED_ERR
++		 */
++		if (free_node >= NODE_TBL_MAX_ENTRIES)
++			return RED_ERR;
++
++		/* if we are here, we have at least one empty slot in the bin
++		 * table and one slot at the node table
++		 */
++
++		IND_BIN_NO(hash)++;
++
++		/* look for an empty slot downwards */
++		for (empty_slot = index;
++		     (BIN_NODEOFS(empty_slot) != NODE_TBL_MAX_ENTRIES) &&
++		     (empty_slot < NODE_TBL_MAX_ENTRIES);
++		     empty_slot++)
++			;
++
++		/* if emptySlot != maxNodes => empty slot is found,
++		 * else no space available downwards, look upwards
++		 */
++		if (empty_slot != NODE_TBL_MAX_ENTRIES) {
++			move_down(index, empty_slot, nt, true);
++		} else {
++			for (empty_slot = index - 1;
++			     (BIN_NODEOFS(empty_slot) != NODE_TBL_MAX_ENTRIES)
++			     && (empty_slot > 0);
++			     empty_slot--)
++				;
++			/* we're sure to get a space here as nodetable
++			 * has a empty slot, so no need to check for
++			 * value of emptySlot
++			 */
++			move_up(index, empty_slot, nt, true);
++		}
++
++		/* space created, now populate the values*/
++		BIN_NODEOFS(index) = free_node;
++		memcpy(nt->bin_tbl[index].src_mac_id, macid, ETHER_ADDR_LEN);
++		write2node_slot(nt, free_node, entry->port_id, entry->sv_frame,
++				entry->proto);
++
++		lre_cnt_nodes_inc(nt);
++	}
++
++	return RED_OK;
++}
++
++
++void node_table_check_and_remove(struct node_tbl *nt, u16 forget_time)
++{
++	int j, end_bin;
++	u16 node;
++	u16 hash;
++
++	/*loop to remove a node reaching NODE_FORGET_TIME*/
++	for (j = 0; j < BIN_TBL_MAX_ENTRIES; j++) {
++		node = BIN_NODEOFS(j);
++		if (node >= NODE_TBL_MAX_ENTRIES)
++			continue;
++
++		if (node_expired(nt, node, forget_time)) {
++			hash = get_hash(nt->bin_tbl[j].src_mac_id);
++
++			/* remove entry from bin array */
++			end_bin = IND_BINOFS(hash) + IND_BIN_NO(hash) - 1;
++
++			move_up(end_bin, j, nt, false);
++			(IND_BIN_NO(hash))--;
++
++			if (!IND_BIN_NO(hash))
++				IND_BINOFS(hash) = BIN_TBL_MAX_ENTRIES;
++
++			nt->node_tbl[node].entry_state = NODE_FREE;
++			BIN_NODEOFS(end_bin) = NODE_TBL_MAX_ENTRIES;
++
++			lre_cnt_nodes_dec(nt);
++		}
++	}
++}
++
++/****************************************************************************/
++static int pop_queue(struct prueth *prueth, spinlock_t *lock)
++{
++	unsigned long flags;
++	struct node_tbl *nt = prueth->nt;
++	struct nt_queue_t *q = prueth->mac_queue;
++	struct nt_queue_entry one_mac;
++	int ret = 0;
++
++	spin_lock_irqsave(lock, flags);
++	if (!q->full && (q->wr_ind == q->rd_ind)) { /* queue empty */
++		ret = 1;
++	} else {
++		memcpy(&one_mac, &(q->nt_queue[q->rd_ind]),
++		       sizeof(struct nt_queue_entry));
++		spin_unlock_irqrestore(lock, flags);
++		node_table_insert_from_queue(nt, &one_mac);
++		spin_lock_irqsave(lock, flags);
++		q->rd_ind++;
++		q->rd_ind &= (MAC_QUEUE_MAX - 1);
++		q->full = false;
++	}
++	spin_unlock_irqrestore(lock, flags);
++
++	return ret;
++}
++
++void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
++{
++	while (pop_queue(prueth, lock) == 0)
++		;
++}
++
++/* indexes */
++static int
++prueth_new_nt_index_show(struct seq_file *sfp, void *data)
++{
++	struct node_tbl *nt = (struct node_tbl *)sfp->private;
++	int j;
++	int cnt_i = 0;
++	int cnt_b = 0;
++
++	for (j = 0; j < INDEX_TBL_MAX_ENTRIES; j++)
++		if ((IND_BINOFS(j) < BIN_TBL_MAX_ENTRIES) &&
++		    (IND_BIN_NO(j) > 0)) {
++			seq_printf(sfp, "%3d; ofs %3d; no %3d\n", j,
++				   IND_BINOFS(j), IND_BIN_NO(j));
++			cnt_i++;
++			cnt_b += IND_BIN_NO(j);
++		}
++
++	seq_printf(sfp, "\nTotal indexes %d; bins %d;\n", cnt_i, cnt_b);
++
++	return 0;
++}
++
++static int
++prueth_new_nt_index_open(struct inode *inode, struct file *filp)
++{
++	return single_open(filp, prueth_new_nt_index_show,
++			   inode->i_private);
++}
++
++const struct file_operations prueth_new_nt_index_fops = {
++	.owner	= THIS_MODULE,
++	.open	= prueth_new_nt_index_open,
++	.read	= seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
++/* bins */
++static int
++prueth_new_nt_bins_show(struct seq_file *sfp, void *data)
++{
++	struct node_tbl *nt = (struct node_tbl *)sfp->private;
++	int j, o;
++	int cnt = 0;
++
++	for (j = 0; j < BIN_TBL_MAX_ENTRIES; j++)
++		if (nt->bin_tbl[j].node_tbl_offset < NODE_TBL_MAX_ENTRIES) {
++			o = nt->bin_tbl[j].node_tbl_offset;
++			seq_printf(sfp, "%3d; ofs %3d; %02x-%02x-%02x-%02x-%02x-%02x %02x %02x ra %4d; rb %4d; s%5d; a%5d; b%5d\n",
++				   j, nt->bin_tbl[j].node_tbl_offset,
++				   nt->bin_tbl[j].src_mac_id[3],
++				   nt->bin_tbl[j].src_mac_id[2],
++				   nt->bin_tbl[j].src_mac_id[1],
++				   nt->bin_tbl[j].src_mac_id[0],
++				   nt->bin_tbl[j].src_mac_id[5],
++				   nt->bin_tbl[j].src_mac_id[4],
++				   nt->node_tbl[o].entry_state,
++				   nt->node_tbl[o].status,
++				   nt->node_tbl[o].cnt_ra,
++				   nt->node_tbl[o].cnt_rb,
++				   nt->node_tbl[o].time_last_seen_s,
++				   nt->node_tbl[o].time_last_seen_a,
++				   nt->node_tbl[o].time_last_seen_b
++				   );
++			cnt++;
++		}
++	seq_printf(sfp, "\nTotal valid entries %d\n", cnt);
++
++	return 0;
++}
++
++static int
++prueth_new_nt_bins_open(struct inode *inode, struct file *filp)
++{
++	return single_open(filp, prueth_new_nt_bins_show,
++			   inode->i_private);
++}
++
++const struct file_operations prueth_new_nt_bins_fops = {
++	.owner	= THIS_MODULE,
++	.open	= prueth_new_nt_bins_open,
++	.read	= seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
+diff --git a/drivers/net/ethernet/ti/pruss_node_tbl.h b/drivers/net/ethernet/ti/pruss_node_tbl.h
+new file mode 100644
+index 0000000..98c5112
+--- /dev/null
++++ b/drivers/net/ethernet/ti/pruss_node_tbl.h
+@@ -0,0 +1,110 @@
++/*
++ * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef __NET_TI_PRUSS_NODE_TBL_H
++#define __NET_TI_PRUSS_NODE_TBL_H
++
++#include <linux/kernel.h>
++#include <linux/debugfs.h>
++#include "prueth.h"
++
++#define INDEX_TBL_MAX_ENTRIES	256
++#define BIN_TBL_MAX_ENTRIES	256
++#define NODE_TBL_MAX_ENTRIES	256
++#define MAX_FORGET_TIME		0xffdf
++#define NODE_FREE		0x10
++#define NODE_TAKEN		0x01
++
++#define RED_PROTO_HSR	0
++#define RED_PROTO_PRP	1
++
++#define ETHER_ADDR_LEN 6
++
++#define RED_OK	0
++#define RED_ERR	-1
++
++#define NT_REM_NODE_TYPE_SANA         0x01 /* Node entry type of : SANA */
++#define NT_REM_NODE_TYPE_SANB         0x02 /* Node entry type of : SANB */
++#define NT_REM_NODE_TYPE_SANAB        0x03 /* Node entry type of : SANAB */
++#define NT_REM_NODE_TYPE_DAN          0x04 /* Node entry type of : DAN */
++#define NT_REM_NODE_TYPE_REDBOX       0x08 /* Node entry type of : REDBOX */
++#define NT_REM_NODE_TYPE_VDAN         0x10 /* Node entry type of : VDAN */
++#define NT_REM_NODE_HSR_BIT           0x20 /*  if set node is HSR */
++
++#define MAC_QUEUE_MAX_SHIFT 6
++#define MAC_QUEUE_MAX (1 << MAC_QUEUE_MAX_SHIFT)
++
++struct node_index_tbl_t {
++	u16 bin_offset;
++	u16 bin_no_entries;
++	u8  lin_bin;	/* 0 - linear; 1 - binary; */
++	u8  res1;
++} __packed;
++
++struct bin_tbl_t {
++	u8 src_mac_id[ETHER_ADDR_LEN];
++	u16 node_tbl_offset;
++} __packed;
++
++struct node_tbl_t {
++	u8 mac[ETHER_ADDR_LEN];
++	u8  entry_state;
++	u8  status;
++	u32 cnt_ra;
++	u32 cnt_rb;
++	u32 err_wla;
++	u32 err_wlb;
++	u8  cnt_rx_sup_a;
++	u8  cnt_rx_sup_b;
++	u16 time_last_seen_s;
++	u16 time_last_seen_a;
++	u16 time_last_seen_b;
++} __packed;
++
++struct node_tbl {
++	struct node_index_tbl_t index_tbl[INDEX_TBL_MAX_ENTRIES];
++	struct bin_tbl_t	bin_tbl[BIN_TBL_MAX_ENTRIES];
++	struct node_tbl_t	node_tbl[NODE_TBL_MAX_ENTRIES];
++	u16 next_free_slot;
++	u16 res1;
++	u8  lock;
++	u8  lock2;
++	u8  res2[2];
++} __packed;
++
++/* NT queue definitions */
++struct nt_queue_entry {
++	u8 mac[ETHER_ADDR_LEN];
++	int sv_frame:1;
++	int proto:1;
++	int port_id:6;
++};
++
++struct nt_queue_t {
++	struct nt_queue_entry nt_queue[MAC_QUEUE_MAX];
++	int rd_ind;
++	int wr_ind;
++	bool full;
++};
++
++void node_table_init(struct prueth *prueth);
++void node_table_update_time(struct node_tbl *nt);
++void node_table_check_and_remove(struct node_tbl *nt, u16 forget_time);
++int node_table_insert(struct prueth *prueth, u8 *mac, int port, int sv_frame,
++		      int proto, spinlock_t *lock);
++
++void pop_queue_process(struct prueth *prueth, spinlock_t *lock);
++
++extern const struct file_operations prueth_new_nt_index_fops;
++extern const struct file_operations prueth_new_nt_bins_fops;
++
++#endif /* __NET_TI_PRUSS_NODE_TBL_H */
+-- 
+1.9.1
+

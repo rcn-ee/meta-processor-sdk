@@ -1,0 +1,38 @@
+From 2aa06a28bb3aa67194db9c1f005428cd0ce8f6d5 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Fri, 22 Dec 2017 11:11:12 -0500
+Subject: [PATCH 146/146] prueth: reinitialize the node table if requested by
+ node_table_clear flag
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 2bcaa8d..b4db51f 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -1786,6 +1786,7 @@ static enum hrtimer_restart prueth_red_table_timer(struct hrtimer *timer)
+ 	struct prueth *prueth = container_of(timer, struct prueth,
+ 					     tbl_check_timer);
+ 	void __iomem *dram1 = prueth->mem[PRUETH_MEM_DRAM1].va;
++	unsigned long flags;
+ 
+ 	hrtimer_forward_now(timer, ktime_set(0, prueth->tbl_check_period));
+ 	if (prueth->emac_configured !=
+@@ -1793,7 +1794,10 @@ static enum hrtimer_restart prueth_red_table_timer(struct hrtimer *timer)
+ 		return HRTIMER_RESTART;
+ 
+ 	if (prueth->node_table_clear) {
+-		prueth->tbl_check_mask |= HOST_TIMER_NODE_TABLE_CLEAR_BIT;
++		spin_lock_irqsave(&prueth->nt_lock, flags);
++		node_table_init(prueth);
++		spin_unlock_irqrestore(&prueth->nt_lock, flags);
++
+ 		prueth->node_table_clear = 0;
+ 	} else {
+ 		prueth->tbl_check_mask &= ~HOST_TIMER_NODE_TABLE_CLEAR_BIT;
+-- 
+1.9.1
+

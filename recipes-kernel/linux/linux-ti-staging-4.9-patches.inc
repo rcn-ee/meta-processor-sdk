@@ -1,4 +1,4 @@
-PR_append = ".p31"
+PR_append = ".p32"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -148,4 +148,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0141-net-ethernet-ti-prueth-modify-IEP-ptp-clock-info-nam.patch \
     file://0142-net-ethernet-ti-iep-release-iep-pinctrl-resource-whe.patch \
     file://0143-net-ethernet-ti-iep-unregister-from-ptp-boundary-clo.patch \
+    file://0144-prueth-move-definitions-to-the-header-file.patch \
+    file://0145-net-ti-prueth-add-node-table.patch \
+    file://0146-prueth-reinitialize-the-node-table-if-requested-by-n.patch \
 "
