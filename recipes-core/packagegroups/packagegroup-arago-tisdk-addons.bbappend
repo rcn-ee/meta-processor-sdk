@@ -1,4 +1,4 @@
-PR_append = "-tisdk43"
+PR_append = "-tisdk44"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -13,9 +13,5 @@ EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 EXTRA_PACKAGES_append = " zbar hidapi"
 
 UTILS_append = " net-snmp net-snmp-server-snmpd"
-
-EXTRA_LIBS_append_ti43x = " \
-    cmem \
-"
 
 EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host kaldi"

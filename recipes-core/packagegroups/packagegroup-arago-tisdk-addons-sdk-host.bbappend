@@ -1,8 +1,4 @@
-PR_append = ".tisdk7"
-
-EXTRA_LIBS_append_ti43x = " \
-    cmem-mod-src \
-"
+PR_append = ".tisdk8"
 
 EXTRA_LIBS_append_am57xx-evm = " \
     jailhouse-src \
