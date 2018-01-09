@@ -1,4 +1,4 @@
-PR_append = ".tisdk48"
+PR_append = ".tisdk49"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -36,9 +36,7 @@ MAKEFILES_remove_omapl138 = "u-boot-legacy"
 
 MAKEFILES_append_omap-a15 = " video-graphics-test"
 
-MAKEFILES_append_ti43x = " cmem-mod \
-			   evse-hmi \
-"
+MAKEFILES_append_ti43x = " evse-hmi"
 
 MAKEFILES_append_ti33x = " evse-hmi \
 			   protection-relays-hmi \
