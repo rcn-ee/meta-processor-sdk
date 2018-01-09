@@ -1,4 +1,4 @@
-PR_append = ".tisdk17"
+PR_append = ".tisdk18"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
@@ -17,24 +17,7 @@ KERNEL_DEVICETREE_append_am57xx-evm = " \
     am572x-idk-jailhouse.dtb \
     am572x-idk-lcd-osd101t2045-jh.dtb \
     am572x-idk-lcd-osd101t2587-jh.dtb \
-    ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am574x-idk-pru-excl-uio.dtb', '', d)} \
 "
-
-CMEM_MACHINE_am57xx-evm = "am571x am572x am574x"
-CMEM_DEVICETREE_am574x = "am574x-idk.dtb am574x-idk-lcd-osd101t2587.dtb"
-
-SRC_URI_append_dra7xx = " file://am57xx-pru-uio.dtsi"
-do_setup_uio_append_dra7xx() {
-
-    if [ "${ENABLE_TI_UIO_DEVICES}" == "1" ]
-    then
-        dts="am574x-idk-pru-excl-uio.dts"
-        dtsi="am57xx-pru-uio.dtsi"
-        cp ${S}/arch/arm/boot/dts/am574x-idk.dts ${S}/arch/arm/boot/dts/$dts
-        cp ${WORKDIR}/${dtsi} ${S}/arch/arm/boot/dts/
-        echo "#include \"${dtsi}\"" >> ${S}/arch/arm/boot/dts/$dts
-    fi
-}
 
 RDEPENDS_kernel-base_append_am57xx-evm = " pruhsr-fw pruprp-fw"
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
