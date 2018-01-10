@@ -1,4 +1,4 @@
-PR_append = ".p32"
+PR_append = ".p33"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -56,7 +56,6 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0049-prueth-preparatory-patch-to-add-run-time-protocol-ch.patch \
     file://0050-prueth-support-run-time-change-of-protocol-at-pru-Et.patch \
     file://0051-prueth-parse-red-rx-red-tx-DT-property-only-if-eth-t.patch \
-    file://0052-arm-dts-am57xx-allow-mt9t111-support-in-the-default-.patch \
     file://0053-arm-dts-rename-am572x-idk-jailhouse.dts-to-dtsi.patch \
     file://0054-arm-dtb-am572x-idk-add-dts-files-to-support-jailhous.patch \
     file://0055-net-prueth-Add-promiscuous-mode-support.patch \
