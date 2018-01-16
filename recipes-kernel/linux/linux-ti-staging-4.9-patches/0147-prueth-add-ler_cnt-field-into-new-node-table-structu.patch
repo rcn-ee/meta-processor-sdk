@@ -1,0 +1,78 @@
+From 62f9bf6a1f197f25058f916baf61fa9724b4ef9d Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Sat, 23 Dec 2017 09:46:56 -0500
+Subject: [PATCH] prueth: add ler_cnt field into new node table structure.
+
+The lre_cnt_nodes variable, which is part of the old node table
+implementation is not updated. Create the lre_cnt inside the node_tbl
+structure to track number of nodes in the new table.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Signed-off-by: Murali Kariceri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/pruss_node_tbl.c | 9 +++++++--
+ drivers/net/ethernet/ti/pruss_node_tbl.h | 2 +-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/pruss_node_tbl.c b/drivers/net/ethernet/ti/pruss_node_tbl.c
+index 5ec269fa..15e11af 100644
+--- a/drivers/net/ethernet/ti/pruss_node_tbl.c
++++ b/drivers/net/ethernet/ti/pruss_node_tbl.c
+@@ -79,18 +79,21 @@ static inline void lre_cnt_nodes_clear(struct node_tbl *nt)
+ {
+ 	u32 *lre_cnt_nodes = (u32 *)((void *)nt + 192 - 0x3000);
+ 	*lre_cnt_nodes = 0;
++	nt->lre_cnt = 0;
+ }
+ 
+ static inline void lre_cnt_nodes_inc(struct node_tbl *nt)
+ {
+ 	u32 *lre_cnt_nodes = (u32 *)((void *)nt + 192 - 0x3000);
+ 	*lre_cnt_nodes += 1;
++	nt->lre_cnt++;
+ }
+ 
+ static inline void lre_cnt_nodes_dec(struct node_tbl *nt)
+ {
+ 	u32 *lre_cnt_nodes = (u32 *)((void *)nt + 192 - 0x3000);
+ 	*lre_cnt_nodes -= 1;
++	nt->lre_cnt--;
+ }
+ 
+ static inline bool node_expired(struct node_tbl *nt, u16 node, u16 forget_time)
+@@ -433,7 +436,8 @@ void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
+ 			cnt_b += IND_BIN_NO(j);
+ 		}
+ 
+-	seq_printf(sfp, "\nTotal indexes %d; bins %d;\n", cnt_i, cnt_b);
++	seq_printf(sfp, "\nTotal indexes %d; bins %d;  lre_cnt %d\n",
++		   cnt_i, cnt_b, nt->lre_cnt);
+ 
+ 	return 0;
+ }
+@@ -482,7 +486,8 @@ void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
+ 				   );
+ 			cnt++;
+ 		}
+-	seq_printf(sfp, "\nTotal valid entries %d\n", cnt);
++	seq_printf(sfp, "\nTotal valid entries %d; lre_cnt %d\n",
++		   cnt, nt->lre_cnt);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/ti/pruss_node_tbl.h b/drivers/net/ethernet/ti/pruss_node_tbl.h
+index 98c5112..36e7a0f 100644
+--- a/drivers/net/ethernet/ti/pruss_node_tbl.h
++++ b/drivers/net/ethernet/ti/pruss_node_tbl.h
+@@ -75,7 +75,7 @@ struct node_tbl {
+ 	struct bin_tbl_t	bin_tbl[BIN_TBL_MAX_ENTRIES];
+ 	struct node_tbl_t	node_tbl[NODE_TBL_MAX_ENTRIES];
+ 	u16 next_free_slot;
+-	u16 res1;
++	u16 lre_cnt;
+ 	u8  lock;
+ 	u8  lock2;
+ 	u8  res2[2];
+-- 
+1.9.1
+

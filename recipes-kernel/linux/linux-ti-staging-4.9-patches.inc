@@ -1,4 +1,4 @@
-PR_append = ".p33"
+PR_append = ".p34"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -150,4 +150,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0144-prueth-move-definitions-to-the-header-file.patch \
     file://0145-net-ti-prueth-add-node-table.patch \
     file://0146-prueth-reinitialize-the-node-table-if-requested-by-n.patch \
+    file://0147-prueth-add-ler_cnt-field-into-new-node-table-structu.patch \
+    file://0148-prueth-update-prueth_hsr_prp_node_show-to-display-th.patch \
+    file://0149-prueth-fix-lre_cnt_nodes-address.patch \
 "
