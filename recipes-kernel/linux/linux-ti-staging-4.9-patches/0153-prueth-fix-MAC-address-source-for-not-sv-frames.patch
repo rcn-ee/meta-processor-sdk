@@ -1,0 +1,29 @@
+From 38c93cf76c257ef4736480a8b491a0dccadab8b9 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Thu, 11 Jan 2018 08:40:24 -0500
+Subject: [PATCH 149/153] prueth: fix MAC address source for not sv frames
+
+The source mac address for not SV frames was taken from a wrong location.
+This commit fixes this bug.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 40db04b..0958214 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -2338,7 +2338,7 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ 		if (PRUETH_HAS_PRP(prueth)) {
+ 			memcpy(macid,
+ 			       ((pkt_info.sv_frame) ? nt_dst_addr + 20 :
+-				src_addr),
++				nt_dst_addr + 6),
+ 			       6);
+ 
+ 			node_table_insert(prueth, macid, emac->port_id,
+-- 
+1.9.1
+

@@ -1,4 +1,4 @@
-PR_append = ".p34"
+PR_append = ".p35"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -153,4 +153,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0147-prueth-add-ler_cnt-field-into-new-node-table-structu.patch \
     file://0148-prueth-update-prueth_hsr_prp_node_show-to-display-th.patch \
     file://0149-prueth-fix-lre_cnt_nodes-address.patch \
+    file://0153-prueth-fix-MAC-address-source-for-not-sv-frames.patch \
+    file://0154-prueth-fix-the-kernel-crash-when-eth-interface-is-br.patch \
+    file://0155-prueth-skip-node-table-insert-for-prp-emac-mode.patch \
+    file://0156-net-ethernet-ti-cpts-add-cpts_fifo_read-within-spin_.patch \
+    file://0157-prueth-move-debug_fs-functions-to-a-separate-file.patch \
 "
