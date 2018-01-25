@@ -1,0 +1,4 @@
+PV = "3.47.01.00"
+
+#Corresponds to 3.47.01.00
+TI_IPC_SRCREV = "6a2595a4148fb12f259efc19164a9d33ad2ed294"
