@@ -1,0 +1,43 @@
+From eebdb59aa520c82b13e58134d6201461f20558cd Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Wed, 24 Jan 2018 10:11:40 -0500
+Subject: [PATCH 155/156] arm: dts: am57xx: add jailhouse support to am574x-idk
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ arch/arm/boot/dts/Makefile                 |  1 +
+ arch/arm/boot/dts/am574x-idk-jailhouse.dts | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
+ create mode 100644 arch/arm/boot/dts/am574x-idk-jailhouse.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index c5d89de..228f6da 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -597,6 +597,7 @@ dtb-$(CONFIG_SOC_DRA7XX) += \
+ 	am572x-idk-lcd-osd101t2587.dtb \
+ 	am574x-idk.dtb \
+ 	am574x-idk-lcd-osd101t2587.dtb \
++	am574x-idk-jailhouse.dtb \
+ 	am571x-idk.dtb \
+ 	am571x-idk-lcd-osd101t2045.dtb \
+ 	am571x-idk-lcd-osd101t2587.dtb \
+diff --git a/arch/arm/boot/dts/am574x-idk-jailhouse.dts b/arch/arm/boot/dts/am574x-idk-jailhouse.dts
+new file mode 100644
+index 0000000..fb2bbb6
+--- /dev/null
++++ b/arch/arm/boot/dts/am574x-idk-jailhouse.dts
+@@ -0,0 +1,10 @@
++/*
++ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "am574x-idk.dts"
++#include "am572x-idk-jailhouse.dtsi"
+-- 
+1.9.1
+

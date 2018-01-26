@@ -1,4 +1,4 @@
-PR_append = ".p35"
+PR_append = ".p36"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -158,4 +158,6 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0155-prueth-skip-node-table-insert-for-prp-emac-mode.patch \
     file://0156-net-ethernet-ti-cpts-add-cpts_fifo_read-within-spin_.patch \
     file://0157-prueth-move-debug_fs-functions-to-a-separate-file.patch \
+    file://0158-arm-dts-am57xx-add-jailhouse-support-to-am574x-idk.patch \
+    file://0159-arm-dts-am57xx-add-jailhouse-dts-files-into-Makefile.patch \
 "
