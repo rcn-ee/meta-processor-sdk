@@ -1,4 +1,4 @@
-PR_append = ".tisdk49"
+PR_append = ".tisdk50"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -61,6 +61,7 @@ KERNEL_DEVICETREE_append_am57xx-evm = " \
     am572x-idk-jailhouse.dtb \
     am572x-idk-lcd-osd101t2045-jh.dtb \
     am572x-idk-lcd-osd101t2587-jh.dtb \
+    am574x-idk-jailhouse.dtb \
 "
 
 
