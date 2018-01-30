@@ -1,4 +1,4 @@
-PR_append = ".tisdk18"
+PR_append = ".tisdk19"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
@@ -17,6 +17,7 @@ KERNEL_DEVICETREE_append_am57xx-evm = " \
     am572x-idk-jailhouse.dtb \
     am572x-idk-lcd-osd101t2045-jh.dtb \
     am572x-idk-lcd-osd101t2587-jh.dtb \
+    am574x-idk-jailhouse.dtb \
 "
 
 RDEPENDS_kernel-base_append_am57xx-evm = " pruhsr-fw pruprp-fw"
