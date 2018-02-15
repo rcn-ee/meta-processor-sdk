@@ -1,5 +1,0 @@
-# Below commit ID corresponds to "DEV.DIAG_SERDES_SB.01.00.00.09"
-SERDES_DIAG_SRCREV = "22c47cc6e1784a3d2813424da5b469e4168659a6"
-
-PV = "01.00.00.09"
-PR = "r0"
