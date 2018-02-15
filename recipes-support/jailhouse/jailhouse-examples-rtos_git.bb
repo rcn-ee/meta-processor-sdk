@@ -20,7 +20,7 @@ DEPENDS = "gcc-arm-none-eabi-native \
            i2c-lld-rtos \
            common-csl-ip-rtos \
            osal-rtos \
-           ti-xdctools \
+           ti-xdctools-native \
            ti-sysbios \
 "
 
