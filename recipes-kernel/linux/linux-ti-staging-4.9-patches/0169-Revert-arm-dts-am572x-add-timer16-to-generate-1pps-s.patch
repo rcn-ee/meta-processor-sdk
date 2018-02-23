@@ -1,0 +1,27 @@
+From 8260fffb73afa80410cb941956549086b667a58f Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Fri, 16 Feb 2018 09:40:12 -0500
+Subject: [PATCH 169/176] Revert "arm: dts: am572x: add timer16 to generate
+ 1pps signal"
+
+This reverts commit 903eca5d3fb3055da60a1faf0b5c14a7d6d9e581.
+---
+ arch/arm/boot/dts/am572x-idk.dts | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am572x-idk.dts b/arch/arm/boot/dts/am572x-idk.dts
+index 23d9c45..59850979 100644
+--- a/arch/arm/boot/dts/am572x-idk.dts
++++ b/arch/arm/boot/dts/am572x-idk.dts
+@@ -42,8 +42,3 @@
+ 	pinctrl-1 = <&mmc2_pins_hs>;
+ 	pinctrl-2 = <&mmc2_pins_ddr_rev20>;
+ };
+-
+-&mac {
+-	/* cptr pps1 generator properties */
+-	timers = <&timer16>;
+-};
+-- 
+1.9.1
+

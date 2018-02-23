@@ -1,0 +1,102 @@
+From ae329c55c9bd68ac8f5e66bf1181cbd5167178ed Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Thu, 15 Feb 2018 17:34:43 -0500
+Subject: [PATCH 161/176] Revert "arm: dts: am571x: add off state for pru sync
+ latch pinmux bindings"
+
+This reverts commit 9f73acf3699d8104b5b71434122b3094b4d3f5e1.
+---
+ arch/arm/boot/dts/am571x-idk.dts | 60 ++++++++--------------------------------
+ 1 file changed, 12 insertions(+), 48 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index 7a36232..7cefcd3 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -299,19 +299,13 @@
+ };
+ 
+ &pruss1_eth {
+-	pinctrl-names = "sync0_off", "sync0_on", "latch0_off", "latch0_on";
+-	pinctrl-0 = <&pr1_edc_sync0_off>;
+-	pinctrl-1 = <&pr1_edc_sync0_on>;
+-	pinctrl-2 = <&pr1_edc_latch0_off>;
+-	pinctrl-3 = <&pr1_edc_latch0_on>;
++	pinctrl-names = "sync_latch";
++	pinctrl-0 = <&pr1_edc_sync_latch>;
+ };
+ 
+ &pruss2_eth {
+-	pinctrl-names = "sync0_off", "sync0_on", "latch0_off", "latch0_on";
+-	pinctrl-0 = <&pr2_edc_sync0_off>;
+-	pinctrl-1 = <&pr2_edc_sync0_on>;
+-	pinctrl-2 = <&pr2_edc_latch0_off>;
+-	pinctrl-3 = <&pr2_edc_latch0_on>;
++	pinctrl-names = "sync_latch";
++	pinctrl-0 = <&pr2_edc_sync_latch>;
+ };
+ 
+ &dra7_pmx_core {
+@@ -351,51 +345,21 @@
+ 		>;
+ 	};
+ 
+-	pr1_edc_sync0_on: pr1_edc_sync0_on {
++	pr1_edc_sync_latch: pr1_edc_sync_latch {
+ 		pinctrl-single,pins = <
++			/* pr1/sync0 */
+ 			DRA7XX_CORE_IOPAD(0x3724, PIN_OUTPUT | MUX_MODE13)
++			/* pr1/latch0 */
++			DRA7XX_CORE_IOPAD(0x3694, PIN_INPUT  | MUX_MODE12)
+ 		>;
+ 	};
+ 
+-	pr1_edc_sync0_off: pr1_edc_sync0_off {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x3724, PIN_OUTPUT | MUX_MODE15)
+-		>;
+-	};
+-
+-	pr1_edc_latch0_on: pr1_edc_latch0_on {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x3694, PIN_INPUT | MUX_MODE12)
+-		>;
+-	};
+-
+-	pr1_edc_latch0_off: pr1_edc_latch0_off {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x3694, PIN_INPUT | MUX_MODE15)
+-		>;
+-	};
+-
+-	pr2_edc_sync0_on: pr2_edc_sync0_on {
++	pr2_edc_sync_latch: pr2_edc_sync_latch {
+ 		pinctrl-single,pins = <
++			/* pr2/sync0 */
+ 			DRA7XX_CORE_IOPAD(0x3728, PIN_OUTPUT | MUX_MODE13)
+-		>;
+-	};
+-
+-	pr2_edc_sync0_off: pr2_edc_sync0_off {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x3728, PIN_OUTPUT | MUX_MODE15)
+-		>;
+-	};
+-
+-	pr2_edc_latch0_on: pr2_edc_latch0_on {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x3698, PIN_INPUT | MUX_MODE12)
+-		>;
+-	};
+-
+-	pr2_edc_latch0_off: pr2_edc_latch0_off {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x3698, PIN_INPUT | MUX_MODE15)
++			/* pr2/latch0 */
++			DRA7XX_CORE_IOPAD(0x3698, PIN_INPUT  | MUX_MODE12)
+ 		>;
+ 	};
+ };
+-- 
+1.9.1
+

@@ -1,0 +1,26 @@
+From 27a6b07f625585b6fbfbc27618846f3f2c383fe4 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Fri, 16 Feb 2018 15:08:00 -0500
+Subject: [PATCH 170/176] arm: dts: am57xx-idk: export pruss2_eth
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ arch/arm/boot/dts/am57xx-idk-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+index ad288bd..af9c6b0 100644
+--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+@@ -158,7 +158,7 @@
+ 	};
+ 
+ 	/* Dual-MAC Ethernet application node on PRU-ICSS2 */
+-	pruss2_eth {
++	pruss2_eth: pruss2_eth {
+ 		compatible = "ti,am57-prueth";
+ 		pruss = <&pruss2>;
+ 		sram = <&ocmcram1>;
+-- 
+1.9.1
+

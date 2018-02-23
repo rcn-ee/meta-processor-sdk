@@ -1,0 +1,56 @@
+From 1650cf223845df28e14815dbcdf39f5447ede433 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Fri, 16 Feb 2018 09:09:06 -0500
+Subject: [PATCH 164/176] Revert "arm: dts: am57xx ptp boundary clock dt
+ bindings"
+
+This reverts commit b8575df4d40050dfe47e8b065fe592e2b1f3485e.
+---
+ arch/arm/boot/dts/am571x-idk.dts         | 4 ----
+ arch/arm/boot/dts/am572x-idk.dts         | 4 ----
+ arch/arm/boot/dts/am57xx-idk-common.dtsi | 5 -----
+ 3 files changed, 13 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index 4bf9214..4ff6f0c 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -336,7 +336,3 @@
+ 	};
+ 
+ };
+-
+-&ptp_bc {
+-	status = "okay";
+-};
+diff --git a/arch/arm/boot/dts/am572x-idk.dts b/arch/arm/boot/dts/am572x-idk.dts
+index 8a51f1f..bcb8dbc 100644
+--- a/arch/arm/boot/dts/am572x-idk.dts
++++ b/arch/arm/boot/dts/am572x-idk.dts
+@@ -94,7 +94,3 @@
+ 	};
+ 
+ };
+-
+-&ptp_bc {
+-	status = "okay";
+-};
+diff --git a/arch/arm/boot/dts/am57xx-idk-common.dtsi b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+index 6678d70..ad288bd 100644
+--- a/arch/arm/boot/dts/am57xx-idk-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-idk-common.dtsi
+@@ -188,11 +188,6 @@
+ 			/*tx-queue-size = /bits/ 16 <97 97 97 97 48>;*/
+ 		};
+ 	};
+-
+-	ptp_bc: ptp_bc {
+-		compatible = "ti,am57-bc";
+-		status = "disabled";
+-	};
+ };
+ 
+ &dra7_pmx_core {
+-- 
+1.9.1
+

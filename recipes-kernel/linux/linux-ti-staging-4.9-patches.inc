@@ -1,4 +1,4 @@
-PR_append = ".p36"
+PR_append = ".p37"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -160,4 +160,17 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0157-prueth-move-debug_fs-functions-to-a-separate-file.patch \
     file://0158-arm-dts-am57xx-add-jailhouse-support-to-am574x-idk.patch \
     file://0159-arm-dts-am57xx-add-jailhouse-dts-files-into-Makefile.patch \
+    file://0161-Revert-arm-dts-am571x-add-off-state-for-pru-sync-lat.patch \
+    file://0162-Revert-arm-dts-am571x-idk-add-pruss_eth-sync-latch-c.patch \
+    file://0163-Revert-arm-dts-am572x-add-pru-sync-latch-pinmux-bind.patch \
+    file://0164-Revert-arm-dts-am57xx-ptp-boundary-clock-dt-bindings.patch \
+    file://0165-Revert-arm-dts-add-cpts-1pps-latch-input-pins.patch \
+    file://0166-Revert-arm-dts-add-cpts-1pps-reference-output-pins.patch \
+    file://0167-Revert-arm-dts-am571x-add-1pps-definitions.patch \
+    file://0168-Revert-arm-dts-am572x-add-1pps-pinmux-definitions.patch \
+    file://0169-Revert-arm-dts-am572x-add-timer16-to-generate-1pps-s.patch \
+    file://0170-arm-dts-am57xx-idk-export-pruss2_eth.patch \
+    file://0171-arm-dts-am57xx-ptp-boundary-clock-dt-bindings.patch \
+    file://0172-arm-dts-am571x-add-am571x-idk-pps.dts.patch \
+    file://0173-arm-dts-am572x-add-am572x-idk-pps.dts.patch \
 "

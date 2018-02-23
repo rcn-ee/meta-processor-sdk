@@ -1,0 +1,43 @@
+From fb33e7c8be9ed9c57993aec80723541e2403863e Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Fri, 16 Feb 2018 09:26:33 -0500
+Subject: [PATCH 167/176] Revert "arm: dts: am571x: add 1pps definitions"
+
+This reverts commit e002ef54731770e692fe8e9422294f6548fb3ab5.
+---
+ arch/arm/boot/dts/am571x-idk.dts | 22 ----------------------
+ 1 file changed, 22 deletions(-)
+
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index 1a067b1..fe23862 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -284,25 +284,3 @@
+ 		spi-max-frequency = <76800000>;
+ 	};
+ };
+-
+-&mac {
+-	/* cptr pps1 generator properties */
+-	timers = <&timer16>;
+-	pinctrl-names = "pwm_off", "pwm_on";
+-	pinctrl-0 = <&pps1_timer16_pwm_off>;
+-	pinctrl-1 = <&pps1_timer16_pwm_on>;
+-};
+-
+-&dra7_pmx_core {
+-	pps1_timer16_pwm_on: pps1_timer16_pwm_on {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x36a0, PIN_OUTPUT | MUX_MODE10)
+-		>;
+-	};
+-
+-	pps1_timer16_pwm_off: pps1_timer16_pwm_off {
+-		pinctrl-single,pins = <
+-			DRA7XX_CORE_IOPAD(0x36a0, PIN_OUTPUT | MUX_MODE15)
+-		>;
+-	};
+-};
+-- 
+1.9.1
+
