@@ -1,0 +1,46 @@
+From 85dbd46e04bf19e7c82f25c2497bb84b0bec45f1 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 14 Feb 2018 13:24:50 -0500
+Subject: [PATCH 174/176] prueth: fix styling issue
+
+Fix indentation issue in emac_rx_packet()
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index acbc6ab..312cd84 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -1524,18 +1524,17 @@ static int emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+ 	}
+ 
+ 	if (!pkt_info.sv_frame) {
++		skb_put(skb, pkt_info.length);
+ 
+-	skb_put(skb, pkt_info.length);
++		if (PRUETH_HAS_PTP(emac->prueth))
++			pruptp_rx_timestamp(emac, skb);
+ 
+-	if (PRUETH_HAS_PTP(emac->prueth))
+-		pruptp_rx_timestamp(emac, skb);
+-
+-	/* send packet up the stack */
+-	skb->protocol = eth_type_trans(skb, ndev);
+-	netif_rx(skb);
+-
+-	} else
++		/* send packet up the stack */
++		skb->protocol = eth_type_trans(skb, ndev);
++		netif_rx(skb);
++	} else {
+ 		dev_kfree_skb_any(skb);
++	}
+ 
+ 	/* update stats */
+ 	ndev->stats.rx_bytes += pkt_info.length;
+-- 
+1.9.1
+

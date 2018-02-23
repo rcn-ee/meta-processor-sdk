@@ -1,0 +1,110 @@
+From 9feb779822feef729e65d1435d90220939c69951 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Wed, 14 Feb 2018 13:59:14 -0500
+Subject: [PATCH 176/176] hsr/prp: add support for mc filtering at the slave
+ device
+
+When MC list is updated by the networking layer due to a user
+command and as well as when allmulti flag is set, it needs to be
+passed to the enslaved Ethernet devices. This patch allows this
+to happen by implementing ndo_change_rx_flags() and ndo_set_rx_mode()
+API calls that in turns pass it to the slave devices using
+existing API calls.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ net/hsr-prp/hsr_prp_device.c | 65 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
+
+diff --git a/net/hsr-prp/hsr_prp_device.c b/net/hsr-prp/hsr_prp_device.c
+index 0f64c33..7e6d6f6 100644
+--- a/net/hsr-prp/hsr_prp_device.c
++++ b/net/hsr-prp/hsr_prp_device.c
+@@ -195,7 +195,24 @@ static int hsr_prp_dev_open(struct net_device *dev)
+ 
+ static int hsr_prp_dev_close(struct net_device *dev)
+ {
+-	/* Nothing to do here. */
++	struct hsr_prp_priv *priv;
++	struct hsr_prp_port *port;
++
++	priv = netdev_priv(dev);
++	hsr_prp_for_each_port(priv, port) {
++		if (port->type == HSR_PRP_PT_MASTER)
++			continue;
++		switch (port->type) {
++		case HSR_PRP_PT_SLAVE_A:
++		case HSR_PRP_PT_SLAVE_B:
++			dev_uc_unsync(port->dev, dev);
++			dev_mc_unsync(port->dev, dev);
++			break;
++		default:
++			break;
++		}
++	}
++
+ 	return 0;
+ }
+ 
+@@ -413,12 +430,58 @@ static void hsr_prp_dev_destroy(struct net_device *hsr_prp_dev)
+ 	free_netdev(hsr_prp_dev);
+ }
+ 
++static void hsr_prp_ndo_set_rx_mode(struct net_device *dev)
++{
++	struct hsr_prp_priv *priv;
++	struct hsr_prp_port *port;
++
++	priv = netdev_priv(dev);
++	hsr_prp_for_each_port(priv, port) {
++		if (port->type == HSR_PRP_PT_MASTER)
++			continue;
++		switch (port->type) {
++		case HSR_PRP_PT_SLAVE_A:
++		case HSR_PRP_PT_SLAVE_B:
++			dev_mc_sync_multiple(port->dev, dev);
++			dev_uc_sync_multiple(port->dev, dev);
++			break;
++		default:
++			break;
++		}
++	}
++}
++
++static void hsr_prp_change_rx_flags(struct net_device *dev, int change)
++{
++	struct hsr_prp_port *port;
++	struct hsr_prp_priv *priv;
++
++	priv = netdev_priv(dev);
++	hsr_prp_for_each_port(priv, port) {
++		if (port->type == HSR_PRP_PT_MASTER)
++			continue;
++		switch (port->type) {
++		case HSR_PRP_PT_SLAVE_A:
++		case HSR_PRP_PT_SLAVE_B:
++			if (change & IFF_ALLMULTI)
++				dev_set_allmulti(port->dev,
++						 dev->flags &
++						 IFF_ALLMULTI ? 1 : -1);
++			break;
++		default:
++			break;
++		}
++	}
++}
++
+ static const struct net_device_ops hsr_prp_device_ops = {
+ 	.ndo_change_mtu = hsr_prp_dev_change_mtu,
+ 	.ndo_open = hsr_prp_dev_open,
+ 	.ndo_stop = hsr_prp_dev_close,
+ 	.ndo_start_xmit = hsr_prp_dev_xmit,
++	.ndo_change_rx_flags = hsr_prp_change_rx_flags,
+ 	.ndo_fix_features = hsr_prp_fix_features,
++	.ndo_set_rx_mode = hsr_prp_ndo_set_rx_mode,
+ };
+ 
+ static void hsr_prp_dev_setup(struct net_device *ndev, struct device_type *type)
+-- 
+1.9.1
+

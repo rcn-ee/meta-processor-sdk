@@ -1,4 +1,4 @@
-PR_append = ".p37"
+PR_append = ".p38"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -173,4 +173,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0171-arm-dts-am57xx-ptp-boundary-clock-dt-bindings.patch \
     file://0172-arm-dts-am571x-add-am571x-idk-pps.dts.patch \
     file://0173-arm-dts-am572x-add-am572x-idk-pps.dts.patch \
+    file://0174-prueth-fix-styling-issue.patch \
+    file://0175-prueth-add-support-for-multicast-filtering.patch \
+    file://0176-hsr-prp-add-support-for-mc-filtering-at-the-slave-de.patch \
 "
