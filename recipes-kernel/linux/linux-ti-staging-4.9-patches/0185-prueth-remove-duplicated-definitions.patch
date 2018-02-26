@@ -1,0 +1,112 @@
+From bfc74cee071cddd288d2d5052743dcd5bb448b6e Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Mon, 29 Jan 2018 09:55:14 -0500
+Subject: [PATCH 185/186] prueth: remove duplicated definitions
+
+Some definitions are already defined in the hsr_prp_firmware.h.
+This commit removes such definitions.
+
+It also removes unused LRE_CNT_NODES firmware variable
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/hsr_prp_firmware.h |  1 -
+ drivers/net/ethernet/ti/prueth_node_tbl.c  | 29 ++---------------------------
+ drivers/net/ethernet/ti/prueth_node_tbl.h  |  8 --------
+ 3 files changed, 2 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/hsr_prp_firmware.h b/drivers/net/ethernet/ti/hsr_prp_firmware.h
+index 9860d88..dc52e1d 100644
+--- a/drivers/net/ethernet/ti/hsr_prp_firmware.h
++++ b/drivers/net/ethernet/ti/hsr_prp_firmware.h
+@@ -181,7 +181,6 @@
+ #define LRE_CNT_ERRORS_B                       (LRE_START + 44)
+ #define LRE_CNT_ERRORS_C                       (LRE_START + 48)
+ /* Number of active nodes in the node table */
+-#define LRE_CNT_NODES                          (LRE_START + 52)
+ #define LRE_CNT_PROXY_NODES                    (LRE_START + 56)
+ /* Number of entries in the duplicate detection mechanism on
+  * port A/B/C for which no duplicate was received.
+diff --git a/drivers/net/ethernet/ti/prueth_node_tbl.c b/drivers/net/ethernet/ti/prueth_node_tbl.c
+index 28b8122..57aec8a 100644
+--- a/drivers/net/ethernet/ti/prueth_node_tbl.c
++++ b/drivers/net/ethernet/ti/prueth_node_tbl.c
+@@ -80,30 +80,6 @@ int node_table_insert(struct prueth *prueth, u8 *mac, int port, int sv_frame,
+ 	return ret;
+ }
+ 
+-static inline void lre_cnt_nodes_clear(struct node_tbl *nt)
+-{
+-	u32 *lre_cnt_nodes = (u32 *)((void *)nt + LRE_CNT_NODES -
+-				     NODE_TABLE_NEW);
+-	*lre_cnt_nodes = 0;
+-	nt->lre_cnt = 0;
+-}
+-
+-static inline void lre_cnt_nodes_inc(struct node_tbl *nt)
+-{
+-	u32 *lre_cnt_nodes = (u32 *)((void *)nt + LRE_CNT_NODES -
+-				     NODE_TABLE_NEW);
+-	*lre_cnt_nodes += 1;
+-	nt->lre_cnt++;
+-}
+-
+-static inline void lre_cnt_nodes_dec(struct node_tbl *nt)
+-{
+-	u32 *lre_cnt_nodes = (u32 *)((void *)nt + LRE_CNT_NODES -
+-				     NODE_TABLE_NEW);
+-	*lre_cnt_nodes -= 1;
+-	nt->lre_cnt--;
+-}
+-
+ static inline bool node_expired(struct node_tbl *nt, u16 node, u16 forget_time)
+ {
+ 	return ((nt->node_tbl[node].time_last_seen_s > forget_time ||
+@@ -118,7 +94,6 @@ void node_table_init(struct prueth *prueth)
+ 	struct node_tbl *nt = prueth->nt;
+ 	struct nt_queue_t *q = prueth->mac_queue;
+ 
+-	lre_cnt_nodes_clear(nt);
+ 	memset(nt, 0, sizeof(struct node_tbl));
+ 
+ 	for (j = 0; j < INDEX_TBL_MAX_ENTRIES; j++)
+@@ -354,7 +329,7 @@ static int node_table_insert_from_queue(struct node_tbl *nt,
+ 		write2node_slot(nt, free_node, entry->port_id, entry->sv_frame,
+ 				entry->proto);
+ 
+-		lre_cnt_nodes_inc(nt);
++		nt->lre_cnt++;
+ 	}
+ 
+ 	return RED_OK;
+@@ -387,7 +362,7 @@ void node_table_check_and_remove(struct node_tbl *nt, u16 forget_time)
+ 			nt->node_tbl[node].entry_state = NODE_FREE;
+ 			BIN_NODEOFS(end_bin) = NODE_TBL_MAX_ENTRIES;
+ 
+-			lre_cnt_nodes_dec(nt);
++			nt->lre_cnt--;
+ 		}
+ 	}
+ }
+diff --git a/drivers/net/ethernet/ti/prueth_node_tbl.h b/drivers/net/ethernet/ti/prueth_node_tbl.h
+index 2e64a99..e0f324a 100644
+--- a/drivers/net/ethernet/ti/prueth_node_tbl.h
++++ b/drivers/net/ethernet/ti/prueth_node_tbl.h
+@@ -32,14 +32,6 @@
+ #define RED_OK	0
+ #define RED_ERR	-1
+ 
+-#define NT_REM_NODE_TYPE_SANA         0x01 /* Node entry type of : SANA */
+-#define NT_REM_NODE_TYPE_SANB         0x02 /* Node entry type of : SANB */
+-#define NT_REM_NODE_TYPE_SANAB        0x03 /* Node entry type of : SANAB */
+-#define NT_REM_NODE_TYPE_DAN          0x04 /* Node entry type of : DAN */
+-#define NT_REM_NODE_TYPE_REDBOX       0x08 /* Node entry type of : REDBOX */
+-#define NT_REM_NODE_TYPE_VDAN         0x10 /* Node entry type of : VDAN */
+-#define NT_REM_NODE_HSR_BIT           0x20 /*  if set node is HSR */
+-
+ #define MAC_QUEUE_MAX_SHIFT 6
+ #define MAC_QUEUE_MAX (1 << MAC_QUEUE_MAX_SHIFT)
+ 
+-- 
+1.9.1
+

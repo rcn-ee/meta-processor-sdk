@@ -1,4 +1,4 @@
-PR_append = ".p41"
+PR_append = ".p42"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -181,4 +181,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0179-prueth-protect-tx_ev_msg-array.patch \
     file://0180-prueth-Fix-random-RT-Linux-crash-seen-when-running-o.patch \
     file://0181-prueth-Fix-the-high-CPU-usage-issue-on-AM3-4-devices.patch \
+    file://0182-prueth-rename-pruss_node_tbl-files-to-prueth_node_tb.patch \
+    file://0183-prueth-rename-all-appearances-of-new_nt_-to-just-nt_.patch \
+    file://0184-prueth-use-u16-for-firmware-lock.patch \
+    file://0185-prueth-remove-duplicated-definitions.patch \
+    file://0186-prueth-wait-firmware-finished-using-the-node-table-b.patch \
 "

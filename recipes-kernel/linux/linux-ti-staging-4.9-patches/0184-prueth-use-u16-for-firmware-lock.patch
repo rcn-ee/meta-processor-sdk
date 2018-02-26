@@ -1,0 +1,110 @@
+From 8579f8af29331efc63788fee92d7f3fa30d34af4 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Mon, 29 Jan 2018 09:13:15 -0500
+Subject: [PATCH 184/186] prueth: use u16 for firmware lock
+
+As we have two PRUs sharing the same lock it is possible that the both
+can obtain the lock and one PRU returns it, while another PRU still
+working on the node table. If the ARM core is waiting for the lock, it
+may start updating the node table, while the second PRU has not finished
+its job.
+
+To eliminate this we allocate u16 for fw_lock, where each PRU will use
+one byte of it. So, in this situation if one PRU returns the lock, it
+will be still locked by the second.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/prueth_node_tbl.c | 22 +++++++++++++---------
+ drivers/net/ethernet/ti/prueth_node_tbl.h |  8 +++++---
+ 2 files changed, 18 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth_node_tbl.c b/drivers/net/ethernet/ti/prueth_node_tbl.c
+index d6605ff..28b8122 100644
+--- a/drivers/net/ethernet/ti/prueth_node_tbl.c
++++ b/drivers/net/ethernet/ti/prueth_node_tbl.c
+@@ -39,17 +39,21 @@ static u16 get_hash(u8 *mac)
+ 	return hash;
+ }
+ 
+-/* TODO: ??? 2 PRUs can use the same lock2 */
+-static void get_lock(struct node_tbl *nt)
++static void pru_spin_lock(struct node_tbl *nt)
+ {
+ 	while (1) {
+-		nt->lock = 1;
+-		if (!nt->lock2)
++		nt->arm_lock = 1;
++		if (!nt->fw_lock)
+ 			break;
+-		nt->lock = 0;
++		nt->arm_lock = 0;
+ 	}
+ }
+ 
++static inline void pru_spin_unlock(struct node_tbl *nt)
++{
++	nt->arm_lock = 0;
++}
++
+ int node_table_insert(struct prueth *prueth, u8 *mac, int port, int sv_frame,
+ 		      int proto, spinlock_t *lock)
+ {
+@@ -228,7 +232,7 @@ static void move_up(u16 start, u16 end, struct node_tbl *nt,
+ {
+ 	u16 j = end;
+ 
+-	get_lock(nt);
++	pru_spin_lock(nt);
+ 
+ 	for (; j < start; j++)
+ 		memcpy(&nt->bin_tbl[j], &nt->bin_tbl[j + 1],
+@@ -239,7 +243,7 @@ static void move_up(u16 start, u16 end, struct node_tbl *nt,
+ 	if (update)
+ 		update_indexes(end, start + 1, nt);
+ 
+-	nt->lock = 0;
++	pru_spin_unlock(nt);
+ }
+ 
+ /* start < end */
+@@ -248,7 +252,7 @@ static void move_down(u16 start, u16 end, struct node_tbl *nt,
+ {
+ 	u16 j = end;
+ 
+-	get_lock(nt);
++	pru_spin_lock(nt);
+ 
+ 	for (; j > start; j--)
+ 		memcpy(&nt->bin_tbl[j], &nt->bin_tbl[j - 1],
+@@ -259,7 +263,7 @@ static void move_down(u16 start, u16 end, struct node_tbl *nt,
+ 	if (update)
+ 		update_indexes(start + 1, end, nt);
+ 
+-	nt->lock = 0;
++	pru_spin_unlock(nt);
+ }
+ 
+ static int node_table_insert_from_queue(struct node_tbl *nt,
+diff --git a/drivers/net/ethernet/ti/prueth_node_tbl.h b/drivers/net/ethernet/ti/prueth_node_tbl.h
+index d1689ac..2e64a99 100644
+--- a/drivers/net/ethernet/ti/prueth_node_tbl.h
++++ b/drivers/net/ethernet/ti/prueth_node_tbl.h
+@@ -76,9 +76,11 @@ struct node_tbl {
+ 	struct node_tbl_t	node_tbl[NODE_TBL_MAX_ENTRIES];
+ 	u16 next_free_slot;
+ 	u16 lre_cnt;
+-	u8  lock;
+-	u8  lock2;
+-	u8  res2[2];
++	u8  arm_lock;
++	u8  res;
++	u16 fw_lock; /* firmware use this field as 2 independent bytes
++		      * first byte for PRU0, second for PRU1
++		      */
+ } __packed;
+ 
+ /* NT queue definitions */
+-- 
+1.9.1
+

@@ -1,0 +1,154 @@
+From fb97004ffdfdfd79b558610826502ac5652dab6e Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Fri, 19 Jan 2018 10:55:03 -0500
+Subject: [PATCH 183/186] prueth: rename all appearances of "new_nt_" to just
+ "nt_"
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.h          |  4 ++--
+ drivers/net/ethernet/ti/prueth_dbgfs.c    | 20 ++++++++++----------
+ drivers/net/ethernet/ti/prueth_node_tbl.c | 20 ++++++++++----------
+ drivers/net/ethernet/ti/prueth_node_tbl.h |  4 ++--
+ 4 files changed, 24 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.h b/drivers/net/ethernet/ti/prueth.h
+index 9875172..b9b357d 100644
+--- a/drivers/net/ethernet/ti/prueth.h
++++ b/drivers/net/ethernet/ti/prueth.h
+@@ -587,8 +587,8 @@ struct prueth {
+ 	struct dentry *dd_file;
+ 	struct dentry *tr_file;
+ 	struct dentry *error_stats_file;
+-	struct dentry *new_nt_index;
+-	struct dentry *new_nt_bins;
++	struct dentry *nt_index;
++	struct dentry *nt_bins;
+ #endif
+ 	struct node_tbl	*nt;
+ 	struct nt_queue_t *mac_queue;
+diff --git a/drivers/net/ethernet/ti/prueth_dbgfs.c b/drivers/net/ethernet/ti/prueth_dbgfs.c
+index 5e786ba..e23fdcb 100644
+--- a/drivers/net/ethernet/ti/prueth_dbgfs.c
++++ b/drivers/net/ethernet/ti/prueth_dbgfs.c
+@@ -831,23 +831,23 @@ int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+ 	}
+ 	prueth->error_stats_file = de;
+ 
+-	de = debugfs_create_file("new_nt_index", S_IFREG | 0444,
++	de = debugfs_create_file("nt_index", S_IFREG | 0444,
+ 				 prueth->root_dir, prueth->nt,
+-				 &prueth_new_nt_index_fops);
++				 &prueth_nt_index_fops);
+ 	if (!de) {
+-		dev_err(dev, "Cannot create new_nt_index file\n");
++		dev_err(dev, "Cannot create nt_index file\n");
+ 		return rc;
+ 	}
+-	prueth->new_nt_index = de;
++	prueth->nt_index = de;
+ 
+-	de = debugfs_create_file("new_nt_bins", S_IFREG | 0444,
++	de = debugfs_create_file("nt_bins", S_IFREG | 0444,
+ 				 prueth->root_dir, prueth->nt,
+-				 &prueth_new_nt_bins_fops);
++				 &prueth_nt_bins_fops);
+ 	if (!de) {
+-		dev_err(dev, "Cannot create new_nt_indexes file\n");
++		dev_err(dev, "Cannot create nt_indexes file\n");
+ 		return rc;
+ 	}
+-	prueth->new_nt_bins = de;
++	prueth->nt_bins = de;
+ 
+ 	return 0;
+ }
+@@ -893,7 +893,7 @@ int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+ 	prueth->tr_file = NULL;
+ 	prueth->error_stats_file = NULL;
+ 	prueth->root_dir = NULL;
+-	prueth->new_nt_index = NULL;
+-	prueth->new_nt_bins = NULL;
++	prueth->nt_index = NULL;
++	prueth->nt_bins = NULL;
+ }
+ #endif
+diff --git a/drivers/net/ethernet/ti/prueth_node_tbl.c b/drivers/net/ethernet/ti/prueth_node_tbl.c
+index 7eb25a5..d6605ff 100644
+--- a/drivers/net/ethernet/ti/prueth_node_tbl.c
++++ b/drivers/net/ethernet/ti/prueth_node_tbl.c
+@@ -423,7 +423,7 @@ void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
+ 
+ /* indexes */
+ static int
+-prueth_new_nt_index_show(struct seq_file *sfp, void *data)
++prueth_nt_index_show(struct seq_file *sfp, void *data)
+ {
+ 	struct node_tbl *nt = (struct node_tbl *)sfp->private;
+ 	int j;
+@@ -446,15 +446,15 @@ void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
+ }
+ 
+ static int
+-prueth_new_nt_index_open(struct inode *inode, struct file *filp)
++prueth_nt_index_open(struct inode *inode, struct file *filp)
+ {
+-	return single_open(filp, prueth_new_nt_index_show,
++	return single_open(filp, prueth_nt_index_show,
+ 			   inode->i_private);
+ }
+ 
+-const struct file_operations prueth_new_nt_index_fops = {
++const struct file_operations prueth_nt_index_fops = {
+ 	.owner	= THIS_MODULE,
+-	.open	= prueth_new_nt_index_open,
++	.open	= prueth_nt_index_open,
+ 	.read	= seq_read,
+ 	.llseek = seq_lseek,
+ 	.release = single_release,
+@@ -462,7 +462,7 @@ void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
+ 
+ /* bins */
+ static int
+-prueth_new_nt_bins_show(struct seq_file *sfp, void *data)
++prueth_nt_bins_show(struct seq_file *sfp, void *data)
+ {
+ 	struct node_tbl *nt = (struct node_tbl *)sfp->private;
+ 	int j, o;
+@@ -496,15 +496,15 @@ void pop_queue_process(struct prueth *prueth, spinlock_t *lock)
+ }
+ 
+ static int
+-prueth_new_nt_bins_open(struct inode *inode, struct file *filp)
++prueth_nt_bins_open(struct inode *inode, struct file *filp)
+ {
+-	return single_open(filp, prueth_new_nt_bins_show,
++	return single_open(filp, prueth_nt_bins_show,
+ 			   inode->i_private);
+ }
+ 
+-const struct file_operations prueth_new_nt_bins_fops = {
++const struct file_operations prueth_nt_bins_fops = {
+ 	.owner	= THIS_MODULE,
+-	.open	= prueth_new_nt_bins_open,
++	.open	= prueth_nt_bins_open,
+ 	.read	= seq_read,
+ 	.llseek = seq_lseek,
+ 	.release = single_release,
+diff --git a/drivers/net/ethernet/ti/prueth_node_tbl.h b/drivers/net/ethernet/ti/prueth_node_tbl.h
+index 36e7a0f..d1689ac 100644
+--- a/drivers/net/ethernet/ti/prueth_node_tbl.h
++++ b/drivers/net/ethernet/ti/prueth_node_tbl.h
+@@ -104,7 +104,7 @@ int node_table_insert(struct prueth *prueth, u8 *mac, int port, int sv_frame,
+ 
+ void pop_queue_process(struct prueth *prueth, spinlock_t *lock);
+ 
+-extern const struct file_operations prueth_new_nt_index_fops;
+-extern const struct file_operations prueth_new_nt_bins_fops;
++extern const struct file_operations prueth_nt_index_fops;
++extern const struct file_operations prueth_nt_bins_fops;
+ 
+ #endif /* __NET_TI_PRUSS_NODE_TBL_H */
+-- 
+1.9.1
+
