@@ -1,4 +1,4 @@
-PR_append = ".p39"
+PR_append = ".p40"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -177,4 +177,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0175-prueth-add-support-for-multicast-filtering.patch \
     file://0176-hsr-prp-add-support-for-mc-filtering-at-the-slave-de.patch \
     file://0177-net-ethernet-ti-cpts-fix-double-disable-issue-of-1PP.patch \
+    file://0178-net-prueth-use-swork-to-handle-tx-timestamp-events-f.patch \
+    file://0179-prueth-protect-tx_ev_msg-array.patch \
+    file://0180-prueth-Fix-random-RT-Linux-crash-seen-when-running-o.patch \
 "

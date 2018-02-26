@@ -1,0 +1,50 @@
+From 3a61875d518defda0562f0f0d8e126e3f4e7671d Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Mon, 19 Feb 2018 11:14:42 -0500
+Subject: [PATCH 176/177] prueth: Fix random RT Linux crash seen when running
+ oc/bc application
+
+This patch fixes the random kernel crash seen when running oc/bc
+application on an RT Linux kernel. The issue seems to be happening
+because in the receive packet processing path, the kernel code
+encounters an skb that is already freed. This is fixed by properly
+reference counting the skb from xmit handler (through a call to
+skb_get() before passing ownership to the ts even handler worker.
+As skb is already reference counted, it is freed at the end of
+xmit handler through a call to dev_kfree_skb_any() as done with
+frames not requiring time stamping.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Suggested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Tested-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 57d2db7..c30df5f 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -1235,6 +1235,7 @@ static inline int emac_tx_ts_enqueue(struct prueth_emac *emac,
+ 		return -EBUSY;
+ 	}
+ 
++	skb_get(skb);
+ 	emac->tx_ev_msg[msg_t] = skb;
+ 	spin_unlock_irqrestore(&emac->ev_msg_lock, flags);
+ 	return 0;
+@@ -2887,10 +2888,7 @@ static int emac_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	ndev->stats.tx_packets++;
+ 	ndev->stats.tx_bytes += skb->len;
+ 
+-	if (!(skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS) ||
+-	    !PRUETH_HAS_PTP(emac->prueth) ||
+-	    !emac_is_ptp_tx_enabled(emac))
+-		dev_kfree_skb_any(skb);
++	dev_kfree_skb_any(skb);
+ 
+ 	return NETDEV_TX_OK;
+ 
+-- 
+1.9.1
+

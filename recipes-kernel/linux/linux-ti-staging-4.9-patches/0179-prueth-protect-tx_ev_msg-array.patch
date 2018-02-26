@@ -1,0 +1,83 @@
+From ec4879d9c9a6eab34286ecb11fb7b540b3f8b321 Mon Sep 17 00:00:00 2001
+From: Vitaly Andrianov <vitalya@ti.com>
+Date: Thu, 15 Feb 2018 12:22:06 -0500
+Subject: [PATCH 175/177] prueth: protect tx_ev_msg array
+
+This commit adds spinlock to prevent simultaneous access to the
+tx_ev_msg array.
+
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+Suggested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Suggested-by: Murali Karicheri <m-karicheri2@ti.com>
+Tested-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/net/ethernet/ti/prueth.c | 8 ++++++++
+ drivers/net/ethernet/ti/prueth.h | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index 25c9666..57d2db7 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -222,10 +222,13 @@ static int pruptp_proc_tx_ts(struct prueth_emac *emac,
+ 	struct prueth *prueth = emac->prueth;
+ 	struct sk_buff *skb;
+ 	int ret;
++	unsigned long flags;
+ 
+ 	/* get the msg from list */
++	spin_lock_irqsave(&emac->ev_msg_lock, flags);
+ 	skb = emac->tx_ev_msg[ts_msgtype];
+ 	emac->tx_ev_msg[ts_msgtype] = NULL;
++	spin_unlock_irqrestore(&emac->ev_msg_lock, flags);
+ 	if (!skb) {
+ 		netdev_err(emac->ndev,
+ 			   "no tx msg %u found waiting for ts\n", ts_msgtype);
+@@ -1216,6 +1219,7 @@ static irqreturn_t emac_tx_hardirq(int irq, void *dev_id)
+ static inline int emac_tx_ts_enqueue(struct prueth_emac *emac,
+ 				     struct sk_buff *skb)
+ {
++	unsigned long flags;
+ 	u8 msg_t = pruptp_ts_msgtype(skb);
+ 
+ 	if (msg_t > PTP_PDLY_RSP_MSG_ID) {
+@@ -1223,13 +1227,16 @@ static inline int emac_tx_ts_enqueue(struct prueth_emac *emac,
+ 		return -EINVAL;
+ 	}
+ 
++	spin_lock_irqsave(&emac->ev_msg_lock, flags);
+ 	if (emac->tx_ev_msg[msg_t]) {
++		spin_unlock_irqrestore(&emac->ev_msg_lock, flags);
+ 		netdev_err(emac->ndev, "msg %u finds ts queue occupied\n",
+ 			   msg_t);
+ 		return -EBUSY;
+ 	}
+ 
+ 	emac->tx_ev_msg[msg_t] = skb;
++	spin_unlock_irqrestore(&emac->ev_msg_lock, flags);
+ 	return 0;
+ }
+ 
+@@ -3575,6 +3582,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 
+ 	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
+ 	spin_lock_init(&emac->lock);
++	spin_lock_init(&emac->ev_msg_lock);
+ 	/* get mac address from DT and set private and netdev addr */
+ 	mac_addr = of_get_mac_address(eth_node);
+ 	if (mac_addr)
+diff --git a/drivers/net/ethernet/ti/prueth.h b/drivers/net/ethernet/ti/prueth.h
+index a31479d..9875172 100644
+--- a/drivers/net/ethernet/ti/prueth.h
++++ b/drivers/net/ethernet/ti/prueth.h
+@@ -435,6 +435,7 @@ struct prueth_emac {
+ 	struct prueth *prueth;
+ 	struct net_device *ndev;
+ 	struct sk_buff *tx_ev_msg[PTP_PDLY_RSP_MSG_ID + 1]; /* tx ev needs ts */
++	spinlock_t ev_msg_lock;
+ 	u8 mac_addr[6];
+ 	u32 msg_enable;
+ 
+-- 
+1.9.1
+
