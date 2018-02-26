@@ -1,0 +1,48 @@
+From 23ccbd101b55da688e4615565128c1c961a41e64 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Fri, 19 Jan 2018 15:13:20 -0500
+Subject: [PATCH 173/177] net:ethernet:ti:cpts: fix double disable issue of
+ 1PPS generation
+
+The timer16 is used to generate the output pulse for both 1PPS and
+reference pulse (PEROUT) and should be disabled when both features are
+disabled and enabled when either one of them is to be enabled. Both
+pps_enable and ref_enable variable are set to -1 to indicate timer16 is
+no longer required and should stay that way when the application intends
+to disable them again.
+
+This patch adds the required check at cpts_pps_enable() and
+cpts_ref_enable()
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/net/ethernet/ti/cpts.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index 08c0fea2..7d37b1b 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -432,6 +432,9 @@ static int cpts_pps_enable(struct cpts *cpts, int on)
+ {
+ 	on = (on? 1 : 0);
+ 
++	if ((cpts->pps_enable == -1) && (on == 0))
++		return 0;
++
+ 	if (cpts->pps_enable == on)
+ 		return 0;
+ 
+@@ -453,6 +456,9 @@ static int cpts_ref_enable(struct cpts *cpts, int on)
+ {
+ 	on = (on ? 1 : 0);
+ 
++	if ((cpts->ref_enable == -1) && (on == 0))
++		return 0;
++
+ 	if (cpts->ref_enable == on)
+ 		return 0;
+ 
+-- 
+1.9.1
+

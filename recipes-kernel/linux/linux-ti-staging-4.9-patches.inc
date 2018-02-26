@@ -1,4 +1,4 @@
-PR_append = ".p38"
+PR_append = ".p39"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -176,4 +176,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0174-prueth-fix-styling-issue.patch \
     file://0175-prueth-add-support-for-multicast-filtering.patch \
     file://0176-hsr-prp-add-support-for-mc-filtering-at-the-slave-de.patch \
+    file://0177-net-ethernet-ti-cpts-fix-double-disable-issue-of-1PP.patch \
 "
