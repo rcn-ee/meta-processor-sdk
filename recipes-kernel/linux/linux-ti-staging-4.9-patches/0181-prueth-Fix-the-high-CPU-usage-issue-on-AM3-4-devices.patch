@@ -1,0 +1,84 @@
+From b2e2d66623dd5686ad60c9977d31a6b369714f70 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Tue, 20 Feb 2018 14:33:03 -0500
+Subject: [PATCH 177/177] prueth: Fix the high CPU usage issue on AM3/4 devices
+
+As soon as prueth Ethernet interface is brought up on an AM3/4
+device, the ARM CPU utilization goes to 95% and the console
+becomes unresponsive. This is root caused to the IEP Global
+configuration register not being initialized to 0x551 which
+was the case prior to adding PTP driver. On AM3xxx devices,
+PRU Dual EMAC firmware currently uses the IEP counter for FIFO
+fill level logic and expect the value to be 0x551. AM4xxx
+devices re-use the AM3xxx firmware and has the same requirement.
+So fix this by restoring the code to initialize IEP_GLOBAL_CFG_REG
+register to 0x511 when PTP is not used.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/iep.c    |  2 +-
+ drivers/net/ethernet/ti/iep.h    |  3 ++-
+ drivers/net/ethernet/ti/prueth.c | 20 ++++++++++++++++++++
+ 3 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/iep.c b/drivers/net/ethernet/ti/iep.c
+index bd461a1..c0ce982 100644
+--- a/drivers/net/ethernet/ti/iep.c
++++ b/drivers/net/ethernet/ti/iep.c
+@@ -849,7 +849,7 @@ static int iep_config(struct iep *iep)
+ static inline void iep_start(struct iep *iep)
+ {
+ 	iep_set_reg(iep, PRUSS_IEP_GLOBAL_CFG,
+-		    IEP_GLOBAL_CFG_REG_MASK, IEP_GLOBAL_CFG_REG_VAL);
++		    IEP_GLOBAL_CFG_REG_MASK, IEP_GLOBAL_CFG_REG_PTP_VAL);
+ }
+ 
+ static inline void iep_time_sync_start(struct iep *iep)
+diff --git a/drivers/net/ethernet/ti/iep.h b/drivers/net/ethernet/ti/iep.h
+index 0e8b98e..ce33500 100644
+--- a/drivers/net/ethernet/ti/iep.h
++++ b/drivers/net/ethernet/ti/iep.h
+@@ -77,7 +77,8 @@
+ #define IEP_TC_DEFAULT_MULT          (5 << IEP_TC_DEFAULT_SHIFT)
+ 
+ #define IEP_GLOBAL_CFG_REG_MASK      0xfffff
+-#define IEP_GLOBAL_CFG_REG_VAL       0x00111
++#define IEP_GLOBAL_CFG_REG_PTP_VAL	0x111
++#define IEP_GLOBAL_CFG_REG_DEF_VAL	0x551
+ 
+ /* 10 ms width */
+ #define IEP_DEFAULT_PPS_WIDTH        (PRUSS_IEP_CLOCK_RATE / 100)
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index c30df5f..b13a763 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -2640,6 +2640,26 @@ static int emac_ndo_open(struct net_device *ndev)
+ 		if (PRUETH_HAS_PTP(prueth)) {
+ 			if (iep_register(prueth->iep))
+ 				dev_err(&ndev->dev, "error registering iep\n");
++		} else {
++			/* Currently PTP is used with PRP firmware and only
++			 * on AM5xxx devices. So we reach here for non PRP
++			 * firmware cases. Dual EMAC Firmware on AM3xxx devices
++			 * uses IEP counter to keep track of Tx FIFO fill level
++			 * since that HW capability is not available in this
++			 * device. AM4xxx re-uses AM3xxx firmware. So need to
++			 * have the IEP counter IEP_GLOBAL_CFG_REG initialized
++			 * to 0x551 as required by the firmware on AM3xxx/4xxx
++			 * devices. For other cases, IEP counter is not used
++			 * in firmware and doesn't matter if it is initialized
++			 * or not. So we alway initialize the register to
++			 * POR value and keep it enabled to satisfy the
++			 * firmware on AM3xxx/4xxx devices.
++			 *
++			 * TODO: Re-visit this firmware dependency when PTP
++			 * is extended to Dual EMAC firmware on AM3xxx/4xxx.
++			 */
++			prueth_set_reg(prueth, PRUETH_MEM_IEP, 0, 0xffff,
++				       IEP_GLOBAL_CFG_REG_DEF_VAL);
+ 		}
+ 	}
+ 
+-- 
+1.9.1
+

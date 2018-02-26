@@ -1,4 +1,4 @@
-PR_append = ".p40"
+PR_append = ".p41"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -180,4 +180,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0178-net-prueth-use-swork-to-handle-tx-timestamp-events-f.patch \
     file://0179-prueth-protect-tx_ev_msg-array.patch \
     file://0180-prueth-Fix-random-RT-Linux-crash-seen-when-running-o.patch \
+    file://0181-prueth-Fix-the-high-CPU-usage-issue-on-AM3-4-devices.patch \
 "
