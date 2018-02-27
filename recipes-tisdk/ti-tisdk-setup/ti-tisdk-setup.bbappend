@@ -1,4 +1,4 @@
-PR_append = ".tisdk8"
+PR_append = ".tisdk9"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -11,6 +11,8 @@ SRC_URI_append = " \
     file://0004-setup-tftp-fit-copy-firmwares-for-k2g-hs.patch \
     file://0005-setup-uboot-env-k2g-hs-add-k2g-hs-support.patch \
     file://0006-setup-uboot-env-keystone-hs-use-default-env-for-net-.patch \
+    file://0007-setup-uboot-env-hs-use-fitImage-w-o-ramfs.patch \
+    file://0008-setup-uboot-env-am-hs-add-support-for-rootfs-over-NF.patch \
 "
 
 SDCARD_SCRIPT_am335x-hs-evm = " create-sdcard-fit.sh"
