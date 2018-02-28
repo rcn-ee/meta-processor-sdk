@@ -1,11 +1,10 @@
-PR_append = ".tisdk9"
+PR_append = ".tisdk10"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRCREV = "3fac15de5205e4d05d3473276037157b0702c78c"
 
 SRC_URI_append = " \
-    file://0001-create-sdcard-fit-create-SD-card-for-secure-platform.patch \
     file://0001-setup-add-support-for-HS-EVMs.patch \
     file://0003-create_sdcard-omapl138-add-custom-script-to-create-S.patch \
     file://0004-setup-tftp-fit-copy-firmwares-for-k2g-hs.patch \
@@ -15,10 +14,6 @@ SRC_URI_append = " \
     file://0008-setup-uboot-env-am-hs-add-support-for-rootfs-over-NF.patch \
 "
 
-SDCARD_SCRIPT_am335x-hs-evm = " create-sdcard-fit.sh"
-SDCARD_SCRIPT_am437x-hs-evm = " create-sdcard-fit.sh"
-SDCARD_SCRIPT_am57xx-hs-evm = " create-sdcard-fit.sh"
-SDCARD_SCRIPT_dra7xx-hs-evm = " create-sdcard-fit.sh"
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
 
 SETUP_SCRIPTS_remove = "setup-tftp.sh"
