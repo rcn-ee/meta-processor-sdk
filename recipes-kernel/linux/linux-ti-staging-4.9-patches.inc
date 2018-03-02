@@ -1,4 +1,4 @@
-PR_append = ".p42"
+PR_append = ".p43"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -186,4 +186,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0184-prueth-use-u16-for-firmware-lock.patch \
     file://0185-prueth-remove-duplicated-definitions.patch \
     file://0186-prueth-wait-firmware-finished-using-the-node-table-b.patch \
+    file://0187-connectivity-Add-FTDI_SIO-loadable-module-to-configu.patch \
+    file://0188-dts-Reserve-4MB-for-DSP-to-DSP-communication.patch \
+    file://0189-ethernet-ti-cpts-fix-error-in-not-unregistering-from.patch \
 "

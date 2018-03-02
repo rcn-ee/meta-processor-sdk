@@ -1,0 +1,48 @@
+From 047b14530df7b09d903da87876246143d646daf5 Mon Sep 17 00:00:00 2001
+From: Djordje Senicic <x0157990@ti.com>
+Date: Wed, 28 Feb 2018 15:06:28 -0500
+Subject: [PATCH 188/189] dts: Reserve 4MB for DSP-to-DSP communication
+
+Signed-off-by: Djordje Senicic <x0157990@ti.com>
+---
+ arch/arm/boot/dts/am572x-idk-common.dtsi        | 6 ++++++
+ arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am572x-idk-common.dtsi b/arch/arm/boot/dts/am572x-idk-common.dtsi
+index e5b4a20..213d301 100644
+--- a/arch/arm/boot/dts/am572x-idk-common.dtsi
++++ b/arch/arm/boot/dts/am572x-idk-common.dtsi
+@@ -48,6 +48,12 @@
+ 			reusable;
+ 			status = "okay";
+ 		};
++
++		dsp2dsp_shm: dsp2dsp_shm@bfc00000 {
++			reg = <0x0 0xbfc00000 0x0 0x400000>;
++			no-map;
++			status = "okay";
++		};
+ 	};
+ 
+ 	status-leds {
+diff --git a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+index 479bd8d..c121776 100644
+--- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+@@ -67,6 +67,12 @@
+ 			reusable;
+ 			status = "okay";
+ 		};
++
++		dsp2dsp_shm: dsp2dsp_shm@bfc00000 {
++			reg = <0x0 0xbfc00000 0x0 0x400000>;
++			no-map;
++			status = "okay";
++		};
+ 	};
+ 
+ 	vdd_3v3: fixedregulator-vdd_3v3 {
+-- 
+1.9.1
+
