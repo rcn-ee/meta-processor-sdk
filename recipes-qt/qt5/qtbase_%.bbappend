@@ -1,4 +1,4 @@
-PR_append = ".tisdk4"
+PR_append = ".tisdk5"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -21,7 +21,7 @@ QT_NOSGX_PATCHES = "\
 
 SRC_URI += "\
     ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', "${QT_NOSGX_PATCHES}", d)}\
-    file://0001-qtbase-enhance-eglfs_kms-to-handle-DRM-plane-set-req.patch        \
+    file://0001-eglfs_kms-enhance-the-QPA-for-multiple-display-and-u.patch        \
 "
 
 python do_patch_append() {
