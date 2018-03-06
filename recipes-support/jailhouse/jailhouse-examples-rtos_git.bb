@@ -6,10 +6,10 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/baremetal/soc/am572x/rules.mk;endline=
 
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/processor-sdk/jailhouse-inmate.git;branch=${BRANCH}"
-SRCREV = "384cdcde45c4170c31a0aef34ab1b03208ed52cb"
+SRCREV = "607f8ab44ae4455a49238b6ee94d5bf5a7b7e24c"
 
 PV = "1.0"
-PR = "r3"
+PR = "r4"
 
 require recipes-ti/includes/tisdk-paths.inc
 
@@ -35,6 +35,7 @@ EXTRA_OEMAKE += "PDK_INSTALL_PATH=${PDK_INSTALL_DIR}/packages \
                  PATH=${GCC_ARM_NONE_TOOLCHAIN}/bin:${PATH} \
                  ROOT_DIR=${S} \
 "
+export PDK_INSTALL_PATH="${PDK_INSTALL_DIR}/packages"
 
 do_install() {
     # Install the binary for Linux
