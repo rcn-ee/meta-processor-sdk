@@ -1,7 +1,6 @@
-PR_append = ".tisdk4"
+PR_append = ".tisdk0"
 
 CONNECTIVITY_RDEPENDS_append_ti33x = " \
-    gadget-init \
     wpantund-dev \
 "
 CONNECTIVITY_RDEPENDS_append_ti43x = " \
