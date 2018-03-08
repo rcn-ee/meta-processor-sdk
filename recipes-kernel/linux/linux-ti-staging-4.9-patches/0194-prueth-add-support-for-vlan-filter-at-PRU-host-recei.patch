@@ -1,0 +1,347 @@
+From c99215d01b8fafa7220922f2ea693490e2c3d633 Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 2 Mar 2018 11:52:24 -0500
+Subject: [PATCH 194/195] prueth: add support for vlan filter at PRU host
+ receive port
+
+prueth firmware for HSR/PRP implements a VLAN filter table of 512
+bytes where each bit in the byte represents a VLAN ID. This allows
+filtering out Ethernet frames at the PRU host receive port which
+are not part of the VLAN group to which the host has subscribed to.
+When a VLAN interface is created, the VID information gets passed
+to the driver through ndo_vlan_rx_add_vid() function call.
+Similarly driver gets notified of the VID to be removed from the
+filter when a VLAN interface is removed through ndo_vlan_rx_kill_vid().
+The prueth driver inserts or deletes a VID in the VLAN filter table
+as part of these function calls.
+
+Untagged frames are dropped and is not received at the Host when
+vlan filter is enabled. This gets enabled when the first VLAN
+interface is created. However priority tagged frames gets forwarded
+to Host when filter is enabled. These are frames with VID 0.
+
+The firmware also provides a statistics counter to keep track of
+the VLAN frames dropped at PRU host receive port. This statistics
+counter can be viewed using ethtool command. Finally add a debugfs
+file to view the contents of the vlan filter table in memory.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/hsr_prp_firmware.h | 34 +++++++++++++
+ drivers/net/ethernet/ti/prueth.c           | 82 ++++++++++++++++++++++++++++--
+ drivers/net/ethernet/ti/prueth.h           |  3 ++
+ drivers/net/ethernet/ti/prueth_dbgfs.c     | 66 ++++++++++++++++++++++++
+ 4 files changed, 181 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/hsr_prp_firmware.h b/drivers/net/ethernet/ti/hsr_prp_firmware.h
+index acf3394..651c7d2 100644
+--- a/drivers/net/ethernet/ti/hsr_prp_firmware.h
++++ b/drivers/net/ethernet/ti/hsr_prp_firmware.h
+@@ -87,6 +87,40 @@
+ #define LRE_DUPLICATE_DISCARD                  (LRE_START + 104)
+ #define LRE_TRANSPARENT_RECEPTION              (LRE_START + 108)
+ 
++/* SRAM
++ * VLAN filter defines & offsets
++ */
++#define VLAN_FLTR_CTRL_BYTE                          0x1FE
++/* one bit field | 0 : VLAN filter disabled
++ *               | 1 : VLAN filter enabled
++ */
++#define VLAN_FLTR_CTRL_SHIFT                         0x0
++/* one bit field | 0 : untagged host rcv allowed
++ *               | 1 : untagged host rcv not allowed
++ */
++#define VLAN_FLTR_UNTAG_HOST_RCV_CTRL_SHIFT          0x1
++/* one bit field | 0 : priotag host rcv allowed
++ *               | 1 : priotag host rcv not allowed
++ */
++#define VLAN_FLTR_PRIOTAG_HOST_RCV_CTRL_SHIFT        0x2
++#define VLAN_FLTR_DIS                                0x0
++#define VLAN_FLTR_ENA                                0x1
++
++#define VLAN_FLTR_UNTAG_HOST_RCV_ALL                 0x0
++#define VLAN_FLTR_UNTAG_HOST_RCV_NAL                 0x1
++
++#define VLAN_FLTR_PRIOTAG_HOST_RCV_ALL               0x0
++#define VLAN_FLTR_PRIOTAG_HOST_RCV_NAL               0x1
++
++/* VID = 0 for priority tagged frames */
++#define VLAN_FLTR_PRIOTAG_VID                        0x0
++#define VLAN_FLTR_TBL_BASE_ADDR                      0x200
++/* 4096 bits = 512 bytes = 0x200 bytes */
++#define VLAN_FLTR_TBL_SIZE                           0x200
++
++#define VLAN_VID_MIN                                 0x0
++#define VLAN_VID_MAX                                 0x0FFF
++
+ #define IEC62439_CONST_DUPLICATE_ACCEPT                 0x01
+ #define IEC62439_CONST_DUPLICATE_DISCARD                0x02
+ #define IEC62439_CONST_TRANSPARENT_RECEPTION_REMOVE_RCT 0x01
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index d050f1e..96c4ed4 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -2700,6 +2700,7 @@ static int emac_ndo_open(struct net_device *ndev)
+ static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
+ {
+ 	struct prueth *prueth = emac->prueth;
++	void __iomem *sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
+ 
+ 	prueth->emac_configured &= ~BIT(emac->port_id);
+ 	/* disable and free rx irq */
+@@ -2729,6 +2730,8 @@ static int sw_emac_pru_stop(struct prueth_emac *emac, struct net_device *ndev)
+ 			kfree(prueth->mac_queue);
+ 			prueth->mac_queue = NULL;
+ 		}
++		/* Disable VLAN filter */
++		writeb(VLAN_FLTR_DIS, sram + VLAN_FLTR_CTRL_BYTE);
+ 	}
+ 
+ 	return 0;
+@@ -3199,6 +3202,69 @@ static int emac_ndo_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+ 	return phy_mii_ioctl(emac->phydev, req, cmd);
+ }
+ 
++static int emac_add_del_vid(struct prueth_emac *emac,
++			    bool add, __be16 proto, u16 vid)
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
++	u16 index = ((vid >> 3) & 0x1ff);
++	unsigned long flags;
++	u8 val;
++
++	/* VLAN filter support available only in HSR/PRP firmware */
++	if (!PRUETH_HAS_RED(prueth))
++		return 0;
++
++	if (proto != htons(ETH_P_8021Q))
++		return -EINVAL;
++
++	if (vid >= VLAN_VID_MAX)
++		return -EINVAL;
++
++	/* VLAN filter table is 512 bytes wide. Index it using
++	 * vid / 8 and then set/reset the bit using vid & 0x7
++	 */
++	spin_lock_irqsave(&emac->addr_lock, flags);
++	/* By default enable priority tagged frames to host below by
++	 * resetting bit 1 in the VLAN_FLTR_CTRL_BYTE. So vid 0 need
++	 * not be added to the table.
++	 */
++	if (vid) {
++		val = readb(sram + VLAN_FLTR_TBL_BASE_ADDR + index);
++		if (add)
++			val |= BIT(vid & 7);
++		else
++			val &= ~BIT(vid & 7);
++		writeb(val, sram + VLAN_FLTR_TBL_BASE_ADDR + index);
++	}
++
++	/* Enable VLAN filter for HSR/PRP. By default drop untagged frames
++	 * and allow priority tagged frames. Convention is 0 for allow,
++	 * 1 for drop.
++	 */
++	writeb(VLAN_FLTR_ENA | BIT(VLAN_FLTR_UNTAG_HOST_RCV_CTRL_SHIFT),
++	       sram + VLAN_FLTR_CTRL_BYTE);
++	spin_unlock_irqrestore(&emac->addr_lock, flags);
++
++	return 0;
++}
++
++static int emac_ndo_vlan_rx_add_vid(struct net_device *dev,
++				    __be16 proto, u16 vid)
++{
++	struct prueth_emac *emac = netdev_priv(dev);
++
++	return emac_add_del_vid(emac, true, proto, vid);
++}
++
++static int emac_ndo_vlan_rx_kill_vid(struct net_device *dev,
++				     __be16 proto, u16 vid)
++{
++	struct prueth_emac *emac = netdev_priv(dev);
++
++	return emac_add_del_vid(emac, false, proto, vid);
++}
++
+ static const struct net_device_ops emac_netdev_ops = {
+ 	.ndo_open = emac_ndo_open,
+ 	.ndo_stop = emac_ndo_stop,
+@@ -3212,6 +3278,9 @@ static int emac_ndo_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
+ 	.ndo_set_features = emac_ndo_set_features,
+ 	.ndo_fix_features = emac_ndo_fix_features,
+ 	.ndo_do_ioctl = emac_ndo_ioctl,
++	.ndo_vlan_rx_add_vid = emac_ndo_vlan_rx_add_vid,
++	.ndo_vlan_rx_kill_vid = emac_ndo_vlan_rx_kill_vid,
++
+ 	/* +++TODO: implement .ndo_setup_tc */
+ };
+ 
+@@ -3358,6 +3427,7 @@ static int emac_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
+ 	{"lreNtLookupErrB", PRUETH_LRE_STAT_OFS(node_table_lookup_error_b)},
+ 	{"lreNodeTableFull", PRUETH_LRE_STAT_OFS(node_table_full)},
+ 	{"lreMulticastDropped", PRUETH_LRE_STAT_OFS(lre_multicast_dropped)},
++	{"lreVlanDropped", PRUETH_LRE_STAT_OFS(lre_vlan_dropped)},
+ 	{"lreTotalRxA", PRUETH_LRE_STAT_OFS(lre_total_rx_a)},
+ 	{"lreTotalRxB", PRUETH_LRE_STAT_OFS(lre_total_rx_b)},
+ 	{"lreOverflowPru0", PRUETH_LRE_STAT_OFS(lre_overflow_pru0)},
+@@ -3577,6 +3647,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 	emac->msg_enable = netif_msg_init(debug_level, PRUETH_EMAC_DEBUG);
+ 	spin_lock_init(&emac->lock);
+ 	spin_lock_init(&emac->ev_msg_lock);
++	spin_lock_init(&emac->addr_lock);
+ 	/* get mac address from DT and set private and netdev addr */
+ 	mac_addr = of_get_mac_address(eth_node);
+ 	if (mac_addr)
+@@ -3619,13 +3690,16 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 
+ 	if (PRUETH_HAS_HSR(prueth))
+ 		ndev->features |= (NETIF_F_HW_HSR_RX_OFFLOAD |
+-					NETIF_F_HW_L2FW_DOFFLOAD);
++					NETIF_F_HW_L2FW_DOFFLOAD |
++					NETIF_F_HW_VLAN_CTAG_FILTER);
+ 	else if (PRUETH_HAS_PRP(prueth))
+-		ndev->features |= NETIF_F_HW_PRP_RX_OFFLOAD;
++		ndev->features |= NETIF_F_HW_PRP_RX_OFFLOAD |
++				  NETIF_F_HW_VLAN_CTAG_FILTER;
+ 
+-	ndev->hw_features |= NETIF_F_HW_PRP_RX_OFFLOAD |
++	ndev->hw_features |= (NETIF_F_HW_PRP_RX_OFFLOAD |
+ 				NETIF_F_HW_HSR_RX_OFFLOAD |
+-				NETIF_F_HW_L2FW_DOFFLOAD;
++				NETIF_F_HW_L2FW_DOFFLOAD |
++				NETIF_F_HW_VLAN_CTAG_FILTER);
+ 
+ 	ndev->netdev_ops = &emac_netdev_ops;
+ 	ndev->ethtool_ops = &emac_ethtool_ops;
+diff --git a/drivers/net/ethernet/ti/prueth.h b/drivers/net/ethernet/ti/prueth.h
+index 61854f1..102e83d 100644
+--- a/drivers/net/ethernet/ti/prueth.h
++++ b/drivers/net/ethernet/ti/prueth.h
+@@ -250,6 +250,7 @@ struct lre_statistics {
+ 	u32 node_table_lookup_error_b;
+ 	u32 node_table_full;
+ 	u32 lre_multicast_dropped;
++	u32 lre_vlan_dropped;
+ 
+ 	/* additional debug counters */
+ 	u32 lre_total_rx_a; /* count of all frames received at port-A */
+@@ -472,6 +473,7 @@ struct prueth_emac {
+ 	u32 rx_packet_counts[NUM_RX_QUEUES];
+ 
+ 	spinlock_t lock;	/* serialize access */
++	spinlock_t addr_lock;
+ #ifdef	CONFIG_DEBUG_FS
+ 	struct dentry *root_dir;
+ 	struct dentry *stats_file;
+@@ -582,6 +584,7 @@ struct prueth {
+ 	struct dentry *root_dir;
+ 	struct dentry *node_tbl_file;
+ 	struct dentry *mc_filter_file;
++	struct dentry *vlan_filter_file;
+ 	struct dentry *nt_clear_file;
+ 	struct dentry *hsr_mode_file;
+ 	struct dentry *dlrmt_file;
+diff --git a/drivers/net/ethernet/ti/prueth_dbgfs.c b/drivers/net/ethernet/ti/prueth_dbgfs.c
+index 57da48e..3307ce5 100644
+--- a/drivers/net/ethernet/ti/prueth_dbgfs.c
++++ b/drivers/net/ethernet/ti/prueth_dbgfs.c
+@@ -306,6 +306,61 @@ static void prueth_hsr_prp_node_show(struct seq_file *sfp,
+ 	.release = single_release,
+ };
+ 
++/* prueth_hsr_prp_vlan_filter_show - Formats and prints vlan_filter entries
++ */
++static int
++prueth_hsr_prp_vlan_filter_show(struct seq_file *sfp, void *data)
++{
++	struct prueth *prueth = (struct prueth *)sfp->private;
++	void __iomem *sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
++	u8 val, mask;
++	int i, j;
++
++	val = readb(sram + VLAN_FLTR_CTRL_BYTE);
++	seq_printf(sfp, "VLAN Filter : %s",
++		   val & BIT(VLAN_FLTR_CTRL_SHIFT) ?
++			 "enabled\n" : "disabled\n");
++	if (val) {
++		for (i = 0; i < VLAN_FLTR_TBL_SIZE; i++) {
++			val = readb(sram + VLAN_FLTR_TBL_BASE_ADDR + i);
++			if (!(i % 8))
++				seq_printf(sfp, "\n%5d: ", i * 8);
++
++			for (j = 0; j < 8; j++) {
++				mask = BIT(j);
++				if (mask & val)
++					seq_printf(sfp, "%1x", 1);
++				else
++					seq_printf(sfp, "%1x", 0);
++			}
++		}
++	}
++	seq_puts(sfp, "\n");
++
++	return 0;
++}
++
++/* prueth_hsr_prp_vlan_filter_open - Open the vlan_filter file
++ *
++ * Description:
++ * This routine opens a debugfs file vlan_filter of specific hsr
++ * or prp device
++ */
++static int
++prueth_hsr_prp_vlan_filter_open(struct inode *inode, struct file *filp)
++{
++	return single_open(filp, prueth_hsr_prp_vlan_filter_show,
++			   inode->i_private);
++}
++
++static const struct file_operations prueth_hsr_prp_vlan_filter_fops = {
++	.owner	= THIS_MODULE,
++	.open	= prueth_hsr_prp_vlan_filter_open,
++	.read	= seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
+ /* prueth_hsr_prp_mc_filter_show - Formats and prints mc_filter entries
+  */
+ static int
+@@ -365,6 +420,7 @@ static void prueth_hsr_prp_node_show(struct seq_file *sfp,
+ 	.llseek = seq_lseek,
+ 	.release = single_release,
+ };
++
+ /* prueth_hsr_prp_nt_clear_write - write the user provided value to
+  * node_table_clear debugfs file
+  */
+@@ -773,6 +829,15 @@ int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+ 	}
+ 	prueth->mc_filter_file = de;
+ 
++	de = debugfs_create_file("vlan_filter", S_IFREG | 0444,
++				 prueth->root_dir, prueth,
++				 &prueth_hsr_prp_vlan_filter_fops);
++	if (!de) {
++		dev_err(dev, "Cannot create hsr-prp vlan_filter file\n");
++		return rc;
++	}
++	prueth->vlan_filter_file = de;
++
+ 	de = debugfs_create_file("node_table_clear", 0644,
+ 				 prueth->root_dir, prueth,
+ 				 &prueth_hsr_prp_nt_clear_fops);
+@@ -887,6 +952,7 @@ int prueth_hsr_prp_debugfs_init(struct prueth *prueth)
+ 	prueth->node_tbl_file = NULL;
+ 	prueth->nt_clear_file = NULL;
+ 	prueth->mc_filter_file = NULL;
++	prueth->vlan_filter_file = NULL;
+ 	prueth->hsr_mode_file = NULL;
+ 	prueth->dlrmt_file = NULL;
+ 	prueth->dd_file = NULL;
+-- 
+1.9.1
+

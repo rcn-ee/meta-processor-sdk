@@ -1,4 +1,4 @@
-PR_append = ".p44"
+PR_append = ".p45"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -190,4 +190,9 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0188-dts-Reserve-4MB-for-DSP-to-DSP-communication.patch \
     file://0189-ethernet-ti-cpts-fix-error-in-not-unregistering-from.patch \
     file://0190-prueth-delete-unused-definitions.patch \
+    file://0191-hsr-prp-add-vlan-ctag-filter-support.patch \
+    file://0192-prueth-move-mc-filter-table-to-DRAM1-from-SRAM.patch \
+    file://0193-prueth-replace-for-loop-for-writing-mask-with-memcpy.patch \
+    file://0194-prueth-add-support-for-vlan-filter-at-PRU-host-recei.patch \
+    file://0195-hsr-prp-fix-potential-deadlock-warning.patch \
 "
