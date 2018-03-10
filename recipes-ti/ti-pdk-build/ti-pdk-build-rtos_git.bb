@@ -31,7 +31,7 @@ do_compile() {
     :
 }
 
-EXTRA_OEMAKE = "-f make_install LIMIT_SOCS="${TI_PDK_LIMIT_SOCS}" PDK_INSTALL_DIR="${PDK_INSTALL_DIR}""
+EXTRA_OEMAKE = "-f make_install LIMIT_SOCS="${TI_PDK_LIMIT_SOCS}" PDK_INSTALL_DIR="${D}${PDK_INSTALL_DIR_RECIPE}""
 
 do_install() {
     oe_runmake
