@@ -55,6 +55,7 @@ do_install() {
     make install DESTDIR=${D}
 }
 
+ALLOW_EMPTY_${PN} = "1"
 FILES_${PN}-examples = "${datadir}/ti/examples/fftw"
 
 INSANE_SKIP_${PN} = "arch"
