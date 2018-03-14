@@ -1,4 +1,4 @@
-PR_append = ".tisdk11"
+PR_append = ".tisdk12"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -12,6 +12,7 @@ SRC_URI_append = " \
     file://0006-setup-uboot-env-keystone-hs-use-default-env-for-net-.patch \
     file://0007-setup-uboot-env-hs-use-fitImage-w-o-ramfs.patch \
     file://0008-setup-uboot-env-am-hs-add-support-for-rootfs-over-NF.patch \
+    file://0009-setup-uboot-env-am18x-bring-up-to-par-with-other-ubo.patch \
 "
 
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
