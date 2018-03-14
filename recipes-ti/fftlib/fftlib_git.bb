@@ -2,6 +2,8 @@ SUMMARY = "TI FFTLIB"
 HOMEPAGE = "http://git.ti.com/fftlib/fftlib"
 LICENSE = "BSD-3-Clause"
 
+LIC_FILES_CHKSUM = "file://ti/fftlib/docs/manifest/manifest.xml.xdt;md5=178402e86abc15ff3bac0d4fc57e5463"
+
 include fftlib.inc
 
 PR = "${INC_PR}.0"

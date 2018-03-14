@@ -2,6 +2,9 @@ SUMMARY = "TI FFTW"
 HOMEPAGE = "http://git.ti.com/fftlib"
 LICENSE = "GPL-2.0 & BSD-3-Clause"
 
+LIC_FILES_CHKSUM = "file://docs/TI-FFTW_3.1.0_manifest.html;md5=aaa275ec704a738216ba696898941b44 \
+                    file://fftw-3.3.4/COPYING;md5=59530bdf33659b29e73d4adb9f9f6552"
+
 include fftlib.inc
 
 PR = "${INC_PR}.0"
@@ -10,18 +13,13 @@ DEPENDS = "common-csl-ip-rtos common-csl-ip ti-xdctools ti-sysbios ti-cgt6x-nati
 
 RDEPENDS_${PN} += "opencl-runtime"
 
-PACKAGES += "${PN}-examples"
-RDEPENDS_${PN}-examples += "${PN}-staticdev"
-
 COMPATIBLE_MACHINE = "k2hk|dra7xx"
 TARGET_dra7xx = "SOC_AM572x"
 TARGET_k2hk   = "SOC_K2H"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-S = "${WORKDIR}/git"
-SRCIPK_SRC_DIR="${S}/ti/fftw"
+S = "${WORKDIR}/git/ti/fftw"
 
-export FFTW_ROOT="${S}/ti/fftw"
 export TI_OCL_INSTALL_DIR = "${STAGING_DIR_TARGET}/usr/share/ti/opencl"
 export TI_OCL_CGT_INSTALL = "${STAGING_DIR_NATIVE}/usr/share/ti/cgt-c6x"
 export PDK_DIR = "${PDK_INSTALL_DIR}"
@@ -46,16 +44,16 @@ export XDCTOOLS_DIR="${XDC_INSTALL_DIR}/packages"
 export LIBARCH_DIR = "${LIBARCH_INSTALL_DIR}"
 
 do_compile() {
-    cd ${FFTW_ROOT}
     make build TARGET=${TARGET}
 }
 
 do_install() {
-    cd ${FFTW_ROOT}
     make install DESTDIR=${D}
+
+    # These files will be installed by the ti-fftw-examples recipe
+    rm -rf ${D}${datadir}/ti
 }
 
 ALLOW_EMPTY_${PN} = "1"
-FILES_${PN}-examples = "${datadir}/ti/examples/fftw"
 
 INSANE_SKIP_${PN} = "arch"

@@ -3,8 +3,6 @@ INC_PR = "r0"
 
 require recipes-ti/includes/tisdk-paths.inc
 
-LIC_FILES_CHKSUM = "file://ti/fftlib/docs/manifest/manifest.xml.xdt;md5=178402e86abc15ff3bac0d4fc57e5463"
-
 DESTSUFFIX = "${WORKDIR}/git"
 
 BRANCH = "master"
