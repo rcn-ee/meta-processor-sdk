@@ -1,4 +1,4 @@
-PR_append = ".p45"
+PR_append = ".p46"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -195,4 +195,5 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0193-prueth-replace-for-loop-for-writing-mask-with-memcpy.patch \
     file://0194-prueth-add-support-for-vlan-filter-at-PRU-host-recei.patch \
     file://0195-hsr-prp-fix-potential-deadlock-warning.patch \
+    file://0196-tmp-prueth-enable-untagged-vlan-frames-to-workaround.patch \
 "
