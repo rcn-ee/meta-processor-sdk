@@ -4,12 +4,12 @@ SECTION = "multimedia"
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c7ca707704d3354a64feeb4f19f52eb5"
 
-DEPENDS += "libdrm"
+DEPENDS += "libdrm ti-gc320-libs cmem qtdeclarative"
 
-PR = "r0"
+PR = "r1"
 
 BRANCH = "master"
-SRCREV = "3b3007680845d39784146396a2dd2a68aa1a2283"
+SRCREV = "bdfbc4179d8d176feec1df148728b1882fca7416"
 
 SRC_URI = "git://git.ti.com/sitara-linux/video-graphics-test.git;protocol=git;branch=${BRANCH} \
 "
