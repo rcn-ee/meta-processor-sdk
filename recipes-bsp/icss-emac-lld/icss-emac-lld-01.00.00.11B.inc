@@ -1,0 +1,5 @@
+# Below commit ID corresponds to "DEV.ICSS_EMAC_LLD.01.00.00.11B"
+ICSS_EMAC_LLD_SRCREV = "bd643d75a0322b6ca769d8ecbee310d859c0f761"
+
+PV = "01.00.00.11B"
+INC_PR = "r0"
