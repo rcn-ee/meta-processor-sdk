@@ -1,4 +1,4 @@
-PR_append = ".p46"
+PR_append = ".p47"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -196,4 +196,7 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0194-prueth-add-support-for-vlan-filter-at-PRU-host-recei.patch \
     file://0195-hsr-prp-fix-potential-deadlock-warning.patch \
     file://0196-tmp-prueth-enable-untagged-vlan-frames-to-workaround.patch \
+    file://0197-ptp_clock-Add-new-PTP-CloCK-Request-PPS-OFFSET.patch \
+    file://0198-net-ethernet-ti-cpts-add-PPS-offset-support.patch \
+    file://0199-net-ethernet-ti-iep-add-PPS-offset-support-for-PRUIC.patch \
 "

@@ -1,0 +1,82 @@
+From b791f8552c12ab21a371a8ac09853aca56446f8d Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Mon, 19 Mar 2018 11:12:23 -0400
+Subject: [PATCH 198/199] net: ethernet: ti: cpts: add PPS offset support
+
+This patch records the PPS offset value and then adjust the PPS output
+time based on that.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/net/ethernet/ti/cpts.c | 14 +++++++++++---
+ drivers/net/ethernet/ti/cpts.h |  1 +
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index 1a68dd2..e2719e6 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -482,6 +482,7 @@ static int cpts_pps_init(struct cpts *cpts)
+ 
+ 	cpts->pps_enable = -1;
+ 	cpts->ref_enable = -1;
++	cpts->pps_offset = 0;
+ 
+ #ifdef CONFIG_OMAP_DM_TIMER
+ 	omap_dm_timer_enable(cpts->odt);
+@@ -618,6 +619,10 @@ static int cpts_ptp_enable(struct ptp_clock_info *ptp,
+ 		}
+ 
+ 		return cpts_ref_enable(cpts, on);
++	case PTP_CLK_REQ_PPS_OFFSET:
++		if (cpts->use_1pps)
++			cpts->pps_offset = on;
++		return 0;
+ 	default:
+ 		break;
+ 	}
+@@ -1328,8 +1333,9 @@ static void cpts_tmr_poll(struct cpts *cpts, bool cpts_poll)
+ 			 *
+ 			 * Calculate the expected tcrr value and update to it
+ 			 */
+-			tmp64 = (100000000UL - cpts_ts_short);
+-				do_div(tmp64, CPTS_TMR_CLK_PERIOD);
++			tmp64 = (100000000UL - cpts_ts_short) +
++				cpts->pps_offset;
++			do_div(tmp64, CPTS_TMR_CLK_PERIOD);
+ 			count_exp = (u32)tmp64;
+ 			count_exp = 0xFFFFFFFFUL - count_exp + 1;
+ 
+@@ -1346,7 +1352,8 @@ static void cpts_tmr_poll(struct cpts *cpts, bool cpts_poll)
+ 				tmr_reload_cnt_prev = tmr_reload_cnt;
+ 				cpts_ts_trans = (cpts_ts - cpts_ts_short) +
+ 					100000000ULL;
+-				pr_info("cpts_tmr_poll: exit INIT state\n");
++				pr_info("cpts_tmr_poll: exit INIT state with pps_offset = %d\n"
++					, cpts->pps_offset);
+ 			}
+ 		}
+ 		break;
+@@ -1397,6 +1404,7 @@ static void cpts_tmr_poll(struct cpts *cpts, bool cpts_poll)
+ 			ts_val = (ts_offset >= 50000000UL) ?
+ 				-(100000000UL - ts_offset) :
+ 				(ts_offset);
++			ts_val -= cpts->pps_offset;
+ 			/* tsAjust should include the current error and the expected
+ 			 * drift for the next two cycles
+ 			 */
+diff --git a/drivers/net/ethernet/ti/cpts.h b/drivers/net/ethernet/ti/cpts.h
+index 95c5574..dca38c0 100644
+--- a/drivers/net/ethernet/ti/cpts.h
++++ b/drivers/net/ethernet/ti/cpts.h
+@@ -154,6 +154,7 @@ struct cpts {
+ 	u32 count_prev;
+ 	u64 hw_timestamp;
+ 	u32 pps_latch_offset;
++	int pps_offset;
+ 
+ 	struct pinctrl *pins;
+ 	struct pinctrl_state *pin_state_pwm_off;
+-- 
+1.9.1
+

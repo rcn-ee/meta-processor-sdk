@@ -1,0 +1,150 @@
+From b20a5d3a27681c43bc620575574765970e9e2102 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Mon, 19 Mar 2018 11:02:27 -0400
+Subject: [PATCH 197/199] ptp_clock: Add new PTP CloCK Request PPS OFFSET
+
+PPS_OFFSET is used to adjust the 1PPS output signal timing to compensate
+for the local I/O delay and/or for testing purpose
+
+This patch adds the new PTP_CLK_REQ code, the PTP_PPS_OFFSET ioctl
+definition. It also implements the PPS_OFFSET control through both
+sysfs and ioctl.
+
+Usage example:
+echo -10 > /sys/devices/platform/pruss2_eth/ptp/ptp1/pps_offset
+ioctl(CLOCKID_TO_FD(src), PTP_PPS_OFFSET, offset);
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/ptp/ptp_chardev.c        |  9 +++++++++
+ drivers/ptp/ptp_sysfs.c          | 40 ++++++++++++++++++++++++++++++++++++++--
+ include/linux/ptp_clock_kernel.h |  1 +
+ include/uapi/linux/ptp_clock.h   |  1 +
+ 4 files changed, 49 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index 58a97d4..b327f47 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -184,6 +184,15 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		err = ops->enable(ops, &req, enable);
+ 		break;
+ 
++	case PTP_PPS_OFFSET:
++		if (!capable(CAP_SYS_TIME))
++			return -EPERM;
++		req.type = PTP_CLK_REQ_PPS_OFFSET;
++		/* record pps offset */
++		enable = (int) arg;
++		err = ops->enable(ops, &req, enable);
++		break;
++
+ 	case PTP_SYS_OFFSET_PRECISE:
+ 		if (!ptp->info->getcrosststamp) {
+ 			err = -EOPNOTSUPP;
+diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
+index 302e626..a15bb8d 100644
+--- a/drivers/ptp/ptp_sysfs.c
++++ b/drivers/ptp/ptp_sysfs.c
+@@ -178,6 +178,33 @@ static ssize_t pps_enable_store(struct device *dev,
+ 	return err;
+ }
+ 
++static ssize_t pps_offset_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct ptp_clock *ptp = dev_get_drvdata(dev);
++	struct ptp_clock_info *ops = ptp->info;
++	struct ptp_clock_request req = { .type = PTP_CLK_REQ_PPS_OFFSET };
++	int rc, offset;
++	int err = -EINVAL;
++
++	if (!capable(CAP_SYS_TIME))
++		return -EPERM;
++
++	rc = kstrtoint(buf, 0, &offset);
++	if (rc)
++		goto out;
++
++	err = ops->enable(ops, &req, offset);
++	if (err)
++		goto out;
++
++	return count;
++out:
++	return err;
++}
++
++
+ static int ptp_pin_name2index(struct ptp_clock *ptp, const char *name)
+ {
+ 	int i;
+@@ -239,6 +266,7 @@ static ssize_t ptp_pin_store(struct device *dev, struct device_attribute *attr,
+ static DEVICE_ATTR(fifo,         0444, extts_fifo_show, NULL);
+ static DEVICE_ATTR(period,       0220, NULL, period_store);
+ static DEVICE_ATTR(pps_enable,   0220, NULL, pps_enable_store);
++static DEVICE_ATTR(pps_offset,   0220, NULL, pps_offset_store);
+ 
+ int ptp_cleanup_sysfs(struct ptp_clock *ptp)
+ {
+@@ -252,8 +280,10 @@ int ptp_cleanup_sysfs(struct ptp_clock *ptp)
+ 	if (info->n_per_out)
+ 		device_remove_file(dev, &dev_attr_period);
+ 
+-	if (info->pps)
++	if (info->pps) {
+ 		device_remove_file(dev, &dev_attr_pps_enable);
++		device_remove_file(dev, &dev_attr_pps_offset);
++	}
+ 
+ 	if (info->n_pins) {
+ 		sysfs_remove_group(&dev->kobj, &ptp->pin_attr_group);
+@@ -328,13 +358,19 @@ int ptp_populate_sysfs(struct ptp_clock *ptp)
+ 		err = device_create_file(dev, &dev_attr_pps_enable);
+ 		if (err)
+ 			goto out4;
++		err = device_create_file(dev, &dev_attr_pps_offset);
++		if (err)
++			goto out5;
+ 	}
+ 	if (info->n_pins) {
+ 		err = ptp_populate_pins(ptp);
+ 		if (err)
+-			goto out5;
++			goto out6;
+ 	}
+ 	return 0;
++out6:
++	if (info->pps)
++		device_remove_file(dev, &dev_attr_pps_offset);
+ out5:
+ 	if (info->pps)
+ 		device_remove_file(dev, &dev_attr_pps_enable);
+diff --git a/include/linux/ptp_clock_kernel.h b/include/linux/ptp_clock_kernel.h
+index 3763cf3..d20c539 100644
+--- a/include/linux/ptp_clock_kernel.h
++++ b/include/linux/ptp_clock_kernel.h
+@@ -31,6 +31,7 @@ struct ptp_clock_request {
+ 		PTP_CLK_REQ_EXTTS,
+ 		PTP_CLK_REQ_PEROUT,
+ 		PTP_CLK_REQ_PPS,
++		PTP_CLK_REQ_PPS_OFFSET,
+ 	} type;
+ 	union {
+ 		struct ptp_extts_request extts;
+diff --git a/include/uapi/linux/ptp_clock.h b/include/uapi/linux/ptp_clock.h
+index ac6dded..e42d2c3 100644
+--- a/include/uapi/linux/ptp_clock.h
++++ b/include/uapi/linux/ptp_clock.h
+@@ -135,6 +135,7 @@ struct ptp_pin_desc {
+ #define PTP_PIN_SETFUNC    _IOW(PTP_CLK_MAGIC, 7, struct ptp_pin_desc)
+ #define PTP_SYS_OFFSET_PRECISE \
+ 	_IOWR(PTP_CLK_MAGIC, 8, struct ptp_sys_offset_precise)
++#define PTP_PPS_OFFSET     _IOW(PTP_CLK_MAGIC, 9, int)
+ 
+ struct ptp_extts_event {
+ 	struct ptp_clock_time t; /* Time event occured. */
+-- 
+1.9.1
+
