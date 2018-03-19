@@ -6,10 +6,10 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/baremetal/soc/am572x/rules.mk;endline=
 
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/processor-sdk/jailhouse-inmate.git;branch=${BRANCH}"
-SRCREV = "607f8ab44ae4455a49238b6ee94d5bf5a7b7e24c"
+SRCREV = "8ccdfdf8761d2df8b0e8ae822dfc69128e988d09"
 
 PV = "1.0"
-PR = "r4"
+PR = "r5"
 
 require recipes-ti/includes/tisdk-paths.inc
 
