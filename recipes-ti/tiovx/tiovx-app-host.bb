@@ -10,7 +10,7 @@ require tiovx-sys.inc
 DEPENDS = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem opencv"
 RDEPENDS_${PN} = " tiovx-sys-iface tiovx-sys-iface-firmware tiovx-lib-host ti-ipc cmem "
 
-PR = "r0"
+PR = "r1"
 
 COMPATIBLE_MACHINE = "dra7xx"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -29,6 +29,9 @@ do_install () {
     install -m 0755 ${S}/host/bin/debug/app_host ${D}${bindir}/tiovx-app_host
     install -m 0755 ${S}/khronos_example/bin/debug/opticalflow ${D}${bindir}/tiovx-opticalflow
 }
+
+CREATE_SRCIPK = "1"
+SRCIPK_INSTALL_DIR = "example-applications/${PN}-${PV}"
 
 FILES_${PN} += "${bindir}/*"
 INSANE_SKIP_${PN} = "ldflags"
