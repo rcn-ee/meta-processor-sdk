@@ -1,7 +1,7 @@
-From d1da0171e5e179816a1d8fd101a7f6c9f5ea307a Mon Sep 17 00:00:00 2001
+From afefb62f69f7449d327e85bdc5f7f7833aff33d8 Mon Sep 17 00:00:00 2001
 From: Jacob Stiffler <j-stiffler@ti.com>
 Date: Tue, 27 Feb 2018 13:50:28 -0500
-Subject: [PATCH 8/8] setup-uboot-env-am*-hs: add support for rootfs over NFS
+Subject: [PATCH 8/9] setup-uboot-env-am*-hs: add support for rootfs over NFS
 
 * Now that ramfs is not required for fitImages, NFS can be used for
   the rootfs.
@@ -14,7 +14,7 @@ Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
  3 files changed, 209 insertions(+), 21 deletions(-)
 
 diff --git a/setup-uboot-env-am335x-hs.sh b/setup-uboot-env-am335x-hs.sh
-index 0222e34..28df19f 100644
+index 0222e34..d95a5f4 100644
 --- a/setup-uboot-env-am335x-hs.sh
 +++ b/setup-uboot-env-am335x-hs.sh
 @@ -57,6 +57,7 @@ platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
@@ -83,7 +83,7 @@ index 0222e34..28df19f 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv nfsopts 'nolock,v3,tcp,rsize=4096,wsize=4096'\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no;dhcp ;tftp \${fit_loadaddr} $fitimage; run netargs; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no;dhcp ;tftp \${fit_loadaddr} $fitimage; run netargs; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	else
@@ -92,7 +92,7 @@ index 0222e34..28df19f 100644
 +		do_expect "\"$prompt\"" "send \"setenv fit_bootfile $fitimage\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv ip_method none\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no; dhcp ; tftp \${fit_loadaddr} $fitimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no; dhcp ; tftp \${fit_loadaddr} $fitimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	fi
@@ -105,7 +105,7 @@ index 0222e34..28df19f 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv nfsopts 'nolock,v3,tcp,rsize=4096,wsize=4096'\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run netargs; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run netargs; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	    else
@@ -113,7 +113,7 @@ index 0222e34..28df19f 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method none\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv fit_bootfile fitImage\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
  
@@ -124,7 +124,7 @@ index 0222e34..28df19f 100644
  
  echo "--------------------------------------------------------------------------------"
 diff --git a/setup-uboot-env-am43x-hs.sh b/setup-uboot-env-am43x-hs.sh
-index 5add85f..156ac74 100644
+index 5add85f..ccb0f93 100644
 --- a/setup-uboot-env-am43x-hs.sh
 +++ b/setup-uboot-env-am43x-hs.sh
 @@ -66,6 +66,18 @@ if [ ! -n "$ip" ]; then
@@ -184,7 +184,7 @@ index 5add85f..156ac74 100644
 +		do_expect "\"$prompt\"" "send \"setenv nfsopts 'nolock,v3,tcp,rsize=4096,wsize=4096'\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv devtype mmc\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'setenv devnum \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no;dhcp ;tftp \${fit_loadaddr} $fitimage; run netargs; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no;dhcp ;tftp \${fit_loadaddr} $fitimage; run netargs; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	else
@@ -194,7 +194,7 @@ index 5add85f..156ac74 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method none\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv devtype mmc\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'setenv devnum \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no; dhcp ; tftp \${fit_loadaddr} $fitimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no; dhcp ; tftp \${fit_loadaddr} $fitimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	fi
@@ -208,7 +208,7 @@ index 5add85f..156ac74 100644
 +		do_expect "\"$prompt\"" "send \"setenv nfsopts 'nolock,v3,tcp,rsize=4096,wsize=4096'\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv devtype mmc\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'setenv devnum \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run netargs; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run netargs; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	    else
@@ -217,7 +217,7 @@ index 5add85f..156ac74 100644
 +		do_expect "\"$prompt\"" "send \"setenv fit_bootfile fitImage\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv devtype mmc\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'setenv devnum \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +
@@ -230,7 +230,7 @@ index 5add85f..156ac74 100644
  
  echo "--------------------------------------------------------------------------------"
 diff --git a/setup-uboot-env-am57xx-hs-evm.sh b/setup-uboot-env-am57xx-hs-evm.sh
-index e2682eb..262a6a2 100644
+index e2682eb..f227d37 100644
 --- a/setup-uboot-env-am57xx-hs-evm.sh
 +++ b/setup-uboot-env-am57xx-hs-evm.sh
 @@ -66,6 +66,18 @@ if [ ! -n "$ip" ]; then
@@ -289,7 +289,7 @@ index e2682eb..262a6a2 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv nfsopts 'nolock,v3,tcp,rsize=4096,wsize=4096'\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'mmc dev \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no;dhcp ;tftp \${fit_loadaddr} $fitimage; run netargs; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no;dhcp ;tftp \${fit_loadaddr} $fitimage; run netargs; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	else
@@ -298,7 +298,7 @@ index e2682eb..262a6a2 100644
 +		do_expect "\"$prompt\"" "send \"setenv fit_bootfile $fitimage\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv ip_method none\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'mmc dev \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no; dhcp ; tftp \${fit_loadaddr} $fitimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'run findfdt; run getuenv; setenv autoload no; dhcp ; tftp \${fit_loadaddr} $fitimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	fi
@@ -311,7 +311,7 @@ index e2682eb..262a6a2 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv nfsopts 'nolock,v3,tcp,rsize=4096,wsize=4096'\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'mmc dev \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run netargs; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'setenv autoload no; mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run netargs; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +	    else
@@ -319,7 +319,7 @@ index e2682eb..262a6a2 100644
 +		do_expect "\"$prompt\"" "send \"setenv ip_method none\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv fit_bootfile fitImage\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"setenv getuenv 'mmc dev \${mmcdev}; if mmc rescan; then if run loadbootenv; then run importbootenv; fi; fi;'\"" $cwd/setupBoard.minicom
-+		do_expect "\"$prompt\"" "send setenv bootcmd 'mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtaddr}'" $cwd/setupBoard.minicom
++		do_expect "\"$prompt\"" "send setenv bootcmd 'mmc rescan; run findfdt; run getuenv; setenv devtype mmc; run loadimage; run args_mmc; bootm \${fit_loadaddr}#\${fdtfile}'" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +		do_expect "\"$prompt\"" "send \"boot\"" $cwd/setupBoard.minicom
 +
