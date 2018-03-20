@@ -1,4 +1,4 @@
-PR_append = ".tisdk51"
+PR_append = ".tisdk52"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -8,6 +8,7 @@ SRC_URI_append = "\
     file://Makefile_jailhouse \
     file://Makefile_evse-hmi \
     file://Makefile_protection-relays-hmi \
+    file://Makefile_tiovx-app-host \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
@@ -45,6 +46,8 @@ MAKEFILES_append_ti33x = " evse-hmi \
 MAKEFILES_append_am57xx-evm = " jailhouse"
 
 MAKEFILES_append_k2g = " pru-icss"
+
+MAKEFILES_append_dra7xx = " tiovx-app-host"
 
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
