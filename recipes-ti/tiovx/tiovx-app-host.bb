@@ -4,13 +4,19 @@ DESCRIPTION = "TI OpenVX implementation, TIOVX, includes Khronos defined conform
 LICENSE = "BSD-3-Clause & MIT"
 LIC_FILES_CHKSUM = "file://docs/manifest/TIOVX-APP-HOST_01.00.01.00_manifest.html;md5=247d7c56d783f583bf802490d5c93db3"
 
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+
+SRC_URI_append += "\
+     file://setenv.sh \
+"
+
 require recipes-ti/includes/tisdk-paths.inc
 require tiovx-sys.inc
 
 DEPENDS = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem opencv"
 RDEPENDS_${PN} = " tiovx-sys-iface tiovx-sys-iface-firmware tiovx-lib-host ti-ipc cmem "
 
-PR = "r1"
+PR = "r2"
 
 COMPATIBLE_MACHINE = "dra7xx"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -28,10 +34,24 @@ do_install () {
     install -d ${D}${bindir}/
     install -m 0755 ${S}/host/bin/debug/app_host ${D}${bindir}/tiovx-app_host
     install -m 0755 ${S}/khronos_example/bin/debug/opticalflow ${D}${bindir}/tiovx-opticalflow
+
+    oe_runmake clean
+    install -d ${D}${datadir}/ti/examples/openvx
+    install -m 644 ${S}/products.mak ${D}${datadir}/ti/examples/openvx
+    install -m 644 ${S}/makefile ${D}${datadir}/ti/examples/openvx
+    install -m 644 ${WORKDIR}/setenv.sh ${D}${datadir}/ti/examples/openvx
+    cp -r ${S}/host ${D}${datadir}/ti/examples/openvx
+    cp -r ${S}/khronos_example  ${D}${datadir}/ti/examples/openvx
+    cp -r ${S}/shared ${D}${datadir}/ti/examples/openvx
 }
+
+PACKAGES += "${PN}-examples"
+FILES_${PN}-examples = "${datadir}/ti/examples/openvx"
+RDEPENDS_${PN}-examples = "tiovx-lib-host-staticdev tiovx-lib-host-dev"
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "example-applications/${PN}-${PV}"
 
 FILES_${PN} += "${bindir}/*"
 INSANE_SKIP_${PN} = "ldflags"
+INSANE_SKIP_${PN}-examples = "dev-deps"
