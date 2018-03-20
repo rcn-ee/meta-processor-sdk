@@ -1,5 +1,5 @@
-PV = "01.00.00.00"
+PV = "01.00.01.00"
 
 BRANCH="master"
-SRCREV = "375fa639773970e433171686f01f360a9a5b2ad4"
+SRCREV = "dc60c253a218fb3ec92fdeeaa454fce047f8964a"
 SRC_URI = "git://git.ti.com/processor-sdk/tiovx-app.git;protocol=git;branch=${BRANCH}"
