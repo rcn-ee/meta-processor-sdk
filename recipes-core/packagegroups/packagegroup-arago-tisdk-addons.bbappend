@@ -1,4 +1,4 @@
-PR_append = "-tisdk45"
+PR_append = "-tisdk46"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -14,6 +14,6 @@ EXTRA_PACKAGES_append = " zbar hidapi"
 
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
-EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host kaldi ti-fftw-examples"
+EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples kaldi ti-fftw-examples"
 
 EXTRA_PACKAGES_append_k2hk = " ti-fftw-examples"
