@@ -1,5 +1,5 @@
-# Below commit ID corresponds to "DEV.TRANSPORT.01.00.00.11"
-TRANSPORT_SRCREV = "7bd5f7ffb38a6021762f29d0652fe63c6114a86f"
+# Below commit ID corresponds to "DEV.TRANSPORT.01.00.00.11A"
+TRANSPORT_SRCREV = "472efde60b5ede35c0746c432001d8e3673a6bb9"
 
-PV = "01.00.00.11"
+PV = "01.00.00.11A"
 INC_PR = "r0"
