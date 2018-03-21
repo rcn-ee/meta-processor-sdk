@@ -1,4 +1,4 @@
-PR_append = ".p47"
+PR_append = ".p48"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -199,4 +199,6 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0197-ptp_clock-Add-new-PTP-CloCK-Request-PPS-OFFSET.patch \
     file://0198-net-ethernet-ti-cpts-add-PPS-offset-support.patch \
     file://0199-net-ethernet-ti-iep-add-PPS-offset-support-for-PRUIC.patch \
+    file://0200-net-ethernet-ks2-fix-MAC_MAC_ENFORCED-configuration-.patch \
+    file://0201-net-ethernet-ks2-fix-warning-message-for-line-too-lo.patch \
 "
