@@ -11,7 +11,6 @@ MATRIX_COMMON_APPS_remove = " \
 MATRIX_APPS_append_omap-a15 = " \
     matrix-gui-apps-dual-camera \
     matrix-gui-apps-image-gallery \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', 'matrix-multimedia-demo-video-graphics', '', d)} \
 "
 
 MATRIX_TOUCH_APPS_keystone = ""
