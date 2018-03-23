@@ -1,4 +1,4 @@
-PR_append = ".p48"
+PR_append = ".p49"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -201,4 +201,6 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0199-net-ethernet-ti-iep-add-PPS-offset-support-for-PRUIC.patch \
     file://0200-net-ethernet-ks2-fix-MAC_MAC_ENFORCED-configuration-.patch \
     file://0201-net-ethernet-ks2-fix-warning-message-for-line-too-lo.patch \
+    file://0202-prueth-hsr-prp-remove-the-extra-6-bytes-in-the-paylo.patch \
+    file://0203-hsr-prp-fix-workaround-the-protocol-892f-is-buggy-lo.patch \
 "

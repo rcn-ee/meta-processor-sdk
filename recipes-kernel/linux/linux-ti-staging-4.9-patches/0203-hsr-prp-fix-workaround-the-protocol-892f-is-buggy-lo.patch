@@ -1,0 +1,43 @@
+From 2e11fa6c653c98d5183c749c74ce6e3ca30576ed Mon Sep 17 00:00:00 2001
+From: Murali Karicheri <m-karicheri2@ti.com>
+Date: Fri, 23 Mar 2018 11:21:03 -0400
+Subject: [PATCH 203/203] hsr/prp: fix/workaround the protocol 892f is buggy
+ log
+
+In the presence of an hsr/prp interface when an application
+sends an ethernet frame over a raw ethernet socket, using
+multicast MAC address, following logs seen.
+
+ [ 3222.401202] protocol 892f is buggy, dev eth2
+
+This is caused when supervision frames are sent periodically
+and also a raw socket is sending packets from user space. This
+is due to a check in net/dev.c, dev_queue_xmit_nit(), that print
+a log message whenever the network header offset is less than
+the data offset in the SKB. As per header description,
+dev_queue_xmit_nit() function is called to present the egress
+Ethernet frame to any network taps which are essentially
+implemented using sockets. So a fix/workaround is to reset
+the network_header of the SKB similar to the code in net/ipv4/arp.c
+that sends the ARP packets.
+
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ net/hsr-prp/hsr_prp_device.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/hsr-prp/hsr_prp_device.c b/net/hsr-prp/hsr_prp_device.c
+index d8e38dc..8557ab2 100644
+--- a/net/hsr-prp/hsr_prp_device.c
++++ b/net/hsr-prp/hsr_prp_device.c
+@@ -305,6 +305,7 @@ static void send_supervision_frame(struct hsr_prp_port *master,
+ 		goto out;
+ 
+ 	skb_reset_mac_header(skb);
++	skb_reset_network_header(skb);
+ 	if (prot_ver == HSR_V1) {
+ 		hsr_tag = (typeof(hsr_tag))skb_put(skb,
+ 						   sizeof(struct hsr_tag));
+-- 
+1.9.1
+

@@ -6,7 +6,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.9:${THISDIR}/files:"
 
 KERNEL_GIT_URI = "git://git.ti.com/processor-sdk/processor-sdk-linux.git"
 BRANCH = "processor-sdk-linux-rt-04.03.00"
-SRCREV = "629caf03407bf26c16e9097d014b69831edcaa05"
+SRCREV = "7069a470d54379d176b7dfe69fcd8b0580f7981e"
 
 SRC_URI_append = " file://jailhouse.cfg"
 
