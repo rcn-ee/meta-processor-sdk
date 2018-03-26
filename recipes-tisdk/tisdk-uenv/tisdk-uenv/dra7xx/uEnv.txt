@@ -14,14 +14,14 @@
 # of the SD card to mark when the first-time setup has been done.
 
 psdk_setup_file=.psdk_setup
-check_psdk_setup=load mmc ${bootpart} ${loadaddr} ${psdk_setup_file}
+check_psdk_setup=load mmc 0:1 ${loadaddr} ${psdk_setup_file}
 
 # Unfortunately, the following will be erased before it can be invoked
 # (See below in "uenvcmd")
-#mark_psdk_setup=mw .b ${loadaddr} 0 1; fatwrite mmc ${bootpart} ${loadaddr} ${psdk_setup_file} 1
+#mark_psdk_setup=mw .b ${loadaddr} 0 1; fatwrite mmc 0:1 ${loadaddr} ${psdk_setup_file} 1
 
 # Reset to the default environment
 do_psdk_setup=env default -f -a; saveenv
 
 # If not previously configured, then configure the environment and indicate this by writing a file
-uenvcmd=if run check_psdk_setup; then echo "Already setup."; else run do_psdk_setup; mw.b ${loadaddr} 0 1; fatwrite mmc ${bootpart} ${loadaddr} .psdk_setup 1; reset; fi
+uenvcmd=if run check_psdk_setup; then echo "Already setup."; else run do_psdk_setup; mw.b ${loadaddr} 0 1; fatwrite mmc 0:1 ${loadaddr} .psdk_setup 1; reset; fi
