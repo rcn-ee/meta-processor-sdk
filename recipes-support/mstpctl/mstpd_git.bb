@@ -6,8 +6,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=4325afd396febcb659c36b49533135d4 \
 
 SRC_URI = "git://github.com/mstpd/mstpd.git;protocol=https"
 
-PV = "0.0.5+git${SRCPV}"
-SRCREV = "3dbd68c11dfed6c8f6f2423f429d3b4a2acc27f8"
+PV = "0.0.6+git${SRCPV}"
+SRCREV = "76289208dcaa9b9bfdd69968e19357eb07a4b21f"
 
 S = "${WORKDIR}/git"
 
