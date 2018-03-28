@@ -1,0 +1,29 @@
+From 3decbcbd64b6d19c0a2e20fdcd7ce291baba4a81 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Tue, 27 Mar 2018 13:10:11 -0400
+Subject: [PATCH 204/204] net: ethernet: ti: cpts: fix pps offset algorithm
+
+This patch fixes the missing pps_offset adjustment at ADJUST state. The
+pps_offset adjustment should be applied to the expected timestamp
+comparison at all states.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ drivers/net/ethernet/ti/cpts.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index e2719e6..6936aa7 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -1369,6 +1369,7 @@ static void cpts_tmr_poll(struct cpts *cpts, bool cpts_poll)
+ 			ts_val = (ts_offset >= 50000000UL) ?
+ 				-(100000000UL - ts_offset) :
+ 				(ts_offset);
++			ts_val -= cpts->pps_offset;
+ 
+ 			/* restore the timer period to 100ms */
+ 			WRITE_TLDR(cpts->odt, tmr_reload_cnt);
+-- 
+1.9.1
+
