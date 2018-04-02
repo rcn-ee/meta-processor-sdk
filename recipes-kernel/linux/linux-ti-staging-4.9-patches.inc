@@ -1,4 +1,4 @@
-PR_append = ".p50"
+PR_append = ".p51"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -204,4 +204,10 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0202-prueth-hsr-prp-remove-the-extra-6-bytes-in-the-paylo.patch \
     file://0203-hsr-prp-fix-workaround-the-protocol-892f-is-buggy-lo.patch \
     file://0204-net-ethernet-ti-cpts-fix-pps-offset-algorithm.patch \
+    file://0205-net-ethernet-ti-cpts-add-pps-gpio-controls.patch \
+    file://0206-arm-dts-am571x-idk-pps-add-gmac-cpts-pps-output-cont.patch \
+    file://0207-arm-dts-am572x-idk-pps-add-gmac-cpts-pps-output-cont.patch \
+    file://0208-net-ethernet-ti-ptp_bc-add-pps-output-selection-gpio.patch \
+    file://0209-arm-dts-am571x-idk-pps-add-ptp_bc-pps-output-selecti.patch \
+    file://0210-arm-dts-am572x-idk-pps-add-ptp_bc-pps-output-selecti.patch \
 "

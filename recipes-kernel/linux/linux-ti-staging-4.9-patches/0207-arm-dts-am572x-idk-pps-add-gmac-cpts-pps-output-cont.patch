@@ -1,0 +1,34 @@
+From 3c2410a0ab9aeec4dfab95de21e7e85435a1a725 Mon Sep 17 00:00:00 2001
+From: Eric Ruei <e-ruei1@ti.com>
+Date: Wed, 28 Mar 2018 09:47:41 -0400
+Subject: [PATCH 207/210] arm: dts: am572x-idk-pps: add gmac/cpts pps
+ output-controlled gpios
+
+A gpio-controlled multiplexer is added to guarantee that there is only
+one PPS output at any time at the AM571(2)x-idk. There is also a
+gpio-controlled AND gate added for CPTS 1PPS reference signal control.
+
+This patch adds GMAC/CPTS-related gpio entries.
+
+Signed-off-by: Eric Ruei <e-ruei1@ti.com>
+---
+ arch/arm/boot/dts/am572x-idk-pps.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am572x-idk-pps.dts b/arch/arm/boot/dts/am572x-idk-pps.dts
+index 90ccece..0ba906e 100644
+--- a/arch/arm/boot/dts/am572x-idk-pps.dts
++++ b/arch/arm/boot/dts/am572x-idk-pps.dts
+@@ -19,6 +19,9 @@
+ 	pinctrl-3 = <&pps1_timer16_pwm2_on>;
+ 	pinctrl-4 = <&pps1_timer15_latch_on>;
+ 	pinctrl-5 = <&pps1_timer15_latch_off>;
++
++	pps-enable-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
++	ref-enable-gpios = <&gpio6 19 GPIO_ACTIVE_HIGH>;
+ };
+ 
+ &pruss2_eth {
+-- 
+1.9.1
+
