@@ -26,6 +26,11 @@ ENABLE_TI_UIO_DEVICES = "1"
 # Configure ROS to use python3
 ROS_USE_PYTHON3 = "yes"
 
+# ROS packages which rdepend on python3-dev
+INSANE_SKIP_tf2-py += "dev-deps"
+INSANE_SKIP_camera-calibration-parsers += "dev-deps"
+INSANE_SKIP_cv-bridge += "dev-deps"
+
 # Additional moules to autoload
 KERNEL_MODULE_AUTOLOAD_EXTRAS = ""
 KERNEL_MODULE_AUTOLOAD_EXTRAS_keystone += "rpmsg_proto"
