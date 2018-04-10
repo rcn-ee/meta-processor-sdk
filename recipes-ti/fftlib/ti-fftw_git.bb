@@ -9,7 +9,7 @@ include fftlib.inc
 
 PR = "${INC_PR}.0"
 
-DEPENDS = "common-csl-ip-rtos common-csl-ip ti-xdctools ti-sysbios ti-cgt6x-native ti-xdais libulm fftlib dsplib-c66x opencl clocl-native libarch"
+DEPENDS = "common-csl-ip-rtos common-csl-ip ti-xdctools-native ti-sysbios ti-cgt6x-native ti-xdais libulm fftlib dsplib-c66x opencl clocl-native libarch"
 
 RDEPENDS_${PN} += "opencl-runtime"
 

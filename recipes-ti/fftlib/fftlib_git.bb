@@ -8,7 +8,7 @@ include fftlib.inc
 
 PR = "${INC_PR}.0"
 
-DEPENDS = "common-csl-ip-rtos libarch ti-xdctools ti-cgt6x-native ti-xdais libulm dsplib-c66x php libxslt-native libxslt openmp-rtos"
+DEPENDS = "common-csl-ip-rtos libarch ti-xdctools-native doxygen-native ti-cgt6x-native ti-xdais libulm dsplib-c66x php libxslt-native libxslt openmp-rtos"
 
 COMPATIBLE_MACHINE = "k2hk|dra7xx"
 
