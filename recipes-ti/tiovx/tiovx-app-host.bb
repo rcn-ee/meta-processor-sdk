@@ -8,12 +8,13 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append += "\
      file://setenv.sh \
+     file://hack-to-add-lib-path.patch \
 "
 
 require recipes-ti/includes/tisdk-paths.inc
 require tiovx-sys.inc
 
-DEPENDS = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem opencv"
+DEPENDS = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem opencv udev"
 RDEPENDS_${PN} = " tiovx-sys-iface tiovx-sys-iface-firmware tiovx-lib-host ti-ipc cmem "
 
 PR = "r2"

@@ -1,0 +1,28 @@
+diff --git a/host/makefile b/host/makefile
+index 469aeb0..295deda 100644
+--- a/host/makefile
++++ b/host/makefile
+@@ -102,7 +102,8 @@ CPPFLAGS =
+ LDFLAGS = -L$(IPC_INSTALL_DIR)/linux/src/api/.libs/ \
+     -L$(IPC_INSTALL_DIR)/linux/src/utils/.libs \
+     -L$(IPC_INSTALL_DIR)/linux/src/transport/.libs \
+-    -L$(TARGET_INSTALL_DIR)/usr/lib
++    -L$(TARGET_INSTALL_DIR)/usr/lib \
++    -L$(TARGET_INSTALL_DIR)/lib
+ 
+ else
+ LD = $(CC)
+diff --git a/khronos_example/makefile b/khronos_example/makefile
+index a54aa33..1e9a75f 100644
+--- a/khronos_example/makefile
++++ b/khronos_example/makefile
+@@ -101,7 +101,8 @@ CPPFLAGS =
+ LDFLAGS = -L$(IPC_INSTALL_DIR)/linux/src/api/.libs/ \
+     -L$(IPC_INSTALL_DIR)/linux/src/utils/.libs \
+     -L$(IPC_INSTALL_DIR)/linux/src/transport/.libs \
+-    -L$(TARGET_INSTALL_DIR)/usr/lib
++    -L$(TARGET_INSTALL_DIR)/usr/lib \
++    -L$(TARGET_INSTALL_DIR)/lib
+ 
+ else
+ LD = $(CC)
