@@ -1,9 +1,9 @@
-PR_append = ".tisdk8"
+PR_append = ".tisdk9"
 
 TEST_ADDONS_TI_append_keystone = " \
     mmap-lld-test \
-    ipsecmgr \
 "
+#    ipsecmgr 
 
 TEST_ADDONS_TI_append_k2hk-evm = " \
     netapi-test \

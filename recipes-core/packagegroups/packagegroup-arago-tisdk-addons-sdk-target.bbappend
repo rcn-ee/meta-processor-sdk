@@ -1,4 +1,4 @@
-PR_append = "-tisdk28"
+PR_append = "-tisdk29"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -18,9 +18,9 @@ UTILS_append_keystone = " \
 
 EXTRA_LIBS_append_keystone = " \
     mmap-lld-staticdev \
-    ipsecmgr-dev \
-    ipsecmgr-staticdev \
 "
+#    ipsecmgr-dev
+#    ipsecmgr-staticdev
 
 EXTRA_LIBS_append_k2hk = " \
     netapi-dev \
