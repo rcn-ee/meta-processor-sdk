@@ -1,4 +1,4 @@
-PR_append = "-tisdk29"
+PR_append = "-tisdk30"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -22,20 +22,20 @@ EXTRA_LIBS_append_keystone = " \
 #    ipsecmgr-dev
 #    ipsecmgr-staticdev
 
-EXTRA_LIBS_append_k2hk = " \
-    netapi-dev \
-    netapi-staticdev \
-"
+#EXTRA_LIBS_append_k2hk = " \
+#    netapi-dev \
+#    netapi-staticdev \
+#"
 
-EXTRA_LIBS_append_k2l-evm = " \
-    netapi-dev \
-    netapi-staticdev \
-"
+#EXTRA_LIBS_append_k2l-evm = " \
+#    netapi-dev \
+#    netapi-staticdev \
+#"
 
-EXTRA_LIBS_append_k2e-evm = " \
-    netapi-dev \
-    netapi-staticdev \
-"
+#EXTRA_LIBS_append_k2e-evm = " \
+#    netapi-dev \
+#    netapi-staticdev \
+#"
 
 EXTRA_LIBS_append_k2g-evm = " \
     icss-emac-lld-dev \
