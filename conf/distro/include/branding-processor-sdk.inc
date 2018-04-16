@@ -22,6 +22,8 @@ RESERVE_CMEM_keystone = "1"
 
 # Enable TI UIO devices
 ENABLE_TI_UIO_DEVICES = "1"
+ENABLE_TI_UIO_DEVICES_ti33x = "0"
+ENABLE_TI_UIO_DEVICES_k2g = "0"
 
 # Configure ROS to use python3
 ROS_USE_PYTHON3 = "yes"
