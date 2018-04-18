@@ -1,5 +1,0 @@
-# Below commit ID corresponds to "DEV.STARTERWARE.PROCSDK.02.01.01.06C"
-STARTERWARE_SRCREV = "c8bbba0b37303529307be608ecca5fee66099973"
-
-PV = "02.01.01.06C"
-INC_PR = "r0"
