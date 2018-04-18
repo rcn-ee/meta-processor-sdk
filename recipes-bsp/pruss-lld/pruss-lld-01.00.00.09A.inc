@@ -1,5 +1,0 @@
-# Below commit ID corresponds to "DEV.PRUSS_LLD.01.00.00.09A"
-PRUSS_LLD_SRCREV = "e56c0950d30f59db3186f354ea4416eac556a331"
-
-PV = "01.00.00.09A"
-INC_PR = "r0"
