@@ -1,5 +1,0 @@
-# Below commit ID corresponds to "DEV.UART_LLD.01.00.00.10A"
-UART_LLD_SRCREV = "4774991ce80627b9f3eb844712e256abaf7462f0"
-
-PV = "01.00.00.10A"
-PR = "r0"
