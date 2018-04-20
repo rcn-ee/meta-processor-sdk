@@ -1,4 +1,4 @@
-PR_append = ".p51"
+PR_append = ".p52"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/linux-ti-staging-4.9-patches:"
 
@@ -210,4 +210,17 @@ TI_LINUX_KERNEL_PATCHES = " \
     file://0208-net-ethernet-ti-ptp_bc-add-pps-output-selection-gpio.patch \
     file://0209-arm-dts-am571x-idk-pps-add-ptp_bc-pps-output-selecti.patch \
     file://0210-arm-dts-am572x-idk-pps-add-ptp_bc-pps-output-selecti.patch \
+    file://0211-net-skbuff-extend-skb-shared-info-to-include-redunda.patch \
+    file://0212-net-packet-pass-on-redundant-net-info-in-packet_recv.patch \
+    file://0213-net-socket-pass-on-redundant-net-info-to-sock_recv_e.patch \
+    file://0214-hsr-save-tx_flags-and-tag-info-of-tagged-skb.patch \
+    file://0215-hsr-save-timestamp-and-tag-info-of-stripped-skb.patch \
+    file://0216-hsr-prp-add-ethtool-and-net_device-ops-support.patch \
+    file://0217-HACK-hsr-prp-Set-PTP-master-clock-address-to-slave-p.patch \
+    file://0218-net-driver-ti-prueth-add-support-of-HSR-PTP.patch \
+    file://0219-socket-accept-redundant-network-info-in-control-mess.patch \
+    file://0220-hsr-add-directed-tx-support.patch \
+    file://0221-socket-forward-extra-timestamp-of-received-skb-to-us.patch \
+    file://0222-hsr-save-cut-through-tx-timestamp-of-stripped-skb.patch \
+    file://0223-net-driver-ti-prueth-handling-HSR-PTP-event-cut-thro.patch \
 "

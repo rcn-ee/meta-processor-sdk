@@ -1,0 +1,121 @@
+From 5856cdb299db78820bee331d2c794e60d8a2c02a Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Fri, 2 Mar 2018 13:55:44 -0500
+Subject: [PATCH 221/223] socket: forward extra timestamp of received skb to
+ user space
+
+Other than the normal receive timestamp, a packet received over
+a redundant network port may have an additional timestamp associated
+with. This is the transmit timestamp of the received packet over the
+other redundant network port due to the cut-through forwarding of
+underlying hardware device.
+
+The additional timestamp, or the red_hwtstamps in the shared redundant
+info area of the received skb, is forwarded to user space as
+SCM_RED_TIMESTAMPING type control message.
+
+tmp: PHASE 3: socket.h: define new socket option SO_RED_TIMESTAMPING
+tmp: skbuff.h: add redundant info hwtstamps for cut-through tx timestamp
+tmp: socket.c sock.h: passing redinfo hwstamp to user space
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ include/linux/skbuff.h            |  7 +++++++
+ include/net/sock.h                |  5 +++++
+ include/uapi/asm-generic/socket.h |  3 +++
+ net/socket.c                      | 19 +++++++++++++++++++
+ 4 files changed, 34 insertions(+)
+
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 791a912..f71335d 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -428,6 +428,7 @@ struct skb_shared_info {
+ 	unsigned short  gso_type;
+ 	struct sk_buff	*frag_list;
+ 	struct skb_shared_hwtstamps hwtstamps;
++	struct skb_shared_hwtstamps red_hwtstamps;
+ 	struct skb_redundant_info redinfo;
+ 	u32		tskey;
+ 	__be32          ip6_frag_id;
+@@ -1243,6 +1244,12 @@ static inline struct skb_redundant_info *skb_redinfo(struct sk_buff *skb)
+ 	return &skb_shinfo(skb)->redinfo;
+ }
+ 
++static inline struct skb_shared_hwtstamps *
++skb_redinfo_hwtstamps(struct sk_buff *skb)
++{
++	return &skb_shinfo(skb)->red_hwtstamps;
++}
++
+ /**
+  *	skb_queue_empty - check if a queue is empty
+  *	@list: queue head
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 99bb74a..c13f16c 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2123,6 +2123,8 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+ 			   struct sk_buff *skb);
+ void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
+ 			     struct sk_buff *skb);
++void __sock_recv_redinfo_timestamp(struct msghdr *msg, struct sock *sk,
++				   struct sk_buff *skb);
+ 
+ static inline void
+ sock_recv_timestamp(struct msghdr *msg, struct sock *sk, struct sk_buff *skb)
+@@ -2193,6 +2195,9 @@ static inline void sock_recv_redundant_info(struct msghdr *msg, struct sock *sk,
+ 	sred = skb_redinfo(skb);
+ 	if (sred->lsdu_size)
+ 		put_cmsg(msg, SOL_SOCKET, SCM_REDUNDANT, sizeof(*sred), sred);
++
++	__sock_recv_redinfo_timestamp(msg, sk, skb);
++
+ }
+ 
+ static inline void sock_tx_redundant_info(const struct sock *sk,
+diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+index 5696277..914fb11 100644
+--- a/include/uapi/asm-generic/socket.h
++++ b/include/uapi/asm-generic/socket.h
+@@ -95,4 +95,7 @@
+ #define SO_REDUNDANT		54
+ #define SCM_REDUNDANT		SO_REDUNDANT
+ 
++#define SO_RED_TIMESTAMPING     55
++#define SCM_RED_TIMESTAMPING    SO_RED_TIMESTAMPING
++
+ #endif /* __ASM_GENERIC_SOCKET_H */
+diff --git a/net/socket.c b/net/socket.c
+index 6bbccf0..45acbea 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -685,6 +685,25 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+ }
+ EXPORT_SYMBOL_GPL(__sock_recv_timestamp);
+ 
++void __sock_recv_redinfo_timestamp(struct msghdr *msg, struct sock *sk,
++				   struct sk_buff *skb)
++{
++	struct scm_timestamping tss;
++	int empty = 1;
++	struct skb_shared_hwtstamps *red_shhwtstamps =
++		skb_redinfo_hwtstamps(skb);
++
++	if (red_shhwtstamps &&
++	    (sk->sk_tsflags & SOF_TIMESTAMPING_RAW_HARDWARE) &&
++	    ktime_to_timespec_cond(red_shhwtstamps->hwtstamp, tss.ts + 2))
++		empty = 0;
++
++	if (!empty)
++		put_cmsg(msg, SOL_SOCKET,
++			 SCM_RED_TIMESTAMPING, sizeof(tss), &tss);
++}
++EXPORT_SYMBOL_GPL(__sock_recv_redinfo_timestamp);
++
+ void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
+ 	struct sk_buff *skb)
+ {
+-- 
+1.9.1
+

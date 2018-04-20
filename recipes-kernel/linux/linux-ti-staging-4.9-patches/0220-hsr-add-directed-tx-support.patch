@@ -1,0 +1,131 @@
+From 856a49de474301dd17bdab4a701496c598749f59 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Thu, 22 Feb 2018 14:55:55 -0500
+Subject: [PATCH 220/223] hsr: add directed tx support
+
+Normally frames submitted to HSR interface are duplicated by the
+HSR layer and a copy of the duplicated frame is sent out
+through one slave port. This patch adds support of sending a
+submitted frame through a HSR slave port specified by the io_port
+field of the redundant network info submitted together with the
+frame without duplicating the frame, i.e. tx as directed by the
+redundant network info. In this case, the HSR tag of the out
+going frame is filled in by using information in the submitted
+redundant network info.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ net/hsr-prp/hsr_prp_forward.c | 41 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 36 insertions(+), 5 deletions(-)
+
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 7e244a6..742f421 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -31,6 +31,7 @@ struct hsr_prp_frame_info {
+ 	bool is_local_dest;
+ 	bool is_local_exclusive;
+ 	bool is_from_san;
++	struct skb_redundant_info *sred;
+ };
+ 
+ static inline int is_hsr_l2ptp(struct sk_buff *skb)
+@@ -281,7 +282,11 @@ static void hsr_fill_tag(struct sk_buff *skb, struct hsr_prp_frame_info *frame,
+ 	else
+ 		hsr_ethhdr = (struct hsr_ethhdr *)pc;
+ 
+-	hsr_set_lan_id(hsr_ethhdr, port);
++	if (REDINFO_T(skb) == DIRECTED_TX)
++		set_hsr_tag_path(&hsr_ethhdr->hsr_tag, REDINFO_PATHID(skb));
++	else
++		hsr_set_lan_id(hsr_ethhdr, port);
++
+ 	set_hsr_tag_LSDU_size(&hsr_ethhdr->hsr_tag, lsdu_size);
+ 	hsr_ethhdr->hsr_tag.sequence_nr = htons(frame->sequence_nr);
+ 	hsr_ethhdr->hsr_tag.encap_proto = hsr_ethhdr->ethhdr.h_proto;
+@@ -333,6 +338,9 @@ static struct sk_buff *create_tagged_skb(struct sk_buff *skb_o,
+ 
+ 	hsr_fill_tag(skb, frame, port, port->priv->prot_version);
+ 
++	if (REDINFO_T(skb) == DIRECTED_TX)
++		return skb;
++
+ 	skb_shinfo(skb)->tx_flags = skb_shinfo(skb_o)->tx_flags;
+ 	skb->sk = skb_o->sk;
+ 
+@@ -341,7 +349,7 @@ static struct sk_buff *create_tagged_skb(struct sk_buff *skb_o,
+ 		sred = skb_redinfo(skb);
+ 		/* assumes no vlan */
+ 		hsr_ethhdr = (struct hsr_ethhdr *)skb_mac_header(skb);
+-		sred->io_port = port->type;
++		sred->io_port = (PTP_EVT_OUT | BIT(port->type - 1));
+ 		sred->ethertype = ntohs(hsr_ethhdr->ethhdr.h_proto);
+ 		s = ntohs(hsr_ethhdr->hsr_tag.path_and_LSDU_size);
+ 		sred->lsdu_size = s & 0xfff;
+@@ -458,8 +466,7 @@ static void stripped_skb_get_shared_info(struct sk_buff *skb_stripped,
+ 		sred = skb_redinfo(skb);
+ 		/* assumes no vlan */
+ 		hsr_ethhdr = (struct hsr_ethhdr *)skb_mac_header(skb_hsr);
+-		/* 0x80 => out port */
+-		sred->io_port = (0x80 | port_rcv->type);
++		sred->io_port = (PTP_MSG_IN | BIT(port_rcv->type - 1));
+ 		sred->ethertype = ntohs(hsr_ethhdr->ethhdr.h_proto);
+ 		s = ntohs(hsr_ethhdr->hsr_tag.path_and_LSDU_size);
+ 		sred->lsdu_size = s & 0xfff;
+@@ -468,6 +475,22 @@ static void stripped_skb_get_shared_info(struct sk_buff *skb_stripped,
+ 	}
+ }
+ 
++static unsigned int
++hsr_prp_directed_tx_ports(struct hsr_prp_frame_info *frame)
++{
++	struct sk_buff *skb;
++
++	if (frame->skb_std)
++		skb = frame->skb_std;
++	else
++		return 0;
++
++	if (REDINFO_T(skb) == DIRECTED_TX)
++		return REDINFO_PORTS(skb);
++
++	return 0;
++}
++
+ /* Forward the frame through all devices except:
+  * - Back through the receiving device
+  * - If it's a HSR frame: through a device where it has passed before
+@@ -484,6 +507,7 @@ static void hsr_prp_forward_do(struct hsr_prp_frame_info *frame)
+ {
+ 	struct hsr_prp_port *port;
+ 	struct sk_buff *skb = NULL;
++	unsigned int dir_ports = 0;
+ 
+ 	hsr_prp_for_each_port(frame->port_rcv->priv, port) {
+ 		/* Don't send frame back the way it came */
+@@ -539,6 +563,10 @@ static void hsr_prp_forward_do(struct hsr_prp_frame_info *frame)
+ 		     (port->type ==  HSR_PRP_PT_SLAVE_A))))
+ 			continue;
+ 
++		dir_ports = hsr_prp_directed_tx_ports(frame);
++		if (dir_ports && !(dir_ports & BIT(port->type - 1)))
++			continue;
++
+ 		if (port->type != HSR_PRP_PT_MASTER) {
+ 			skb = frame_get_tagged_skb(frame, port);
+ 		} else {
+@@ -667,7 +695,10 @@ static int hsr_prp_fill_frame_info(struct hsr_prp_frame_info *frame,
+ 			if (port->type != HSR_PRP_PT_MASTER) {
+ 				frame->is_from_san = true;
+ 			} else {
+-				if (((priv->prot_version == HSR_V1) &&
++				if ((REDINFO_T(skb) == DIRECTED_TX) &&
++				    (REDINFO_LSDU_SIZE(skb))) {
++					frame->sequence_nr = REDINFO_SEQNR(skb);
++				} else if (((priv->prot_version == HSR_V1) &&
+ 				     (priv->hsr_mode
+ 					!= IEC62439_3_HSR_MODE_T)) ||
+ 				     (priv->prot_version == PRP_V1) ||
+-- 
+1.9.1
+

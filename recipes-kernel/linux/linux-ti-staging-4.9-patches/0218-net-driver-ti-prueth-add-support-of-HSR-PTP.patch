@@ -1,0 +1,148 @@
+From d5bae389002c9ad452315190e147dfffeb13ae28 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Fri, 16 Feb 2018 11:51:40 -0500
+Subject: [PATCH 218/223] net: driver: ti: prueth: add support of HSR PTP
+
+This patch adds support of HSR PTP over L2 in prueth driver.
+
+tmp: prueth: support of hsr ptp packet processing
+tmp: iep: enable forced 2-step in HSR firmware
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ drivers/net/ethernet/ti/icss_time_sync.h |  4 +++
+ drivers/net/ethernet/ti/iep.c            | 10 +++++--
+ drivers/net/ethernet/ti/prueth.c         | 47 +++++++++++++++++++++++++++++++-
+ drivers/net/ethernet/ti/prueth.h         |  2 +-
+ 4 files changed, 59 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/icss_time_sync.h b/drivers/net/ethernet/ti/icss_time_sync.h
+index ef42a54..999a9d5 100644
+--- a/drivers/net/ethernet/ti/icss_time_sync.h
++++ b/drivers/net/ethernet/ti/icss_time_sync.h
+@@ -113,4 +113,8 @@
+ #define PTP_CLK_IDENTITY_OFFSET                 (PTP_PREV_TX_TIMESTAMP_P2 + 8)               /* 8 bytes */
+ #define PTP_SCRATCH_MEM                         (PTP_CLK_IDENTITY_OFFSET + 8)                /* 8 bytes */
+ 
++/* Bit definitions for TIMESYNC_CTRL */
++#define TIMESYNC_CTRL_BG_ENABLE    BIT(0)
++#define TIMESYNC_CTRL_FORCED_2STEP BIT(1)
++
+ #endif /* ICSS_TIMESYNC_H_ */
+diff --git a/drivers/net/ethernet/ti/iep.c b/drivers/net/ethernet/ti/iep.c
+index 1e3d97c..f0fde3d 100644
+--- a/drivers/net/ethernet/ti/iep.c
++++ b/drivers/net/ethernet/ti/iep.c
+@@ -860,8 +860,14 @@ static inline void iep_start(struct iep *iep)
+ 
+ static inline void iep_time_sync_start(struct iep *iep)
+ {
+-	/* disable fw background task */
+-	writeb(0, iep->sram + TIMESYNC_CTRL_VAR_OFFSET);
++	u8 val = 0;
++
++	/* Disable fw background task for both HSR/PRP. */
++	val &= ~TIMESYNC_CTRL_BG_ENABLE;
++	/* Enable forced 2-step for HSR. No effect on PRP */
++	val |= TIMESYNC_CTRL_FORCED_2STEP;
++
++	writeb(val, iep->sram + TIMESYNC_CTRL_VAR_OFFSET);
+ 	iep->ptp_tx_enable = TIMESYNC_ENABLE;
+ 	iep->ptp_rx_enable = TIMESYNC_ENABLE;
+ }
+diff --git a/drivers/net/ethernet/ti/prueth.c b/drivers/net/ethernet/ti/prueth.c
+index fa57356..aba185d 100644
+--- a/drivers/net/ethernet/ti/prueth.c
++++ b/drivers/net/ethernet/ti/prueth.c
+@@ -95,6 +95,19 @@
+ module_param(pruss2_mc_mask, charp, 0444);
+ MODULE_PARM_DESC(pruss2_mc_mask, "Choose pruss2 MC mask");
+ 
++static inline int is_hsr_skb(struct sk_buff *skb)
++{
++	unsigned char *p;
++
++	if (!skb->data)
++		return 0;
++
++	p = skb->data;
++
++	/* FIXME: should use macros to access header fields */
++	return (*(p + 12) == 0x89 && *(p + 13) == 0x2f);
++}
++
+ static inline u32 prueth_read_reg(struct prueth *prueth,
+ 				  enum prueth_mem region,
+ 				  unsigned int reg)
+@@ -350,6 +363,7 @@ static void prueth_clean_ptp_tx_work(void) { }
+ static int pruptp_rx_timestamp(struct prueth_emac *emac, struct sk_buff *skb)
+ {
+ 	struct prueth *prueth = emac->prueth;
++	bool changed = false;
+ 	u32 ts_ofs;
+ 	u8 ts_msgtype;
+ 	int ret;
+@@ -357,7 +371,21 @@ static int pruptp_rx_timestamp(struct prueth_emac *emac, struct sk_buff *skb)
+ 	if (!emac_is_ptp_rx_enabled(emac))
+ 		return -EPERM;
+ 
++	if (PRUETH_HAS_HSR(prueth) && is_hsr_skb(skb)) {
++		/* This 6-byte shift is just a trick to skip
++		 * the size of a hsr tag so that the same
++		 * pruptp_ts_msgtype can be re-used to parse
++		 * hsr tagged skbs
++		 */
++		skb->data += 6;
++		changed = true;
++	}
++
+ 	ts_msgtype = pruptp_ts_msgtype(skb);
++
++	if (changed)
++		skb->data -= 6;
++
+ 	if ((ts_msgtype != PTP_SYNC_MSG_ID) &&
+ 	    (ts_msgtype != PTP_PDLY_REQ_MSG_ID) &&
+ 	    (ts_msgtype != PTP_PDLY_RSP_MSG_ID))
+@@ -1196,7 +1224,24 @@ static inline int emac_tx_ts_enqueue(struct prueth_emac *emac,
+ 				     struct sk_buff *skb)
+ {
+ 	unsigned long flags;
+-	u8 msg_t = pruptp_ts_msgtype(skb);
++	struct prueth *prueth = emac->prueth;
++	bool changed = false;
++	u8 msg_t;
++
++	if (PRUETH_HAS_HSR(prueth) && is_hsr_skb(skb)) {
++		/* This 6-byte shift is just a trick to skip
++		 * the size of a hsr tag so that the same
++		 * pruptp_ts_msgtype can be re-used to parse
++		 * hsr tagged skbs
++		 */
++		skb->data += 6;
++		changed = true;
++	}
++
++	msg_t = pruptp_ts_msgtype(skb);
++
++	if (changed)
++		skb->data -= 6;
+ 
+ 	if (msg_t > PTP_PDLY_RSP_MSG_ID) {
+ 		netdev_err(emac->ndev, "invalid msg_t %u\n", msg_t);
+diff --git a/drivers/net/ethernet/ti/prueth.h b/drivers/net/ethernet/ti/prueth.h
+index 102e83d..3c43e5e 100644
+--- a/drivers/net/ethernet/ti/prueth.h
++++ b/drivers/net/ethernet/ti/prueth.h
+@@ -354,7 +354,7 @@ enum pruss_ethtype {
+ 
+ #define MS_TO_NS(msec)		((msec) * 1000 * 1000)
+ #define PRUETH_RED_TABLE_CHECK_PERIOD_MS	10
+-#define PRUETH_HAS_PTP(p)       PRUETH_HAS_PRP(p)
++#define PRUETH_HAS_PTP(p)       (PRUETH_HAS_PRP(p) || PRUETH_HAS_HSR(p))
+ /* A group of PCPs are mapped to a Queue. This is the size of firmware
+  * array in shared memory
+  */
+-- 
+1.9.1
+

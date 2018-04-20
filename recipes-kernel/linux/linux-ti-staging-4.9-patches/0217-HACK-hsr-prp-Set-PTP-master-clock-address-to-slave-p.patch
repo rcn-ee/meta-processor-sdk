@@ -1,0 +1,53 @@
+From d99f609af0fa61fa0fb06028eef61c38719ce303 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Wed, 18 Apr 2018 19:29:46 -0400
+Subject: [PATCH 217/223] [HACK] hsr/prp: Set PTP master clock address to slave
+ ports
+
+Overload the ethtool op set_dump to set the PTP master clock
+address to slave port of a redundant network interface.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ net/hsr-prp/hsr_prp_device.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/net/hsr-prp/hsr_prp_device.c b/net/hsr-prp/hsr_prp_device.c
+index 7e37dc4..23fb9b4 100644
+--- a/net/hsr-prp/hsr_prp_device.c
++++ b/net/hsr-prp/hsr_prp_device.c
+@@ -609,9 +609,31 @@ static int hsr_prp_get_ts_info(struct net_device *dev,
+ 	return -1;
+ }
+ 
++static int hsr_prp_set_dump(struct net_device *dev, struct ethtool_dump *dump)
++{
++	struct hsr_prp_priv *priv = netdev_priv(dev);
++	struct hsr_prp_port *port;
++	const struct ethtool_ops *ops;
++	int ret = -1;
++
++	hsr_prp_for_each_port(priv, port) {
++		if (is_slave_port(port)) {
++			ops = port->dev->ethtool_ops;
++			if (ops && ops->set_dump) {
++				ret = ops->set_dump(port->dev, dump);
++				if (ret < 0)
++					return ret;
++			}
++		}
++	}
++
++	return 0;
++}
++
+ static const struct ethtool_ops hsr_prp_ethtool_ops = {
+ 	.get_link = ethtool_op_get_link,
+ 	.get_ts_info = hsr_prp_get_ts_info,
++	.set_dump = hsr_prp_set_dump,
+ };
+ 
+ static void hsr_prp_dev_setup(struct net_device *ndev, struct device_type *type)
+-- 
+1.9.1
+

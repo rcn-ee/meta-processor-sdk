@@ -1,0 +1,37 @@
+From 28b50555cf3176bcfec9b4463f135e1b68808542 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Fri, 2 Mar 2018 14:42:46 -0500
+Subject: [PATCH 222/223] hsr: save cut-through tx timestamp of stripped skb
+
+For a received PTP event message, there may be a cut-through tx timestamp
+associated with it also. When the skb is stripped of the HSR tag and a
+new skb is created, the cut-through tx timestamp is saved in the shared
+redundant info area of the newly created skb.
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ net/hsr-prp/hsr_prp_forward.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/net/hsr-prp/hsr_prp_forward.c b/net/hsr-prp/hsr_prp_forward.c
+index 742f421..b366bda 100644
+--- a/net/hsr-prp/hsr_prp_forward.c
++++ b/net/hsr-prp/hsr_prp_forward.c
+@@ -459,8 +459,13 @@ static void stripped_skb_get_shared_info(struct sk_buff *skb_stripped,
+ 	skb_hsr = frame->skb_hsr;
+ 	skb = skb_stripped;
+ 
+-	if (is_hsr_l2ptp_evt(skb_hsr))
++	if (is_hsr_l2ptp_evt(skb_hsr)) {
++		/* Rx timestamp */
+ 		skb_hwtstamps(skb)->hwtstamp = skb_hwtstamps(skb_hsr)->hwtstamp;
++		/* Cut-through tx timestamp */
++		skb_redinfo_hwtstamps(skb)->hwtstamp =
++			skb_redinfo_hwtstamps(skb_hsr)->hwtstamp;
++	}
+ 
+ 	if (is_hsr_l2ptp(skb_hsr)) {
+ 		sred = skb_redinfo(skb);
+-- 
+1.9.1
+

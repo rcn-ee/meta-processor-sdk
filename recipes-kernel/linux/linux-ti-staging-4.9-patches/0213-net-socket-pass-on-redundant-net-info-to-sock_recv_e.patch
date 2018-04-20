@@ -1,0 +1,87 @@
+From 321151100f1961957d3a9c20ec80141115fee620 Mon Sep 17 00:00:00 2001
+From: WingMan Kwok <w-kwok2@ti.com>
+Date: Fri, 16 Feb 2018 09:54:24 -0500
+Subject: [PATCH 213/223] net/socket: pass on redundant net info to
+ sock_recv_errqueue
+
+Along the same idea as passing a packet's tx timestamp
+back to user space application through a socket's errqueue,
+this patch adds the passing of a packet's tx redundant network
+information back to user space application through a
+socket's errqueue. The redundant network information could
+include information from HSR TAG or PRP RCT, or the
+redundant network port on which the packet is sent.
+
+tmp: socket.h: defines new socket option SO_REDUNDANT
+tmp: skbuff.c sock.c: pass on redundant info to sock_recv_errqueue()
+
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+---
+ include/uapi/asm-generic/socket.h | 3 +++
+ net/core/skbuff.c                 | 8 ++++++++
+ net/core/sock.c                   | 4 ++++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+index 67d632f..5696277 100644
+--- a/include/uapi/asm-generic/socket.h
++++ b/include/uapi/asm-generic/socket.h
+@@ -92,4 +92,7 @@
+ 
+ #define SO_CNX_ADVICE		53
+ 
++#define SO_REDUNDANT		54
++#define SCM_REDUNDANT		SO_REDUNDANT
++
+ #endif /* __ASM_GENERIC_SOCKET_H */
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index aec5605..4ca8e3a 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3842,6 +3842,7 @@ void __skb_tstamp_tx(struct sk_buff *orig_skb,
+ {
+ 	struct sk_buff *skb;
+ 	bool tsonly;
++	struct skb_redundant_info *sred, *orig_sred;
+ 
+ 	if (!sk)
+ 		return;
+@@ -3862,6 +3863,13 @@ void __skb_tstamp_tx(struct sk_buff *orig_skb,
+ 		skb_shinfo(skb)->tskey = skb_shinfo(orig_skb)->tskey;
+ 	}
+ 
++	/* FIXME: should check sk flags */
++	orig_sred = skb_redinfo(orig_skb);
++	if (orig_sred->lsdu_size) {
++		sred = skb_redinfo(skb);
++		memcpy(sred, orig_sred, sizeof(*sred));
++	}
++
+ 	if (hwtstamps)
+ 		*skb_hwtstamps(skb) = *hwtstamps;
+ 	else
+diff --git a/net/core/sock.c b/net/core/sock.c
+index d0a98b4..9819392 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2609,6 +2609,7 @@ int sock_recv_errqueue(struct sock *sk, struct msghdr *msg, int len,
+ 	struct sock_exterr_skb *serr;
+ 	struct sk_buff *skb;
+ 	int copied, err;
++	struct skb_redundant_info *sred;
+ 
+ 	err = -EAGAIN;
+ 	skb = sock_dequeue_err_skb(sk);
+@@ -2626,6 +2627,9 @@ int sock_recv_errqueue(struct sock *sk, struct msghdr *msg, int len,
+ 
+ 	sock_recv_timestamp(msg, sk, skb);
+ 
++	sred = skb_redinfo(skb);
++	put_cmsg(msg, SOL_SOCKET, SCM_REDUNDANT, sizeof(*sred), sred);
++
+ 	serr = SKB_EXT_ERR(skb);
+ 	put_cmsg(msg, level, type, sizeof(serr->ee), &serr->ee);
+ 
+-- 
+1.9.1
+
