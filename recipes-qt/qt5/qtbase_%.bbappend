@@ -1,4 +1,4 @@
-PR_append = ".tisdk5.1"
+PR_append = ".tisdk5.2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -12,6 +12,9 @@ GLES_EXTRA_DEPS = "libdrm ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', 'wayla
 # Implement the patch here
 PACKAGECONFIG[kms] = "-kms,-no-kms,drm virtual/egl"
 PACKAGECONFIG += "kms"
+
+PACKAGECONFIG[gbm] = "-gbm,-no-gbm,drm virtual/egl"
+PACKAGECONFIG += "gbm"
 
 QT_NOSGX_PATCHES = "\
     file://0001-calculator-Add-exit-button-for-non-window-environmen.patch \
