@@ -27,7 +27,7 @@ EXTRA_LIBS_append_keystone = " \
 #    netapi-staticdev \
 #"
 
-#EXTRA_LIBS_append_k2l-evm = " \
+#EXTRA_LIBS_append_k2l = " \
 #    netapi-dev \
 #    netapi-staticdev \
 #"

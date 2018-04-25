@@ -9,7 +9,7 @@ TEST_ADDONS_TI_append_keystone = " \
 #    netapi-test \
 #"
 
-#TEST_ADDONS_TI_append_k2l-evm = " \
+#TEST_ADDONS_TI_append_k2l = " \
 #    netapi-test \
 #"
 
