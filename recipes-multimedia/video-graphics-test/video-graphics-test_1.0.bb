@@ -6,10 +6,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=c7ca707704d3354a64feeb4f19f52eb5"
 
 DEPENDS += "libdrm ti-gc320-libs cmem qtdeclarative"
 
-PR = "r1"
+PR = "r2"
 
 BRANCH = "master"
-SRCREV = "bdfbc4179d8d176feec1df148728b1882fca7416"
+SRCREV = "54ec5ff165413d41d32bb2672e127487ee37a82b"
 
 SRC_URI = "git://git.ti.com/sitara-linux/video-graphics-test.git;protocol=git;branch=${BRANCH} \
 "
