@@ -1,5 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 SRC_URI += "file://eglfs_kms_cfg.json"
 
