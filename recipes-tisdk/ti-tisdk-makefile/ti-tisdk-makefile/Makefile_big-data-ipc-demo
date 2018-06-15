@@ -19,14 +19,12 @@ big-data-ipc-demo-linux:
 	@echo     Building the big data ipc demo: Linux host
 	@echo ==================================================
 	@cd example-applications; cd `find . -name "*big-data-ipc-demo-linux*"`; \
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
-	source $(ENV_SETUP); \
-	make -j $(MAKE_JOBS) host_linux \
-		PLATFORM="$${IPC_PLATFORM}" \
+	$(MAKE) -j $(MAKE_JOBS) host_linux \
+		PLATFORM="$(IPC_PLATFORM)" \
 		KERNEL_INSTALL_DIR="$(LINUXKERNEL_INSTALL_DIR)" \
-		XDC_INSTALL_DIR="$${XDC_INSTALL_PATH}" \
-		BIOS_INSTALL_DIR="$${BIOS_INSTALL_PATH}" \
-		IPC_INSTALL_DIR="$${IPC_INSTALL_PATH}" \
+		XDC_INSTALL_DIR="$(XDC_INSTALL_PATH)" \
+		BIOS_INSTALL_DIR="$(BIOS_INSTALL_PATH)" \
+		IPC_INSTALL_DIR="$(IPC_INSTALL_PATH)" \
 		TOOLCHAIN_LONGNAME=$${TOOLCHAIN_SYS} \
 		TOOLCHAIN_INSTALL_DIR=$${SDK_PATH_NATIVE}/usr \
 		TOOLCHAIN_PREFIX=$(CROSS_COMPILE) \
@@ -44,17 +42,14 @@ big-data-ipc-demo-linux_install:
 	fi
 	@cd example-applications; \
 	cd `find . -name "*big-data-ipc-demo-linux*"`; \
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
-	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) install_linux_bin DESTDIR=$(DESTDIR) \
-	PLATFORM="$${IPC_PLATFORM}"
+	PLATFORM="$(IPC_PLATFORM)"
 
 big-data-ipc-demo-linux_clean:
 	@echo ==================================================
 	@echo     Cleaning the big data ipc demo: Linux host
 	@echo ==================================================
 	@cd example-applications; cd `find . -name "*big-data-ipc-demo-linux*"`; \
-	SDK_INSTALL_PATH=$(TI_RTOS_PATH_ABS) source $(TI_PRSDK_PATH)/setupenv.sh > /dev/null; \
-	source $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) clean_linux \
-	PLATFORM="$${IPC_PLATFORM}"
+	PLATFORM="$(IPC_PLATFORM)"
+
