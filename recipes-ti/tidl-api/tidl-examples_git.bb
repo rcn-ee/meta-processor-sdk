@@ -28,20 +28,25 @@ do_compile() {
 
 CP_ARGS="-Prf --preserve=mode,timestamps --no-preserve=ownership"
 
+TIDL_INSTALL_DIR = "${datadir}/ti/tidl"
+
 do_install() {
-    install -d ${D}${datadir}/ti/tidl-api
-    install -d ${D}${datadir}/ti/tidl-api/examples
-    install -d ${D}${datadir}/ti/tidl-api/tidl_api
-    install -d ${D}${datadir}/ti/tidl-api/viewer
-    cp ${CP_ARGS} ${S}/examples/* ${D}${datadir}/ti/tidl-api/examples/
-    cp ${CP_ARGS} ${S}/tidl_api/* ${D}${datadir}/ti/tidl-api/tidl_api/
-    cp ${CP_ARGS} ${S}/viewer/* ${D}${datadir}/ti/tidl-api/viewer/
-    install ${S}/readme.md ${D}${datadir}/ti/tidl-api/
+    install -d ${D}${TIDL_INSTALL_DIR}
+    install -d ${D}${TIDL_INSTALL_DIR}/examples
+    install -d ${D}${TIDL_INSTALL_DIR}/tidl_api
+    install -d ${D}${TIDL_INSTALL_DIR}/viewer
+    cp ${CP_ARGS} ${S}/examples/* ${D}${TIDL_INSTALL_DIR}/examples/
+    cp ${CP_ARGS} ${S}/tidl_api/* ${D}${TIDL_INSTALL_DIR}/tidl_api/
+    cp ${CP_ARGS} ${S}/viewer/* ${D}${TIDL_INSTALL_DIR}/viewer/
+    install ${S}/readme.md ${D}${TIDL_INSTALL_DIR}/
 }
 
 FILES_${PN} += "\
-    ${datadir}/ti/tidl-api \
+    ${TIDL_INSTALL_DIR} \
 "
 
 
 INSANE_SKIP_${PN} = "arch ldflags textrel staticdev"
+
+CREATE_SRCIPK = "1"
+SRCIPK_INSTALL_DIR = "example-applications/tidl-api-${PV}"
