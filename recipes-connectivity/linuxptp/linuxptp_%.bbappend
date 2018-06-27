@@ -5,7 +5,7 @@ BRANCH = "ti-linuxptp-release"
 SRC_URI = "git://git.ti.com/processor-sdk/linuxptp.git;protocol=git;branch=${BRANCH} \
            file://build-Allow-CC-and-prefix-to-be-overriden.patch"
 
-SRCREV = "fac6d1e8cc4cef10fa2e6c8fd7c49779fcff50de"
+SRCREV = "2b045f8c4994bb31b5876c1fb347e9b0a23e94cc"
 
 S = "${WORKDIR}/git"
 
