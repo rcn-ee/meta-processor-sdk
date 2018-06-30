@@ -1,6 +1,6 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
-SRCREV = "71c1049e7a73cc731766aa72fc7197a45003625d"
+SRCREV = "65fee8957447ae4e403ad324acf735d811b2c412"
 
 PACKAGES_append = " matrix-multimedia-demo-video-graphics"
 
