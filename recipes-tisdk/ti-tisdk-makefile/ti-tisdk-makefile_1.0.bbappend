@@ -1,4 +1,4 @@
-PR_append = ".tisdk53"
+PR_append = ".tisdk54"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -55,6 +55,8 @@ MAKEFILES_append_dra7xx = " tiovx-app-host"
 
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)}"
+
+MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
 
 PRU_ICSS_INSTALL_TARGET_k2g = "pru-icss_install_k2g"
 
