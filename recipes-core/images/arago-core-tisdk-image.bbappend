@@ -90,16 +90,4 @@ tisdk_image_build_append () {
     fi
 }
 
-tisdk_image_cleanup() {
-    local cleanup_dirs="var etc lib run sbin usr"
-
-    for d in $cleanup_dirs
-    do
-        if [ -d ${IMAGE_ROOTFS}/$d ]
-        then
-            mv ${IMAGE_ROOTFS}/$d ${IMAGE_ROOTFS}/.$d
-        fi
-    done
-}
-
 require arago-core-tisdk-image-sw-manifest.inc
