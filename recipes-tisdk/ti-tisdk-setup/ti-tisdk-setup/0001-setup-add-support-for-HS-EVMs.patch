@@ -328,11 +328,11 @@ index 0000000..3e7bfad
 +echo "timeout 300" > $cwd/setupBoard.minicom
 +echo "verbose on" >> $cwd/setupBoard.minicom
 +
-+do_expect "\"abort autoboot\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"stop autoboot\"" "send \" \"" $cwd/setupBoard.minicom
 +do_expect "\"$prompt\"" "send \"env default -f -a\"" $cwd/setupBoard.minicom
 +do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +do_expect "\"$prompt\"" "send \"reset\"" $cwd/setupBoard.minicom
-+do_expect "\"abort autoboot\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"stop autoboot\"" "send \" \"" $cwd/setupBoard.minicom
 +
 +if [ "$fit" -eq "1" ]; then
 +	do_expect "\"$prompt\"" "send setenv serverip $ip" $cwd/setupBoard.minicom

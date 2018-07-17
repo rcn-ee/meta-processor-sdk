@@ -201,11 +201,11 @@ index 8c296e5..8a513f3 100644
 -    check_status
 -    echo >> $3
 -}
-+do_expect "\"abort autoboot\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"stop autoboot\"" "send \" \"" $cwd/setupBoard.minicom
 +do_expect "\"$prompt\"" "send \"env default -f -a\"" $cwd/setupBoard.minicom
 +do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 +do_expect "\"$prompt\"" "send \"reset\"" $cwd/setupBoard.minicom
-+do_expect "\"abort autoboot\"" "send \" \"" $cwd/setupBoard.minicom
++do_expect "\"stop autoboot\"" "send \" \"" $cwd/setupBoard.minicom
 +
 +if [ "$kernel" -eq "1" ]; then
 +	if [ "$fs" -eq "1" ]; then

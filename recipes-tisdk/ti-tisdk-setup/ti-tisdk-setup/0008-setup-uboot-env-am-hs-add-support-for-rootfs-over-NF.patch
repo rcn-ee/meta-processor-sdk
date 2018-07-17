@@ -65,7 +65,7 @@ index 0222e34..d95a5f4 100644
      echo
 @@ -155,15 +180,52 @@ do_expect "\"$prompt\"" "send \"saveenv\"" $cwd/setupBoard.minicom
  do_expect "\"$prompt\"" "send \"reset\"" $cwd/setupBoard.minicom
- do_expect "\"abort autoboot\"" "send \" \"" $cwd/setupBoard.minicom
+ do_expect "\"stop autoboot\"" "send \" \"" $cwd/setupBoard.minicom
  
 +do_expect "\"$prompt\"" "send \"run update_to_fit\"" $cwd/setupBoard.minicom
  if [ "$fit" -eq "1" ]; then
