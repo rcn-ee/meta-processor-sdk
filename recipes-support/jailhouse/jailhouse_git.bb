@@ -7,10 +7,9 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=9fa7f895f96bde2d47fd5b7d95b6ba4d"
 BRANCH = "plsdk_am57xx"
 SRC_URI = "git://git.ti.com/processor-sdk/jailhouse.git;branch=${BRANCH}"
 
-SRCREV = "238433e3f4203b23dc4bba9d09118a3608be1931"
+SRCREV = "2ad429b04f30a082f206e0083c398f018467ef1c"
 
-PV = "0.7"
-PR = "r1"
+PV = "0.8"
 
 PACKAGES =+ "${PN}-drivers ${PN}-firmware ${PN}-examples"
 RDEPENDS_${PN} += "${PN}-drivers ${PN}-firmware"
@@ -51,7 +50,7 @@ JAILHOUSE_EXAMPLE_FILES_append_am57xx-evm = " \
 "
 
 do_configure() {
-    cp ./ci/jailhouse-config-${JAILHOUSE_CONFIG}.h ./hypervisor/include/jailhouse/config.h
+    cp ./ci/jailhouse-config-${JAILHOUSE_CONFIG}.h ./include/jailhouse/config.h
 }
 
 PARALLEL_MAKE = ""
@@ -69,6 +68,8 @@ do_install() {
 
 FILES_${PN}-firmware = "${base_libdir}/firmware"
 FILES_${PN}-examples = "${datadir}/${PN}/examples"
+
+INSANE_SKIP_${PN} += "ldflags"
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "board-support/extra-drivers/${PN}-${PV}"
