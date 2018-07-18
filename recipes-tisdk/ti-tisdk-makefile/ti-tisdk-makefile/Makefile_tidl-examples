@@ -1,11 +1,10 @@
 
-
 tidl-examples:
 	@echo =====================================
 	@echo     Building TIDL Examples
 	@echo =====================================
-	@cd example-applications; cd `find . -name "*tidl-api*"`; . $(ENV_SETUP); \
-		make -C ./examples \
+	@cd example-applications; cd `find . -name "*tidl-examples*"`; . $(ENV_SETUP); \
+		make \
 		TARGET_ROOTDIR=$(SDK_PATH_TARGET) TI_OCL_CGT_INSTALL=$(SDK_PATH_TARGET)/usr/share/ti/cgt-c6x
 
 tidl-examples_install: tidl-examples
@@ -18,18 +17,19 @@ tidl-examples_install: tidl-examples
 		exit 1; \
 	fi
 	@cd example-applications; \
-	cd `find . -name "*tidl-api*"`; \
-	for d in ./examples/*; \
+	cd `find . -name "*tidl-examples*"`; \
+	for d in ./*; \
 	do \
 		[ -f "$$d/Makefile" ] || continue; \
 		exe=$$(sed -ne 's|^EXE *= *||p' $$d/Makefile); \
-		install -d $(DESTDIR)/usr/share/ti/tidl/$$d; \
-		install -m 755 $$d/$$exe $(DESTDIR)/usr/share/ti/tidl/$$d; \
+		install -d $(DESTDIR)/usr/share/ti/tidl/examples/$$d; \
+		install -m 755 $$d/$$exe $(DESTDIR)/usr/share/ti/tidl/examples/$$d; \
 	done
 
 tidl-examples_clean:
 	@echo =======================================
 	@echo     Cleaning TIDL Examples
 	@echo =======================================
-	@cd example-applications; cd `find . -name "*tidl-api*"`; : $(ENV_SETUP); \
-	make -C ./examples realclean
+	@cd example-applications; cd `find . -name "*tidl-examples*"`; : $(ENV_SETUP); \
+	make TARGET_ROOTDIR=$(SDK_PATH_TARGET) clean
+
