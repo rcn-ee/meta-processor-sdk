@@ -6,8 +6,8 @@ EXTRA_PACKAGES_append_omap-a15 = " opencv"
 EXTRA_PACKAGES_append_keystone = " opencv"
 EXTRA_PACKAGES_remove_k2hk-hs-evm = "opencv"
 
-# jailhouse-examples
-EXTRA_PACKAGES_append_am57xx-evm = " jailhouse-examples-rtos"
+
+EXTRA_PACKAGES_append_am57xx-evm = " jailhouse-examples jailhouse-examples-rtos"
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
