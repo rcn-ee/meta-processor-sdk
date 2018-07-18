@@ -7,7 +7,7 @@ PV = "2.14.21"
 PE = "1"
 PR = "r0"
 
-COMPATIBLE_MACHINE = "am57xx-evm"
+COMPATIBLE_MACHINE = "am57xx-evm|am57xx-hs-evm"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
