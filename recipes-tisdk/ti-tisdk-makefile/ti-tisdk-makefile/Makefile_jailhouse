@@ -5,7 +5,7 @@ jailhouse_config:
 	@echo =====================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "jailhouse*" -type d`; \
-	cp -v ./ci/jailhouse-config-${PLATFORM}.h ./hypervisor/include/jailhouse/config.h
+	cp -v ./ci/jailhouse-config-${PLATFORM}.h ./include/jailhouse/config.h
 
 jailhouse: linux jailhouse_config
 	@echo =====================================

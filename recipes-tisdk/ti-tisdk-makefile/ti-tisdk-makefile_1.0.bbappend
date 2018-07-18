@@ -1,4 +1,4 @@
-PR_append = ".tisdk54"
+PR_append = ".tisdk55"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -65,8 +65,9 @@ KERNEL_DEVICETREE_append_ti43x = " ${@base_conditional('ENABLE_TI_UIO_DEVICES', 
 KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am574x-idk-pru-excl-uio.dtb am572x-idk-pru-excl-uio.dtb am571x-idk-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_k2g-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' keystone-k2g-ice-pru-excl-uio.dtb', '', d)}"
 
-KERNEL_DEVICETREE_append_am57xx-evm = " \
-    am572x-evm-jailhouse.dtb \
+AM57XX_KERNEL_DEVICETREE = " \
+    am57xx-evm-jailhouse.dtb \
+    am57xx-evm-reva3-jailhouse.dtb \
     am572x-idk-jailhouse.dtb \
     am572x-idk-lcd-osd101t2045-jh.dtb \
     am572x-idk-lcd-osd101t2587-jh.dtb \
@@ -75,6 +76,9 @@ KERNEL_DEVICETREE_append_am57xx-evm = " \
     am572x-idk-pps.dtb \
     am574x-idk-pps.dtb \
 "
+
+KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
+KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
 
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\(C6X_GEN_INSTALL_PATH\)""
