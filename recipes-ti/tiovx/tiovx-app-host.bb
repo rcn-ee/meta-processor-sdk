@@ -8,7 +8,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append += "\
      file://setenv.sh \
-     file://hack-to-add-lib-path.patch \
 "
 
 require recipes-ti/includes/tisdk-paths.inc
