@@ -1,6 +1,6 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
-TIDL_PKGS = "tidl-examples-dev tidl-viewer"
+TIDL_PKGS = "tidl-examples-dev tidl-viewer tidl-utils"
 
 EXTRA_PKGS_append_am57xx-evm = " ${TIDL_PKGS}"
 EXTRA_PKGS_append_am57xx-hs-evm = " ${TIDL_PKGS}"
