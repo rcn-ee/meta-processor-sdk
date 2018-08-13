@@ -1,4 +1,4 @@
-PR_append = "-tisdk47"
+PR_append = "-tisdk48"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -16,7 +16,10 @@ EXTRA_PACKAGES_append_am57xx-evm = " jailhouse-examples \
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
-EXTRA_PACKAGES_append = " zbar hidapi"
+EXTRA_PACKAGES_append = " hidapi"
+
+EXTRA_PACKAGES_append_armv5 = " zbar"
+EXTRA_PACKAGES_append_armv7a = " zbar"
 
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
