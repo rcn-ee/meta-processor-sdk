@@ -1,8 +1,6 @@
-PR_append = ".tisdk12"
+PR_append = ".tisdk13"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-
-SRCREV = "2184048a4a01a338f9e839ffb39663805a4e7a58"
 
 SRC_URI_append = " \
     file://0001-setup-add-support-for-HS-EVMs.patch \
