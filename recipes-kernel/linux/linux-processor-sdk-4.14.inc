@@ -23,7 +23,10 @@ AM57XX_KERNEL_DEVICETREE = " \
 KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
+RDEPENDS_kernel-base_append_ti33x = " pruhsr-fw pruprp-fw"
+RDEPENDS_kernel-base_append_ti43x = " pruhsr-fw pruprp-fw"
 RDEPENDS_kernel-base_append_am57xx-evm = " pruhsr-fw pruprp-fw"
 RDEPENDS_kernel-base_append_am57xx-hs-evm = " pruhsr-fw pruprp-fw"
+RDEPENDS_kernel-base_append_k2g = " pruhsr-fw pruprp-fw"
 
 RDEPENDS_kernel-base_append_keystone = " netcp-sa-fw"
