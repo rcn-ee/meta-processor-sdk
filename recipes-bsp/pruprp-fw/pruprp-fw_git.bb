@@ -7,18 +7,24 @@ PV = "2.14.22"
 PE = "1"
 PR = "r0"
 
-COMPATIBLE_MACHINE = "am57xx-evm|am57xx-hs-evm"
+COMPATIBLE_MACHINE = "ti33x|ti43x|am57xx-evm|am57xx-hs-evm|k2g"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-SRCREV = "049f406cdd7c8e7753513f816e7a5d82a7df8cdb"
+SRCREV = "5c1ef4db0098d7bb5dea1c37923e6eca4246921d"
 BRANCH ?= "master"
 
 SRC_URI = "git://git.ti.com/processor-sdk/processor-sdk-firmware.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
 
-TARGET = "am57xx-pru0-pruprp-fw.elf am57xx-pru1-pruprp-fw.elf"
+TARGET = ""
+TARGET_ti33x = "am335x-pru0-pruprp-fw.elf am335x-pru1-pruprp-fw.elf"
+TARGET_ti43x = "am437x-pru0-pruprp-fw.elf am437x-pru1-pruprp-fw.elf"
+TARGET_am57xx-evm = "am57xx-pru0-pruprp-fw.elf am57xx-pru1-pruprp-fw.elf"
+TARGET_am57xx-hs-evm = "am57xx-pru0-pruprp-fw.elf am57xx-pru1-pruprp-fw.elf"
+TARGET_k2g = "k2g-pru0-pruprp-fw.elf k2g-pru1-pruprp-fw.elf"
+
 
 do_install() {
 	install -d ${D}${base_libdir}/firmware/ti-pruss
