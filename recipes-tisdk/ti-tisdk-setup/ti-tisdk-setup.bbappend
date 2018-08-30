@@ -38,9 +38,9 @@ do_install_append() {
         # Remove spaces
         script=$(echo "${SDCARD_SCRIPT}" | sed -e 's|^ *||' -e 's| *$||')
 
-        if [ "${script}" != "create-sdcard.sh" ]
+        if [ "${script##*/}" != "create-sdcard.sh" ]
         then
-            mv "${D}/bin/${script}" "${D}/bin/create-sdcard.sh"
+            mv "${D}/bin/${script##*/}" "${D}/bin/create-sdcard.sh"
         fi
     fi
 
