@@ -1,0 +1,68 @@
+&am33xx_pinmux {
+        pru_adc_bone_pins: pru_adc_bone_pins {
+                pinctrl-single,pins = <
+                        0x0a0 0x2e /* MISO_1, lcd_data0,       MUX_MODE6 | INPUT,  P8.45, PRU1[0]  GPI/GPO */
+                        0x0a4 0x2e /* MISO_2, lcd_data1,       MUX_MODE6 | INPUT,  P8.46, PRU1[1]  GPI/GPO */
+                        0x0a8 0x2e /* MISO_3, lcd_data2,       MUX_MODE6 | INPUT,  P8.43, PRU1[2]  GPI/GPO */
+                        0x0ac 0x2e /* MISO_4, lcd_data3,       MUX_MODE6 | INPUT,  P8.44, PRU1[3]  GPI/GPO */
+                        0x0b0 0x2e /* MISO_5, lcd_data4,       MUX_MODE6 | INPUT,  P8.41, PRU1[4]  GPI/GPO */
+                        0x0b4 0x2e /* MISO_6, lcd_data5,       MUX_MODE6 | INPUT,  P8.42, PRU1[5]  GPI/GPO */
+                        0x0b8 0x05 /* CS_12, lcd_data6,        MUX_MODE5 | OUTPUT, P8.39, PRU1[6]  GPI/GPO */
+                        0x0bc 0x05 /* MOSI_1, lcd_data7,       MUX_MODE5 | OUTPUT, P8.40, PRU1[7]  GPI/GPO */
+                        0x0e0 0x05 /* MOSI_2, lcd_vsync,       MUX_MODE5 | OUTPUT, P8.27, PRU1[8]  GPI/GPO */
+                        0x0e4 0x05 /* MOSI_3, lcd_hsync,       MUX_MODE5 | OUTPUT, P8.29, PRU1[9]  GPI/GPO */
+                        0x0e8 0x05 /* MOSI_4, lcd_pclk,        MUX_MODE5 | OUTPUT, P8.28, PRU1[10] GPI/GPO */
+                        0x0ec 0x05 /* MOSI_5, lcd_ac_bias_en,  MUX_MODE5 | OUTPUT, P8.30, PRU1[11] GPI/GPO */
+                        0x080 0x05 /* MOSI_6, gpmc_csn1,       MUX_MODE5 | OUTPUT, P8.21, PRU1[12] GPI/GPO */
+                        0x084 0x05 /* SCLK_OUT, gpmc_csn2,     MUX_MODE5 | OUTPUT, P8.20, PRU1[13] GPI/GPO */
+                        0x038 0x07 /* OE, GPIO1_14,            MUX_MODE7 | OUTPUT, P8.16, GPIO1_14 GPIO */
+                >;
+        };
+};
+
+&pruss {
+        pinctrl-names = "default";
+        pinctrl-0 = <&pru_adc_bone_pins>;
+};
+
+/* Reserve 256kB DDR memory for the ping/pong buffers */
+/{
+        reserved-memory {
+                #address-cells = <1>;
+                #size-cells = <1>;
+                ranges;
+
+                pruadc_reserved: pruadc_reserved@0x9ffc0000 {
+                        reg = <0x9ffc0000 0x00040000>;
+                        no-map;
+                        status = "okay";
+                };
+        };
+
+        hdmi {
+                status = "disabled";
+        };
+};
+
+/* Disable the following nodes due to pin mux conflicts with PRU signals needed */
+&tda19988 {
+        status = "disabled";
+};
+
+&lcdc {
+        status = "disabled";
+};
+
+&mcasp0 {
+        status = "disabled";
+};
+
+&mmc2 {
+        status = "disabled";
+};
+
+/{
+        sound {
+                status = "disabled";
+        };
+};

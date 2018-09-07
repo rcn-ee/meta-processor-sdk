@@ -1,10 +1,12 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.14:${THISDIR}/files:"
 
 #require linux-ti-staging-4.14-patches.inc
 
 SRC_URI_append = " file://jailhouse.cfg"
+
+SRC_URI_append_ti33x = " file://am335x-pru-adc.dtsi"
 
 KERNEL_CONFIG_FRAGMENTS_append_am57xx-evm = " ${WORKDIR}/jailhouse.cfg"
 
@@ -19,6 +21,22 @@ AM57XX_KERNEL_DEVICETREE = " \
     am572x-idk-pps.dtb \
     am574x-idk-pps.dtb \
 "
+
+do_setup_adc() {
+:
+}
+
+do_setup_adc_ti33x() {
+    dts="am335x-boneblack-pru-adc.dts"
+    dtsi="am335x-pru-adc.dtsi"
+    cp ${S}/arch/arm/boot/dts/am335x-boneblack.dts ${S}/arch/arm/boot/dts/$dts
+    cp ${WORKDIR}/${dtsi} ${S}/arch/arm/boot/dts/
+    echo "#include \"${dtsi}\"" >> ${S}/arch/arm/boot/dts/$dts
+}
+
+do_patch[postfuncs] += "do_setup_adc"
+
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-pru-adc.dtb"
 
 KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
