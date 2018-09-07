@@ -1,4 +1,4 @@
-PR_append = ".tisdk55"
+PR_append = ".tisdk56"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -10,6 +10,7 @@ SRC_URI_append = "\
     file://Makefile_protection-relays-hmi \
     file://Makefile_tiovx-app-host \
     file://Makefile_tidl-examples \
+    file://Makefile_pru-adc \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
@@ -42,6 +43,7 @@ MAKEFILES_append_ti43x = " evse-hmi"
 
 MAKEFILES_append_ti33x = " evse-hmi \
 			   protection-relays-hmi \
+			   pru-adc \
 "
 
 MAKEFILES_append_am57xx-evm = " jailhouse \
@@ -60,7 +62,7 @@ MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
 
 PRU_ICSS_INSTALL_TARGET_k2g = "pru-icss_install_k2g"
 
-KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am335x-icev2-pru-excl-uio.dtb', '', d)}"
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-iot-cape.dtb am335x-boneblack-pru-adc.dtb ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am335x-icev2-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_ti43x = " ${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', 'am437x-idk-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_am57xx-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' am574x-idk-pru-excl-uio.dtb am572x-idk-pru-excl-uio.dtb am571x-idk-pru-excl-uio.dtb', '', d)}"
 KERNEL_DEVICETREE_append_k2g-evm = "${@base_conditional('ENABLE_TI_UIO_DEVICES', '1', ' keystone-k2g-ice-pru-excl-uio.dtb', '', d)}"
