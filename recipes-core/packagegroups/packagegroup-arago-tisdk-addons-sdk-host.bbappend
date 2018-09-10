@@ -1,4 +1,4 @@
-PR_append = ".tisdk11"
+PR_append = ".tisdk12"
 
 EXTRA_LIBS_append_am57xx-evm = " \
     jailhouse-src \
@@ -16,4 +16,4 @@ EXTRA_LIBS_append_dra7xx = " \
     tiovx-app-host-src \
 "
 
-UTILS_append_ti33x = " pru-adc-src"
+UTILS_append_am335x-evm = " pru-adc-src"
