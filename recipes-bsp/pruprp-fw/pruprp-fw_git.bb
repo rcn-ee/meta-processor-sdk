@@ -5,13 +5,13 @@ LIC_FILES_CHKSUM = "file://LICENSE.ti;md5=b5aebf0668bdf95621259288c4a46d76"
 
 PV = "2.14.22"
 PE = "1"
-PR = "r0"
+PR = "r1"
 
 COMPATIBLE_MACHINE = "ti33x|ti43x|am57xx-evm|am57xx-hs-evm|k2g"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-SRCREV = "5c1ef4db0098d7bb5dea1c37923e6eca4246921d"
+SRCREV = "6e22e6ed873502b008e0ca18ddcba96ed38e04c2"
 BRANCH ?= "master"
 
 SRC_URI = "git://git.ti.com/processor-sdk/processor-sdk-firmware.git;protocol=git;branch=${BRANCH}"
