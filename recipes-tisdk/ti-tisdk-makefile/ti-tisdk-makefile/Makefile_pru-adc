@@ -30,5 +30,5 @@ pru-adc_install:
 		$(DESTDIR)/lib/firmware/pru; \
 	install -m 0644 ./PRU_ADS8688_Interface/gen/PRU_ADS8688_Interface.out \
 		$(DESTDIR)/lib/firmware/pru; \
-	install -m 755 ./ARM_User_Space_App/gen/ARM_User_Space_App.out $(DESTDIR)/usr/bin
+	install -m 755 ./ARM_User_Space_App/gen/ARM_User_Space_App.out $(DESTDIR)/usr/bin/pru-adc-arm-app.out
 
