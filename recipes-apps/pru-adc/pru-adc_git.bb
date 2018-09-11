@@ -1,4 +1,4 @@
-UMMARY = "PRU Multi-channel ADC Interface Reference Design"
+SUMMARY = "PRU Multi-channel ADC Interface Reference Design"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://PRUMulti-channelADCInterfaceReferen_manifest.html;md5=1302c86d3951a0d1254e1805158ccf2e"
 
@@ -9,7 +9,7 @@ inherit update-alternatives
 COMPATIBLE_MACHINE = "am335x-evm"
 
 PV = "1.0"
-PR = "r0"
+PR = "r1"
 
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/apps/tida01555.git;protocol=git;branch=${BRANCH}"
@@ -32,8 +32,9 @@ do_install() {
     install -m 0644 PRU_ADS8688_Interface/gen/PRU_ADS8688_Interface.out ${D}${base_libdir}/firmware/pru
 # install binary and scripts
     install -d ${D}${bindir}
-    install -m 755 ARM_User_Space_App/gen/ARM_User_Space_App.out ${D}${bindir}
+    install -m 755 ARM_User_Space_App/gen/ARM_User_Space_App.out ${D}${bindir}/pru-adc-arm-app.out
     install -m 755 run.sh ${D}${bindir}/run-pru-adc.sh
+    sed -i 's|./ARM_User_Space_App.out|/usr/bin/pru-adc-arm-app.out|g' ${D}${bindir}/run-pru-adc.sh
 }
 
 FILES_${PN} += "${base_libdir}/firmware"
