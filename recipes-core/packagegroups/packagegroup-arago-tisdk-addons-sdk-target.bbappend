@@ -1,4 +1,4 @@
-PR_append = "-tisdk30"
+PR_append = "-tisdk31"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -58,6 +58,8 @@ EXTRA_LIBS_append_am335x-evm = " \
     pruss-lld-staticdev \
     icss-emac-lld-dev \
     icss-emac-lld-staticdev \
+    pru-icss-dev \
+    pru-icss-staticdev \
 "
 
 EXTRA_LIBS_append_am437x-evm = " \
