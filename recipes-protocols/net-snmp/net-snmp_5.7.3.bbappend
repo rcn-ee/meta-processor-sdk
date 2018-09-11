@@ -1,4 +1,4 @@
-PR_append = ".tisdk4"
+PR_append = ".tisdk5"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:${THISDIR}/files:"
 
@@ -19,6 +19,7 @@ SRC_URI_append = " \
     file://0014-IEC-62439-3-MIB-add-license-header-to-sources.patch \
     file://0001-IEC-62439-3-MIB-fix-lreManufacturerName-displaying-d.patch \
     file://0001-IEC-62439-3-MIB-fix-duplicate-discard-mode-setting-f.patch \
+    file://0001-hsr-prp-update-to-retrieve-mibs-from-main-interface.patch \
 "
 
 PACKAGECONFIG[iec-62439-3-mib] = "--with-mib-modules=iec-62439-3-mib,,,"
