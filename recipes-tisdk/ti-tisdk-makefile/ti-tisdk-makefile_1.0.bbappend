@@ -1,4 +1,4 @@
-PR_append = ".tisdk58"
+PR_append = ".tisdk59"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -44,6 +44,8 @@ MAKEFILES_append_ti43x = " evse-hmi"
 MAKEFILES_append_ti33x = " evse-hmi \
 			   protection-relays-hmi \
 "
+
+MAKEFILES_append_k3 = " evse-hmi"
 
 MAKEFILES_append_am335x-evm = " pru-adc"
 
