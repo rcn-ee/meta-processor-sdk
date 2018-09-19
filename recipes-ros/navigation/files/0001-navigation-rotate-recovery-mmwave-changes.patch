@@ -1,0 +1,88 @@
+diff --git a/rotate_recovery/src/rotate_recovery.cpp b/rotate_recovery/src/rotate_recovery.cpp
+index 64e9999..65959e8 100644
+--- a/rotate_recovery/src/rotate_recovery.cpp
++++ b/rotate_recovery/src/rotate_recovery.cpp
+@@ -3,6 +3,7 @@
+ * Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2009, Willow Garage, Inc.
++*  Copyright (c) 2017, Texas Instruments Incorporated
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+@@ -38,7 +39,7 @@
+ #include <pluginlib/class_list_macros.h>
+ 
+ //register this planner as a RecoveryBehavior plugin
+-PLUGINLIB_DECLARE_CLASS(rotate_recovery, RotateRecovery, rotate_recovery::RotateRecovery, nav_core::RecoveryBehavior)
++PLUGINLIB_EXPORT_CLASS(rotate_recovery::RotateRecovery, nav_core::RecoveryBehavior)
+ 
+ namespace rotate_recovery {
+ RotateRecovery::RotateRecovery(): global_costmap_(NULL), local_costmap_(NULL), 
+@@ -54,7 +55,7 @@ void RotateRecovery::initialize(std::string name, tf::TransformListener* tf,
+ 
+     //get some parameters from the parameter server
+     ros::NodeHandle private_nh("~/" + name_);
+-    ros::NodeHandle blp_nh("~/TrajectoryPlannerROS");
++    ros::NodeHandle blp_nh("~/DWAPlannerROS");
+ 
+     //we'll simulate every degree by default
+     private_nh.param("sim_granularity", sim_granularity_, 0.017);
+@@ -88,8 +89,13 @@ void RotateRecovery::runBehavior(){
+     ROS_ERROR("The costmaps passed to the RotateRecovery object cannot be NULL. Doing nothing.");
+     return;
+   }
+-  ROS_WARN("Rotate recovery behavior started.");
++  ROS_WARN("mmWave customized rotate recovery behavior started.");
+ 
++  ROS_WARN("Clearing costmaps...");
++  global_costmap_->resetLayers();
++  local_costmap_->resetLayers();
++
++  ROS_WARN("Performing rotation...");
+   ros::Rate r(frequency_);
+   ros::NodeHandle n;
+   ros::Publisher vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 10);
+@@ -101,15 +107,15 @@ void RotateRecovery::runBehavior(){
+ 
+   bool got_180 = false;
+ 
+-  double start_offset = 0 - angles::normalize_angle(tf::getYaw(global_pose.getRotation()));
++  double start_offset = angles::normalize_angle_positive(tf::getYaw(global_pose.getRotation()));
+   while(n.ok()){
+     local_costmap_->getRobotPose(global_pose);
+ 
+-    double norm_angle = angles::normalize_angle(tf::getYaw(global_pose.getRotation()));
+-    current_angle = angles::normalize_angle(norm_angle + start_offset);
++    double norm_angle = angles::normalize_angle_positive(tf::getYaw(global_pose.getRotation()));
++    current_angle = angles::normalize_angle_positive(norm_angle - start_offset);
+ 
+     //compute the distance left to rotate
+-    double dist_left = M_PI - current_angle;
++    double dist_left = (2 * M_PI) - current_angle;
+ 
+     double x = global_pose.getOrigin().x(), y = global_pose.getOrigin().y();
+ 
+@@ -142,12 +148,20 @@ void RotateRecovery::runBehavior(){
+     vel_pub.publish(cmd_vel);
+ 
+     //makes sure that we won't decide we're done right after we start
+-    if(current_angle < 0.0)
++    if ((fabs(current_angle - M_PI) < M_PI/2) && (got_180 == false))
++    {
+       got_180 = true;
++    }
+ 
+     //if we're done with our in-place rotation... then return
+-    if(got_180 && current_angle >= (0.0 - tolerance_))
++    if(got_180 && ((current_angle >= (2*M_PI - tolerance_)) || (current_angle <= (M_PI/2))))
++    {
++      cmd_vel.angular.z = 0;
++      vel_pub.publish(cmd_vel);
++
++      ROS_WARN("Completed rotation...");
+       return;
++    }
+ 
+     r.sleep();
+   }
