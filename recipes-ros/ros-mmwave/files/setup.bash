@@ -1,0 +1,9 @@
+export ROS_ROOT=/opt/ros/indigo
+export PATH=$PATH:/opt/ros/indigo/bin
+export LD_LIBRARY_PATH=/opt/ros/indigo/lib
+export PYTHONPATH=/usr/lib/python3.5/site-packages:/opt/ros/indigo/lib/python3.5/site-packages
+export ROS_MASTER_URI=http://$SITARA_IP_ADDR:11311
+export ROS_IP=$SITARA_IP_ADDR
+export CMAKE_PREFIX_PATH=/opt/ros/indigo
+export ROS_PACKAGE_PATH=/opt/ros/indigo/share
+touch /opt/ros/indigo/.catkin
