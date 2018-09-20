@@ -11,11 +11,12 @@ SRC_URI += "file://0001-turtlebot-bringup-description-launch-xml.patch;patchdir=
             file://0002-turtlebot-bringup-minimal-launch.patch;patchdir=${WORKDIR}/${P}/turtlebot/turtlebot/turtlebot_bringup \
             file://0001-turtlebot-navigation-params-yaml.patch;patchdir=${WORKDIR}/${P}/turtlebot/turtlebot_apps/turtlebot_navigation \
             file://0001-turtlebot-mmwave-launchers-navigation-visualization-rviz.patch;patchdir=${S} \
+            file://0003-turtlebot-bringup-description.launch \
 "
 
 S = "${WORKDIR}/${P}/turtlebot_mmwave_launchers"
 
-PR = "r2"
+PR = "r3"
 
 inherit catkin
 
@@ -39,6 +40,7 @@ do_install_append() {
     install -d ${D}${ros_datadir}/turtlebot_description
     cp -r ${WORKDIR}/${P}/turtlebot/turtlebot/turtlebot_bringup/* ${D}${ros_datadir}/turtlebot_bringup
     cp -r ${WORKDIR}/${P}/turtlebot/turtlebot/turtlebot_description/* ${D}${ros_datadir}/turtlebot_description 
+    cp ${WORKDIR}/0003-turtlebot-bringup-description.launch ${D}${ros_datadir}/turtlebot_bringup/launch/description.launch
     rm -rf ${D}${ros_datadir}/turtlebot_bringup/patches
 
     install -d ${D}${ros_datadir}/turtlebot_navigation
