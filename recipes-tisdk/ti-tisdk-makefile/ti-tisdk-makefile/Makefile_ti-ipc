@@ -63,14 +63,14 @@ ti-ipc-linux: ti-ipc-rtos-path-check linux ti-ipc-linux-config
 	@echo =================================
 	@echo     Building IPC
 	@echo =================================
-	source $(ENV_SETUP); \
+	. $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $(IPC_INSTALL_PATH)
 
 ti-ipc-linux_clean: ti-ipc-rtos-path-check ti-ipc-linux-config
 	@echo =================================
 	@echo     Cleaning IPC
 	@echo =================================
-	source $(ENV_SETUP); \
+	. $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $(IPC_INSTALL_PATH) clean
 
 ti-ipc-linux_install: ti-ipc-rtos-path-check ti-ipc-linux
@@ -82,7 +82,7 @@ ti-ipc-linux_install: ti-ipc-rtos-path-check ti-ipc-linux
 		echo "Please run setup.sh in the SDK's root directory and then try again."; \
 		exit 1; \
 	fi
-	source $(ENV_SETUP); \
+	. $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $(IPC_INSTALL_PATH) install DESTDIR=$(DESTDIR)
 
 ti-ipc-linux-examples: ti-ipc-rtos-path-check
@@ -94,6 +94,7 @@ ti-ipc-linux-examples: ti-ipc-rtos-path-check
 		PLATFORM="$(IPC_PLATFORM)" \
 		KERNEL_INSTALL_DIR="$(LINUXKERNEL_INSTALL_DIR)" \
 		XDC_INSTALL_DIR="$(XDC_INSTALL_PATH)" \
+		PDK_INSTALL_DIR="$(PDK_INSTALL_PATH)/.." \
 		BIOS_INSTALL_DIR="$(BIOS_INSTALL_PATH)" \
 		IPC_INSTALL_DIR="$(IPC_INSTALL_PATH)" \
 		TOOLCHAIN_LONGNAME=$${TOOLCHAIN_SYS} \
@@ -119,7 +120,7 @@ ti-ipc-linux-examples_clean: ti-ipc-rtos-path-check
 	@echo =================================
 	@echo     Cleaning the IPC Examples
 	@echo =================================
-	source $(ENV_SETUP); \
+	. $(ENV_SETUP); \
 	$(MAKE) -j $(MAKE_JOBS) -C $${IPC_INSTALL_PATH}/examples clean \
 		HOSTOS="linux" \
 		PLATFORM="$(IPC_PLATFORM)" \
