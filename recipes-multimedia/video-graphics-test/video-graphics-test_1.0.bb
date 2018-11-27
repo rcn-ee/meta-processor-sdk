@@ -9,7 +9,7 @@ DEPENDS += "libdrm ti-gc320-libs cmem qtdeclarative"
 PR = "r2"
 
 BRANCH = "master"
-SRCREV = "54ec5ff165413d41d32bb2672e127487ee37a82b"
+SRCREV = "2db3848cd1047e688ea0a94a987e35a292bcbda9"
 
 SRC_URI = "git://git.ti.com/sitara-linux/video-graphics-test.git;protocol=git;branch=${BRANCH} \
 "
