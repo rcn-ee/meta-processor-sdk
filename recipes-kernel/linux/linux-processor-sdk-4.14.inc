@@ -1,13 +1,15 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.14:${THISDIR}/files:"
 
 #require linux-ti-staging-4.14-patches.inc
 
-SRC_URI_append = " file://jailhouse.cfg"
+SRC_URI_append = " file://jailhouse.cfg \
+                   file://docker.cfg"
 
 SRC_URI_append_ti33x = " file://am335x-pru-adc.dtsi"
 
+KERNEL_CONFIG_FRAGMENTS_append = " ${WORKDIR}/docker.cfg"
 KERNEL_CONFIG_FRAGMENTS_append_am57xx-evm = " ${WORKDIR}/jailhouse.cfg"
 
 AM57XX_KERNEL_DEVICETREE = " \
