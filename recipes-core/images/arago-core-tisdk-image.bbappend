@@ -1,8 +1,12 @@
-PR_append = ".tisdk13"
+PR_append = ".tisdk14"
 
 IMAGE_INSTALL_append = " \                                                                                                                   
       packagegroup-arago-tisdk-hmi-sdk-host \ 
  "
+
+# Add small docker rootfs for all SOCs
+TARGET_IMAGES_append = " tisdk-docker-rootfs-image"
+
 
 # The following FITIMAGE vars are copied from kernel-fitimage.bbclass.
 #
