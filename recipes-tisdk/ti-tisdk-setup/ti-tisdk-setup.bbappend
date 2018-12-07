@@ -1,4 +1,4 @@
-PR_append = ".tisdk13"
+PR_append = ".tisdk14"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -22,6 +22,7 @@ SETUP_TFTP_am335x-hs-evm = "setup-tftp-fit.sh"
 SETUP_TFTP_am437x-hs-evm = "setup-tftp-fit.sh"
 SETUP_TFTP_am57xx-hs-evm = "setup-tftp-fit.sh"
 SETUP_TFTP_k2e-hs-evm = "setup-tftp-fit.sh"
+SETUP_TFTP_k2l-hs-evm = "setup-tftp-fit.sh"
 SETUP_TFTP_k2g-hs-evm = "setup-tftp-fit.sh"
 SETUP_TFTP_k2hk-hs-evm = "setup-tftp-fit.sh"
 
@@ -29,6 +30,7 @@ UBOOT_ENV_am335x-hs-evm = "setup-uboot-env-am335x-hs.sh"
 UBOOT_ENV_am437x-hs-evm = "setup-uboot-env-am43x-hs.sh"
 UBOOT_ENV_am57xx-hs-evm = "setup-uboot-env-am57xx-hs-evm.sh"
 UBOOT_ENV_k2e-hs-evm = "setup-uboot-env-keystone-hs.sh"
+UBOOT_ENV_k2l-hs-evm = "setup-uboot-env-keystone-hs.sh"
 UBOOT_ENV_k2hk-hs-evm = "setup-uboot-env-keystone-hs.sh"
 UBOOT_ENV_k2g-hs-evm = "setup-uboot-env-k2g-hs-evm.sh"
 
