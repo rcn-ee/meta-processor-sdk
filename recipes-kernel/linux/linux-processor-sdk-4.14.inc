@@ -1,4 +1,4 @@
-PR_append = ".tisdk2"
+PR_append = ".tisdk3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.14:${THISDIR}/files:"
 
@@ -38,7 +38,10 @@ do_setup_adc_ti33x() {
 
 do_patch[postfuncs] += "do_setup_adc"
 
-KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-pru-adc.dtb"
+KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-pru-adc.dtb \
+                                   am335x-icev2-prueth-pps.dtb"
+KERNEL_DEVICETREE_append_ti43x = " am437x-idk-pps.dtb"
+KERNEL_DEVICETREE_append_k2g   = " keystone-k2g-ice-pps.dtb"
 
 KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
