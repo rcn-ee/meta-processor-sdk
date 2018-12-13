@@ -12,7 +12,7 @@ pru-adc_clean:
 	@echo    Cleaning PRU-ADC
 	@echo =================================
 	@cd example-applications; cd `find . -name "*pru-adc*"`; \
-		make clean
+		make PRU_CGT=$(LINUX_DEVKIT_PATH)/sysroots/__SDKMACHINE__-arago-linux/usr/share/ti/cgt-pru PRU_SSP=$(SDK_PATH_TARGET)/usr clean
 
 pru-adc_install:
 	@echo ===================================================
