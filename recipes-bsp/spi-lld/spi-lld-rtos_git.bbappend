@@ -1,6 +1,6 @@
 
-# Below commit ID corresponds to "DEV.SPI_LLD.01.00.00.13A"
-SPI_LLD_SRCREV = "2c6c4fe250383c8854be8fd58a6b599dbbe3fe8e"
+# Below commit ID corresponds to "DEV.SPI_LLD.01.00.00.13B"
+SPI_LLD_SRCREV = "07fd0f70b1656fb2ddde44d828592ec0358b0c37"
 
-PV = "01.00.00.13A"
+PV = "01.00.00.13B"
 PR = "r0"
