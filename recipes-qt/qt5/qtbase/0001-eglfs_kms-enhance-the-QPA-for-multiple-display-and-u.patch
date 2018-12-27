@@ -1,6 +1,6 @@
-From f383ddedeb19e87d987b4146a20b7c9e7ea2808e Mon Sep 17 00:00:00 2001
+From e1dee76a81fb16966ecf1f09c2a7c6fbcfb63bb9 Mon Sep 17 00:00:00 2001
 From: Manisha Agrawal <manisha.agrawal@ti.com>
-Date: Fri, 18 May 2018 09:23:31 -0400
+Date: Wed, 26 Dec 2018 10:50:14 -0500
 Subject: [PATCH] eglfs_kms: enhance the QPA for multiple display and user
  buffer
 
@@ -26,14 +26,14 @@ Signed-off-by: Manisha Agrawal <manisha.agrawal@ti.com>
  src/platformsupport/kmsconvenience/qkmsdevice_p.h  |  14 +-
  .../eglfs/api/qeglfsdeviceintegration.cpp          |  87 +++++++
  .../eglfs/api/qeglfsdeviceintegration_p.h          |  14 ++
- .../platforms/eglfs/api/qeglfsintegration.cpp      | 106 +++++++-
- .../eglfs_kms/qeglfskmsgbmdevice.cpp               |  63 +++--
+ .../platforms/eglfs/api/qeglfsintegration.cpp      | 104 +++++++-
+ .../eglfs_kms/qeglfskmsgbmdevice.cpp               |  97 ++++++--
  .../eglfs_kms/qeglfskmsgbmdevice.h                 |  16 +-
  .../eglfs_kms/qeglfskmsgbmintegration.cpp          | 103 ++++++++
  .../eglfs_kms/qeglfskmsgbmintegration.h            |  13 +
- .../eglfs_kms/qeglfskmsgbmscreen.cpp               | 270 +++++++++++++++++++--
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp               | 268 ++++++++++++++++++++-
  .../eglfs_kms/qeglfskmsgbmscreen.h                 |  39 +++
- 11 files changed, 886 insertions(+), 47 deletions(-)
+ 11 files changed, 918 insertions(+), 45 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 index a8eefe6..a6478ed 100644
@@ -467,16 +467,14 @@ index 4335554..b3d8fa0 100644
  
  class Q_EGLFS_EXPORT QEglFSDeviceIntegrationPlugin : public QObject
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 9a0be48..3bc4111 100644
+index 9a0be48..81a1848 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-@@ -286,8 +286,17 @@ enum ResourceType {
-     EglConfig,
+@@ -287,7 +287,16 @@ enum ResourceType {
      NativeDisplay,
      XlibDisplay,
--    WaylandDisplay,
+     WaylandDisplay,
 -    EglSurface
-+    WaylandDisplay,
 +    EglSurface,
 +    ExportBuffer,
 +    DistroyBuffer,
@@ -605,20 +603,21 @@ index 9a0be48..3bc4111 100644
          break;
      }
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
-index e218d58..9948ef7 100644
+index e218d58..2a1b4b4 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
-@@ -45,7 +45,8 @@
- #include "qeglfsintegration_p.h"
+@@ -46,6 +46,10 @@
  
  #include <QtCore/QLoggingCategory>
--#include <QtCore/private/qcore_unix_p.h>
-+#include <QtCore/private/qcore_unix_p.h>
+ #include <QtCore/private/qcore_unix_p.h>
 +#include <QThread>
++
++#include <sys/select.h>
++
  
  #define ARRAY_LENGTH(a) (sizeof (a) / sizeof (a)[0])
  
-@@ -53,6 +54,31 @@ QT_BEGIN_NAMESPACE
+@@ -53,6 +57,62 @@ QT_BEGIN_NAMESPACE
  
  Q_DECLARE_LOGGING_CATEGORY(qLcEglfsKmsDebug)
  
@@ -642,15 +641,46 @@ index e218d58..9948ef7 100644
 +        QEglFSKmsGbmDevice::pageFlipHandler // page flip handler
 +    };
 +
-+    while(m_abort == false){
-+        drmHandleEvent(m_gbm_device->fd(), &drmEvent);
-+    }
++	struct timeval timeout = {
++		.tv_sec = 0,
++		.tv_usec = 5 * 1000  /* 5ms polling for dRM events */
++	};
++
++	fd_set fds;
++	int res;
++
++	while(m_abort == false){
++
++		FD_ZERO(&fds);
++		FD_SET(m_gbm_device->fd(), &fds);
++
++		res = select(m_gbm_device->fd() + 1, &fds, NULL, NULL, &timeout);
++
++		switch (res)
++		{
++			case 0:
++				/* timeout occurs */
++				break;
++
++			case -1:
++				if (errno != EINTR)
++				{
++					qErrnoWarning("%s: Select failed waiting for flip event: %d",
++								__func__, errno);
++				}
++				break;
++
++			default:
++				drmHandleEvent(m_gbm_device->fd(), &drmEvent);
++				break;
++		}
++	}
 +}
 +
  void QEglFSKmsGbmDevice::pageFlipHandler(int fd, unsigned int sequence, unsigned int tv_sec, unsigned int tv_usec, void *user_data)
  {
      Q_UNUSED(fd);
-@@ -60,8 +86,17 @@ void QEglFSKmsGbmDevice::pageFlipHandler(int fd, unsigned int sequence, unsigned
+@@ -60,8 +120,17 @@ void QEglFSKmsGbmDevice::pageFlipHandler(int fd, unsigned int sequence, unsigned
      Q_UNUSED(tv_sec);
      Q_UNUSED(tv_usec);
  
@@ -670,7 +700,7 @@ index e218d58..9948ef7 100644
  }
  
  QEglFSKmsGbmDevice::QEglFSKmsGbmDevice(QKmsScreenConfig *screenConfig, const QString &path)
-@@ -92,8 +127,12 @@ bool QEglFSKmsGbmDevice::open()
+@@ -92,8 +161,12 @@ bool QEglFSKmsGbmDevice::open()
          return false;
      }
  
@@ -683,10 +713,13 @@ index e218d58..9948ef7 100644
      return true;
  }
  
-@@ -105,9 +144,16 @@ void QEglFSKmsGbmDevice::close()
+@@ -104,9 +177,16 @@ void QEglFSKmsGbmDevice::close()
+     if (m_gbm_device) {
          gbm_device_destroy(m_gbm_device);
          m_gbm_device = Q_NULLPTR;
-     }
+-    }
++    }
++
 +    m_drm_page_flip_handler->m_abort = true;
 +    m_drm_page_flip_handler->wait();
 +    delete m_drm_page_flip_handler;
@@ -696,11 +729,9 @@ index e218d58..9948ef7 100644
 +        drmSetClientCap(fd(), DRM_CLIENT_CAP_UNIVERSAL_PLANES, 0);
 +        drmSetClientCap(fd(), DRM_CLIENT_CAP_ATOMIC, 0);
          qt_safe_close(fd());
-+        qWarning("QEglFSKmsGBmDevice::close(): close DRM %d", fd());
          setFd(-1);
      }
- }
-@@ -138,17 +184,6 @@ void QEglFSKmsGbmDevice::destroyGlobalCursor()
+@@ -138,17 +218,6 @@ void QEglFSKmsGbmDevice::destroyGlobalCursor()
      }
  }
  
@@ -898,15 +929,13 @@ index 38f132d..ad11c6d 100644
  protected:
      QKmsDevice *createDevice() override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 87fb314..f498bf1 100644
+index 87fb314..87a4f09 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-@@ -49,11 +49,26 @@
- #include <QtGui/private/qguiapplication_p.h>
+@@ -50,10 +50,25 @@
  #include <QtFbSupport/private/qfbvthandler_p.h>
  
--#include <errno.h>
-+#include <errno.h>
+ #include <errno.h>
 +#include <QThread>
 +#include <QMutex>
 +#include <string.h>
@@ -935,7 +964,7 @@ index 87fb314..f498bf1 100644
      : QEglFSKmsScreen(device, output)
 +    , m_qpa_flip_call(false)
 +    , m_user_flip_call(false)
-+	, m_start_flip_overlay_plane(false)
++    , m_start_flip_overlay_plane(false)
      , m_gbm_surface(Q_NULLPTR)
      , m_gbm_bo_current(Q_NULLPTR)
      , m_gbm_bo_next(Q_NULLPTR)
