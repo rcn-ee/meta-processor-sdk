@@ -10,7 +10,285 @@ index c608d37..43e0e8c 100644
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
-@@ -662,6 +663,9 @@ namespace move_base {
+@@ -114,24 +115,9 @@
+ 
+     //initialize the global planner
+     try {
+-      //check if a non fully qualified name has potentially been passed in
+-      if(!bgp_loader_.isClassAvailable(global_planner)){
+-        std::vector<std::string> classes = bgp_loader_.getDeclaredClasses();
+-        for(unsigned int i = 0; i < classes.size(); ++i){
+-          if(global_planner == bgp_loader_.getName(classes[i])){
+-            //if we've found a match... we'll get the fully qualified name and break out of the loop
+-            ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+-                global_planner.c_str(), classes[i].c_str());
+-            global_planner = classes[i];
+-            break;
+-          }
+-        }
+-      }
+-
+       planner_ = bgp_loader_.createInstance(global_planner);
+       planner_->initialize(bgp_loader_.getName(global_planner), planner_costmap_ros_);
+-    } catch (const pluginlib::PluginlibException& ex)
+-    {
++    } catch (const pluginlib::PluginlibException& ex) {
+       ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", global_planner.c_str(), ex.what());
+       exit(1);
+     }
+@@ -142,25 +128,10 @@
+ 
+     //create a local planner
+     try {
+-      //check if a non fully qualified name has potentially been passed in
+-      if(!blp_loader_.isClassAvailable(local_planner)){
+-        std::vector<std::string> classes = blp_loader_.getDeclaredClasses();
+-        for(unsigned int i = 0; i < classes.size(); ++i){
+-          if(local_planner == blp_loader_.getName(classes[i])){
+-            //if we've found a match... we'll get the fully qualified name and break out of the loop
+-            ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+-                local_planner.c_str(), classes[i].c_str());
+-            local_planner = classes[i];
+-            break;
+-          }
+-        }
+-      }
+-
+       tc_ = blp_loader_.createInstance(local_planner);
+       ROS_INFO("Created local_planner %s", local_planner.c_str());
+       tc_->initialize(blp_loader_.getName(local_planner), &tf_, controller_costmap_ros_);
+-    } catch (const pluginlib::PluginlibException& ex)
+-    {
++    } catch (const pluginlib::PluginlibException& ex) {
+       ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", local_planner.c_str(), ex.what());
+       exit(1);
+     }
+@@ -248,20 +219,6 @@
+       //initialize the global planner
+       ROS_INFO("Loading global planner %s", config.base_global_planner.c_str());
+       try {
+-        //check if a non fully qualified name has potentially been passed in
+-        if(!bgp_loader_.isClassAvailable(config.base_global_planner)){
+-          std::vector<std::string> classes = bgp_loader_.getDeclaredClasses();
+-          for(unsigned int i = 0; i < classes.size(); ++i){
+-            if(config.base_global_planner == bgp_loader_.getName(classes[i])){
+-              //if we've found a match... we'll get the fully qualified name and break out of the loop
+-              ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+-                  config.base_global_planner.c_str(), classes[i].c_str());
+-              config.base_global_planner = classes[i];
+-              break;
+-            }
+-          }
+-        }
+-
+         planner_ = bgp_loader_.createInstance(config.base_global_planner);
+ 
+         // wait for the current planner to finish planning
+@@ -275,9 +232,9 @@
+         planner_->initialize(bgp_loader_.getName(config.base_global_planner), planner_costmap_ros_);
+ 
+         lock.unlock();
+-      } catch (const pluginlib::PluginlibException& ex)
+-      {
+-        ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", config.base_global_planner.c_str(), ex.what());
++      } catch (const pluginlib::PluginlibException& ex) {
++        ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the \
++                   containing library is built? Exception: %s", config.base_global_planner.c_str(), ex.what());
+         planner_ = old_planner;
+         config.base_global_planner = last_config_.base_global_planner;
+       }
+@@ -287,20 +244,6 @@
+       boost::shared_ptr<nav_core::BaseLocalPlanner> old_planner = tc_;
+       //create a local planner
+       try {
+-        //check if a non fully qualified name has potentially been passed in
+-        ROS_INFO("Loading local planner: %s", config.base_local_planner.c_str());
+-        if(!blp_loader_.isClassAvailable(config.base_local_planner)){
+-          std::vector<std::string> classes = blp_loader_.getDeclaredClasses();
+-          for(unsigned int i = 0; i < classes.size(); ++i){
+-            if(config.base_local_planner == blp_loader_.getName(classes[i])){
+-              //if we've found a match... we'll get the fully qualified name and break out of the loop
+-              ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+-                  config.base_local_planner.c_str(), classes[i].c_str());
+-              config.base_local_planner = classes[i];
+-              break;
+-            }
+-          }
+-        }
+         tc_ = blp_loader_.createInstance(config.base_local_planner);
+         // Clean up before initializing the new planner
+         planner_plan_->clear();
+@@ -308,9 +251,9 @@
+         controller_plan_->clear();
+         resetState();
+         tc_->initialize(blp_loader_.getName(config.base_local_planner), &tf_, controller_costmap_ros_);
+-      } catch (const pluginlib::PluginlibException& ex)
+-      {
+-        ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", config.base_local_planner.c_str(), ex.what());
++      } catch (const pluginlib::PluginlibException& ex) {
++        ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the \
++                   containing library is built? Exception: %s", config.base_local_planner.c_str(), ex.what());
+         tc_ = old_planner;
+         config.base_local_planner = last_config_.base_local_planner;
+       }
+@@ -340,19 +283,19 @@
+     geometry_msgs::Point pt;
+ 
+     pt.x = x - size_x / 2;
+-    pt.y = y - size_x / 2;
++    pt.y = y - size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     pt.x = x + size_x / 2;
+-    pt.y = y - size_x / 2;
++    pt.y = y - size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     pt.x = x + size_x / 2;
+-    pt.y = y + size_x / 2;
++    pt.y = y + size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     pt.x = x - size_x / 2;
+-    pt.y = y + size_x / 2;
++    pt.y = y + size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     planner_costmap_ros_->getCostmap()->setConvexPolygonCost(clear_poly, costmap_2d::FREE_SPACE);
+@@ -365,19 +308,19 @@
+     y = global_pose.getOrigin().y();
+ 
+     pt.x = x - size_x / 2;
+-    pt.y = y - size_x / 2;
++    pt.y = y - size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     pt.x = x + size_x / 2;
+-    pt.y = y - size_x / 2;
++    pt.y = y - size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     pt.x = x + size_x / 2;
+-    pt.y = y + size_x / 2;
++    pt.y = y + size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     pt.x = x - size_x / 2;
+-    pt.y = y + size_x / 2;
++    pt.y = y + size_y / 2;
+     clear_poly.push_back(pt);
+ 
+     controller_costmap_ros_->getCostmap()->setConvexPolygonCost(clear_poly, costmap_2d::FREE_SPACE);
+@@ -625,62 +568,55 @@
+       }
+       ros::Time start_time = ros::Time::now();
+ 
+-      if(state_==PLANNING){
+-        //time to plan! get a copy of the goal and unlock the mutex
+-        geometry_msgs::PoseStamped temp_goal = planner_goal_;
++      //time to plan! get a copy of the goal and unlock the mutex
++      geometry_msgs::PoseStamped temp_goal = planner_goal_;
++      lock.unlock();
++      ROS_DEBUG_NAMED("move_base_plan_thread","Planning...");
++
++      //run planner
++      planner_plan_->clear();
++      bool gotPlan = n.ok() && makePlan(temp_goal, *planner_plan_);
++
++      if(gotPlan){
++        ROS_DEBUG_NAMED("move_base_plan_thread","Got Plan with %zu points!", planner_plan_->size());
++        //pointer swap the plans under mutex (the controller will pull from latest_plan_)
++        std::vector<geometry_msgs::PoseStamped>* temp_plan = planner_plan_;
++
++        lock.lock();
++        planner_plan_ = latest_plan_;
++        latest_plan_ = temp_plan;
++        last_valid_plan_ = ros::Time::now();
++        planning_retries_ = 0;
++        new_global_plan_ = true;
++
++        ROS_DEBUG_NAMED("move_base_plan_thread","Generated a plan from the base_global_planner");
++
++        //make sure we only start the controller if we still haven't reached the goal
++        if(runPlanner_)
++          state_ = CONTROLLING;
++        if(planner_frequency_ <= 0)
++          runPlanner_ = false;
+         lock.unlock();
+-        ROS_DEBUG_NAMED("move_base_plan_thread","Planning...");
+-
+-        //run planner
+-        planner_plan_->clear();
+-        bool gotPlan = n.ok() && makePlan(temp_goal, *planner_plan_);
+-
+-        if(gotPlan){
+-          ROS_DEBUG_NAMED("move_base_plan_thread","Got Plan with %zu points!", planner_plan_->size());
+-          //pointer swap the plans under mutex (the controller will pull from latest_plan_)
+-          std::vector<geometry_msgs::PoseStamped>* temp_plan = planner_plan_;
+-
+-          lock.lock();
+-          planner_plan_ = latest_plan_;
+-          latest_plan_ = temp_plan;
+-          last_valid_plan_ = ros::Time::now();
+-          planning_retries_ = 0;
+-          new_global_plan_ = true;
+-
+-          ROS_DEBUG_NAMED("move_base_plan_thread","Generated a plan from the base_global_planner");
+-
+-          //make sure we only start the controller if we still haven't reached the goal
+-          if(runPlanner_)
+-            state_ = CONTROLLING;
+-          if(planner_frequency_ <= 0)
+-            runPlanner_ = false;
+-          lock.unlock();
++      }
++      //if we didn't get a plan and we are in the planning state (the robot isn't moving)
++      else if(state_==PLANNING){
++        ROS_DEBUG_NAMED("move_base_plan_thread","No Plan...");
++        ros::Time attempt_end = last_valid_plan_ + ros::Duration(planner_patience_);
++
++        //check if we've tried to make a plan for over our time limit or our maximum number of retries
++        //issue #496: we stop planning when one of the conditions is true, but if max_planning_retries_
++        //is negative (the default), it is just ignored and we have the same behavior as ever
++        lock.lock();
++        planning_retries_++;
++        if(runPlanner_ &&
++           (ros::Time::now() > attempt_end || planning_retries_ > uint32_t(max_planning_retries_))){
++          //we'll move into our obstacle clearing mode
++          state_ = CLEARING;
++          runPlanner_ = false;  // proper solution for issue #523
++          publishZeroVelocity();
++          recovery_trigger_ = PLANNING_R;
+         }
+-        //if we didn't get a plan and we are in the planning state (the robot isn't moving)
+-        else{
+-          ROS_DEBUG_NAMED("move_base_plan_thread","No Plan...");
+-          ros::Time attempt_end = last_valid_plan_ + ros::Duration(planner_patience_);
+-
+-          //check if we've tried to make a plan for over our time limit or our maximum number of retries
+-          //issue #496: we stop planning when one of the conditions is true, but if max_planning_retries_
+-          //is negative (the default), it is just ignored and we have the same behavior as ever
+-          lock.lock();
+-          planning_retries_++;
+-          if(runPlanner_ &&
+-             (ros::Time::now() > attempt_end || planning_retries_ > uint32_t(max_planning_retries_))){
+-            //we'll move into our obstacle clearing mode
+-            state_ = CLEARING;
+-            wait_for_wake = true;
+-            publishZeroVelocity();
+-            recovery_trigger_ = PLANNING_R;
+-          }
+ 
+-          lock.unlock();
+-        }
+-      }
+-      else
+-      {
+-        //not planning, so just unlock the mutex
+         lock.unlock();
+       }
+ 
+@@ -724,6 +660,9 @@
        controller_costmap_ros_->start();
      }
  
