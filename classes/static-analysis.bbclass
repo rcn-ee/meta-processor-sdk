@@ -99,7 +99,7 @@ static_analysis_postbuild[dirs] += "${STATIC_ANALYSIS_POSTBUILD_DIRS}"
 #  calling this script with the static analysis command.
 #
 def static_analysis_compile_wrapper(d):
-    if (d.getVar('STATIC_ANALYSIS_ENABLE', True)):
+    if ((d.getVar('STATIC_ANALYSIS_ENABLE', True)) == '1'):
         cwd = None
 
         # Make a copy of do_compile
