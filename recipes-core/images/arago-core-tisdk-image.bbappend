@@ -32,7 +32,7 @@ DEPLOY_SPL_NAME_k2g-evm = "MLO-${MACHINE}"
 SW_MANIFEST_QT5_FOOTER = "Any Qt package referenced in this manifest that has LGPL 2.1 or LGPL 3 as a licensing option is only being used and distributed by TI under LGPL 2.1. The choice of having both, as reflected in the manifest table, comes from the licensing line the corresponding recipe. TI has opted to only use LGPL 2.1."
 
 SW_MANIFEST_FOOTER = "\
-${@base_conditional('QT_PROVIDER', 'qt5', '${SW_MANIFEST_QT5_FOOTER}', '', d)}\
+${@oe.utils.conditional('QT_PROVIDER', 'qt5', '${SW_MANIFEST_QT5_FOOTER}', '', d)}\
 "
 
 sw_manifest_table_footer() {
