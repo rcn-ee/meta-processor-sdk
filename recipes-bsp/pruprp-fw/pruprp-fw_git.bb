@@ -3,15 +3,15 @@ DESCRIPTION = "PRU PRP firmware for AM57xx"
 LICENSE = "TI-TFL"
 LIC_FILES_CHKSUM = "file://LICENSE.ti;md5=b5aebf0668bdf95621259288c4a46d76"
 
-PV = "2.14.22"
+PV = "2.15.23"
 PE = "1"
-PR = "r1"
+PR = "r0"
 
 COMPATIBLE_MACHINE = "ti33x|ti43x|am57xx-evm|am57xx-hs-evm|k2g"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-SRCREV = "6e22e6ed873502b008e0ca18ddcba96ed38e04c2"
+SRCREV = "dc149b545667043d2324f7a0e481ecc8f2e6b8de"
 BRANCH ?= "master"
 
 SRC_URI = "git://git.ti.com/processor-sdk/processor-sdk-firmware.git;protocol=git;branch=${BRANCH}"
