@@ -1,0 +1,70 @@
+From f1ecc3bf17b4bd97d16c00d220a30c230cbdacc7 Mon Sep 17 00:00:00 2001
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Mon, 26 Nov 2018 14:49:34 -0600
+Subject: [PATCH 02/10] arm: K3: Avoid use of MCU_PSRAM0 before SYSFW is loaded
+
+On HS devices the 512b region of reset isolated memory called
+MCU_PSRAM0 is firewalled by default. Until SYSFW is loaded we
+cannot use this memory. It is only used to store a single value
+left at the end of SRAM by ROM that will be needed later. Save
+that value to a global variable stored in the .data section.
+This section is used as .bss will be cleared between saving
+this value and using it.
+
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ arch/arm/mach-k3/include/mach/hardware.h | 3 +--
+ arch/arm/mach-k3/init.c                  | 8 +++-----
+ 2 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-k3/include/mach/hardware.h b/arch/arm/mach-k3/include/mach/hardware.h
+index 533c044..77a8b0d 100644
+--- a/arch/arm/mach-k3/include/mach/hardware.h
++++ b/arch/arm/mach-k3/include/mach/hardware.h
+@@ -49,7 +49,6 @@
+ #define CTRLMMR_PADCONFIG(x)				(0x1c000 + ((x) << 2))
+ 
+ /* MCU SCRATCHPAD usage */
+-#define K3_BOOT_PARAM_TABLE_INDEX_VAL	CONFIG_MCU_SCRATCHPAD_BASE
+-#define TI_SRAM_SCRATCH_BOARD_EEPROM_START	(CONFIG_MCU_SCRATCHPAD_BASE + 4)
++#define TI_SRAM_SCRATCH_BOARD_EEPROM_START	CONFIG_MCU_SCRATCHPAD_BASE
+ 
+ #endif /* __ASM_ARCH_HARDWARE_H */
+diff --git a/arch/arm/mach-k3/init.c b/arch/arm/mach-k3/init.c
+index f2a303e..6014893 100644
+--- a/arch/arm/mach-k3/init.c
++++ b/arch/arm/mach-k3/init.c
+@@ -95,11 +95,11 @@ static void ctrl_mmr_unlock(void)
+ 
+ }
+ 
++u32 bootindex __attribute__((section(".data")));
++
+ static void store_boot_index_from_rom(void)
+ {
+-	u32 *boot_index = (u32 *)K3_BOOT_PARAM_TABLE_INDEX_VAL;
+-
+-	*boot_index = *(u32 *)(CONFIG_BOOT_PARAM_TABLE_INDEX);
++	bootindex = *(u32 *)(CONFIG_BOOT_PARAM_TABLE_INDEX);
+ }
+ 
+ #ifdef CONFIG_K3_EARLY_CONS
+@@ -220,7 +220,6 @@ void board_init_f(ulong dummy)
+ u32 spl_boot_mode(const u32 boot_device)
+ {
+ 	u32 devstat = readl(CTRLMMR_MAIN_DEVSTAT);
+-	u32 bootindex = readl(K3_BOOT_PARAM_TABLE_INDEX_VAL);
+ 
+ 	u32 bootmode = (devstat & CTRLMMR_MAIN_DEVSTAT_BOOTMODE_MASK) >>
+ 			CTRLMMR_MAIN_DEVSTAT_BOOTMODE_SHIFT;
+@@ -290,7 +289,6 @@ static u32 __get_primary_bootmedia(u32 devstat)
+ u32 spl_boot_device(void)
+ {
+ 	u32 devstat = readl(CTRLMMR_MAIN_DEVSTAT);
+-	u32 bootindex = readl(K3_BOOT_PARAM_TABLE_INDEX_VAL);
+ 
+ 	if (bootindex == K3_PRIMARY_BOOTMODE)
+ 		return __get_primary_bootmedia(devstat);
+-- 
+2.7.4
+

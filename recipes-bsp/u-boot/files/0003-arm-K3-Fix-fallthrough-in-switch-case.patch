@@ -1,0 +1,32 @@
+From b205d36fd34931ad97a173b76626035b6e8ebe1a Mon Sep 17 00:00:00 2001
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Tue, 4 Dec 2018 14:06:25 -0600
+Subject: [PATCH 03/10] arm: K3: Fix fallthrough in switch case
+
+When detecting the backup boot media a switch case is
+used that does not have any breaks, this leads to the
+last statement always running. Add breaks to the case
+macro.
+
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ arch/arm/mach-k3/init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-k3/init.c b/arch/arm/mach-k3/init.c
+index 6014893..6026710 100644
+--- a/arch/arm/mach-k3/init.c
++++ b/arch/arm/mach-k3/init.c
+@@ -243,7 +243,8 @@ static u32 __get_backup_bootmedia(u32 devstat)
+ 	switch (bkup_boot) {
+ #define __BKUP_BOOT_DEVICE(n)			\
+ 	case BACKUP_BOOT_DEVICE_##n:		\
+-		bootmode =  BOOT_DEVICE_##n;
++		bootmode =  BOOT_DEVICE_##n;	\
++		break;
+ 	__BKUP_BOOT_DEVICE(USB);
+ 	__BKUP_BOOT_DEVICE(UART);
+ 	__BKUP_BOOT_DEVICE(ETHERNET);
+-- 
+2.7.4
+

@@ -1,0 +1,123 @@
+From 939c863f43c8bb8f1aa84fc0467428277f394e7a Mon Sep 17 00:00:00 2001
+From: "Andrew F. Davis" <afd@ti.com>
+Date: Mon, 10 Dec 2018 16:39:45 -0600
+Subject: [PATCH 05/10] firmware: ti_sci: Modify auth_boot TI-SCI API to match
+ new version
+
+SYSFW version 2019.01 introduces a slightly modified version of this API,
+add support for it here.
+
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/firmware/ti_sci.c              | 25 ++++++++++++++++---------
+ drivers/firmware/ti_sci.h              |  9 +++++++--
+ include/linux/soc/ti/ti_sci_protocol.h |  4 ++--
+ 3 files changed, 25 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 808c06b..4c2131f 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -1696,16 +1696,19 @@ static int ti_sci_cmd_set_proc_boot_ctrl(const struct ti_sci_handle *handle,
+  * ti_sci_cmd_proc_auth_boot_image() - Command to authenticate and load the
+  *			image and then set the processor configuration flags.
+  * @handle:	Pointer to TI SCI handle
+- * @proc_id:	Processor ID this request is for
+- * @cert_addr:	Memory address at which payload image certificate is located.
++ * @image_addr:	Memory address at which payload image and certificate is
++ *		located in memory, this is updated if the image data is
++ *		moved during authentication.
++ * @image_size: This is updated with the final size of the image after
++ *		authentication.
+  *
+  * Return: 0 if all went well, else returns appropriate error value.
+  */
+ static int ti_sci_cmd_proc_auth_boot_image(const struct ti_sci_handle *handle,
+-					   u8 proc_id, u64 cert_addr)
++					   u64 *image_addr, u32 *image_size)
+ {
+ 	struct ti_sci_msg_req_proc_auth_boot_image req;
+-	struct ti_sci_msg_hdr *resp;
++	struct ti_sci_msg_resp_proc_auth_boot_image *resp;
+ 	struct ti_sci_info *info;
+ 	struct ti_sci_xfer *xfer;
+ 	int ret = 0;
+@@ -1725,9 +1728,8 @@ static int ti_sci_cmd_proc_auth_boot_image(const struct ti_sci_handle *handle,
+ 		dev_err(info->dev, "Message alloc failed(%d)\n", ret);
+ 		return ret;
+ 	}
+-	req.processor_id = proc_id;
+-	req.cert_addr_low = cert_addr & TISCI_ADDR_LOW_MASK;
+-	req.cert_addr_high = (cert_addr & TISCI_ADDR_HIGH_MASK) >>
++	req.cert_addr_low = *image_addr & TISCI_ADDR_LOW_MASK;
++	req.cert_addr_high = (*image_addr & TISCI_ADDR_HIGH_MASK) >>
+ 				TISCI_ADDR_HIGH_SHIFT;
+ 
+ 	ret = ti_sci_do_xfer(info, xfer);
+@@ -1736,10 +1738,15 @@ static int ti_sci_cmd_proc_auth_boot_image(const struct ti_sci_handle *handle,
+ 		return ret;
+ 	}
+ 
+-	resp = (struct ti_sci_msg_hdr *)xfer->tx_message.buf;
++	resp = (struct ti_sci_msg_resp_proc_auth_boot_image *)xfer->tx_message.buf;
+ 
+ 	if (!ti_sci_is_response_ack(resp))
+-		ret = -ENODEV;
++		return -ENODEV;
++
++	*image_addr = (resp->image_addr_low & TISCI_ADDR_LOW_MASK) |
++			(((u64)resp->image_addr_high  <<
++			  TISCI_ADDR_HIGH_SHIFT) & TISCI_ADDR_HIGH_MASK);
++	*image_size = resp->image_size;
+ 
+ 	return ret;
+ }
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index 61c884b..c45b441 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -647,7 +647,6 @@ struct ti_sci_msg_req_set_proc_boot_ctrl {
+ /**
+  * struct ti_sci_msg_req_proc_auth_start_image - Authenticate and start image
+  * @hdr:		Generic Header
+- * @processor_id:	ID of processor
+  * @cert_addr_low:	Lower 32bit (Little Endian) of certificate
+  * @cert_addr_high:	Higher 32bit (Little Endian) of certificate
+  *
+@@ -656,11 +655,17 @@ struct ti_sci_msg_req_set_proc_boot_ctrl {
+  */
+ struct ti_sci_msg_req_proc_auth_boot_image {
+ 	struct ti_sci_msg_hdr hdr;
+-	u8 processor_id;
+ 	u32 cert_addr_low;
+ 	u32 cert_addr_high;
+ } __packed;
+ 
++struct ti_sci_msg_resp_proc_auth_boot_image {
++	struct ti_sci_msg_hdr hdr;
++	u32 image_addr_low;
++	u32 image_addr_high;
++	u32 image_size;
++} __packed;
++
+ /**
+  * struct ti_sci_msg_req_get_proc_boot_status - Get processor boot status
+  * @hdr:		Generic Header
+diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
+index c3fef4a..06b5625 100644
+--- a/include/linux/soc/ti/ti_sci_protocol.h
++++ b/include/linux/soc/ti/ti_sci_protocol.h
+@@ -255,8 +255,8 @@ struct ti_sci_proc_ops {
+ 				 u64 bv, u32 cfg_set, u32 cfg_clr);
+ 	int (*set_proc_boot_ctrl)(const struct ti_sci_handle *handle, u8 pid,
+ 				  u32 ctrl_set, u32 ctrl_clr);
+-	int (*proc_auth_boot_image)(const struct ti_sci_handle *handle, u8 pid,
+-				    u64 caddr);
++	int (*proc_auth_boot_image)(const struct ti_sci_handle *handle,
++				    u64 *image_addr, u32 *image_size);
+ 	int (*get_proc_boot_status)(const struct ti_sci_handle *handle, u8 pid,
+ 				    u64 *bv, u32 *cfg_flags, u32 *ctrl_flags,
+ 				    u32 *sts_flags);
+-- 
+2.7.4
+

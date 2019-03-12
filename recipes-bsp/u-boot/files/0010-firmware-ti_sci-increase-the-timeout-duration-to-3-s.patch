@@ -1,0 +1,31 @@
+From f8c45c14a2f52e2c29fcea633eb4dc65c7f8f5f9 Mon Sep 17 00:00:00 2001
+From: Tero Kristo <t-kristo@ti.com>
+Date: Wed, 23 Jan 2019 15:18:31 +0200
+Subject: [PATCH 10/10] firmware: ti_sci: increase the timeout duration to 3
+ seconds
+
+The board config operations can take quite a long time to execute with
+traces enabled, so increase the timeout duration to cope with this.
+In effect, this allows the PM board config to pass with traces enabled.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/firmware/ti_sci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 4c2131f..96d723d 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -2583,7 +2583,7 @@ static int ti_sci_probe(struct udevice *dev)
+ /* Description for AM654 */
+ static const struct ti_sci_desc ti_sci_sysfw_am654_desc = {
+ 	.host_id = 4,
+-	.max_rx_timeout_us = 1000000,
++	.max_rx_timeout_us = 3000000,
+ 	.max_msg_size = 60,
+ };
+ 
+-- 
+2.7.4
+
