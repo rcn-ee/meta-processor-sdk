@@ -1,4 +1,4 @@
-PR_append = ".tisdk14"
+PR_append = ".tisdk15"
 
 IMAGE_INSTALL_append = " \                                                                                                                   
       packagegroup-arago-tisdk-hmi-sdk-host \ 
@@ -28,6 +28,9 @@ DEPLOY_FITIMAGE_NAMES ?= "${FITIMAGE_ITS_SYMLINK} ${FITIMAGE_ITB_SYMLINK}"
 DEPLOY_HS_MLO_NAME ?= "u-boot_HS_MLO-${MACHINE}"
 
 DEPLOY_SPL_NAME_k2g-evm = "MLO-${MACHINE}"
+
+DTB_FILTER_am65xx-hs-evm = "am65"
+DEPLOY_IMAGES_NAME_am65xx-hs-evm = "bl31.bin bl32.bin"
 
 SW_MANIFEST_QT5_FOOTER = "Any Qt package referenced in this manifest that has LGPL 2.1 or LGPL 3 as a licensing option is only being used and distributed by TI under LGPL 2.1. The choice of having both, as reflected in the manifest table, comes from the licensing line the corresponding recipe. TI has opted to only use LGPL 2.1."
 
