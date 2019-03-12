@@ -1,0 +1,30 @@
+From 3cf206286f759425aff025de4b5abe09bb14ed19 Mon Sep 17 00:00:00 2001
+From: Jacob Stiffler <j-stiffler@ti.com>
+Date: Fri, 22 Feb 2019 08:59:28 -0500
+Subject: [PATCH] HACK: firmware: ti_sci: remove EXCLUSIVE flag
+
+* With SYSFW v2019.01, the EXCLUSIVE flag is enforced.
+* Clients can not yet handle this enforcement, so remove the flag for
+  legacy behavior.
+
+Signed-off-by: Jacob Stiffler <j-stiffler@ti.com>
+---
+ drivers/firmware/ti_sci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index c45b441..e7a3e4c 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -188,7 +188,7 @@ struct ti_sci_msg_req_set_device_state {
+ 	/* Additional hdr->flags options */
+ #define MSG_FLAG_DEVICE_WAKE_ENABLED	TI_SCI_MSG_FLAG(8)
+ #define MSG_FLAG_DEVICE_RESET_ISO	TI_SCI_MSG_FLAG(9)
+-#define MSG_FLAG_DEVICE_EXCLUSIVE	TI_SCI_MSG_FLAG(10)
++#define MSG_FLAG_DEVICE_EXCLUSIVE	0x0
+ 	struct ti_sci_msg_hdr hdr;
+ 	u32 id;
+ 	u32 reserved;
+-- 
+1.9.1
+
