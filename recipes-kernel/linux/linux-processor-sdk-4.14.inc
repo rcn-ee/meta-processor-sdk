@@ -1,4 +1,4 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-4.14:${THISDIR}/files:"
 
@@ -45,6 +45,9 @@ KERNEL_DEVICETREE_append_k2g   = " keystone-k2g-ice-pps.dtb"
 
 KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
+
+KERNEL_DEVICETREE_append_am65xx-evm = " ti/k3-am654-idk-interposer.dtbo"
+KERNEL_DEVICETREE_append_am65xx-hs-evm = " ti/k3-am654-idk-interposer.dtbo"
 
 RDEPENDS_kernel-base_append_ti33x = " pruhsr-fw pruprp-fw"
 RDEPENDS_kernel-base_append_ti43x = " pruhsr-fw pruprp-fw"
