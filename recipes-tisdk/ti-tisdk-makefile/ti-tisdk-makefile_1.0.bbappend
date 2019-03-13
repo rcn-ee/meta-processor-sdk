@@ -1,4 +1,4 @@
-PR_append = ".tisdk62"
+PR_append = ".tisdk63"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -114,6 +114,11 @@ do_install_append() {
 # Set EXEC_DIR to install example binaries
 EXEC_DIR=__EXEC_DIR__
 __EOF__
+}
+
+# Fix UBOOT_MACHINE_R5 for am65xx-hs-evm
+do_install_append_am65xx-hs-evm() {
+    sed -i -e 's|^UBOOT_MACHINE_R5=.*$|UBOOT_MACHINE_R5=am65x_hs_evm_r5_defconfig|' ${D}/Rules.make
 }
 
 # Populate UBOOT_MACHINE when UBOOT_CONFIG is used
