@@ -51,7 +51,7 @@ MKUBIFS_ARGS_dra7xx-hs-evm  = "-F -m 2048 -e 126976 -c 15000"
 MKUBIFS_ARGS_k2hk           = "-F -m 2048 -e 126976 -c 5000"
 MKUBIFS_ARGS_k2e            = "-F -m 2048 -e 126976 -c 4800"
 MKUBIFS_ARGS_k2g            = "-F -m 4096 -e 253952 -c 2400"
-MKUBIFS_ARGS_k2l            = "-F -m 4096 -e 253952 -c 2400"
+MKUBIFS_ARGS_k2l            = "-F -m 4096 -e 253952 -c 2800"
 
 # By default, do not include OPTEE for any HS platform
 # Comment the OPTEEMACHINE and OPTEEFLAVOR line for a
