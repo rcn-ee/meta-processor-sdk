@@ -1,5 +1,0 @@
-# Below commit ID corresponds to "DEV.MMCSD_LLD.01.00.00.14B"
-MMCSD_LLD_SRCREV = "d5a79b543b47dfba764b567e21963426a318ae83"
-
-PV = "01.00.00.14B"
-PR = "r0"
