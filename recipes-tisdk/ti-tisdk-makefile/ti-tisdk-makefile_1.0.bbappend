@@ -1,4 +1,4 @@
-PR_append = ".tisdk63"
+PR_append = ".tisdk64"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -92,7 +92,8 @@ KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
 KERNEL_DEVICETREE_append_am65xx-evm = " ti/k3-am654-idk-interposer.dtbo"
-KERNEL_DEVICETREE_append_am65xx-hs-evm = " ti/k3-am654-idk-interposer.dtbo"
+KERNEL_DEVICETREE_append_am65xx-hs-evm = " ti/k3-am654-idk-interposer.dtbo \
+                                           ti/k3-am654-hs.dtbo"
 
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\(C6X_GEN_INSTALL_PATH\)""
 IPC_TOOLS_PATHS_M4  = "ti.targets.arm.elf.M4="\$\(TOOLCHAIN_PATH_M4\)" ti.targets.arm.elf.M4F="\$\(TOOLCHAIN_PATH_M4\)""
