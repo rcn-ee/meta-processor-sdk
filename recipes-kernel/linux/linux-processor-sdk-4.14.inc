@@ -47,7 +47,8 @@ KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
 KERNEL_DEVICETREE_append_am65xx-evm = " ti/k3-am654-idk-interposer.dtbo"
-KERNEL_DEVICETREE_append_am65xx-hs-evm = " ti/k3-am654-idk-interposer.dtbo"
+KERNEL_DEVICETREE_append_am65xx-hs-evm = " ti/k3-am654-idk-interposer.dtbo \
+                                           ti/k3-am654-hs.dtbo"
 
 RDEPENDS_kernel-base_append_ti33x = " pruhsr-fw pruprp-fw"
 RDEPENDS_kernel-base_append_ti43x = " pruhsr-fw pruprp-fw"
