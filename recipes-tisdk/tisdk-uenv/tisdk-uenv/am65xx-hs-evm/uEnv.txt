@@ -12,7 +12,7 @@
 # workaround to set a sane default incase the user has not manually configured
 # a specific board.
 name_overlays=k3-am654-hs.dtbo
-
+overlay_files=k3-am654-hs.dtbo
 
 # The environment is saved to eMMC, but we wish that a newly created SD card
 # will boot without any manual configuration. To do this we will reset the
