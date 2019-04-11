@@ -1,11 +1,16 @@
-PR_append = ".tisdk15"
+PR_append = ".tisdk16"
 
-IMAGE_INSTALL_append = " \                                                                                                                   
-      packagegroup-arago-tisdk-hmi-sdk-host \ 
+# FIXME: Remove until sourceipk is fixed
+#      packagegroup-arago-tisdk-hmi-sdk-host
+
+# These do not use sourceipk...
+IMAGE_INSTALL_append = " \
+    packagegroup-arago-tisdk-amsdk-sdk-host \
  "
 
 # Add small docker rootfs for all SOCs
-TARGET_IMAGES_append = " tisdk-docker-rootfs-image"
+# FIXME: Disable due to toolchain issues with build GO
+#TARGET_IMAGES_append = " tisdk-docker-rootfs-image"
 
 
 # The following FITIMAGE vars are copied from kernel-fitimage.bbclass.
