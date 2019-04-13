@@ -1,4 +1,4 @@
-PR_append = ".tisdk5.4"
+PR_append = ".tisdk5.5"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -22,9 +22,9 @@ QT_NOSGX_PATCHES = "\
     file://quit.png \
 "
 
+#    file://0001-eglfs_kms-enhance-the-QPA-for-multiple-display-and-u.patch
 SRC_URI += "\
     ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', "${QT_NOSGX_PATCHES}", d)}\
-    file://0001-eglfs_kms-enhance-the-QPA-for-multiple-display-and-u.patch \
 "
 
 python do_patch_append() {
