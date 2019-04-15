@@ -3,7 +3,7 @@ DESCRIPTION = "Keystone2 initramfs with SerDes, QMSS and NETCP PA firmware"
 LICENSE = "TI-TFL"
 PACKAGES = "${PN}"
 
-PR = "r1"
+PR = "r2"
 
 COMPATIBLE_MACHINE = "keystone"
 
@@ -23,7 +23,7 @@ PACKAGE_INSTALL_remove_k2g-evm = "netcp-pa-fw"
 
 export IMAGE_BASENAME = "k2-fw-initrd"
 export IMAGE_NAME = "${IMAGE_BASENAME}"
-export IMAGE_NAME_SUFFIX = ""
+export IMAGE_NAME_SUFFIX = "-${MACHINE}"
 
 IMGDEPLOYDIR = "${WORKDIR}/deploy-${PN}-image-complete"
 
@@ -80,21 +80,35 @@ addtask rootfs before do_install
 
 # Create the cpio.gz image
 do_image() {
-    local image_base_path="${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}"
-
     cd ${IMAGE_ROOTFS}
 
     # Only capture the firmwares
     (echo .; echo ./lib; find ./lib/firmware; ) | cpio -o -H newc >${image_base_path}.cpio
-    gzip -f -9 -c ${image_base_path}.cpio > ${image_base_path}.cpio.gz
+    gzip -f -9 -c ${image_base_path}.cpio > ${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.cpio.gz
+    ln -s ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.cpio.gz ${IMGDEPLOYDIR}/${IMAGE_NAME}.cpio.gz
 }
-do_image[dirs] = "${TOPDIR} ${DEPLOY_DIR_IMAGE}"
+do_image[dirs] = "${TOPDIR}"
 do_image[umask] = "022"
 addtask do_image after do_rootfs before do_install
 
+do_image_complete() {
+    :
+}
+
+SSTATETASKS += "do_image_complete"
+SSTATE_SKIP_CREATION_task-image-complete = '1'
+do_image_complete[sstate-inputdirs] = "${IMGDEPLOYDIR}"
+do_image_complete[sstate-outputdirs] = "${DEPLOY_DIR_IMAGE}"
+do_image_complete[stamp-extra-info] = "${MACHINE_ARCH}"
+addtask do_image_complete after do_image before do_build
+python do_image_complete_setscene () {
+    sstate_setscene(d)
+}
+addtask do_image_complete_setscene
+
 # Now install this image for packaging
 do_install() {
-    local image_base_path="${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}"
+    local image_base_path="${IMGDEPLOYDIR}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}"
 
     install -d ${D}/boot
     install -m 0644 ${image_base_path}.cpio.gz ${D}/boot/${IMAGE_BASENAME}.cpio.gz
