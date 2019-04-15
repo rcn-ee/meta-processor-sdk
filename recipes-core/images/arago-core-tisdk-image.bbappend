@@ -5,7 +5,7 @@ PR_append = ".tisdk16"
 
 # These do not use sourceipk...
 IMAGE_INSTALL_append = " \
-    packagegroup-arago-tisdk-amsdk-sdk-host \
+    packagegroup-arago-tisdk-amsdk-sdk-host${ARAGO_KERNEL_SUFFIX} \
  "
 
 # Add small docker rootfs for all SOCs
