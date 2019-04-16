@@ -10,7 +10,7 @@ SRC_URI += "file://0001-ti-mmwave-rospkg-launch-rviz.patch \
             file://setup.bash \
 "
 
-PR = "r1"
+PR = "r2"
 
 # do not use rpath
 EXTRA_OECMAKE_append = " -DCMAKE_SKIP_RPATH=ON"
@@ -23,8 +23,8 @@ inherit catkin
 
 do_install_append() {
      install -d  ${D}${ros_libdir}/ti_mmwave_rospkg
-     cp ${WORKDIR}/build/devel/lib/libmmwave.so ${D}${ros_libdir}
-     cp ${WORKDIR}/build/devel/lib/ti_mmwave_rospkg/* ${D}${ros_libdir}/ti_mmwave_rospkg/
+     cp ${WORKDIR}/devel/lib/libmmwave.so ${D}${ros_libdir}
+     cp ${WORKDIR}/devel/lib/ti_mmwave_rospkg/* ${D}${ros_libdir}/ti_mmwave_rospkg/
      cp ${S}/mmWave_nodelets.xml ${D}${ros_datadir}/ti_mmwave_rospkg/
      cp -r ${S}/cfg ${D}${ros_datadir}/ti_mmwave_rospkg/
      cp -r ${S}/launch ${D}${ros_datadir}/ti_mmwave_rospkg/
