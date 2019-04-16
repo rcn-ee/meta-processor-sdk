@@ -36,6 +36,9 @@ RESERVE_CMEM_keystone = "1"
 # Enable TI UIO devices
 ENABLE_TI_UIO_DEVICES = "1"
 
+# FIXME: temporarily remove broken device tree
+KERNEL_DEVICETREE_remove = "am571x-idk-pru-excl-uio.dtb"
+
 # Configure ROS to use python3
 ROS_USE_PYTHON3 = "yes"
 
