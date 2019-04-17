@@ -9,8 +9,7 @@ IMAGE_INSTALL_append = " \
  "
 
 # Add small docker rootfs for all SOCs
-# FIXME: Disable due to toolchain issues with build GO
-#TARGET_IMAGES_append = " tisdk-docker-rootfs-image"
+TARGET_IMAGES_append = " tisdk-docker-rootfs-image"
 
 
 # The following FITIMAGE vars are copied from kernel-fitimage.bbclass.
