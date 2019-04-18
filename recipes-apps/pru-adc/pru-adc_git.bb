@@ -9,12 +9,12 @@ inherit update-alternatives
 COMPATIBLE_MACHINE = "am335x-evm"
 
 PV = "1.0"
-PR = "r1"
+PR = "r2"
 
 BRANCH = "master"
 SRC_URI = "git://git.ti.com/apps/tida01555.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "7cbdf20ed44eb6486137e3866e43eec39eb7a468"
+SRCREV = "0a0f7700d11ec8a6b7ed02e4c70d4bf196ca35e5"
 
 S = "${WORKDIR}/git"
 
