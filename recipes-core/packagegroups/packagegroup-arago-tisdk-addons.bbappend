@@ -1,4 +1,4 @@
-PR_append = "-tisdk49"
+PR_append = "-tisdk50"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -10,9 +10,10 @@ EXTRA_PACKAGES_remove_k2hk-hs-evm = "opencv"
 EXTRA_PACKAGES_append_am335x-evm = " pruss-lld-apps pru-adc"
 EXTRA_PACKAGES_append_am437x-evm = " pruss-lld-apps"
 EXTRA_PACKAGES_append_k2g-evm  = " pruss-lld-apps"
-EXTRA_PACKAGES_append_am57xx-evm = " jailhouse-examples \
-                                     jailhouse-examples-rtos \
-                                     pruss-lld-apps"
+EXTRA_PACKAGES_append_am57xx-evm = " pruss-lld-apps"
+# FIXME: disable for now
+# jailhouse-examples
+# jailhouse-examples-rtos
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
