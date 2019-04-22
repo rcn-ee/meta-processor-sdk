@@ -1,4 +1,4 @@
-PR_append = ".tisdk14"
+PR_append = ".tisdk15"
 
 # FIXME: disable for now
 #EXTRA_LIBS_append_am57xx-evm = " \
@@ -13,9 +13,10 @@ UTILS_append_k2g = " \
     pru-icss-src \
 "
 
-EXTRA_LIBS_append_dra7xx = " \
-    tiovx-app-host-src \
-"
+# FIXME: disable for now
+#EXTRA_LIBS_append_dra7xx = " \
+#    tiovx-app-host-src \
+#"
 
 UTILS_append_am335x-evm = " pru-adc-src"
 

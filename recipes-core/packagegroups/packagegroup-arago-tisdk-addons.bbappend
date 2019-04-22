@@ -1,4 +1,4 @@
-PR_append = "-tisdk50"
+PR_append = "-tisdk51"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -24,6 +24,8 @@ EXTRA_PACKAGES_append_armv7a = " zbar"
 
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
-EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples kaldi ti-fftw-examples"
+# FIXME: disable for now
+# tiovx-app-host tiovx-app-host-examples
+EXTRA_PACKAGES_append_dra7xx = " kaldi ti-fftw-examples"
 
 EXTRA_PACKAGES_append_k2hk = " ti-fftw-examples"
