@@ -25,10 +25,6 @@ inherit bash-completion
 # conveniences provided, so borrow the top few lines for the module class.
 inherit module-base kernel-module-split
 
-addtask make_scripts after do_patch before do_compile
-do_make_scripts[lockfiles] = "${TMPDIR}/kernel-scripts.lock"
-do_make_scripts[depends] += "virtual/kernel:do_shared_workdir"
-
 
 COMPATIBLE_MACHINE = "am57xx-evm"
 
