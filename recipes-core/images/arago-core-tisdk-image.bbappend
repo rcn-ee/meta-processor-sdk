@@ -1,13 +1,16 @@
-PR_append = ".tisdk16"
+PR_append = ".tisdk17"
 
-# FIXME: Remove until sourceipk is fixed
-#      packagegroup-arago-tisdk-hmi-sdk-host
-
-# These do not use sourceipk...
-IMAGE_INSTALL_append = " \
+IMAGE_INSTALL = "\
+    packagegroup-arago-tisdk-addons-sdk-host \
+    ${@bb.utils.contains('MACHINE_FEATURES','dsp','packagegroup-arago-tisdk-opencl-sdk-host','',d)} \
+    packagegroup-arago-tisdk-crypto-sdk-host \
+    ${@bb.utils.contains('MACHINE_FEATURES','sgx','packagegroup-arago-tisdk-graphics-sdk-host','',d)} \
+    packagegroup-arago-tisdk-matrix-sdk-host \
+    packagegroup-arago-tisdk-multimedia-sdk-host \
+    packagegroup-arago-tisdk-hmi-sdk-host \
     packagegroup-arago-tisdk-amsdk-sdk-host${ARAGO_KERNEL_SUFFIX} \
- "
-
+    ${IMAGE_INSTALL_QT} \
+"
 # Add small docker rootfs for all SOCs
 TARGET_IMAGES_append = " tisdk-docker-rootfs-image"
 
