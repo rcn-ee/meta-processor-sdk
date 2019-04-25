@@ -314,6 +314,19 @@ python __anonymous () {
 #        d.setVar('INSANE_SKIP_%s-src' % (pn), d.getVar('ALL_QA'))
 }
 
+# Do not strip nor debug split files in SRCIPK_INSTALL_DIR
+PACKAGE_PREPROCESS_FUNCS =+ "${@oe.utils.conditional('CREATE_SRCIPK','0','','srcipk_inhibit_strip',d)}"
+python srcipk_inhibit_strip() {
+    dvar = d.getVar('PKGD')
+    srcipk_install_dir = dvar + d.getVar('SRCIPK_INSTALL_DIR')
+    srcipk_files = ['']
+
+    for root, dirs, files in cpath.walk(dvar):
+        for f in files:
+            srcipk_files.append(os.path.join(root, f))
+
+    d.appendVar('INHIBIT_PACKAGE_STRIP_FILES', ' '.join(srcipk_files))
+}
 # This seems to be an ancient variable no longer defined, so set it here, but
 # it should be a fix in arago-source-ipk.conf
 PVExtra ?= ""
