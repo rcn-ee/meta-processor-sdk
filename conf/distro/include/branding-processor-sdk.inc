@@ -2,9 +2,6 @@ ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_KERNEL_SUFFIX}-image"
 
 INHERIT += "recipe-data"
 
-# Use internal toolchain for omapl1
-TOOLCHAIN_TYPE_omapl1 = "internal"
-
 # The MACHINE config is included before MACHINE_FEATURES is initialized in
 # bitbake.conf, so incase some "MACHINE" has not defined MACHINES_FEATURES,
 # weakly initialize it here.
