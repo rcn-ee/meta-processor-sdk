@@ -97,10 +97,10 @@ MKUBIFS_ARGS_k2g            = "-F -m 4096 -e 253952 -c 2400"
 MKUBIFS_ARGS_k2l            = "-F -m 4096 -e 253952 -c 2800"
 
 # By default, do not include OPTEE for any HS platform
-# Comment the OPTEEMACHINE and OPTEEFLAVOR line for a
-# to build Processor SDK with OPTEE
-OPTEEMACHINE_armv7a = ""
-OPTEEFLAVOR_armv7a = ""
+# Comment the following lines to build Processor SDK with OPTEE
+FITIMAGE_PACK_TEE_am437x-hs-evm = "0"
+FITIMAGE_PACK_TEE_am57xx-hs-evm = "0"
+FITIMAGE_PACK_TEE_dra7xx-hs-evm = "0"
 
 # To create newlines in the message \n is used and the slash must be escaped
 # to function properly
