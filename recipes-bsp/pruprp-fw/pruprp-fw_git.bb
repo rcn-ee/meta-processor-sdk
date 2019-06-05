@@ -11,7 +11,7 @@ COMPATIBLE_MACHINE = "ti33x|ti43x|am57xx-evm|am57xx-hs-evm|k2g"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-SRCREV = "dc149b545667043d2324f7a0e481ecc8f2e6b8de"
+SRCREV = "ccca45999b170ed32db4248f5f89b81c08cc286d"
 BRANCH ?= "master"
 
 SRC_URI = "git://git.ti.com/processor-sdk/processor-sdk-firmware.git;protocol=git;branch=${BRANCH}"
