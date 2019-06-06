@@ -1,4 +1,4 @@
-PR_append = "-tisdk51"
+PR_append = "-tisdk52"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -11,6 +11,7 @@ EXTRA_PACKAGES_append_am335x-evm = " pruss-lld-apps pru-adc"
 EXTRA_PACKAGES_append_am437x-evm = " pruss-lld-apps"
 EXTRA_PACKAGES_append_k2g-evm  = " pruss-lld-apps"
 EXTRA_PACKAGES_append_am57xx-evm = " pruss-lld-apps"
+EXTRA_PACKAGES_append_k3 = " watchdog"
 # FIXME: disable for now
 # jailhouse-examples
 # jailhouse-examples-rtos
