@@ -10,6 +10,8 @@ SRC_URI_append += "\
      file://setenv.sh \
 "
 
+inherit pkgconfig
+
 require recipes-ti/includes/tisdk-paths.inc
 require tiovx-sys.inc
 
