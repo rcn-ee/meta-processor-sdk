@@ -1,4 +1,4 @@
-PR_append = ".tisdk15"
+PR_append = ".tisdk16"
 
 # FIXME: disable for now
 #EXTRA_LIBS_append_am57xx-evm = " \
@@ -19,10 +19,3 @@ UTILS_append_k2g = " \
 #"
 
 UTILS_append_am335x-evm = " pru-adc-src"
-
-# FIXME: remove debugss and gdbserver-proxy-module as their builds are currently
-#        broken
-EXTRA_LIBS_remove = " \
-    debugss-module-drv-src \
-    gdbserverproxy-module-drv-src \
-"
