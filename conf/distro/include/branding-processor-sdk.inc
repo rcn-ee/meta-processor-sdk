@@ -2,15 +2,6 @@ ARAGO_TISDK_IMAGE = "processor-sdk-linux${ARAGO_KERNEL_SUFFIX}-image"
 
 INHERIT += "recipe-data"
 
-# The MACHINE config is included before MACHINE_FEATURES is initialized in
-# bitbake.conf, so incase some "MACHINE" has not defined MACHINES_FEATURES,
-# weakly initialize it here.
-MACHINE_FEATURES ??= ""
-
-# Temporarily disable "dsp" machine feature for all SOCs while building
-# latest code base, until it is fixed for gdbc6x, qt-openvc-opencl
-MACHINE_FEATURES := "${@d.getVar('MACHINE_FEATURES', True).replace('dsp', '')}"
-
 # EXTRA_IMAGEDEPENDS not deployed prior to image creation, so disable wic images
 # as they require u-boot to be deployed.
 IMAGE_FSTYPES_remove = "wic.xz"
