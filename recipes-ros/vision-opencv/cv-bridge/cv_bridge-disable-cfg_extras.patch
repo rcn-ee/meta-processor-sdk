@@ -1,0 +1,12 @@
+diff -urN a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2019-06-13 14:20:51.878245130 -0400
++++ b/CMakeLists.txt	2019-06-13 14:21:12.114245649 -0400
+@@ -20,7 +20,7 @@
+   LIBRARIES ${PROJECT_NAME}
+   CATKIN_DEPENDS rosconsole sensor_msgs
+   DEPENDS OpenCV
+-  CFG_EXTRAS cv_bridge-extras.cmake
++#  CFG_EXTRAS cv_bridge-extras.cmake
+ )
+ 
+ catkin_python_setup()
