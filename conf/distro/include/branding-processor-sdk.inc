@@ -56,9 +56,6 @@ KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
 KERNEL_DEVICETREE_append_am65xx = " ti/k3-am654-idk-interposer.dtbo"
 
-# FIXME: temporarily remove broken device tree
-KERNEL_DEVICETREE_remove = "am571x-idk-pru-excl-uio.dtb"
-
 # Configure ROS to use python3
 ROS_USE_PYTHON3 = "yes"
 
