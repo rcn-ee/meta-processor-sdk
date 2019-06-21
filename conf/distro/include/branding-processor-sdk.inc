@@ -47,8 +47,8 @@ AM57XX_KERNEL_DEVICETREE = " \
 "
 
 PSDK_KERNEL_DEVICETREE_ti33x = " am335x-boneblack-pru-adc.dtb \
-                                   am335x-icev2-prueth-pps.dtb"
-#                                   am335x-boneblack-iot-cape.dtb
+                                 am335x-icev2-prueth-pps.dtb \
+                                 am335x-boneblack-iot-cape.dtb"
 PSDK_KERNEL_DEVICETREE_ti43x = " am437x-idk-pps.dtb"
 PSDK_KERNEL_DEVICETREE_k2g   = " keystone-k2g-ice-pps.dtb"
 
