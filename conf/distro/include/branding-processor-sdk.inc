@@ -29,8 +29,11 @@ RESERVE_CMEM_keystone = "1"
 ENABLE_TI_UIO_DEVICES = "1"
 
 
-# Common location to specify KERNEL_DEVICETREE as this may be shared
-# information.
+# Add DTBs specific to the Processor SDK kernel
+PSDK_KERNEL_DEVICETREE ?= ""
+KERNEL_DEVICETREE_append = " ${PSDK_KERNEL_DEVICETREE}"
+
+
 #    am57xx-evm-jailhouse.dtb
 #    am57xx-evm-reva3-jailhouse.dtb
 #    am572x-idk-jailhouse.dtb
@@ -43,16 +46,16 @@ AM57XX_KERNEL_DEVICETREE = " \
     am574x-idk-pps.dtb \
 "
 
-KERNEL_DEVICETREE_append_ti33x = " am335x-boneblack-pru-adc.dtb \
+PSDK_KERNEL_DEVICETREE_ti33x = " am335x-boneblack-pru-adc.dtb \
                                    am335x-icev2-prueth-pps.dtb"
 #                                   am335x-boneblack-iot-cape.dtb
-KERNEL_DEVICETREE_append_ti43x = " am437x-idk-pps.dtb"
-KERNEL_DEVICETREE_append_k2g   = " keystone-k2g-ice-pps.dtb"
+PSDK_KERNEL_DEVICETREE_ti43x = " am437x-idk-pps.dtb"
+PSDK_KERNEL_DEVICETREE_k2g   = " keystone-k2g-ice-pps.dtb"
 
-KERNEL_DEVICETREE_append_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
-KERNEL_DEVICETREE_append_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
+PSDK_KERNEL_DEVICETREE_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
+PSDK_KERNEL_DEVICETREE_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
-KERNEL_DEVICETREE_append_am65xx = " ti/k3-am654-idk-interposer.dtbo"
+PSDK_KERNEL_DEVICETREE_am65xx = " ti/k3-am654-idk-interposer.dtbo"
 
 # Configure ROS to use python3
 ROS_USE_PYTHON3 = "yes"
