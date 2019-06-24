@@ -1,0 +1,19 @@
+# barcode-roi build targets
+
+demo-glow:
+	@echo =============================
+	@echo    Building Demo GLOW
+	@echo =============================
+	@cd example-applications; cd `find . -name "*demo-glow*"`; make -f Makefile.build release
+
+demo-glow_clean:
+	@echo =============================
+	@echo    Cleaning Demo GLOW
+	@echo =============================
+	@cd example-applications; cd `find . -name "*demo-glow*"`; make -f Makefile.build clean
+
+demo-glow_install:
+	@echo ================================================
+	@echo   Installing Demo Glow - Release version
+	@echo ================================================
+	@cd example-applications; cd `find . -name "*demo-glow*"`; make -f Makefile.build install
