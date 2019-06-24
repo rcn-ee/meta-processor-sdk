@@ -1,0 +1,99 @@
+From 724ed36a3efc9d48baada931feef58d831bddd3e Mon Sep 17 00:00:00 2001
+From: Djordje Senicic <x0157990@ti.com>
+Date: Wed, 29 May 2019 03:51:13 -0400
+Subject: [PATCH] Fix path and dependencies to intermediate executables
+
+Signed-off-by: Djordje Senicic <x0157990@ti.com>
+---
+ lib/Backends/CPU/CMakeLists.txt    |  3 ++-
+ lib/Backends/OpenCL/CMakeLists.txt | 12 ++++++------
+ lib/Graph/CMakeLists.txt           |  4 ++--
+ lib/IR/CMakeLists.txt              |  4 ++--
+ 4 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/lib/Backends/CPU/CMakeLists.txt b/lib/Backends/CPU/CMakeLists.txt
+index 1e734539..5b79ee7d 100644
+--- a/lib/Backends/CPU/CMakeLists.txt
++++ b/lib/Backends/CPU/CMakeLists.txt
+@@ -53,8 +53,9 @@ add_custom_command(
+ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/glow/CPU)
+ add_custom_command(
+     OUTPUT ${CMAKE_BINARY_DIR}/glow/CPU/libjit_bc.inc
+-    COMMAND include-bin "${CMAKE_BINARY_DIR}/CPU/libjit.bc" "${CMAKE_BINARY_DIR}/glow/CPU/libjit_bc.inc"
++    COMMAND ${GLOW_BINARY_DIR}/bin/include-bin "${CMAKE_BINARY_DIR}/CPU/libjit.bc" "${CMAKE_BINARY_DIR}/glow/CPU/libjit_bc.inc"
+     DEPENDS ${GLOW_BINARY_DIR}/CPU/libjit.bc
++    DEPENDS ${GLOW_BINARY_DIR}/bin/include-bin
+     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+ 
+ add_custom_target(CPURuntime
+diff --git a/lib/Backends/OpenCL/CMakeLists.txt b/lib/Backends/OpenCL/CMakeLists.txt
+index fd9f965c..e37b4b35 100644
+--- a/lib/Backends/OpenCL/CMakeLists.txt
++++ b/lib/Backends/OpenCL/CMakeLists.txt
+@@ -8,25 +8,25 @@ add_custom_target(make_opencl_dir
+ 
+ add_custom_command(
+   OUTPUT "${OpenCL_DIR}/kernels.cl.inc"
+-  COMMAND include-bin
++  COMMAND ${GLOW_BINARY_DIR}/bin/include-bin
+           "${CMAKE_CURRENT_SOURCE_DIR}/kernels.cl"
+           "${OpenCL_DIR}/kernels.cl.inc"
+-  DEPENDS make_opencl_dir include-bin "${CMAKE_CURRENT_SOURCE_DIR}/kernels.cl")
++  DEPENDS make_opencl_dir ${GLOW_BINARY_DIR}/bin/include-bin "${CMAKE_CURRENT_SOURCE_DIR}/kernels.cl")
+ 
+ add_custom_command(
+   OUTPUT "${OpenCL_DIR}/kernels_fwd_conv.cl.inc"
+-  COMMAND include-bin
++  COMMAND ${GLOW_BINARY_DIR}/bin/include-bin
+           "${CMAKE_CURRENT_SOURCE_DIR}/kernels_fwd_conv.cl"
+           "${OpenCL_DIR}/kernels_fwd_conv.cl.inc"
+-  DEPENDS make_opencl_dir include-bin
++  DEPENDS make_opencl_dir ${GLOW_BINARY_DIR}/bin/include-bin
+           "${CMAKE_CURRENT_SOURCE_DIR}/kernels_fwd_conv.cl")
+ 
+ add_custom_command(
+   OUTPUT "${OpenCL_DIR}/kernels_fwd_quantized_conv.cl.inc"
+-  COMMAND include-bin
++  COMMAND ${GLOW_BINARY_DIR}/bin/include-bin
+           "${CMAKE_CURRENT_SOURCE_DIR}/kernels_fwd_quantized_conv.cl"
+           "${OpenCL_DIR}/kernels_fwd_quantized_conv.cl.inc"
+-  DEPENDS make_opencl_dir include-bin
++  DEPENDS make_opencl_dir ${GLOW_BINARY_DIR}/bin/include-bin
+           "${CMAKE_CURRENT_SOURCE_DIR}/kernels_fwd_quantized_conv.cl")
+ 
+ add_library(OpenCLBackend
+diff --git a/lib/Graph/CMakeLists.txt b/lib/Graph/CMakeLists.txt
+index 84589761..02a92636 100644
+--- a/lib/Graph/CMakeLists.txt
++++ b/lib/Graph/CMakeLists.txt
+@@ -7,8 +7,8 @@ add_custom_command(OUTPUT
+                    "${NODES_HDR}"
+                    "${NODES_SRC}"
+                    "${NODES_DEF}"
+-                   COMMAND NodeGen ${NODES_HDR} ${NODES_SRC} ${NODES_DEF}
+-                   DEPENDS NodeGen
++                   COMMAND ${GLOW_BINARY_DIR}/bin/NodeGen ${NODES_HDR} ${NODES_SRC} ${NODES_DEF}
++                   DEPENDS ${GLOW_BINARY_DIR}/bin/NodeGen
+                    COMMENT "NodeGen: Generating nodes." VERBATIM)
+ add_custom_target(AutoGenNode
+                    DEPENDS
+diff --git a/lib/IR/CMakeLists.txt b/lib/IR/CMakeLists.txt
+index 7660308d..fb5302ce 100644
+--- a/lib/IR/CMakeLists.txt
++++ b/lib/IR/CMakeLists.txt
+@@ -13,10 +13,10 @@ add_custom_command(OUTPUT
+                     "${INSTR_BLD_HDR}"
+                     "${INSTR_BLD_SRC}"
+                     "${INSTR_IR_GEN}"
+-                    COMMAND InstrGen
++                    COMMAND ${GLOW_BINARY_DIR}/bin/InstrGen
+                       "${INSTR_HDR}" "${INSTR_SRC}" "${INSTR_DEF}"
+                       "${INSTR_BLD_HDR}" "${INSTR_BLD_SRC}" "${INSTR_IR_GEN}"
+-                    DEPENDS InstrGen
++                    DEPENDS ${GLOW_BINARY_DIR}/bin/InstrGen
+                     COMMENT "InstrGen: Generating instructions." VERBATIM)
+ add_custom_target(AutoGenInstr
+                    DEPENDS
+-- 
+2.17.1
+
