@@ -28,3 +28,10 @@ UTILS_append = " net-snmp net-snmp-server-snmpd"
 EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples kaldi ti-fftw-examples"
 
 EXTRA_PACKAGES_append_k2hk = " ti-fftw-examples"
+
+EXTRA_PACKAGES_append_ti33x = " demo-glow "
+
+EXTRA_PACKAGES_append_ti43x = " demo-glow "
+
+EXTRA_PACKAGES_append_omap-a15 = " demo-glow "
+

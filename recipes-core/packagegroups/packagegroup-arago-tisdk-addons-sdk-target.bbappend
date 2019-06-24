@@ -76,3 +76,10 @@ EXTRA_LIBS_append_dra7xx = " \
     tiovx-lib-host-staticdev \
     tiovx-sys-iface \
 "
+
+EXTRA_PACKAGES_append_ti33x = " demo-glow-dev "
+
+EXTRA_PACKAGES_append_ti43x = " demo-glow-dev "
+
+EXTRA_PACKAGES_append_omap-a15 = " demo-glow-dev "
+
