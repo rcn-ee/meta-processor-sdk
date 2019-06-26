@@ -30,6 +30,8 @@ FITIMAGE_INITRAMFS_ITS_SYMLINK ?= "fitImage-its-${INITRAMFS_IMAGE}-${MACHINE}.${
 FITIMAGE_INITRAMFS_ITB_SYMLINK ?= "fitImage-${INITRAMFS_IMAGE}-${MACHINE}.${FITIMAGE_ITB_SUFFIX}"
 
 DEPLOY_FITIMAGE_NAMES ?= "${FITIMAGE_ITS_SYMLINK} ${FITIMAGE_ITB_SYMLINK}"
+DEPLOY_FITIMAGE_INITRAMFS_NAMES ?= "${FITIMAGE_INITRAMFS_ITS_SYMLINK} ${FITIMAGE_INITRAMFS_ITB_SYMLINK}"
+
 
 # U-Boot HS_MLO filename
 DEPLOY_HS_MLO_NAME ?= "u-boot_HS_MLO-${MACHINE}"
@@ -98,6 +100,14 @@ tisdk_image_build_append () {
         do
             cp ${DEPLOY_DIR_IMAGE}/$fitimage ${prebuilt_dir}/
         done
+
+        if [ -n "${INITRAMFS_IMAGE}" ]
+        then
+            for fitimage in ${DEPLOY_FITIMAGE_INITRAMFS_NAMES}
+            do
+                cp ${DEPLOY_DIR_IMAGE}/$fitimage ${prebuilt_dir}/
+            done
+        fi
     fi
 }
 
