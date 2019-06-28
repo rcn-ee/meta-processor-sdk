@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=9fa7f895f96bde2d47fd5b7d95b6ba4d"
 BRANCH = "plsdk_am57xx"
 SRC_URI = "git://git.ti.com/processor-sdk/jailhouse.git;branch=${BRANCH}"
 
-SRCREV = "2ad429b04f30a082f206e0083c398f018467ef1c"
+SRCREV = "cb0f5799acbd28bedde30ccc043223f65d87f860"
 
 PV = "0.8"
 
@@ -33,17 +33,12 @@ S = "${WORKDIR}/git"
 JAILHOUSE_CONFIG = "${MACHINE}"
 
 JAILHOUSE_EXAMPLE_FILES = " \
-    configs/${MACHINE}.cell \
-    configs/${MACHINE}-ti-app.cell \
     inmates/ti_app/ti-app.bin \
     inmates/tools/arm/linux-loader.bin \
 "
 
-JAILHOUSE_EXAMPLE_FILES_append_am57xx-evm = " \
-    configs/am57xx-pdk-leddiag.cell \
-    configs/am572x-rtos-icss.cell \
-    configs/am572x-rtos-pruss.cell \
-"
+JAILHOUSE_CELL_REGEX = ""
+JAILHOUSE_CELL_REGEX_am57xx-evm = "am57*.cell"
 
 do_configure() {
     cp ./ci/jailhouse-config-${JAILHOUSE_CONFIG}.h ./include/jailhouse/config.h
@@ -57,6 +52,11 @@ do_install() {
 
     install -d ${D}${datadir}/${PN}/examples
     for f in ${JAILHOUSE_EXAMPLE_FILES}
+    do
+        install -m 644 $f ${D}${datadir}/${PN}/examples/
+    done
+
+    for f in `find configs/$ARCH -name "${JAILHOUSE_CELL_REGEX}"`
     do
         install -m 644 $f ${D}${datadir}/${PN}/examples/
     done
