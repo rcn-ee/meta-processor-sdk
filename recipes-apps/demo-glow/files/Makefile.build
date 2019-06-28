@@ -6,7 +6,7 @@ DESTDIR ?=
 all: release
 
 lenet_mnist:
-	${SDK_PATH_NATIVE}/usr/share/glow/bin/image-classifier ${SDK_PATH_NATIVE}/usr/share/glow/tests/images/mnist/1_1008.png -m=mnist.onnx -image-mode=0to1 -model-input-name=data_0 -emit-bundle ./ -cpu -target armv7l-unknown-linux-gnueabihf   -network-name="lenet_mnist"
+	LD_LIBRARY_PATH=${SDK_PATH_NATIVE}/usr/lib ${SDK_PATH_NATIVE}/usr/share/glow/bin/image-classifier ${SDK_PATH_NATIVE}/usr/share/glow/tests/images/mnist/1_1008.png -m=mnist.onnx -image-mode=0to1 -model-input-name=data_0 -emit-bundle ./ -cpu -target armv7l-unknown-linux-gnueabihf   -network-name="lenet_mnist"
 
 release: lenet_mnist
 	@. ${ENV_SETUP}; \
@@ -16,3 +16,17 @@ clean:
 	@. ${ENV_SETUP}; \
         make clean
 	rm lenet_mnist.*
+
+install:
+	@if [ ! -d $(DESTDIR) ] ; then \
+		echo "The extracted target filesystem directory doesn't exist."; \
+		echo "Please run setup.sh in the SDK's root directory and then try again."; \
+		exit 1; \
+	fi
+	@install -d ${DESTDIR}/usr/share/glow/infer
+	cp -Prf --preserve=mode,timestamps makefile ${DESTDIR}/usr/share/glow/infer
+	cp -Prf --preserve=mode,timestamps main.cpp ${DESTDIR}/usr/share/glow/infer
+	cp -Prf --preserve=mode,timestamps *.weights ${DESTDIR}/usr/share//glow/infer
+	cp -Prf --preserve=mode,timestamps lenet_mnist.o ${DESTDIR}/usr/share/glow/infer
+	cp -Prf --preserve=mode,timestamps infer_mnist ${DESTDIR}/usr/share/glow/infer
+
