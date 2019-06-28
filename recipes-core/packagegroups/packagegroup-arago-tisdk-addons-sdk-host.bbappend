@@ -1,9 +1,8 @@
-PR_append = ".tisdk17"
+PR_append = ".tisdk18"
 
-# FIXME: disable for now
-#EXTRA_LIBS_append_am57xx-evm = " \
-#    jailhouse-src \
-#"
+EXTRA_LIBS_append_am57xx-evm = " \
+    jailhouse-src \
+"
 
 EXTRA_LIBS_append_keystone = " \
 "
