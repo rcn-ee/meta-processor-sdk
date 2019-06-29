@@ -34,16 +34,16 @@ PSDK_KERNEL_DEVICETREE ?= ""
 KERNEL_DEVICETREE_append = " ${PSDK_KERNEL_DEVICETREE}"
 
 
-#    am57xx-evm-jailhouse.dtb
-#    am57xx-evm-reva3-jailhouse.dtb
-#    am572x-idk-jailhouse.dtb
-#    am572x-idk-lcd-osd101t2045-jh.dtb
-#    am572x-idk-lcd-osd101t2587-jh.dtb
-#    am574x-idk-jailhouse.dtb
 AM57XX_KERNEL_DEVICETREE = " \
     am571x-idk-pps.dtb \
     am572x-idk-pps.dtb \
     am574x-idk-pps.dtb \
+    am57xx-evm-jailhouse.dtb \
+    am57xx-evm-reva3-jailhouse.dtb \
+    am572x-idk-jailhouse.dtb \
+    am572x-idk-lcd-osd101t2045-jailhouse.dtb \
+    am572x-idk-lcd-osd101t2587-jailhouse.dtb \
+    am574x-idk-jailhouse.dtb \
 "
 
 PSDK_KERNEL_DEVICETREE_ti33x = " am335x-boneblack-pru-adc.dtb \
