@@ -7,9 +7,9 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=9fa7f895f96bde2d47fd5b7d95b6ba4d"
 BRANCH = "plsdk_am57xx"
 SRC_URI = "git://git.ti.com/processor-sdk/jailhouse.git;branch=${BRANCH}"
 
-SRCREV = "cb0f5799acbd28bedde30ccc043223f65d87f860"
+SRCREV = "6044dcf5643ebe5928703e5bd73f4bca52149409"
 
-PV = "0.8"
+PV = "0.10"
 
 PACKAGES =+ "${PN}-drivers ${PN}-firmware ${PN}-examples"
 RDEPENDS_${PN} += "${PN}-drivers ${PN}-firmware"
