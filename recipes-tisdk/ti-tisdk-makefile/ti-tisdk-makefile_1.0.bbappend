@@ -11,7 +11,6 @@ SRC_URI_append = "\
     file://Makefile_tiovx-app-host \
     file://Makefile_tidl-examples \
     file://Makefile_pru-adc \
-    file://Makefile_demo-glow \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
@@ -40,16 +39,13 @@ MAKEFILES_remove_omapl138 = "pru"
 MAKEFILES_remove_omapl138 = "u-boot-legacy"
 
 MAKEFILES_append_omap-a15 = " video-graphics-test \
-                              demo-glow \
 "
 
 MAKEFILES_append_ti43x = " evse-hmi \
-                           demo-glow \
 "
 
 MAKEFILES_append_ti33x = " evse-hmi \
 			   protection-relays-hmi \
-                           demo-glow \
 "
 
 MAKEFILES_append_k3 = " evse-hmi"

@@ -18,14 +18,3 @@ EXTRA_LIBS_append_dra7xx = " \
 
 UTILS_append_am335x-evm = " pru-adc-src"
 
-EXTRA_PACKAGES_append_omap-a15 = " \
-    demo-glow-src \
-"
-
-EXTRA_PACKAGES_append_ti43x = " \
-    demo-glow-src \
-"
-    
-EXTRA_PACKAGES_append_ti33x = " \
-    demo-glow-src \
-"
