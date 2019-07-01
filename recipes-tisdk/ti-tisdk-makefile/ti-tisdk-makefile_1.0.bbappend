@@ -17,6 +17,9 @@ SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 
 MAKEFILES_MATRIX_GUI_omapl138 = ""
 
+# FIXME: ti-crypto-examples require openssl 1.0, but devkit packages openssl 1.1
+MAKEFILES_remove = "ti-crypto-examples"
+
 MAKEFILES_append_keystone = " ti-ipc"
 MAKEFILES_append_k3 = " ti-ipc"
 
