@@ -8,12 +8,6 @@
 #       variables such as bootdelay cannot be changed by this file since
 #       it is not evaluated until the bootcmd is run.
 
-# The specific board is not able to be automatically detected. The below is a
-# workaround to set a sane default incase the user has not manually configured
-# a specific board.
-name_overlays=k3-am654-hs.dtbo
-overlay_files=k3-am654-hs.dtbo
-
 # The environment is saved to eMMC, but we wish that a newly created SD card
 # will boot without any manual configuration. To do this we will reset the
 # environment upon the first boot, and then create a file in the boot partition
