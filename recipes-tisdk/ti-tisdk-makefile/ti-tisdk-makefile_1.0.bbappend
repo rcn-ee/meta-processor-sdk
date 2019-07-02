@@ -1,4 +1,4 @@
-PR_append = ".tisdk65"
+PR_append = ".tisdk66"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
