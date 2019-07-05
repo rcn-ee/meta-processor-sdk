@@ -2,8 +2,6 @@ PR_append = ".tisdk16"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRCREV = "ebfc94b347bc74ad9590cfbb5588900e31d6bc0e"
-
 SRC_URI_append = " \
     file://0001-setup-add-support-for-HS-EVMs.patch \
     file://0003-create_sdcard-omapl138-add-custom-script-to-create-S.patch \
