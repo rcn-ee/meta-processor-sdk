@@ -25,7 +25,4 @@ EXTRA_PACKAGES_append_armv7a = " zbar"
 
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
-EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples ti-fftw-examples"
-
-EXTRA_PACKAGES_append_k2hk = " ti-fftw-examples"
-
+EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples"
