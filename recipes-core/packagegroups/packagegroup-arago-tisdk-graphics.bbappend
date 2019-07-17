@@ -6,14 +6,14 @@ GRAPHICS_DEMO_omap-a15 = "\
 "
 
 GRAPHICS_RDEPENDS_remove = "\
-    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'ti-sgx-ddk-km', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)} \
 "
 GRAPHICS_RDEPENDS_remove = "\
-    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'glmark2', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'glmark2', d)} \
 "
 
 GRAPHICS_WAYLAND_remove = "\
-    ${@bb.utils.contains('MACHINE_FEATURES', 'sgx', '', 'wayland-ivi-extension', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'wayland-ivi-extension', d)} \
 "
 
 RDEPENDS_${PN} += "${GRAPHICS_DEMO}"
