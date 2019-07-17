@@ -15,7 +15,6 @@ SRC_URI_append = "\
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 
-MAKEFILES_MATRIX_GUI_omapl138 = ""
 
 # FIXME: ti-crypto-examples require openssl 1.0, but devkit packages openssl 1.1
 MAKEFILES_remove = "ti-crypto-examples"
@@ -35,11 +34,7 @@ MAKEFILES_append_omap-a15 = " dual-camera-demo \
 "
 
 MAKEFILES_append_omapl138 = " ti-ipc \
-                              linux-dtbs \
-                              u-boot-spl \
 "
-MAKEFILES_remove_omapl138 = "pru"
-MAKEFILES_remove_omapl138 = "u-boot-legacy"
 
 MAKEFILES_append_omap-a15 = " video-graphics-test \
 "
@@ -60,16 +55,12 @@ MAKEFILES_append_am57xx-evm = " jailhouse \
 "
 MAKEFILES_append_am57xx-hs-evm = " tidl-examples"
 
-MAKEFILES_append_k2g = " pru-icss"
-
 MAKEFILES_append_dra7xx = " tiovx-app-host"
 
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 
 MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
-
-PRU_ICSS_INSTALL_TARGET_k2g = "pru-icss_install_k2g"
 
 IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\(C6X_GEN_INSTALL_PATH\)""
 IPC_TOOLS_PATHS_M4  = "ti.targets.arm.elf.M4="\$\(TOOLCHAIN_PATH_M4\)" ti.targets.arm.elf.M4F="\$\(TOOLCHAIN_PATH_M4\)""
