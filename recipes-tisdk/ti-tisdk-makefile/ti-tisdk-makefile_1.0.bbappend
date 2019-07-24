@@ -3,7 +3,6 @@ PR_append = ".tisdk66"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = "\
-    file://Makefile_ti-ipc \
     file://Makefile_video-graphics-test \
     file://Makefile_jailhouse \
     file://Makefile_evse-hmi \
@@ -19,21 +18,14 @@ SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 # FIXME: ti-crypto-examples require openssl 1.0, but devkit packages openssl 1.1
 MAKEFILES_remove = "ti-crypto-examples"
 
-MAKEFILES_append_keystone = " ti-ipc"
-MAKEFILES_append_k3 = " ti-ipc"
-
 MAKEFILES_append_k2g = " opencl-examples \
                          openmpacc-examples \
 "
 
 MAKEFILES_append_omap-a15 = " dual-camera-demo \
                               image-gallery \
-                              ti-ipc \
                               big-data-ipc-demo \
 			      evse-hmi \
-"
-
-MAKEFILES_append_omapl138 = " ti-ipc \
 "
 
 MAKEFILES_append_omap-a15 = " video-graphics-test \
@@ -61,28 +53,6 @@ MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 't
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 
 MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
-
-IPC_TOOLS_PATHS_C66 = "ti.targets.elf.C66="\$\(C6X_GEN_INSTALL_PATH\)""
-IPC_TOOLS_PATHS_M4  = "ti.targets.arm.elf.M4="\$\(TOOLCHAIN_PATH_M4\)" ti.targets.arm.elf.M4F="\$\(TOOLCHAIN_PATH_M4\)""
-IPC_TOOLS_PATHS_R5F  = "ti.targets.arm.elf.R5F="\$\(TOOLCHAIN_PATH_R5\)""
-IPC_TOOLS_PATHS_C674 = "ti.targets.elf.C674="\$\(C6X_GEN_INSTALL_PATH\)""
-
-IPC_TOOLS_PATHS = ""
-IPC_TOOLS_PATHS_append_keystone = " ${IPC_TOOLS_PATHS_C66}"
-IPC_TOOLS_PATHS_append_omap-a15 = " ${IPC_TOOLS_PATHS_C66} ${IPC_TOOLS_PATHS_M4}"
-IPC_TOOLS_PATHS_append_omapl138 = " ${IPC_TOOLS_PATHS_C674}"
-IPC_TOOLS_PATHS_append_k3 = "${IPC_TOOLS_PATHS_R5F}"
-
-do_install_append() {
-    sed -i -e "s/__IPC_TOOLS_PATHS__/${IPC_TOOLS_PATHS}/g" ${D}/Makefile
-    sed -i -e "s/__TISDK_VERSION__/${TISDK_VERSION}/g" ${D}/Makefile
-
-    cat >> ${D}/Rules.make << __EOF__
-
-# Set EXEC_DIR to install example binaries
-EXEC_DIR=__EXEC_DIR__
-__EOF__
-}
 
 
 # Populate UBOOT_MACHINE when UBOOT_CONFIG is used
