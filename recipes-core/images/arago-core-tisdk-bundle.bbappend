@@ -111,4 +111,4 @@ tisdk_image_build_append () {
     fi
 }
 
-require arago-core-tisdk-image-sw-manifest.inc
+require arago-core-tisdk-bundle-sw-manifest.inc
