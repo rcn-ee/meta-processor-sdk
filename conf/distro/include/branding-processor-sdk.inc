@@ -6,6 +6,9 @@ INHERIT += "recipe-data"
 # as they require u-boot to be deployed.
 IMAGE_FSTYPES_remove = "wic.xz"
 
+# TEMP: add additional console for jailhouse demo
+SERIAL_CONSOLES_am65xx = "115200;ttyS2 115200;ttyS1"
+
 # Configure ramfs for jailhouse inmate
 JH_RAMFS_IMAGE_k3 = "arago-tiny-image"
 IMAGE_FSTYPES_append_pn-${JH_RAMFS_IMAGE} = " cpio"
