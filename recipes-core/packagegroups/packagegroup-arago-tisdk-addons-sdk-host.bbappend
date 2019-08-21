@@ -4,6 +4,10 @@ EXTRA_LIBS_append_am57xx-evm = " \
     jailhouse-src \
 "
 
+EXTRA_LIBS_append_k3 = " \
+    jailhouse-src \
+"
+
 EXTRA_LIBS_append_keystone = " \
 "
 #    ipsecmgr-mod-src 

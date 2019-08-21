@@ -1,4 +1,4 @@
-PR_append = "-tisdk54"
+PR_append = "-tisdk55"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -11,10 +11,11 @@ EXTRA_PACKAGES_append_am335x-evm = " pruss-lld-apps pru-adc"
 EXTRA_PACKAGES_append_am437x-evm = " pruss-lld-apps"
 EXTRA_PACKAGES_append_k2g-evm  = " pruss-lld-apps"
 EXTRA_PACKAGES_append_am57xx-evm = " pruss-lld-apps \
-                                     jailhouse-examples \
+                                     jailhouse \
                                      jailhouse-examples-rtos"
 
-EXTRA_PACKAGES_append_k3 = " watchdog"
+EXTRA_PACKAGES_append_k3 = " watchdog \
+                             jailhouse"
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
