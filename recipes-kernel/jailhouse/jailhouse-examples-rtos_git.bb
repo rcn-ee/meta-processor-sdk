@@ -37,13 +37,20 @@ EXTRA_OEMAKE += "PDK_INSTALL_PATH=${PDK_INSTALL_DIR}/packages \
 "
 export PDK_INSTALL_PATH="${PDK_INSTALL_DIR}/packages"
 
+# Copied from meta-ti/recipes-kernel/jailhouse/jailhouse_git.bb
+JH_DATADIR ?= "${datadir}/jailhouse"
+JH_EXEC_DIR ?= "${libexecdir}/jailhouse"
+CELL_DIR ?= "${JH_DATADIR}/cells"
+CELLCONF_DIR ?= "${JH_DATADIR}/configs"
+INMATES_DIR ?= "${JH_DATADIR}/inmates"
+
 do_install() {
     # Install the binary for Linux
-    install -d ${D}${datadir}/jailhouse/examples
-    make INSTALL_DIR=${D}${datadir}/jailhouse/examples install
+    install -d ${D}${INMATES_DIR}
+    make INSTALL_DIR=${D}${INMATES_DIR} install
 }
 
-FILES_${PN} += "${datadir}/jailhouse/examples"
+FILES_${PN} += "${INMATES_DIR}"
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "${PROC_SDK_INSTALL_DIR_RECIPE}/demos/jailhouse-inmate"
