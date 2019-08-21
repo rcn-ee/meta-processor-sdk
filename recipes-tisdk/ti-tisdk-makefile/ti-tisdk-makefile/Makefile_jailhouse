@@ -1,11 +1,14 @@
 # jailhouse module
+JH_ARCH = "__KERNEL_ARCH__"
+JH_PLATFORM = "__JH_PLATFORM__"
+
 jailhouse_config:
 	@echo =====================================
 	@echo      Configuring jailhouse
 	@echo =====================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "jailhouse*" -type d`; \
-	cp -v ./ci/jailhouse-config-${PLATFORM}.h ./include/jailhouse/config.h
+	cp -v ./ci/jailhouse-config-$(JH_PLATFORM).h ./include/jailhouse/config.h
 
 jailhouse: linux jailhouse_config
 	@echo =====================================
@@ -13,7 +16,7 @@ jailhouse: linux jailhouse_config
 	@echo =====================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "jailhouse*" -type d`; \
-	make ARCH=arm KDIR=${LINUXKERNEL_INSTALL_DIR}
+	make ARCH=$(JH_ARCH) KDIR=${LINUXKERNEL_INSTALL_DIR}
 
 jailhouse_clean:
 	@echo =====================================
@@ -21,7 +24,7 @@ jailhouse_clean:
 	@echo =====================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "jailhouse*" -type d`; \
-	make ARCH=arm KDIR=${LINUXKERNEL_INSTALL_DIR} clean
+	make ARCH=$(JH_ARCH) KDIR=${LINUXKERNEL_INSTALL_DIR} clean
 
 jailhouse_distclean: jailhouse_clean
 	@echo =====================================
@@ -37,5 +40,5 @@ jailhouse_install:
 	@echo ================================
 	@cd board-support/extra-drivers; \
 	cd `find . -maxdepth 1 -name "jailhouse*" -type d`; \
-	make ARCH=arm KDIR=${LINUXKERNEL_INSTALL_DIR} DESTDIR=$(DESTDIR) INSTALL_MOD_STRIP=$(INSTALL_MOD_STRIP) prefix=/usr install
+	make ARCH=$(JH_ARCH) KDIR=${LINUXKERNEL_INSTALL_DIR} DESTDIR=$(DESTDIR) INSTALL_MOD_STRIP=$(INSTALL_MOD_STRIP) prefix=/usr install
 
