@@ -145,7 +145,7 @@ FILES_${PN}-tools = "${libexecdir}/${BPN}/${BPN}-*"
 RDEPENDS_${PN}-tools = "pyjailhouse python-mmap python-math python-argparse python-datetime python-curses python-compression"
 RDEPENDS_pyjailhouse = "python-core python-ctypes python-fcntl python-shell"
 
-RRECCOMMENDS_${PN} = "${PN}-tools"
+RRECOMMENDS_${PN} = "${PN}-tools"
 
 INSANE_SKIP_${PN} = "ldflags"
 
