@@ -4,6 +4,9 @@ PR_append = ".arago0"
 
 SRC_URI += "file://rngd.rules"
 
+# Prevent collision of initscript and systemd service
+INHIBIT_UPDATERCD_BBCLASS = "1"
+
 do_install_append() {
 	# remove duplicate initscript
 	rm -f ${D}${sysconfdir}/init.d/rng-tools
