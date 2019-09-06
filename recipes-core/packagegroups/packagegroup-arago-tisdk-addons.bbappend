@@ -1,4 +1,4 @@
-PR_append = "-tisdk56"
+PR_append = "-tisdk57"
 
 EXTRA_PACKAGES_append_ti33x = " opencv tensorflow-lite"
 EXTRA_PACKAGES_append_ti43x = " opencv tensorflow-lite"
@@ -15,8 +15,7 @@ EXTRA_PACKAGES_append_am57xx-evm = " pruss-lld-apps \
                                      jailhouse \
                                      jailhouse-examples-rtos"
 
-EXTRA_PACKAGES_append_k3 = " watchdog \
-                             jailhouse"
+EXTRA_PACKAGES_append_k3 = " watchdog"
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 

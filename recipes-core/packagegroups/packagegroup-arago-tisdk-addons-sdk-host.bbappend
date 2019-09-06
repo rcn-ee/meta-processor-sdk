@@ -1,10 +1,6 @@
-PR_append = ".tisdk18"
+PR_append = ".tisdk19"
 
 EXTRA_LIBS_append_am57xx-evm = " \
-    jailhouse-src \
-"
-
-EXTRA_LIBS_append_k3 = " \
     jailhouse-src \
 "
 
