@@ -1,10 +1,9 @@
-PR_append = ".tisdk67"
+PR_append = ".tisdk68"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = "\
     file://Makefile_video-graphics-test \
-    file://Makefile_jailhouse \
     file://Makefile_evse-hmi \
     file://Makefile_protection-relays-hmi \
     file://Makefile_tiovx-app-host \
@@ -39,7 +38,6 @@ MAKEFILES_append_ti33x = " evse-hmi \
 "
 
 MAKEFILES_append_k3 = " evse-hmi \
-                        jailhouse \
 "
 
 MAKEFILES_append_am335x-evm = " pru-adc"
@@ -55,14 +53,6 @@ MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 't
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 
 MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
-
-# Populate Jailhouse config header
-JH_PLATFORM = "${MACHINE}"
-JH_PLATFORM_k3 = "k3"
-
-do_install_append() {
-    sed -i -e "s/__JH_PLATFORM__/${JH_PLATFORM}/" ${D}/Makefile
-}
 
 # Populate UBOOT_MACHINE when UBOOT_CONFIG is used
 # (see uboot-config.bbclass)
