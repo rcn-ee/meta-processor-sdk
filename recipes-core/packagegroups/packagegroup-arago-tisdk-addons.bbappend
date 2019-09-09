@@ -1,9 +1,9 @@
 PR_append = "-tisdk57"
 
-EXTRA_PACKAGES_append_ti33x = " opencv tensorflow-lite"
-EXTRA_PACKAGES_append_ti43x = " opencv tensorflow-lite"
-EXTRA_PACKAGES_append_omap-a15 = " opencv tensorflow-lite"
-EXTRA_PACKAGES_append_am65xx = " tensorflow-lite"
+EXTRA_PACKAGES_append_ti33x = " opencv tensorflow-lite-examples"
+EXTRA_PACKAGES_append_ti43x = " opencv tensorflow-lite-examples"
+EXTRA_PACKAGES_append_omap-a15 = " opencv tensorflow-lite-examples"
+EXTRA_PACKAGES_append_am65xx = " tensorflow-lite-examples"
 EXTRA_PACKAGES_append_keystone = " opencv"
 EXTRA_PACKAGES_remove_k2hk-hs-evm = "opencv"
 
