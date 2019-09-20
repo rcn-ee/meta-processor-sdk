@@ -1,4 +1,4 @@
-PR_append = "-tisdk32"
+PR_append = "-tisdk33"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -76,8 +76,3 @@ EXTRA_LIBS_append_dra7xx = " \
     tiovx-lib-host-staticdev \
     tiovx-sys-iface \
 "
-
-EXTRA_PACKAGES_append_ti33x = " tensorflow-lite-dev tensorflow-lite-staticdev"
-EXTRA_PACKAGES_append_ti43x = " tensorflow-lite-dev tensorflow-lite-staticdev"
-EXTRA_PACKAGES_append_omap-a15 = " tensorflow-lite-dev tensorflow-lite-staticdev"
-EXTRA_PACKAGES_append_am65xx = " tensorflow-lite-dev tensorflow-lite-staticdev"
