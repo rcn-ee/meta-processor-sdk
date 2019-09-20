@@ -18,7 +18,7 @@ require tiovx-sys.inc
 DEPENDS = " tiovx-sys-iface tiovx-lib-host ti-ipc cmem opencv udev"
 RDEPENDS_${PN} = " tiovx-sys-iface tiovx-sys-iface-firmware tiovx-lib-host ti-ipc cmem "
 
-PR = "r2"
+PR = "r3"
 
 COMPATIBLE_MACHINE = "dra7xx"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
