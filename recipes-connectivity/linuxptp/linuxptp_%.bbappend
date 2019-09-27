@@ -1,11 +1,11 @@
-PR_append = ".tisdk15"
+PR_append = ".tisdk16"
 PV = "2.0+"
 
 BRANCH = "ti-linuxptp-v2.0-release"
 SRC_URI = "git://git.ti.com/processor-sdk/linuxptp.git;protocol=git;branch=${BRANCH} \
            file://build-Allow-CC-and-prefix-to-be-overriden.patch"
 
-SRCREV = "e44715625b022cfe61a6e5c7a097624e74479a43"
+SRCREV = "8e3dcb0beb46d044232918de9cd5b2723721c3bb"
 
 S = "${WORKDIR}/git"
 
