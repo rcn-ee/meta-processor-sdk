@@ -28,6 +28,8 @@ RESERVE_CMEM_keystone = "1"
 # Enable TI UIO devices
 ENABLE_TI_UIO_DEVICES = "1"
 
+# Increase priority of ti-ipc-rtos firmwares
+ALTERNATIVE_PRIORITY_pn-ti-ipc-rtos = "15"
 
 # Add DTBs specific to the Processor SDK kernel
 PSDK_KERNEL_DEVICETREE ?= ""
