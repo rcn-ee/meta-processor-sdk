@@ -1,0 +1,32 @@
+From b3a68ac89d7ed955546eae91954b184ec1583ce3 Mon Sep 17 00:00:00 2001
+From: Lokesh Vutla <lokeshvutla@ti.com>
+Date: Thu, 26 Sep 2019 15:42:00 +0530
+Subject: [PATCH] tools: cell-linux: arm: Do not page align the ramdisk size
+
+When updating linux initrd size in inmate DT, the size is aligned
+to page. Because of this some initrd images were not able to mount
+by inmate as Linux is seeing junk at end of specified initrd.
+Pass the exact initrd size to the Linux kernel.
+
+Tested-by: Nikhil Devshatwar <nikhil.nd@ti.com>
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+---
+ tools/jailhouse-cell-linux | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/jailhouse-cell-linux b/tools/jailhouse-cell-linux
+index 033cbc5..7f20cb2 100755
+--- a/tools/jailhouse-cell-linux
++++ b/tools/jailhouse-cell-linux
+@@ -317,7 +317,7 @@ class ARMCommon:
+ 
+         ramdisk_size = 0
+         if args.initrd:
+-            ramdisk_size = page_align(os.fstat(args.initrd.fileno()).st_size)
++            ramdisk_size = os.fstat(args.initrd.fileno()).st_size
+             # leave sufficient space between the kernel and the initrd
+             decompression_factor = self.default_decompression_factor()
+             if args.kernel_decomp_factor:
+-- 
+1.9.1
+

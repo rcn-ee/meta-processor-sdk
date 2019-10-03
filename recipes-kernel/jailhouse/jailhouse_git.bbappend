@@ -1,3 +1,7 @@
+# Backport k3 patch fixing linux cell
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+SRC_URI_append_k3 = "file://0001-tools-cell-linux-arm-Do-not-page-align-the-ramdisk-s.patch"
+
 # jailhouse for am57xx-evm was developed in a different repo
 BRANCH_am57xx-evm = "plsdk_am57xx"
 SRC_URI_am57xx-evm = "git://git.ti.com/processor-sdk/jailhouse.git;branch=${BRANCH}"
