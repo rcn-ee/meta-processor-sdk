@@ -7,6 +7,12 @@ SRCREV_am57xx-evm = "6044dcf5643ebe5928703e5bd73f4bca52149409"
 # ti-app cannot be built in parallel
 PARALLEL_MAKE_am57xx-evm = ""
 
+# This recipe builds both a kernel module and userspace libs without a clear
+# way to build each individually. The am5 kernel wants to set soft-float while
+# we have tuned it for hard-float, so there is a conflict. Remove CC from here
+# until a proper solution is found.
+EXTRA_OEMAKE_remove_am57xx-evm = "CC="${CC}""
+
 # Directory structure used in previous jailhouse recipe
 #CELL_DIR_am57xx-evm ?= "${JH_DATADIR}/examples"
 #INMATES_DIR_am57xx-evm ?= "${JH_DATADIR}/examples"
