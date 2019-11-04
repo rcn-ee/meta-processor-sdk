@@ -57,8 +57,6 @@ PSDK_KERNEL_DEVICETREE_k2g   = " keystone-k2g-ice-pps.dtb"
 PSDK_KERNEL_DEVICETREE_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 PSDK_KERNEL_DEVICETREE_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 
-PSDK_KERNEL_DEVICETREE_am65xx = " ti/k3-am654-idk-interposer.dtbo"
-
 # Configure ROS to use python3
 ROS_USE_PYTHON3 = "yes"
 
