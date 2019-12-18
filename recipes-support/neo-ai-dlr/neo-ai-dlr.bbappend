@@ -17,7 +17,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=34400b68072d710fecd0a2940a0d1658 \
 
 SRC_DISTRIBUTE_LICENSES += "Unlicense"
 
-PV = "1.01"
+PV = "1.0.1"
 
 DEPENDS += " opencv "
 
@@ -56,13 +56,19 @@ do_compile_append() {
    ninja democv
 }
 
+SOLIBS = ".so"
+FILES_SOLIBSDEV = ""
 
 do_install_append() {
-
     # Now install additional python test scripts, bash scripts and precomputed models
     install -d ${D}${datadir}/dlr/demos
     cp -Prf --preserve=mode,timestamps ${S}/examples/tidl/* ${D}${datadir}/dlr/demos
     install -m 0755 ${B}/bin/* ${D}${datadir}/dlr/demos/.
+    install -d ${D}${libdir}
+    install -m 0755  ${B}/lib/libdlr.so ${D}${libdir}
+    cp -Prf --preserve=mode,timestamps  ${S}/3rdparty/tvm/3rdparty/dmlc-core/include/dmlc ${D}${includedir}
+
 }
 
 FILES_${PN}-tests += "${datadir}/dlr/demos"
+FILES_${PN} += "${libdir}/libdlr.so* "
