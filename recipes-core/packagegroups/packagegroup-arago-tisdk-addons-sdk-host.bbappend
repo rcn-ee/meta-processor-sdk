@@ -1,4 +1,4 @@
-PR_append = ".tisdk19"
+PR_append = ".tisdk20"
 
 EXTRA_LIBS_append_am57xx-evm = " \
     jailhouse-src \
@@ -18,3 +18,8 @@ EXTRA_LIBS_append_dra7xx = " \
 
 UTILS_append_am335x-evm = " pru-adc-src"
 
+NEO_AI_PACKAGES = " \
+    ${@bb.utils.contains('MACHINE_FEATURES','mmip','neo-ai-dlr-demo-src','',d)} \
+"
+
+RDEPENDS_${PN}_append = " ${NEO_AI_PACKAGES}"

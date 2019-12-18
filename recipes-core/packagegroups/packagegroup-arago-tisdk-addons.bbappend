@@ -1,4 +1,4 @@
-PR_append = "-tisdk58"
+PR_append = "-tisdk59"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -17,12 +17,17 @@ EXTRA_PACKAGES_append_k3 = " watchdog"
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
-NEO_AI_PACKAGES = "neo-ai-dlr neo-ai-dlr-tests"
+NEO_AI_PACKAGES = " \
+    neo-ai-dlr \
+    neo-ai-dlr-tests \
+    neo-ai-dlr-dev \
+    ${@bb.utils.contains('MACHINE_FEATURES','mmip','neo-ai-dlr-demo','',d)} \
+"
 NEO_AI_PACKAGES_armv5 = ""
 
 EXTRA_PACKAGES_append = " hidapi \
                           tvm \
-                          ${NEO_AI_PACKAGES}"
+"
 
 EXTRA_PACKAGES_append_armv5 = " zbar"
 EXTRA_PACKAGES_append_armv7a = " zbar"
@@ -30,3 +35,5 @@ EXTRA_PACKAGES_append_armv7a = " zbar"
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
 EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples"
+
+RDEPENDS_${PN}-extra_append = " ${NEO_AI_PACKAGES}"

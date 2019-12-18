@@ -1,4 +1,4 @@
-PR_append = "-tisdk33"
+PR_append = "-tisdk34"
 
 UTILS_append_ti33x = " \
     opencv-dev \
@@ -76,3 +76,7 @@ EXTRA_LIBS_append_dra7xx = " \
     tiovx-lib-host-staticdev \
     tiovx-sys-iface \
 "
+
+NEO_AI_PACKAGES = "neo-ai-dlr-dev"
+
+RDEPENDS_${PN}_append = " ${NEO_AI_PACKAGES}"
