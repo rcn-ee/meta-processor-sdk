@@ -26,8 +26,8 @@ do_patch[postfuncs] += "do_setup_adc"
 
 RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_ti33x = " pruhsr-fw pruprp-fw"
 RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_ti43x = " pruhsr-fw pruprp-fw"
-RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_am57xx-evm = " pruhsr-fw pruprp-fw"
-RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_am57xx-hs-evm = " pruhsr-fw pruprp-fw"
+RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_am57xx-evm = " pruhsr-fw pruprp-fw prusw-fw"
+RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_am57xx-hs-evm = " pruhsr-fw pruprp-fw prusw-fw"
 RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_am65xx = " csl-rti-dwwdtest-fw-evm csl-rti-dwwdtest-fw-idk"
 RDEPENDS_${KERNEL_PACKAGE_NAME}-base_append_k2g = " pruhsr-fw pruprp-fw"
 
