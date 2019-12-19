@@ -1,4 +1,4 @@
-PR_append = ".tisdk17"
+PR_append = ".tisdk18"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -47,4 +47,10 @@ do_install_append() {
     fi
 
     install -m 0755 ${S}/${SETUP_TFTP} ${D}/bin/setup-tftp.sh
+
+    if [ -z "${MKUBIFS_ARGS}" -o -z "${UBINIZE_ARGS}" ]
+    then
+        # UBIFS not supported
+        rm -f "${D}/bin/create-ubifs.sh"
+    fi
 }
