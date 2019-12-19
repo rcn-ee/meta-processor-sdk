@@ -46,7 +46,6 @@ AM57XX_KERNEL_DEVICETREE = " \
     am572x-idk-lcd-osd101t2045-jailhouse.dtb \
     am572x-idk-lcd-osd101t2587-jailhouse.dtb \
     am574x-idk-jailhouse.dtb \
-    am5729-beagleboneai.dtb \
 "
 
 PSDK_KERNEL_DEVICETREE_ti33x = " am335x-boneblack-pru-adc.dtb \
