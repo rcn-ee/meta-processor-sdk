@@ -78,5 +78,6 @@ EXTRA_LIBS_append_dra7xx = " \
 "
 
 NEO_AI_PACKAGES = "neo-ai-dlr-dev"
+NEO_AI_PACKAGES_armv5 = ""
 
 RDEPENDS_${PN}_append = " ${NEO_AI_PACKAGES}"
