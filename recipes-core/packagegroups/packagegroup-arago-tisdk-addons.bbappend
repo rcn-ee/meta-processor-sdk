@@ -1,4 +1,4 @@
-PR_append = "-tisdk59"
+PR_append = "-tisdk60"
 
 EXTRA_PACKAGES_append_ti33x = " opencv"
 EXTRA_PACKAGES_append_ti43x = " opencv"
@@ -18,6 +18,8 @@ EXTRA_PACKAGES_append_k3 = " watchdog"
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
 NEO_AI_PACKAGES = " \
+    neo-ai-tvm \
+    neo-ai-tvm-tests \
     neo-ai-dlr \
     neo-ai-dlr-tests \
     neo-ai-dlr-dev \
@@ -26,7 +28,6 @@ NEO_AI_PACKAGES = " \
 NEO_AI_PACKAGES_armv5 = ""
 
 EXTRA_PACKAGES_append = " hidapi \
-                          tvm \
 "
 
 EXTRA_PACKAGES_append_armv5 = " zbar"
