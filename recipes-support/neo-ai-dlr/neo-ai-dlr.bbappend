@@ -17,7 +17,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=34400b68072d710fecd0a2940a0d1658 \
 
 SRC_DISTRIBUTE_LICENSES += "Unlicense"
 
-PV = "1.0.1"
+PV = "1.0.2"
 
 DEPENDS += " opencv "
 
@@ -38,7 +38,7 @@ SRC_URI = "git://github.com/TexasInstruments/neo-ai-dlr;protocol=https;branch=${
            git://github.com/google/googletest;protocol=https;nobranch=1;destsuffix=${S}/3rdparty/treelite/3rdparty/protobuf/third_party/googletest;name=neo-ai-treelite-protobuf-googletest \
 "
 
-SRCREV_neo-ai-dlr = "ac8ed960e8525e26eb271cb8f4402e73a78d81bf"
+SRCREV_neo-ai-dlr = "aefda8ab117ea437ba01b1cc7e54d9e866cabeea"
 SRCREV_neo-ai-tvm = "11f0a9d2349b94a733aae1c8bd652e6055f4b185"
 SRCREV_neo-ai-tvm-dmlc-core = "ca9f9329654dbd42f06988276c6f74eb8bdd5038"
 SRCREV_neo-ai-tvm-dlpack = "b7bd45cdd8b67f4ab2502a8717f2e0926d9b4121"
