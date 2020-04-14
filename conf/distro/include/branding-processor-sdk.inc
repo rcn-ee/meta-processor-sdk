@@ -31,10 +31,6 @@ ENABLE_TI_UIO_DEVICES = "1"
 # Increase priority of ti-ipc-rtos firmwares
 ALTERNATIVE_PRIORITY_pn-ti-ipc-rtos = "15"
 
-# Bump TI_PDK_SRCREV for minor fix
-TI_PDK_SRCREV = "2357d1436f1b2c3b5f1d0c9c94e045d33b63f3fe"
-TI_PDK_VERSION = "2019.12.2"
-
 # Add DTBs specific to the Processor SDK kernel
 PSDK_KERNEL_DEVICETREE ?= ""
 KERNEL_DEVICETREE_append = " ${PSDK_KERNEL_DEVICETREE}"
