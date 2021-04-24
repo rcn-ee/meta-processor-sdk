@@ -17,16 +17,6 @@ EXTRA_PACKAGES_append_k3 = " watchdog"
 
 EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
-NEO_AI_PACKAGES = " \
-    neo-ai-tvm \
-    neo-ai-tvm-tests \
-    neo-ai-dlr \
-    neo-ai-dlr-tests \
-    neo-ai-dlr-dev \
-    ${@bb.utils.contains('MACHINE_FEATURES','mmip','neo-ai-dlr-demo','',d)} \
-"
-NEO_AI_PACKAGES_armv5 = ""
-
 EXTRA_PACKAGES_append = " hidapi \
 "
 
@@ -37,4 +27,3 @@ UTILS_append = " net-snmp net-snmp-server-snmpd"
 
 EXTRA_PACKAGES_append_dra7xx = " tiovx-app-host tiovx-app-host-examples"
 
-RDEPENDS_${PN}-extra_append = " ${NEO_AI_PACKAGES}"

@@ -76,8 +76,3 @@ EXTRA_LIBS_append_dra7xx = " \
     tiovx-lib-host-staticdev \
     tiovx-sys-iface \
 "
-
-NEO_AI_PACKAGES = "neo-ai-dlr-dev"
-NEO_AI_PACKAGES_armv5 = ""
-
-RDEPENDS_${PN}_append = " ${NEO_AI_PACKAGES}"

@@ -9,7 +9,6 @@ SRC_URI_append = "\
     file://Makefile_tiovx-app-host \
     file://Makefile_tidl-examples \
     file://Makefile_pru-adc \
-    file://Makefile_neo-ai-dlr-demo \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
@@ -47,8 +46,6 @@ MAKEFILES_append_am57xx-evm = " jailhouse \
 MAKEFILES_append_am57xx-hs-evm = " tidl-examples"
 
 MAKEFILES_append_dra7xx = " tiovx-app-host"
-
-MAKEFILES_append = " ${@bb.utils.contains('MACHINE_FEATURES','mmip','neo-ai-dlr-demo','',d)}"
 
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
