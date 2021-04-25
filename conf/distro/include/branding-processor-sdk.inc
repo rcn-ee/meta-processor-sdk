@@ -26,7 +26,7 @@ RESERVE_CMEM_dra7xx = "1"
 RESERVE_CMEM_keystone = "1"
 
 # Enable TI UIO devices
-ENABLE_TI_UIO_DEVICES = "1"
+ENABLE_TI_UIO_DEVICES = "0"
 
 # Increase priority of ti-ipc-rtos firmwares
 ALTERNATIVE_PRIORITY_pn-ti-ipc-rtos = "15"
@@ -48,11 +48,9 @@ AM57XX_KERNEL_DEVICETREE = " \
     am574x-idk-jailhouse.dtb \
 "
 
-PSDK_KERNEL_DEVICETREE_ti33x = " am335x-boneblack-pru-adc.dtb \
-                                 am335x-icev2-prueth-pps.dtb \
-                                 am335x-boneblack-iot-cape.dtb"
-PSDK_KERNEL_DEVICETREE_ti43x = " am437x-idk-pps.dtb"
-PSDK_KERNEL_DEVICETREE_k2g   = " keystone-k2g-ice-pps.dtb"
+PSDK_KERNEL_DEVICETREE_ti33x = " "
+PSDK_KERNEL_DEVICETREE_ti43x = " "
+PSDK_KERNEL_DEVICETREE_k2g   = " "
 
 PSDK_KERNEL_DEVICETREE_am57xx-evm = " ${AM57XX_KERNEL_DEVICETREE}"
 PSDK_KERNEL_DEVICETREE_am57xx-hs-evm = " ${AM57XX_KERNEL_DEVICETREE}"
