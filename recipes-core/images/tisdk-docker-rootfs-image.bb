@@ -6,6 +6,6 @@ IMAGE_INSTALL += "packagegroup-arago-base \
                   packagegroup-arago-console"
 
 # Add docker and dropbear for SSH server
-IMAGE_INSTALL += "docker docker-contrib dropbear"
+IMAGE_INSTALL += "docker dropbear"
 
 export IMAGE_BASENAME = "tisdk-docker-rootfs-image"
