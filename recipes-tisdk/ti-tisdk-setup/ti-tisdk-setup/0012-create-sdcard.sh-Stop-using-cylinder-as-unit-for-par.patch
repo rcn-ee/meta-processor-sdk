@@ -1,0 +1,92 @@
+From ec9296bcf3d6e59eec32344d1e813c1c5114e327 Mon Sep 17 00:00:00 2001
+From: Priya N S <priya.ns@ti.com>
+Date: Thu, 13 May 2021 15:43:51 +0530
+Subject: [PATCH] create-sdcard.sh: Stop using cylinder as unit for
+ partition size
+
+* Cylinder size of sdcard is manufacturer dependent. To standardize
+  sdcard partitioning remove the use of cylinder (cyl) unit.
+* While at it shift to using fdisk for the partitioning the sdcard.
+  fdisk is already used in the script and this reduces the dependencies
+  of this script on available installed applications.
+* This fixes cases where already partitioned cards were being detected
+  as not partitioned because of size check elsewhere in the script
+  failing.
+
+Signed-off-by: Priya N S <priya.ns@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+---
+ create-sdcard.sh | 50 +++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 41 insertions(+), 9 deletions(-)
+
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index 8f996871d0fc..1114f705fe75 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -501,11 +501,29 @@ SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
+ 
+ echo DISK SIZE - $SIZE bytes
+ 
+-parted -s $DRIVE mklabel msdos
+-parted -s $DRIVE unit cyl mkpart primary fat32 -- 0 9
+-parted -s $DRIVE set 1 boot on
+-parted -s $DRIVE unit cyl mkpart primary ext2 -- 9 310
+-parted -s $DRIVE unit cyl mkpart primary ext2 -- 310 -2
++cat << END | fdisk $DRIVE
++n
++p
++1
++
+++75M
++n
++p
++2
++
+++2.4G
++n
++p
++3
++
++
++t
++1
++c
++a
++1
++w
++END
+ 
+ 
+ cat << EOM
+@@ -559,10 +577,24 @@ SIZE=`fdisk -l $DRIVE | grep Disk | awk '{print $5}'`
+ 
+ echo DISK SIZE - $SIZE bytes
+ 
+-parted -s $DRIVE mklabel msdos
+-parted -s $DRIVE unit cyl mkpart primary fat32 -- 0 9
+-parted -s $DRIVE set 1 boot on
+-parted -s $DRIVE unit cyl mkpart primary ext2 -- 9 -2
++cat << END | fdisk $DRIVE
++n
++p
++1
++
+++75M
++n
++p
++2
++
++
++t
++1
++c
++a
++1
++w
++END
+ 
+ cat << EOM
+ 
+-- 
+2.17.1
+

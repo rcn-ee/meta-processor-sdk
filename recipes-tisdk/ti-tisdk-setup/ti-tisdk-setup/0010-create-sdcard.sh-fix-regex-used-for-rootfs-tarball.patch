@@ -1,0 +1,54 @@
+From fb6b87269db3278cbe19e8b952b1ed57ab335093 Mon Sep 17 00:00:00 2001
+From: Priya N S <priya.ns@ti.com>
+Date: Fri, 7 May 2021 17:34:33 +0530
+Subject: [PATCH] create-sdcard.sh: fix regex used for rootfs tarball
+
+Filesystem tarballs present in SDK are in the format
+tisdk-<IMAGE_TYPE>-image-<MACHINE>.tar.xz. This is different from
+earlier format where 'rootfs' was present in all the filesystem
+tarball names. Update regex used for filesystem tarball search to
+use "image" as the keyword.
+
+Signed-off-by: Priya N S <priya.ns@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+---
+ create-sdcard.sh | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index 736cd42b9754..264095a7e8f4 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -752,10 +752,9 @@ if [ $FILEPATHOPTION -eq 1 ] ; then
+	BOOTUENV=`ls $BOOTFILEPATH | grep uEnv.txt | awk {'print $1'}`
+	#rootfs
+	ROOTFILEPARTH="$PARSEPATH/filesystem"
+-	#ROOTFSTAR=`ls  $ROOTFILEPARTH | grep tisdk.*rootfs | awk {'print $1'}`
+
+	#Make sure there is only 1 tar
+-	CHECKNUMOFTAR=`ls $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | grep '2:' | awk {'print $1'}`
++	CHECKNUMOFTAR=`ls $ROOTFILEPARTH | grep "tisdk.*image" | grep 'tar.xz' | grep -n '' | grep '2:' | awk {'print $1'}`
+	if [ -n "$CHECKNUMOFTAR" ]
+	then
+ cat << EOM
+@@ -767,15 +766,15 @@ cat << EOM
+ ################################################################################
+
+ EOM
+-		ls --sort=size $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | awk {'print "	" , $1'}
++		ls --sort=size $ROOTFILEPARTH | grep "tisdk.*image" | grep 'tar.xz' | grep -n '' | awk {'print "	" , $1'}
+		echo ""
+		read -p "Enter Number of rootfs Tarball: " TARNUMBER
+		echo " "
+-		FOUNDTARFILENAME=`ls --sort=size $ROOTFILEPARTH | grep "rootfs" | grep 'tar.xz' | grep -n '' | grep "${TARNUMBER}:" | cut -c3- | awk {'print$1'}`
++		FOUNDTARFILENAME=`ls --sort=size $ROOTFILEPARTH | grep "image" | grep 'tar.xz' | grep -n '' | grep "${TARNUMBER}:" | cut -c3- | awk {'print$1'}`
+		ROOTFSTAR=$FOUNDTARFILENAME
+
+	else
+-		ROOTFSTAR=`ls  $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | awk {'print $1'}`
++		ROOTFSTAR=`ls  $ROOTFILEPARTH | grep "tisdk.*image" | grep 'tar.xz' | awk {'print $1'}`
+	fi
+
+	ROOTFSUSERFILEPATH=$ROOTFILEPARTH/$ROOTFSTAR
+--
+2.17.1
