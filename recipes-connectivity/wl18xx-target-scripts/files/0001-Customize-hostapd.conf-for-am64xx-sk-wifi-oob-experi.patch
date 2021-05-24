@@ -1,0 +1,71 @@
+From 09925ca6f3e756b824c9c5e0c892041aa81d97b9 Mon Sep 17 00:00:00 2001
+From: Aparna M <a-m1@ti.com>
+Date: Thu, 6 May 2021 19:49:48 +0530
+Subject: [PATCH 1/2] Customize hostapd.conf for am64xx-sk wifi-oob experience
+
+Set SSID, passphrase for wifi access point to enable out of box experience
+---
+ conf/hostapd.conf | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/conf/hostapd.conf b/conf/hostapd.conf
+index 2dd3ca0..4194907 100755
+--- a/conf/hostapd.conf
++++ b/conf/hostapd.conf
+@@ -91,7 +91,7 @@ ctrl_interface=/var/run/hostapd
+ ##### IEEE 802.11 related configuration #######################################
+ 
+ # SSID to be used in IEEE 802.11 management frames
+-ssid=SitaraAP
++ssid=AM64xSK-AP
+ # Alternative formats for configuring SSID
+ # (double quoted string, hexdump, printf-escaped string)
+ #ssid2="test"
+@@ -142,7 +142,7 @@ channel=11
+ # Set to 1 in order to sync the channel of the current AP to the
+ # channel of an operational radio on the same PHY. Note that this
+ # applies to the 40Mhz operating channel (primary + secondary)
+-ap_channel_sync=1
++#ap_channel_sync=1
+ 
+ # Beacon interval in kus (1.024 ms) (default: 100; range 15..65535)
+ beacon_int=100
+@@ -794,7 +794,7 @@ own_ip_addr=127.0.0.1
+ # and/or WPA2 (full IEEE 802.11i/RSN):
+ # bit0 = WPA
+ # bit1 = IEEE 802.11i/RSN (WPA2) (dot11RSNAEnabled)
+-#wpa=1
++wpa=2
+ 
+ # WPA pre-shared keys for WPA-PSK. This can be either entered as a 256-bit
+ # secret in hex format (64 hex digits), wpa_psk, or as an ASCII passphrase
+@@ -803,7 +803,7 @@ own_ip_addr=127.0.0.1
+ # wpa_psk (dot11RSNAConfigPSKValue)
+ # wpa_passphrase (dot11RSNAConfigPSKPassPhrase)
+ #wpa_psk=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+-#wpa_passphrase=secret passphrase
++wpa_passphrase=tiwilink8
+ 
+ # Optionally, WPA PSKs can be read from a separate text file (containing list
+ # of (PSK,MAC address) pairs. This allows more than one PSK to be configured.
+@@ -824,7 +824,7 @@ own_ip_addr=127.0.0.1
+ # entries are separated with a space. WPA-PSK-SHA256 and WPA-EAP-SHA256 can be
+ # added to enable SHA256-based stronger algorithms.
+ # (dot11RSNAConfigAuthenticationSuitesTable)
+-#wpa_key_mgmt=WPA-PSK WPA-EAP
++#wpa_key_mgmt=WPA-PSK
+ 
+ # Set of accepted cipher suites (encryption algorithms) for pairwise keys
+ # (unicast packets). This is a space separated list of algorithms:
+@@ -838,7 +838,7 @@ own_ip_addr=127.0.0.1
+ # Pairwise cipher for WPA (v1) (default: TKIP)
+ #wpa_pairwise=TKIP CCMP
+ # Pairwise cipher for RSN/WPA2 (default: use wpa_pairwise value)
+-#rsn_pairwise=CCMP
++rsn_pairwise=CCMP
+ # Time interval for rekeying GTK (broadcast/multicast encryption keys) in
+ # seconds. (dot11RSNAConfigGroupRekeyTime)
+ wpa_group_rekey=0
+-- 
+2.17.1
+
