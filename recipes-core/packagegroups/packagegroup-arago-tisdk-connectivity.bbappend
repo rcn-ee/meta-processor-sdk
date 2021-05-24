@@ -1,4 +1,4 @@
-PR_append = ".tisdk4"
+PR_append = ".tisdk5"
 
 CONNECTIVITY_RDEPENDS_append_ti33x = " \
     wpantund-dev \
@@ -8,4 +8,7 @@ CONNECTIVITY_RDEPENDS_append_ti43x = " \
 "
 CONNECTIVITY_RDEPENDS_append_omap-a15 = " \
     wpantund-dev \
+"
+WLAN_TI_append_am64xx-evm = " \
+    wifi-oob \
 "
