@@ -1,5 +1,7 @@
 PR_append = ".tisdk19"
 
+DEPLOY_IMAGES_NAME_append_am64xx-evm = " ti-sci-firmware-am64x-gp.bin"
+
 # Add small docker rootfs for all SOCs
 TARGET_IMAGES_append = " tisdk-docker-rootfs-image tisdk-tiny-image"
 
