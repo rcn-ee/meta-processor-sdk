@@ -17,6 +17,10 @@ EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
 EXTRA_PACKAGES_append = " hidapi \
 "
+EXTRA_PACKAGES_append_am64xx-evm = " \
+    benchmark-server \
+    opcua-server \
+"
 
 EXTRA_PACKAGES_append_armv5 = " zbar"
 EXTRA_PACKAGES_append_armv7a = " zbar"
