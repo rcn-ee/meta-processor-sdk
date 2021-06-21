@@ -13,5 +13,9 @@ MATRIX_APPS_append_omap-a15 = " \
     matrix-gui-apps-image-gallery \
 "
 
+MATRIX_APPS_append_am64xx-evm = " \
+    matrix-gui-led-demos \
+"
+
 MATRIX_TOUCH_APPS_keystone = ""
 MATRIX_TOUCH_APPS_omapl138 = ""
