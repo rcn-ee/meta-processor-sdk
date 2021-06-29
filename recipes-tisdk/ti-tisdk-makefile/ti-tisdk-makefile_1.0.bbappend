@@ -40,7 +40,7 @@ MAKEFILES_append_k3 = " evse-hmi \
 
 MAKEFILES_append_am335x-evm = " pru-adc"
 
-MAKEFILES_append_am57xx-evm = " jailhouse \
+MAKEFILES_append_am57xx-evm = " \
                                 tidl-examples \
 "
 MAKEFILES_append_am57xx-hs-evm = " tidl-examples"
