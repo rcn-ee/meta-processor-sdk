@@ -2,13 +2,11 @@ PR_append = ".tisdk1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " file://jailhouse.cfg \
-                   file://docker.cfg"
+SRC_URI_append = " file://docker.cfg"
 
 SRC_URI_append_ti33x = " file://am335x-pru-adc.dtsi"
 
 KERNEL_CONFIG_FRAGMENTS_append = " ${WORKDIR}/docker.cfg"
-KERNEL_CONFIG_FRAGMENTS_append_am57xx-evm = " ${WORKDIR}/jailhouse.cfg"
 
 do_setup_adc() {
 :
