@@ -9,9 +9,7 @@ EXTRA_PACKAGES_remove_k2hk-hs-evm = "opencv"
 EXTRA_PACKAGES_append_am335x-evm = " pruss-lld-apps pru-adc"
 EXTRA_PACKAGES_append_am437x-evm = " pruss-lld-apps"
 EXTRA_PACKAGES_append_k2g-evm  = " pruss-lld-apps"
-EXTRA_PACKAGES_append_am57xx-evm = " pruss-lld-apps \
-                                     jailhouse \
-                                     jailhouse-examples-rtos"
+EXTRA_PACKAGES_append_am57xx-evm = " pruss-lld-apps"
 
 EXTRA_PACKAGES_append_k3 = " watchdog"
 
