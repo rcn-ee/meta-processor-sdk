@@ -1,9 +1,9 @@
 [Unit]
-Description=startwlan
+Description=startwlanap
 
 [Service]
 Type=exec
-ExecStart=/etc/init.d/startwlan.sh
+ExecStart=/etc/init.d/startwlanap.sh
 After=systemd-logind.service
 StandardOutput=journal+console
 RemainAfterExit=yes
