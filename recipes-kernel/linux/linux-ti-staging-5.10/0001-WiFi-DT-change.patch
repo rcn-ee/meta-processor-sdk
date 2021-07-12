@@ -1,0 +1,101 @@
+From 678eab9117542e1ede7061229939cf9104e2e2e2 Mon Sep 17 00:00:00 2001
+From: Aparna M <a-m1@ti.com>
+Date: Tue, 13 Jul 2021 03:53:58 +0530
+Subject: [PATCH] WiFi DT change
+
+Signed-off-by: Aparna M <a-m1@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts | 63 ++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
+index 727f06475670..fce22d7eb610 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
+@@ -125,6 +125,31 @@
+ 		vin-supply = <&vcc_3v3_sys>;
+ 		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
+ 	};
++
++	com8_ls_en: fixed-regulator-com8 {
++		compatible = "regulator-fixed";
++		regulator-name = "com8_ls_en";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		regulator-boot-on;
++		pinctrl-0 = <&main_com8_ls_en_pins_default>;
++		pinctrl-names = "default";
++		gpio = <&main_gpio0 62 GPIO_ACTIVE_LOW>;
++	};
++
++	wlan_en: fixed-regulator-wlan {
++		/* output of SN74AVC4T245RSVR */
++		compatible = "regulator-fixed";
++		regulator-name = "wlan_en";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		enable-active-high;
++		pinctrl-0 = <&main_wlan_en_pins_default>;
++		pinctrl-names = "default";
++		vin-supply = <&com8_ls_en>;
++		gpio = <&main_gpio0 48 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &main_pmx0 {
+@@ -154,6 +179,24 @@
+ 		>;
+ 	};
+ 
++	main_wlan_en_pins_default: main-wlan-en-pins-default {
++		pinctrl-single,pins = <
++			AM64X_IOPAD(0x00c4, PIN_OUTPUT_PULLUP, 7) /* (V8) GPIO0_48 */
++		>;
++	};
++
++	main_com8_ls_en_pins_default: main-com8-ls-en-pins-default {
++		pinctrl-single,pins = <
++			AM64X_IOPAD(0x00fc, PIN_OUTPUT, 7) /* (U7) PRG1_PRU0_GPO17.GPIO0_62 */
++		>;
++	};
++
++	main_wlan_pins_default: main-wlan-pins-default {
++		pinctrl-single,pins = <
++			AM64X_IOPAD(0x00bc, PIN_INPUT, 7) /* (U8) GPIO0_46 */
++		>;
++	};
++
+ 	mdio1_pins_default: mdio1-pins-default {
+ 		pinctrl-single,pins = <
+ 			AM64X_IOPAD(0x01fc, PIN_OUTPUT, 4) /* (R2) PRG0_PRU1_GPO19.MDIO0_MDC */
+@@ -293,6 +336,26 @@
+ 	status = "reserved";
+ };
+ 
++&sdhci0 {
++	vmmc-supply = <&wlan_en>;
++	bus-width = <4>;
++	non-removable;
++	cap-power-off-card;
++	keep-power-in-suspend;
++	ti,driver-strength-ohm = <50>;
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++		wlcore: wlcore@2 {
++		compatible = "ti,wl1837";
++		reg = <2>;
++		pinctrl-0 = <&main_wlan_pins_default>;
++		pinctrl-names = "default";
++		interrupt-parent = <&main_gpio0>;
++		interrupts = <46 IRQ_TYPE_EDGE_FALLING>;
++	};
++};
++
+ &sdhci1 {
+ 	/* SD/MMC */
+ 	vmmc-supply = <&vdd_mmc1>;
+-- 
+2.17.1
+
