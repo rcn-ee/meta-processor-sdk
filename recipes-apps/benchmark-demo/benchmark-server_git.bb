@@ -75,6 +75,7 @@ PV = "1.0.0+git${SRCPV}"
 NPM_SHIRNKWRAP := "${THISDIR}/${BPN}/npm-shrinkwrap.json"
 SRCREV_guicomposer = "18115d266ba9f1956d06258ce2c8997fd1ef2efe"
 
+RDEPENDS_${PN} += "sitara-ipc-app"
 
 inherit npm systemd
 
