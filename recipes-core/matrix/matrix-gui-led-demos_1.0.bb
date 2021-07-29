@@ -2,6 +2,7 @@ DESCRIPTION = "LED Applications for Matrix v2"
 
 require recipes-core/matrix/matrix-gui-apps-git.inc
 
+SRCREV = "cad105b0c2b75a90f4def523b4fdbd0b6aa2fe8e"
 PR = "${INC_PR}.0"
 
 inherit allarch
