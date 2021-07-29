@@ -20,6 +20,7 @@ EXTRA_PACKAGES_append = " hidapi \
 EXTRA_PACKAGES_append_am64xx-evm = " \
     benchmark-server \
     opcua-server \
+    benchmark-demo-firmware \
 "
 
 EXTRA_PACKAGES_append_armv5 = " zbar"
