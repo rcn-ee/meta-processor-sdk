@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/../meta-ti/licenses/TI-TFL;md5=a1b59cb7ba
 
 COMPATIBLE_MACHINE = "k3"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
-PV = "07_03_00_19"
+PV = "08_00_00_21"
 
-SRC_URI = "https://software-dl.ti.com/processor-sdk-rtos/esd/AM64X/firmware/${PV}/mcu_plus_sdk_am64x_${PV}_firmware_demos.tar.xz"
-SRC_URI[sha256sum] = "48737566dc57053c4d689b3eee75bacfb4b314621ff2837e9e0f0d1723502bd8"
+SRC_URI = "https://software-dl.ti.com/mcu-plus-sdk/esd/AM64X/${PV}/exports/mcu_plus_sdk_am64x_${PV}_firmware_demos.tar.xz"
+SRC_URI[sha256sum] = "5c790c200d5dccb6d0208b9114b5d7bbfb9423540195c7f2d0c9844705c7921d"
 
 S = "${WORKDIR}/lib"
 
