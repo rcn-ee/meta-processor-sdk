@@ -133,6 +133,3 @@ SRCIPK_SHALLOW_DEPTH_pn-linux-ti-staging-rt = "100"
 SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-u-boot-ti-staging = "${SRCIPK_GIT_COMMIT_MESSAGE}"
 
-# Extra boot files for WIC images
-do_image_wic_append_am64xx-evm[depends] += " wifi-oob:do_deploy"
-IMAGE_BOOT_FILES_append_am64xx-evm += " wificfg"

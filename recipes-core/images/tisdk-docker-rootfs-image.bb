@@ -9,3 +9,7 @@ IMAGE_INSTALL += "packagegroup-arago-base \
 IMAGE_INSTALL += "docker dropbear"
 
 export IMAGE_BASENAME = "tisdk-docker-rootfs-image"
+
+# Extra boot files for WIC images
+do_image_wic_append_am64xx-evm[depends] += " wifi-oob:do_deploy"
+IMAGE_BOOT_FILES_append_am64xx-evm += " wificfg"
