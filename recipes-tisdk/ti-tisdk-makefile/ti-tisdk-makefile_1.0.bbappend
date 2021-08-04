@@ -35,9 +35,6 @@ MAKEFILES_append_ti33x = " evse-hmi \
 			   protection-relays-hmi \
 "
 
-MAKEFILES_append_k3 = " evse-hmi \
-"
-
 MAKEFILES_append_am335x-evm = " pru-adc"
 
 MAKEFILES_append_am57xx-evm = " \
