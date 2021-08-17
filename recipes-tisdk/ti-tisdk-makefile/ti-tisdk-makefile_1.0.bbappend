@@ -17,6 +17,10 @@ SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 # FIXME: ti-crypto-examples require openssl 1.0, but devkit packages openssl 1.1
 MAKEFILES_remove = "ti-crypto-examples"
 
+MAKEFILES_remove_ti33x = " barcode-roi"
+
+MAKEFILES_remove_ti43x = " barcode-roi"
+
 MAKEFILES_append_k2g = " opencl-examples \
                          openmpacc-examples \
 "
