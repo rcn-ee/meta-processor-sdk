@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/../meta-ti/licenses/TI-TFL;md5=a1b59cb7ba
 
 COMPATIBLE_MACHINE = "k3"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
-PV = "08_00_00_21"
+PV = "08_01_00_10"
 
 SRC_URI = "https://software-dl.ti.com/mcu-plus-sdk/esd/AM64X/${PV}/exports/mcu_plus_sdk_am64x_${PV}_firmware_demos.tar.xz"
 SRC_URI[sha256sum] = "5c790c200d5dccb6d0208b9114b5d7bbfb9423540195c7f2d0c9844705c7921d"
