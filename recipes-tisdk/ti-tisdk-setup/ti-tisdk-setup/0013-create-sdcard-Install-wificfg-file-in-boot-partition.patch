@@ -1,0 +1,65 @@
+From 6560d721a8d7713cff76efe845709e5d774372a6 Mon Sep 17 00:00:00 2001
+From: Aparna M <a-m1@ti.com>
+Date: Tue, 31 Aug 2021 07:12:17 +0530
+Subject: [PATCH] create-sdcard: Install wificfg file in boot partition for
+ am64xx-evm
+
+Install wificfg file required for WiFi demo in am64xx-evm in boot
+partition of SD card when script is used to flash tisdk-default-image
+
+Signed-off-by: Aparna M <a-m1@ti.com>
+---
+ create-sdcard.sh | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index 736cd42..c15af66 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -750,6 +750,7 @@ if [ $FILEPATHOPTION -eq 1 ] ; then
+ 	BOOTIMG=`ls $BOOTFILEPATH | grep u-boot | grep .img | awk {'print $1'}`
+ 	BOOTBIN=`ls $BOOTFILEPATH | grep u-boot | grep .bin | awk {'print $1'}`
+ 	BOOTUENV=`ls $BOOTFILEPATH | grep uEnv.txt | awk {'print $1'}`
++	WIFICFG=`ls $BOOTFILEPATH | grep wificfg | awk {'print $1'}`
+ 	#rootfs
+ 	ROOTFILEPARTH="$PARSEPATH/filesystem"
+ 	#ROOTFSTAR=`ls  $ROOTFILEPARTH | grep tisdk.*rootfs | awk {'print $1'}`
+@@ -773,6 +774,8 @@ EOM
+ 		echo " "
+ 		FOUNDTARFILENAME=`ls --sort=size $ROOTFILEPARTH | grep "rootfs" | grep 'tar.xz' | grep -n '' | grep "${TARNUMBER}:" | cut -c3- | awk {'print$1'}`
+ 		ROOTFSTAR=$FOUNDTARFILENAME
++		TARDEVICENAME=`ls $ROOTFILEPARTH | grep "tisdk-default-image" | grep 'tar.xz' | awk -F - {'print $4'}`
++		TARIMAGETYPE=`ls $ROOTFILEPARTH | grep "tisdk-default-image" | grep 'tar.xz' | awk -F - {'print $2'}`
+ 
+ 	else
+ 		ROOTFSTAR=`ls  $ROOTFILEPARTH | grep "tisdk.*rootfs" | grep 'tar.xz' | awk {'print $1'}`
+@@ -976,6 +979,7 @@ EOM
+ 		BOOTIMG=`ls $BOOTFILEPATH | grep u-boot | grep .img | awk {'print $1'}`
+ 		BOOTBIN=`ls $BOOTFILEPATH | grep u-boot | grep .bin | awk {'print $1'}`
+ 		BOOTUENV=`ls $BOOTFILEPATH | grep uEnv.txt | awk {'print $1'}`
++		WIFICFG=`ls $BOOTFILEPATH | grep wificfg | awk {'print $1'}`
+ 	fi
+ 
+ 
+@@ -1076,6 +1080,18 @@ if [ $BOOTPATHOPTION -eq 1 ] ; then
+ 		echo "uEnv.txt copied"
+ 	fi
+ 
++	echo ""
++
++	if [ "$TARIMAGETYPE" == "default" ] && [ "$TARDEVICENAME" == "am64xx" ] ; then
++		if [ "$WIFICFG" != "" ] ; then
++			cp $BOOTFILEPATH/$WIFICFG $PATH_TO_SDBOOT/wificfg
++			echo "wificfg copied"
++		else
++			echo "wificfg file not found"
++		fi
++
++	fi
++
+ elif [ $BOOTPATHOPTION -eq 2  ] ; then
+ 	untar_progress $BOOTUSERFILEPATH $PATH_TO_TMP_DIR
+ 	cp -rf $PATH_TO_TMP_DIR/* $PATH_TO_SDBOOT
+-- 
+2.17.1
+

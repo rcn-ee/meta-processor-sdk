@@ -14,6 +14,7 @@ SRC_URI_append = " \
     file://0010-create-sdcard.sh-fix-regex-used-for-rootfs-tarball.patch \
     file://0011-create-sdcard-Fix-wrong-rootfs-tarball-selection.patch \
     file://0012-create-sdcard.sh-Stop-using-cylinder-as-unit-for-par.patch \
+    file://0013-create-sdcard-Install-wificfg-file-in-boot-partition.patch \
 "
 
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
