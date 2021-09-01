@@ -7,7 +7,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 PV = "08_01_00_10"
 
 SRC_URI = "https://software-dl.ti.com/mcu-plus-sdk/esd/AM64X/${PV}/exports/mcu_plus_sdk_am64x_${PV}_firmware_demos.tar.xz"
-SRC_URI[sha256sum] = "5c790c200d5dccb6d0208b9114b5d7bbfb9423540195c7f2d0c9844705c7921d"
+SRC_URI[sha256sum] = "708f20808e415b44e444598752251a3dc022b64a4e4342232e8b7ed56cf6748a"
 
 S = "${WORKDIR}/lib"
 
