@@ -14,6 +14,10 @@ SRC_URI_append = " \
     file://0013-create-sdcard-Install-wificfg-file-in-boot-partition.patch \
 "
 
+SRC_URI_append_am64xx-evm = " \
+    file://0014-setup-host-check-Modify-script-to-support-only-Ubunu.patch\
+"
+
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
 
 SETUP_SCRIPTS_remove = "setup-tftp.sh"
