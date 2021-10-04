@@ -1,7 +1,11 @@
-From 64ae39d5ac7c4e1fbce8c378830ce49fb3027eb5 Mon Sep 17 00:00:00 2001
+From fb559e70d6e19588f51dc3a5547b428aae5ba162 Mon Sep 17 00:00:00 2001
 From: Aparna M <a-m1@ti.com>
-Date: Thu, 15 Jul 2021 00:48:59 +0530
-Subject: [PATCH] arm64:dts:k3-am642-sk: Add DT entry for GPIO LEDs
+Date: Mon, 4 Oct 2021 19:55:00 +0530
+Subject: [PATCH] arm64: dts: k3-am642-sk: Enable LEDs connected to tpic2810 on
+ AM64xx SK
+
+There are 8 LEDs connected to tpic2810 on AM64xx SK.
+Enable these for out of board LED blink demo.
 
 Signed-off-by: Aparna M <a-m1@ti.com>
 ---
