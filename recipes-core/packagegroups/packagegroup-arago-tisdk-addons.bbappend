@@ -21,6 +21,7 @@ EXTRA_PACKAGES_append_am64xx-evm = " \
     benchmark-server \
     opcua-server \
     benchmark-demo-firmware \
+    print-ip \
 "
 
 EXTRA_PACKAGES_append_armv5 = " zbar"
