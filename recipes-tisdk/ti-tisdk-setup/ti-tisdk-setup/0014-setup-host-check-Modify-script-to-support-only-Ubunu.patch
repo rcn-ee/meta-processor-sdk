@@ -22,7 +22,7 @@ index 45b4c71..df0d0b2 100644
 -if [ "$host" != "precise" -a "$host" != "trusty" -a "$host" != "xenial"  -a "$host" != "bionic" ]; then
 -    echo "Unsupported host machine, only Ubuntu 12.04 LTS, Ubuntu 14.04 LTS, Ubuntu 16.04 LTS, and Ubuntu 18.04 LTS are supported"
 +if [ "$host" != "bionic" ]; then
-+    echo "Unsupported host machine, only Ubuntu 18.04 LTS supported"
++    echo "Unsupported host Linux. Only Ubuntu 18.04 LTS is supported"
      exit 1
  fi
 -echo "Ubuntu 12.04 LTS, Ubuntu 14.04, or Ubuntu 14.04 LTS is being used, continuing.."
