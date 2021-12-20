@@ -1,0 +1,47 @@
+From 7b2525cac2e44991e421fa288501110ab449dd13 Mon Sep 17 00:00:00 2001
+From: Aparna M <a-m1@ti.com>
+Date: Mon, 20 Dec 2021 11:37:21 +0530
+Subject: [PATCH] setup-targetfs-nfs: Modify script to search for
+ tisdk-default-image
+
+The tisdk-rootfs-image has been renamed to tisdk-default-image. Modify
+the script to search for the renamed default rootfs so the customer can
+pick the preferred rootfs to be installed.
+
+Signed-off-by: Aparna M <a-m1@ti.com>
+---
+ setup-targetfs-nfs.sh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/setup-targetfs-nfs.sh b/setup-targetfs-nfs.sh
+index 8f7fbb1..8f89f0d 100644
+--- a/setup-targetfs-nfs.sh
++++ b/setup-targetfs-nfs.sh
+@@ -59,19 +59,19 @@ extract_fs() {
+     fstar=""
+     while [ -z "$fstar" ]
+     do
+-        numfs=`ls $cwd/../filesystem | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | grep '2:' | awk {'print $1'}`
++        numfs=`ls $cwd/../filesystem | grep "tisdk.*rootfs\|tisdk.*default" | grep 'tar.xz' | grep -n '' | grep '2:' | awk {'print $1'}`
+         if [ -n "$numfs" ]
+         then
+             echo
+             echo "Multiple filesystems found."
+-            ls --sort=size $cwd/../filesystem | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | awk {'print "       " , $1'}
++            ls --sort=size $cwd/../filesystem | grep "tisdk.*rootfs\|tisdk.*default" | grep 'tar.xz' | grep -n '' | awk {'print "       " , $1'}
+             echo
+-            read -p "Enter Number of rootfs Tarball: [1] " fsnum
++            read -p "Enter Number of rootfs Tarball: [1 or 2] " fsnum
+             [ -n "$fsnum" ] || fsnum=1
+             echo
+-            fstar=`ls --sort=size $cwd/../filesystem | grep "tisdk.*rootfs" | grep 'tar.xz' | grep -n '' | grep "^$fsnum:" | cut -c3- | awk {'print$1'}`
++            fstar=`ls --sort=size $cwd/../filesystem | grep "tisdk.*rootfs\|tisdk.*default" | grep 'tar.xz' | grep -n '' | grep "^$fsnum:" | cut -c3- | awk {'print$1'}`
+         else
+-            fstar=`ls  $cwd/../filesystem | grep "tisdk.*rootfs" | grep 'tar.xz' | awk {'print $1'}`
++            fstar=`ls  $cwd/../filesystem | grep "tisdk.*rootfs\|tisdk.*default" | grep 'tar.xz' | awk {'print $1'}`
+         fi
+         if [ -z "$fstar" ]
+         then
+-- 
+2.17.1
+

@@ -12,6 +12,7 @@ SRC_URI_append = " \
     file://0008-setup-uboot-env-am-hs-add-support-for-rootfs-over-NF.patch \
     file://0009-setup-uboot-env-am18x-bring-up-to-par-with-other-ubo.patch \
     file://0013-create-sdcard-Install-wificfg-file-in-boot-partition.patch \
+    file://0014-setup-targetfs-nfs-Modify-script-to-search-for-tisdk.patch \
 "
 
 SRC_URI_append_am64xx-evm = " \
