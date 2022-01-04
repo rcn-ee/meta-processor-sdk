@@ -133,3 +133,4 @@ SRCIPK_SHALLOW_DEPTH_pn-linux-ti-staging-rt = "100"
 SRCIPK_CUSTOM_GIT_BRANCH_pn-u-boot-ti-staging = "processor-sdk-local"
 SRCIPK_CUSTOM_GIT_MESSAGE_pn-u-boot-ti-staging = "${SRCIPK_GIT_COMMIT_MESSAGE}"
 
+IMAGE_BOOT_FILES_am64xx-hs-evm = " tiboot3.bin ${SPL_BINARYNAME} ${UBOOT_IMAGE} uEnv.txt"
