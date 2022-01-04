@@ -17,7 +17,7 @@ EXTRA_PACKAGES_append_omapl138 = " ccief-basic"
 
 EXTRA_PACKAGES_append = " hidapi \
 "
-EXTRA_PACKAGES_append_am64xx-evm = " \
+EXTRA_PACKAGES_append_am64xx = " \
     benchmark-server \
     opcua-server \
     benchmark-demo-firmware \

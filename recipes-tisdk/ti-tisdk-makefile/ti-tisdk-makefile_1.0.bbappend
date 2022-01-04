@@ -53,7 +53,7 @@ MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 't
 
 MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
 
-MAKEFILES_MATRIX_GUI_am64xx-evm = ""
+MAKEFILES_MATRIX_GUI_am64xx = ""
 K3_UBOOT_MACHINE_R5_am64xx-evm = "am64x_evm_r5_defconfig"
 K3_UBOOT_MACHINE_R5_am64xx-hs-evm = "am64x_hs_evm_r5_defconfig"
 

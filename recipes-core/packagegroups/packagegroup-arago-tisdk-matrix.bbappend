@@ -13,7 +13,7 @@ MATRIX_APPS_append_omap-a15 = " \
     matrix-gui-apps-image-gallery \
 "
 
-MATRIX_APPS_append_am64xx-evm = " \
+MATRIX_APPS_append_am64xx = " \
     matrix-gui-led-demos \
 "
 

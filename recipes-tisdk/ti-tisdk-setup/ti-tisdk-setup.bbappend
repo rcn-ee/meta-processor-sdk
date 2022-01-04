@@ -15,7 +15,7 @@ SRC_URI_append = " \
     file://0014-setup-targetfs-nfs-Modify-script-to-search-for-tisdk.patch \
 "
 
-SRC_URI_append_am64xx-evm = " \
+SRC_URI_append_am64xx = " \
     file://0014-setup-host-check-Modify-script-to-support-only-Ubunu.patch\
 "
 
