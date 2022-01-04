@@ -55,6 +55,7 @@ MAKEFILES_remove_keystone = "hplib-mod ipsecmgr-mod"
 
 MAKEFILES_MATRIX_GUI_am64xx-evm = ""
 K3_UBOOT_MACHINE_R5_am64xx-evm = "am64x_evm_r5_defconfig"
+K3_UBOOT_MACHINE_R5_am64xx-hs-evm = "am64x_hs_evm_r5_defconfig"
 
 # Populate UBOOT_MACHINE when UBOOT_CONFIG is used
 # (see uboot-config.bbclass)
