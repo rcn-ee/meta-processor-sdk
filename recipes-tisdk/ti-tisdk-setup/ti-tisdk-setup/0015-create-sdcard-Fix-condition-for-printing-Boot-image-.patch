@@ -1,0 +1,30 @@
+From 118751ce0feff3c998f258ba892981853bf6f112 Mon Sep 17 00:00:00 2001
+From: Aparna M <a-m1@ti.com>
+Date: Fri, 14 Jan 2022 14:56:49 +0530
+Subject: [PATCH] create-sdcard: Fix condition for printing Boot image not
+ found
+
+Fix condition for printing Boot image not found. sysfw.itb is now part
+of tiboot3.bin
+
+Signed-off-by: Aparna M <a-m1@ti.com>
+---
+ create-sdcard.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/create-sdcard.sh b/create-sdcard.sh
+index 947d625..d93141d 100644
+--- a/create-sdcard.sh
++++ b/create-sdcard.sh
+@@ -1057,7 +1057,7 @@ if [ $BOOTPATHOPTION -eq 1 ] ; then
+ 
+ 	echo ""
+ 	#copy boot files out of board support
+-	if [ "$MLO" == "" ] && ( [ "$SPL_R5" == "" ] || [ "$SPL_A53" == "" ] || [ "$SYSFW" == "" ] ); then
++	if [ "$MLO" == "" ] && ( [ "$SPL_R5" == "" ] || [ "$SPL_A53" == "" ] ) ; then
+ 		echo "Boot image not found"
+ 	fi
+ 
+-- 
+2.17.1
+

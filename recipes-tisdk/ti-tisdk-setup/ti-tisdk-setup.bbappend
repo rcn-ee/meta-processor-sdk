@@ -1,5 +1,7 @@
 PR_append = ".tisdk19"
 
+SRCREV = "f443ad08b6bd289578a00502653dcd0e8bdb77a2"
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = " \
@@ -11,8 +13,8 @@ SRC_URI_append = " \
     file://0007-setup-uboot-env-hs-use-fitImage-w-o-ramfs.patch \
     file://0008-setup-uboot-env-am-hs-add-support-for-rootfs-over-NF.patch \
     file://0009-setup-uboot-env-am18x-bring-up-to-par-with-other-ubo.patch \
-    file://0013-create-sdcard-Install-wificfg-file-in-boot-partition.patch \
     file://0014-setup-targetfs-nfs-Modify-script-to-search-for-tisdk.patch \
+    file://0015-create-sdcard-Fix-condition-for-printing-Boot-image-.patch \
 "
 
 SRC_URI_append_am64xx = " \
