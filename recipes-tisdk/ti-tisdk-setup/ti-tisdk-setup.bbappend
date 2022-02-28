@@ -1,25 +1,6 @@
 PR_append = ".tisdk19"
 
-SRCREV = "f443ad08b6bd289578a00502653dcd0e8bdb77a2"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-
-SRC_URI_append = " \
-    file://0001-setup-add-support-for-HS-EVMs.patch \
-    file://0003-create_sdcard-omapl138-add-custom-script-to-create-S.patch \
-    file://0004-setup-tftp-fit-copy-firmwares-for-k2g-hs.patch \
-    file://0005-setup-uboot-env-k2g-hs-add-k2g-hs-support.patch \
-    file://0006-setup-uboot-env-keystone-hs-use-default-env-for-net-.patch \
-    file://0007-setup-uboot-env-hs-use-fitImage-w-o-ramfs.patch \
-    file://0008-setup-uboot-env-am-hs-add-support-for-rootfs-over-NF.patch \
-    file://0009-setup-uboot-env-am18x-bring-up-to-par-with-other-ubo.patch \
-    file://0014-setup-targetfs-nfs-Modify-script-to-search-for-tisdk.patch \
-    file://0015-create-sdcard-Fix-condition-for-printing-Boot-image-.patch \
-"
-
-SRC_URI_append_am64xx = " \
-    file://0014-setup-host-check-Modify-script-to-support-only-Ubunu.patch\
-"
+SRCREV = "22f4e5af1894a60d9e7d04caf83f26a556c14eca"
 
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
 
