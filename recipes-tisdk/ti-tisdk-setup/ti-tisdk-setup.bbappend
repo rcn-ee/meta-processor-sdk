@@ -1,7 +1,5 @@
 PR_append = ".tisdk19"
 
-SRCREV = "22f4e5af1894a60d9e7d04caf83f26a556c14eca"
-
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
 
 SETUP_SCRIPTS_remove = "setup-tftp.sh"
