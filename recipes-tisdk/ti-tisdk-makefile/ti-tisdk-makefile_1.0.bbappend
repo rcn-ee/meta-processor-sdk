@@ -1,4 +1,4 @@
-PR_append = ".tisdk69"
+PR_append = ".tisdk70"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -10,6 +10,7 @@ SRC_URI_append = "\
     file://Makefile_tidl-examples \
     file://Makefile_pru-adc \
     file://Makefile_sysfw-image \
+    file://Makefile_linux-fitimage \
 "
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
@@ -48,6 +49,9 @@ MAKEFILES_append_am57xx-evm = " \
 MAKEFILES_append_am57xx-hs-evm = " tidl-examples"
 
 MAKEFILES_append_dra7xx = " tiovx-app-host"
+
+KERNEL_BUILD_CMDS_append_am64xx-hs-evm = " Image.gz"
+MAKEFILES_append_am64xx-hs-evm = " linux-fitimage"
 
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
