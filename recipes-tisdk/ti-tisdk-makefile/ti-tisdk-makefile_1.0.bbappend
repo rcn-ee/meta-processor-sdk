@@ -1,4 +1,4 @@
-PR_append = ".tisdk70"
+PR_append = ".tisdk71"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
@@ -52,6 +52,7 @@ MAKEFILES_append_dra7xx = " tiovx-app-host"
 
 KERNEL_BUILD_CMDS_append_am64xx-hs-evm = " Image.gz"
 MAKEFILES_append_am64xx-hs-evm = " linux-fitimage"
+PRU_ICSS_INSTALL_TARGET_am64xx = "pru-icss_install_am64x"
 
 MAKEFILES_remove_ti33x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
 MAKEFILES_remove_ti43x = "${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)}"
