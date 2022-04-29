@@ -1,0 +1,37 @@
+From 7031fc13cadef253b1f9b8c574dbb4f54811b79f Mon Sep 17 00:00:00 2001
+From: Aparna M <a-m1@ti.com>
+Date: Thu, 6 May 2021 19:58:14 +0530
+Subject: [PATCH 2/2] Customize wpa_supplicant.conf for am62xx-sk wifi oob
+ experience
+
+Disable p2p for enabling out of box wifi access point
+---
+ conf/wpa_supplicant.conf | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/conf/wpa_supplicant.conf b/conf/wpa_supplicant.conf
+index 24364ec..57224ba 100755
+--- a/conf/wpa_supplicant.conf
++++ b/conf/wpa_supplicant.conf
+@@ -334,12 +334,12 @@ config_methods=virtual_display virtual_push_button keypad
+ # This timeout value is used in P2P GO mode to clean up
+ # inactive stations.
+ #p2p_go_max_inactivity=300
+-p2p_go_ht40=1
+-p2p_ignore_shared_freq=1
+-disassoc_low_ack=1
+-p2p_go_ht40=1
+-p2p_ignore_shared_freq=1
+-disassoc_low_ack=1
++#p2p_go_ht40=1
++#p2p_ignore_shared_freq=1
++#disassoc_low_ack=1
++#p2p_go_ht40=1
++#p2p_ignore_shared_freq=1
++#disassoc_low_ack=1
+ 
+ # Passphrase length (8..63) for P2P GO
+ #
+-- 
+2.17.1
+

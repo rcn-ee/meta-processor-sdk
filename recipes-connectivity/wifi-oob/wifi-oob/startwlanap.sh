@@ -2,9 +2,14 @@
 
 board_model=$(tr -d '\0' </proc/device-tree/model)
 
-if [[ $board_model == *"AM642 SK"* ]]
+if [[ $board_model == *"AM642 SK"* || $board_model == *"AM625 SK"* ]]
 then
-    defapname=AM64xSK-AP
+    if [[ $board_model == *"AM642 SK"* ]]
+    then
+        defapname=AM64xSK-AP
+    else
+        defapname=AM62xSK-AP
+    fi
 
     cd /usr/share/wl18xx
 

@@ -6,6 +6,11 @@ SRC_URI_append_am64xx-evm = " \
     file://0002-Customize-wpa_supplicant.conf-for-am64xx-sk-wifi-oob.patch \
 "
 
+SRC_URI_append_am62xx-evm = " \
+    file://0001-Customize-hostapd.conf-for-am62xx-sk-wifi-oob-experi.patch \
+    file://0002-Customize-wpa_supplicant.conf-for-am62xx-sk-wifi-oob.patch \
+"
+
 FILESEXTRAPATHS_append := "${THISDIR}/files:"
 
 PACKAGE_ARCH="${MACHINE_ARCH}"

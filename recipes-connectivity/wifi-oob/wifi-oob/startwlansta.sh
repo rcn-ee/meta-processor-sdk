@@ -14,8 +14,18 @@ print (config.get('$section','$param'));
 "
 }
 
+
+board_model=$(tr -d '\0' </proc/device-tree/model)
+
 filename=/media/mmcblk1p1/wificfg
-defapname=AM64xSK-AP
+
+if [[ $board_model == *"AM642 SK"* ]]
+then
+    defapname=AM64xSK-AP
+else
+    defapname=AM62xSK-AP
+fi
+
 
 cd /usr/share/wl18xx
 

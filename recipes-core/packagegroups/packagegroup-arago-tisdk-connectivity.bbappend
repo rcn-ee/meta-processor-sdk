@@ -12,3 +12,6 @@ CONNECTIVITY_RDEPENDS_append_omap-a15 = " \
 WLAN_TI_append_am64xx-evm = " \
     wifi-oob \
 "
+WLAN_TI_append_am62xx-evm = " \
+    wifi-oob \
+"
