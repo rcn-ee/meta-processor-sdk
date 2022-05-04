@@ -12,18 +12,22 @@ RDEPENDS_${PN} = "qtquick3d"
 BRANCH = "master"
 SRCREV = "48076d49e65fd86b4ad91384fd8a3b84ed6d6905"
 
-SRC_URI = "git://git.ti.com/apps/am62x_hmi_demo.git;protocol=git;branch=${BRANCH}"
+SRC_URI = "git://git.ti.com/apps/am62x_hmi_demo.git;protocol=git;branch=${BRANCH} \
+           file://hmi_demo.sh"
 
 S = "${WORKDIR}/git"
 
-inherit qmake5
-inherit deploy
+inherit qmake5 deploy update-rc.d
 
 do_install_append () {
-    # Install application
     install -d ${D}${bindir}
-    install -m 0755 hmi_demo ${D}${bindir}/
+    install -m 0755 hmi_demo ${D}${bindir}/hmi_demo
+
+    install -d ${D}${sysconfdir}/init.d
+    install -m 755 ${WORKDIR}/hmi_demo.sh ${D}${sysconfdir}/init.d/hmi_demo.sh
 }
 
-FILES_${PN} += "${bindir}/hmi_demo"
+INITSCRIPT_NAME="hmi_demo.sh"
+
+FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh"
 

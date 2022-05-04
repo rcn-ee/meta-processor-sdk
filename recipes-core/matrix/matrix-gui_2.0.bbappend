@@ -11,3 +11,4 @@ do_install_append(){
 	install -m 0755 ${WORKDIR}/qwindow ${D}${sysconfdir}/init.d/qwindow
 }
 
+SYSTEMD_AUTO_ENABLE_${PN}_am62xx-evm = "disable"
