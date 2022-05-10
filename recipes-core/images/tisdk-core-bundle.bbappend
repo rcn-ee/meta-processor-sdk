@@ -2,6 +2,7 @@ PR_append = ".tisdk19"
 
 DEPLOY_IMAGES_NAME_append_am64xx-evm = " ti-sci-firmware-am64x-gp.bin wificfg"
 DEPLOY_IMAGES_NAME_append_am64xx-hs-evm = " ti-sci-firmware-am64x-hs-cert.bin ti-sci-firmware-am64x-hs-enc.bin fitImage-its.its"
+DEPLOY_IMAGES_NAME_append_am62xx-evm = " ti-fs-firmware-am62x-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f wificfg"
 
 # Add small docker rootfs for all SOCs
 TARGET_IMAGES_append = " tisdk-docker-rootfs-image tisdk-tiny-image"
