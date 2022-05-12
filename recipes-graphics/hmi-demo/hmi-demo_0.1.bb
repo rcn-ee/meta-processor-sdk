@@ -13,7 +13,8 @@ BRANCH = "master"
 SRCREV = "48076d49e65fd86b4ad91384fd8a3b84ed6d6905"
 
 SRC_URI = "git://git.ti.com/apps/am62x_hmi_demo.git;protocol=git;branch=${BRANCH} \
-           file://hmi_demo.sh"
+           file://hmi_demo.sh \
+           file://start_hmi_matrix.sh"
 
 S = "${WORKDIR}/git"
 
@@ -25,9 +26,10 @@ do_install_append () {
 
     install -d ${D}${sysconfdir}/init.d
     install -m 755 ${WORKDIR}/hmi_demo.sh ${D}${sysconfdir}/init.d/hmi_demo.sh
+    install -m 755 ${WORKDIR}/start_hmi_matrix.sh ${D}${sysconfdir}/init.d/start_hmi_matrix.sh
 }
 
 INITSCRIPT_NAME="hmi_demo.sh"
 
-FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh"
+FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh ${sysconfdir}/init.d/start_hmi_matrix.sh"
 

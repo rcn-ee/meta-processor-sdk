@@ -4,42 +4,29 @@
 # Provides: HMI Demo
 ### END INIT INFO
 
-APP=/usr/bin/hmi_demo
-
+HMI_MATRIX_SCRIPT=/etc/init.d/start_hmi_matrix.sh
 PIDFILE=/var/run/hmi_demo.pid
-LOGFILE=/var/log/hmi_demo.log
 
 start() {
-    if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
-        echo 'Service already running' >&2
-        return 1
+    local HMI_MATRIX_CMD="$HMI_MATRIX_SCRIPT start &"
+
+    eval $HMI_MATRIX_CMD
+    local HMI_MATRIX_PID=$!
+
+    # wait until the hmi_demo is started and quit if not within 10 seconds
+    timeout -s SIGKILL 10 bash -c "until [ -e $PIDFILE ]; do sleep 0.1; done"
+
+    if [ -e $PIDFILE ]; then
+        exit 0
+    else
+        # kill start_hmi_matrix.sh script and exit with error
+        kill -9 $HMI_MATRIX_PID
+        exit 1
     fi
-    echo 'Starting HMI Demo ..' >&2
-
-    if test -z "$XDG_RUNTIME_DIR"; then
-        export XDG_RUNTIME_DIR=/tmp/`id -u`-runtime-dir
-        if ! test -d "$XDG_RUNTIME_DIR"; then
-            mkdir --parents $XDG_RUNTIME_DIR
-            chmod 0700 $XDG_RUNTIME_DIR
-        fi
-    fi
-
-    # wait for weston
-    while [ ! -e  $XDG_RUNTIME_DIR/wayland-0 ] ; do sleep 0.1; done
-    export DISPLAY=:0.0
-
-    local CMD="$APP &> $LOGFILE & echo \$!"
-    eval $CMD > $PIDFILE
-    echo 'Service started' >&2
 }
 
 stop() {
-    if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-        echo 'Service not running' >&2
-        return 1
-    fi
-    echo 'Stopping HMI Demo ..' >&2
-    kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+    local HMI_MATRIX_CMD="$HMI_MATRIX_SCRIPT stop"
     echo 'Service stopped' >&2
 }
 
