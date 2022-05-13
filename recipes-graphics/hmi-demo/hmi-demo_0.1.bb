@@ -14,7 +14,8 @@ SRCREV = "48076d49e65fd86b4ad91384fd8a3b84ed6d6905"
 
 SRC_URI = "git://git.ti.com/apps/am62x_hmi_demo.git;protocol=git;branch=${BRANCH} \
            file://hmi_demo.sh \
-           file://start_hmi_matrix.sh"
+           file://start_hmi_matrix.sh \
+           file://0001-hmi-demo-Add-exit-feature-and-smooth-needle-movement.patch"
 
 S = "${WORKDIR}/git"
 

@@ -1,0 +1,1155 @@
+From c3c66b95f89a5efbf8dcb1c73f1533c3f9797b17 Mon Sep 17 00:00:00 2001
+From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+Date: Fri, 13 May 2022 16:37:43 +0530
+Subject: [PATCH] hmi-demo: Add exit feature and smooth needle movement
+
+Add a provision to exit the app by long pressing the power button.
+After a long press, It waits for 3 seconds and exits.
+
+Make the needles move smoothly instead of jumps when speed is increased.
+
+Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+---
+ main.qml | 973 +++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 545 insertions(+), 428 deletions(-)
+
+diff --git a/main.qml b/main.qml
+index e4960df..b0a706a 100644
+--- a/main.qml
++++ b/main.qml
+@@ -14,395 +14,488 @@ Window {
+         id: backgroundrect
+         width: window.width
+         height: window.height
++        property int count: 0
+         Image {
+             id: backgroundimage
+             source:"images/Background.png"
++            fillMode: Image.PreserveAspectFit
+         }
+         Image {
+             id: motorimage
+             source: "images/servo-drives-icon.png"
++            fillMode: Image.PreserveAspectFit
+             anchors.left: parent.left
+             anchors.leftMargin: window.width * 0.02
+-        }
+-    }
+-
+-    Rectangle {
+-        id: tilogo
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.08
+-        anchors.right: parent.right
+-        anchors.rightMargin: window.width * 0.255
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.87
++            anchors.top: parent.top
++            anchors.topMargin: window.height * 0.01
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.80
+ 
++        }
+         Image {
++            id: tilogoimage
+             source: "images/Texas_Instrument.png"
++            fillMode: Image.PreserveAspectFit
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.70
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.10
++            anchors.top: parent.top
++            anchors.topMargin: window.height * 0.04
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.80
+         }
+-    }
+-
+-    Rectangle {
+-        id: topright
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.15
+-        anchors.right: parent.right
+-        anchors.rightMargin: window.width * 0.35
+ 
+         Image {
++            id: toprb
+             source: "images/Top_Righ_Box.png"
+-        }
+-        Text {
+-            text: qsTr("Motor-1 RPM Control")
+-            color: "#FFFFFF"
+-            anchors.top: parent.top
+-            anchors.topMargin: window.height * 0.02
+-            anchors.left: parent.left
+-            anchors.leftMargin: window.width * 0.075
+-            font.pixelSize: 25
+-        }
+-        CircularGauge {
+-            id: motorspeed1
+-            value: 0
+-            maximumValue: 130
+             anchors.top: parent.top
+-            anchors.topMargin: window.height * 0.07
++            anchors.topMargin: window.height * 0.15
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.47
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.09
+             anchors.left: parent.left
+-            anchors.leftMargin: window.width * 0.03
+-            width: window.width * 0.22
+-            height: window.height * 0.22
+-            style: CircularGaugeStyle {
+-                needle: Rectangle {
+-                    implicitWidth: outerRadius * 0.02
+-                    implicitHeight: outerRadius * 0.60
+-                    antialiasing: true
+-                    color: "#D0001C"
+-                }
+-                foreground: Item {
+-                    Rectangle {
+-                        width: outerRadius * 0.1
+-                        height: width
+-                        radius: width / 2
+-                        color: "#FFFFFF"
+-                        anchors.centerIn: parent
+-                    }
+-                }
+-                tickmarkLabel:  Text {
+-                    visible: false
+-                }
++            anchors.leftMargin: window.width * 0.62
+ 
+-                tickmark: Rectangle {
+-                    visible: false
+-                }
++            Text {
++                text: qsTr("Motor-1 RPM Control")
++                color: "#FFFFFF"
++                anchors.top: parent.top
++                anchors.topMargin: window.height * 0.02
++                anchors.left: parent.left
++                anchors.leftMargin: window.width * 0.075
++                font.pixelSize: parent.width * 0.05
++            }
+ 
+-                minorTickmark: Rectangle {
+-                    visible: false
++            CircularGauge {
++                id: motorspeed1
++                maximumValue: 130
++                anchors.top: parent.top
++                anchors.topMargin: window.height * 0.07
++                anchors.left: parent.left
++                anchors.leftMargin: window.width * 0.03
++                width: window.width * 0.22
++                height: window.height * 0.22
++                property int count1: 0
++                value: count1
++                Behavior on value {
++                    NumberAnimation {
++                        duration: 200
++                    }
+                 }
++                Component.onCompleted: forceActiveFocus()
++
++                style: CircularGaugeStyle {
++                    needle: Rectangle {
++                        implicitWidth: outerRadius * 0.02
++                        implicitHeight: outerRadius * 0.60
++                        antialiasing: true
++                        color: "#D0001C"
++                    }
++                    foreground: Item {
++                        Rectangle {
++                            width: outerRadius * 0.1
++                            height: width
++                            radius: width / 2
++                            color: "#FFFFFF"
++                            anchors.centerIn: parent
++                        }
++                    }
++                    tickmarkLabel:  Text {
++                        visible: false
++                    }
+ 
+-                function degreesToRadians(degrees) {
+-                    return degrees * (Math.PI / 180);
+-                }
+-                background: Canvas {
+-                    onPaint: {
+-                        var ctx = getContext("2d");
+-                        ctx.reset();
++                    tickmark: Rectangle {
++                        visible: false
++                    }
+ 
+-                        ctx.beginPath();
+-                        ctx.strokeStyle = "#C6C6C6";
+-                        ctx.lineWidth = outerRadius * 0.04;
++                    minorTickmark: Rectangle {
++                        visible: false
++                    }
+ 
+-                        ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth / 2,
+-                                degreesToRadians(valueToAngle(0) - 90), degreesToRadians(valueToAngle(130) - 90));
+-                        ctx.stroke();
++                    function degreesToRadians(degrees) {
++                        return degrees * (Math.PI / 180);
++                    }
++                    background: Canvas {
++                        onPaint: {
++                            var ctx = getContext("2d");
++                            ctx.reset();
++
++                            ctx.beginPath();
++                            ctx.strokeStyle = "#C6C6C6";
++                            ctx.lineWidth = outerRadius * 0.04;
++
++                            ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth / 2,
++                                    degreesToRadians(valueToAngle(0) - 90), degreesToRadians(valueToAngle(130) - 90));
++                            ctx.stroke();
++                        }
+                     }
+                 }
+             }
+-        }
+-        Rectangle {
+-            id: increment1
+-            anchors.top: motorspeed1.bottom
+-            y: -10
+-            anchors.left: parent.left
+-            anchors.leftMargin: window.width * 0.102
++
++
+             Image {
+                 id: rectbox1
+                 source: "images/Rectangle.png"
+-            }
+-            Text {
+-                id: motor1text
+-                x: 55
+-                y: 7
+-                text: qsTr("0")
+-                color: "#FFFFFF"
+-                font.pixelSize: 24
+-            }
+-
+-            Rectangle {
+-                id: minus1
+-                anchors.left: increment1.left
+-                width: minusbox1.width
+-                height: minusbox1.height
+-                color: "transparent"
++                anchors.top: parent.top
++                anchors.topMargin: parent.height * 0.75
++                anchors.left: parent.left
++                anchors.leftMargin: parent.width * 0.36
++                width: parent.width * 0.26
++                height: parent.height * 0.12
++                Text {
++                    id: motor1text
++                    text: qsTr("0")
++                    color: "#FFFFFF"
++                    font.pixelSize: parent.width * 0.20
++                    anchors.centerIn: parent
++                }
+                 Image {
+                     id: minusbox1
+                     source: "images/Minux_Box.png"
+-                }
+-                MouseArea {
+-                    anchors.fill: parent
+-                    onClicked: {
+-                        if (powerbox.count == 1) {
+-                            motorspeed1.value -=10
+-                            motor1text.text = motorspeed1.value
+-
+-                            if ( motorspeed1.value > 10 && motorspeed1.value < 130) {
+-                                motor1bar.width -= 52
+-                            }
+-                            else if (motorspeed1.value <= 10 && motorspeed1.value > 0) {
+-                                motor1bar.width = 10
++                    fillMode: Image.PreserveAspectFit
++                    width: parent.height
++                    height: parent.height
++                    x: 0
++                    MouseArea {
++                        anchors.fill: parent
++                        onClicked: {
++                            if (backgroundrect.count == 1) {
++                                motorspeed1.count1 -=10
++                                if ( motorspeed1.count1 == 10) {
++                                    motor1bar.width = window.width * 0.01
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 10 && motorspeed1.count1 < 50) {
++                                    motor1bar.width -= window.width * 0.025
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 50 && motorspeed1.count1 < 70) {
++                                    motor1bar.width -= window.width * 0.03
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 70 && motorspeed1.count1 < 100) {
++                                    motor1bar.width -= window.width * 0.025
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 100 && motorspeed1.count1 < 130) {
++                                    motor1bar.width -= window.width * 0.03
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 130) {
++                                    motor1bar.width = window.width * 0.34
++                                    motorspeed1.count1 = 130
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else {
++                                    motor1bar.width = 0
++                                    motorspeed1.count1 = 0
++                                    motor1text.text = motorspeed1.count1
++                                }
+                             }
+ 
+-                            else {
+-                                motor1bar.width = 0
+-                            }
+                         }
+-
+                     }
+                 }
+-            }
+-            Rectangle {
+-                id: plus1
+-                x: 100
+-                width: plusbox1.width
+-                height: plusbox1.height
+-                color: "transparent"
+                 Image {
+                     id: plusbox1
+                     source: "images/Plus_Box.png"
+-                }
+-                MouseArea {
+-                    anchors.fill: parent
+-                    onClicked: {
+-                        if (powerbox.count == 1) {
+-                            motorspeed1.value +=10
+-                            motor1text.text = motorspeed1.value
+-                            if ( motorspeed1.value == 10) {
+-                                motor1bar.width = 10
+-                            }
+-                            else if (motorspeed1.value >= 10 && motorspeed1.value < 130) {
+-                                motor1bar.width += 53
++                    fillMode: Image.PreserveAspectFit
++                    width: parent.height
++                    height: parent.height
++                    x: parent.width * 0.68
++                    MouseArea {
++                        anchors.fill: parent
++                        onClicked: {
++                            if (backgroundrect.count == 1) {
++                                motorspeed1.count1 +=10
++                                if ( motorspeed1.count1 == 10) {
++                                    motor1bar.width = window.width * 0.01
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 10 && motorspeed1.count1 < 50) {
++                                    motor1bar.width += window.width * 0.025
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 50 && motorspeed1.count1 < 70) {
++                                    motor1bar.width += window.width * 0.03
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 70 && motorspeed1.count1 < 100) {
++                                    motor1bar.width += window.width * 0.025
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 100 && motorspeed1.count1 < 130) {
++                                    motor1bar.width += window.width * 0.03
++                                    motor1text.text = motorspeed1.count1
++                                }
++                                else if (motorspeed1.count1 >= 130) {
++                                    motor1bar.width = window.width * 0.34
++                                    motorspeed1.count1 = 130
++                                    motor1text.text = motorspeed1.count1
++                                }
++
++                                else {
++                                    motor1bar.width = 0
++                                    motorspeed1.count1 = 0
++                                    motor1text.text = motorspeed1.count1
++                                }
+                             }
+-
+-                            else if (motorspeed1.value == 130) {
+-                                motor1bar.width = 640
+-                            }
+-
+                             else {
+-                                motor1bar.width = 0
++                                textupdate.text = "Press the ON button to start Motor-1 control"
+                             }
+                         }
+                     }
+                 }
+-            }
+ 
++            }
+         }
+-    }
+-
+-    Rectangle {
+-        id: bottomright
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.525
+-        anchors.right: parent.right
+-        anchors.rightMargin: window.width * 0.35
+-
+         Image {
++            id: bottomrb
+             source: "images/Bottom_Right_Box.png"
+-        }
+-        Text {
+-            text: qsTr("Motor-2 RPM Control")
+-            color: "#FFFFFF"
+             anchors.top: parent.top
+-            anchors.topMargin: window.height * 0.02
++            anchors.topMargin: window.height * 0.53
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.09
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.09
+             anchors.left: parent.left
+-            anchors.leftMargin: window.width * 0.075
+-            font.pixelSize: 25
+-        }
+-        CircularGauge {
+-            id: motorspeed2
+-            value: 0
+-            maximumValue: 130
+-            anchors.top: parent.top
+-            anchors.topMargin: window.height * 0.07
+-            anchors.left: parent.left
+-            anchors.leftMargin: window.width * 0.03
+-            width: window.width * 0.22
+-            height: window.height * 0.22
+-            style: CircularGaugeStyle {
+-                needle: Rectangle {
+-                    implicitWidth: outerRadius * 0.02
+-                    implicitHeight: outerRadius * 0.60
+-                    antialiasing: true
+-                    color: "#D0001C"
+-                }
+-                foreground: Item {
+-                    Rectangle {
+-                        width: outerRadius * 0.1
+-                        height: width
+-                        radius: width / 2
+-                        color: "#FFFFFF"
+-                        anchors.centerIn: parent
+-                    }
+-                }
+-                tickmarkLabel:  Text {
+-                    visible: false
+-                }
+-
+-                tickmark: Rectangle {
+-                    visible: false
+-                }
++            anchors.leftMargin: window.width * 0.62
+ 
+-                minorTickmark: Rectangle {
+-                    visible: false
++            Text {
++                text: qsTr("Motor-2 RPM Control")
++                color: "#FFFFFF"
++                anchors.top: parent.top
++                anchors.topMargin: window.height * 0.02
++                anchors.left: parent.left
++                anchors.leftMargin: window.width * 0.075
++                font.pixelSize: parent.width * 0.05
++            }
++            CircularGauge {
++                id: motorspeed2
++                maximumValue: 130
++                anchors.top: parent.top
++                anchors.topMargin: window.height * 0.07
++                anchors.left: parent.left
++                anchors.leftMargin: window.width * 0.03
++                width: window.width * 0.22
++                height: window.height * 0.22
++                property int count2: 0
++                value: count2
++                Behavior on value {
++                    NumberAnimation {
++                        duration: 200
++                    }
+                 }
++                style: CircularGaugeStyle {
++                    needle: Rectangle {
++                        implicitWidth: outerRadius * 0.02
++                        implicitHeight: outerRadius * 0.60
++                        antialiasing: true
++                        color: "#D0001C"
++                    }
++                    foreground: Item {
++                        Rectangle {
++                            width: outerRadius * 0.1
++                            height: width
++                            radius: width / 2
++                            color: "#FFFFFF"
++                            anchors.centerIn: parent
++                        }
++                    }
++                    tickmarkLabel:  Text {
++                        visible: false
++                    }
+ 
+-                function degreesToRadians(degrees) {
+-                    return degrees * (Math.PI / 180);
+-                }
+-                background: Canvas {
+-                    onPaint: {
+-                        var ctx = getContext("2d");
+-                        ctx.reset();
++                    tickmark: Rectangle {
++                        visible: false
++                    }
+ 
+-                        ctx.beginPath();
+-                        ctx.strokeStyle = "#C6C6C6";
+-                        ctx.lineWidth = outerRadius * 0.04;
++                    minorTickmark: Rectangle {
++                        visible: false
++                    }
+ 
+-                        ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth / 2,
+-                                degreesToRadians(valueToAngle(0) - 90), degreesToRadians(valueToAngle(130) - 90));
+-                        ctx.stroke();
++                    function degreesToRadians(degrees) {
++                        return degrees * (Math.PI / 180);
++                    }
++                    background: Canvas {
++                        onPaint: {
++                            var ctx = getContext("2d");
++                            ctx.reset();
++
++                            ctx.beginPath();
++                            ctx.strokeStyle = "#C6C6C6";
++                            ctx.lineWidth = outerRadius * 0.04;
++
++                            ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth / 2,
++                                    degreesToRadians(valueToAngle(0) - 90), degreesToRadians(valueToAngle(130) - 90));
++                            ctx.stroke();
++                        }
+                     }
+                 }
+             }
+-        }
+-        Rectangle {
+-            id: increment2
+-            anchors.top: motorspeed2.bottom
+-            y: -10
+-            anchors.left: parent.left
+-            anchors.leftMargin: window.width * 0.102
+             Image {
+                 id: rectbox2
+                 source: "images/Rectangle.png"
+-            }
+-            Text {
+-                id: motor2text
+-                x: 55
+-                y: 7
+-                text: qsTr("0")
+-                color: "#FFFFFF"
+-                font.pixelSize: 24
+-            }
+-
+-            Rectangle {
+-                id: minus2
+-                anchors.left: increment2.left
+-                width: minusbox2.width
+-                height: minusbox2.height
+-                color: "transparent"
++                anchors.top: parent.top
++                anchors.topMargin: parent.height * 0.75
++                anchors.left: parent.left
++                anchors.leftMargin: parent.width * 0.36
++                width: parent.width * 0.26
++                height: parent.height * 0.12
++                Text {
++                    id: motor2text
++                    text: qsTr("0")
++                    color: "#FFFFFF"
++                    font.pixelSize: parent.width * 0.20
++                    anchors.centerIn: parent
++                }
+                 Image {
+                     id: minusbox2
+                     source: "images/Minux_Box.png"
+-                }
+-                MouseArea {
+-                    anchors.fill: parent
+-                    onClicked: {
+-                        if (powerbox.count == 1) {
+-                            motorspeed2.value -=10
+-                            motor2text.text = motorspeed2.value
+-                            if ( motorspeed2.value > 10 && motorspeed2.value < 130) {
+-                                motor2bar.width -= 52
+-                            }
+-                            else if (motorspeed2.value <= 10 && motorspeed2.value > 0) {
+-                                motor2bar.width = 10
+-                            }
+-
+-                            else {
+-                                motor2bar.width = 0
++                    fillMode: Image.PreserveAspectFit
++                    width: parent.height
++                    height: parent.height
++                    x: 0
++                    MouseArea {
++                        anchors.fill: parent
++                        onClicked: {
++                            if (backgroundrect.count == 1) {
++                                motorspeed2.count2 -=10
++                                if ( motorspeed2.count2 == 10) {
++                                    motor2bar.width = window.width * 0.01
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 10 && motorspeed2.count2 < 50) {
++                                    motor2bar.width -= window.width * 0.025
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 50 && motorspeed2.count2 < 70) {
++                                    motor2bar.width -= window.width * 0.03
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 70 && motorspeed2.count2 < 100) {
++                                    motor2bar.width -= window.width * 0.025
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 100 && motorspeed2.count2 < 130) {
++                                    motor2bar.width -= window.width * 0.03
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 130) {
++                                    motor2bar.width = window.width * 0.34
++                                    motorspeed2.count2 = 130
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else {
++                                    motor2bar.width = 0
++                                    motorspeed2.count2 = 0
++                                    motor2text.text = motorspeed2.count2
++                                }
+                             }
+                         }
+                     }
+                 }
+-            }
+-            Rectangle {
+-                id: plus2
+-                x: 100
+-                width: plusbox2.width
+-                height: plusbox2.height
+-                color: "transparent"
+                 Image {
+                     id: plusbox2
+                     source: "images/Plus_Box.png"
+-                }
+-                MouseArea {
+-                    anchors.fill: parent
+-                    onClicked: {
+-                        if (powerbox.count == 1) {
+-                            motorspeed2.value +=10
+-                            motor2text.text = motorspeed2.value
+-                            if ( motorspeed2.value == 10) {
+-                                motor2bar.width = 10
+-                            }
+-                            else if (motorspeed2.value >= 10 && motorspeed2.value < 130) {
+-                                motor2bar.width += 53
++                    fillMode: Image.PreserveAspectFit
++                    width: parent.height
++                    height: parent.height
++                    x: parent.width * 0.68
++                    MouseArea {
++                        anchors.fill: parent
++                        onClicked: {
++                            if (backgroundrect.count == 1) {
++                                motorspeed2.count2 +=10
++                                if ( motorspeed2.count2 == 10) {
++                                    motor2bar.width = window.width * 0.01
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 10 && motorspeed2.count2 < 50) {
++                                    motor2bar.width += window.width * 0.025
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 50 && motorspeed2.count2 < 70) {
++                                    motor2bar.width += window.width * 0.03
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 70 && motorspeed2.count2 < 100) {
++                                    motor2bar.width += window.width * 0.025
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 100 && motorspeed2.count2 < 130) {
++                                    motor2bar.width += window.width * 0.03
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else if (motorspeed2.count2 >= 130) {
++                                    motor2bar.width = window.width * 0.34
++                                    motorspeed2.count2 = 130
++                                    motor2text.text = motorspeed2.count2
++                                }
++                                else {
++                                    motor2bar.width = 0
++                                    motorspeed2.count2 = 0
++                                    motor2text.text = motorspeed2.count2
++                                }
+                             }
+-
+-                            else if (motorspeed2.value == 130) {
+-                                motor2bar.width = 640
+-                            }
+-
+                             else {
+-                                motor2bar.width = 0
++                                textupdate.text = "Press the ON button to start Motor-2 control"
+                             }
+                         }
+                     }
+                 }
+-            }
+ 
++            }
+         }
+-    }
+-
+-    Rectangle {
+-        id: centerbox
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.15
+-        anchors.left: parent.left
+-        anchors.leftMargin: window.width * 0.14
+-
+         Image {
++            id: centreb
+             source: "images/Center_Box.png"
+-        }
++            anchors.top: parent.top
++            anchors.topMargin: window.height * 0.15
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.09
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.38
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.15
+ 
+-        Rectangle {
+-            id: tempcontrol
+             Image {
+                 source: "images/Motor_Temp.png"
++                fillMode: Image.PreserveAspectFit
+                 anchors.top: parent.top
+-                anchors.topMargin: window.height * 0.05
++                anchors.topMargin: window.height * 0.03
+                 anchors.left: parent.left
+-                anchors.leftMargin: window.width * 0.10
++                anchors.leftMargin: window.width * 0.06
++                anchors.right: parent.right
++                anchors.rightMargin: window.width * 0.22
++                anchors.bottom: parent.bottom
++                anchors.bottomMargin: window.height * 0.65
+             }
+-
+             Image {
+                 id: motor1image
+                 Text {
+                     id: motor1
+                     text: qsTr("Motor 1")
+-                    y: -100
++                    y: -1 * parent.height * 1.2
+                     color: "#FFFFFF"
+-                    font.pixelSize: 20
++                    font.pixelSize: parent.width * 0.04
+                 }
++                source: "images/Repeat_Grid.png"
++                fillMode: Image.PreserveAspectFit
+                 anchors.top: parent.top
+-                anchors.topMargin: window.height * 0.30
++                anchors.topMargin: window.height * 0.25
+                 anchors.left: parent.left
+-                anchors.leftMargin: window.width * 0.10
+-                source: "images/Repeat_Grid.png"
+-
++                anchors.leftMargin: window.width * 0.06
++                anchors.right: parent.right
++                anchors.rightMargin: window.width * 0.07
++                anchors.bottom: parent.bottom
++                anchors.bottomMargin: window.height * 0.45
+                 Rectangle {
++
+                     id: motor1tempbar
+                     width: motor1image.width
+                     height: motor1image.width * 0.05
+@@ -417,22 +510,25 @@ Window {
+                     }
+                 }
+             }
+-
+             Image {
+                 id: motor2image
+                 Text {
+                     id: motor2
+                     text: qsTr("Motor 2")
+-                    y: -100
++                    y: -1 * parent.height * 1.2
+                     color: "#FFFFFF"
+-                    font.pixelSize: 20
++                    font.pixelSize: parent.width * 0.04
+                 }
++                source: "images/Repeat_Grid.png"
++                fillMode: Image.PreserveAspectFit
+                 anchors.top: parent.top
+-                anchors.topMargin: window.height * 0.60
++                anchors.topMargin: window.height * 0.50
+                 anchors.left: parent.left
+-                anchors.leftMargin: window.width * 0.10
+-                source: "images/Repeat_Grid.png"
+-
++                anchors.leftMargin: window.width * 0.06
++                anchors.right: parent.right
++                anchors.rightMargin: window.width * 0.07
++                anchors.bottom: parent.bottom
++                anchors.bottomMargin: window.height * 0.20
+                 Rectangle {
+                     id: motor2tempbar
+                     width: motor2image.width
+@@ -449,168 +545,189 @@ Window {
+                 }
+             }
+         }
+-    }
+-
+-    Rectangle {
+-        id: controlpanel
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.18
+-        anchors.left: parent.left
+-        anchors.bottom: parent.bottom
+-        anchors.bottomMargin: window.height * 0.77
+-        anchors.right: parent.right
+-        anchors.rightMargin: window.width * 0.855
+-        color: "transparent"
+         Image {
+             id: controlimage
+             source: "images/Control_Panel_with_text.png"
+-            anchors.left: parent.left
+-            anchors.leftMargin: parent.width * 0.20
++            fillMode: Image.PreserveAspectFit
+             anchors.top: parent.top
+-            anchors.topMargin: parent.height * 0.25
+-        }
+-        MouseArea {
+-            anchors.fill: parent
+-            hoverEnabled: true
+-            onEntered: {
+-                controlpanel.color = "#C6C6C6"
+-            }
+-            onExited: {
+-                controlpanel.color = "transparent"
+-            }
+-            onClicked: {
+-                textupdate.text = "Control Panel selected"
++            anchors.topMargin: window.height * 0.20
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.77
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.89
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.03
++            Rectangle{
++                id:controlfill
++                color: "transparent"
++                z: -1
++                x: -1 * (parent.width)
++                width: parent.width * 2.56
++                height: parent.height * 1.5
++                MouseArea {
++                    anchors.fill: parent
++                    hoverEnabled: true
++                    onEntered: {
++                        controlfill.color = "#C6C6C6"
++                    }
++                    onExited: {
++                        controlfill.color = "transparent"
++                    }
++                    onClicked: {
++                        controlfill.color = "#C6C6C6"
++                        textupdate.text = "Control Panel Selected"
++                    }
++                    onReleased: {
++                        controlfill.color = "transparent"
++                    }
++                }
+             }
+         }
+-    }
+-
+-    Rectangle {
+-        id: renderpanel
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.28
+-        anchors.left: parent.left
+-        anchors.bottom: parent.bottom
+-        anchors.bottomMargin: window.height * 0.67
+-        anchors.right: parent.right
+-        anchors.rightMargin: window.width * 0.855
+-        color: "transparent"
+         Image {
+             id: renderimage
+             source: "images/3D_with_text.png"
+-            anchors.left: parent.left
+-            anchors.leftMargin: parent.width * 0.20
++            fillMode: Image.PreserveAspectFit
+             anchors.top: parent.top
+-            anchors.topMargin: parent.height * 0.25
+-        }
+-        MouseArea {
+-            anchors.fill: parent
+-            hoverEnabled: true
+-            onEntered: {
+-                renderpanel.color = "#C6C6C6"
+-            }
+-            onExited: {
+-                renderpanel.color = "transparent"
+-            }
+-            onClicked: {
+-                textupdate.text = "3D demo selected (Coming Soon)"
++            anchors.topMargin: window.height * 0.29
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.68
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.94
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.03
++            Rectangle{
++                id:renderfill
++                color: "transparent"
++                z: -1
++                x: -1 * (parent.width)
++                width: parent.width * 5.2
++                height: parent.height * 1.5
++                MouseArea {
++                    anchors.fill: parent
++                    hoverEnabled: true
++                    onEntered: {
++                        renderfill.color = "#C6C6C6"
++                    }
++                    onExited: {
++                        renderfill.color = "transparent"
++                    }
++                    onClicked: {
++                        renderfill.color = "#C6C6C6"
++                        textupdate.text = "3D Demo Selected (Coming Soon)"
++                    }
++                    onReleased: {
++                        renderfill.color = "transparent"
++                    }
++                }
+             }
+         }
+-    }
+-
+-    Rectangle {
+-        id: analyticspanel
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.38
+-        anchors.left: parent.left
+-        anchors.bottom: parent.bottom
+-        anchors.bottomMargin: window.height * 0.57
+-        anchors.right: parent.right
+-        anchors.rightMargin: window.width * 0.855
+-        color: "transparent"
+         Image {
+             id: analyticsimage
+             source: "images/Analytics_with_text.png"
+-            anchors.left: parent.left
+-            anchors.leftMargin: parent.width * 0.20
++            fillMode: Image.PreserveAspectFit
+             anchors.top: parent.top
+-            anchors.topMargin: parent.height * 0.25
+-        }
+-        MouseArea {
+-            anchors.fill: parent
+-            hoverEnabled: true
+-            onEntered: {
+-                analyticspanel.color = "#C6C6C6"
+-            }
+-            onExited: {
+-                analyticspanel.color = "transparent"
+-            }
+-            onClicked: {
+-                textupdate.text = "Analytics demo selected (Coming Soon)"
++            anchors.topMargin: window.height * 0.38
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.59
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.91
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.03
++            Rectangle{
++                id:analyticsill
++                color: "transparent"
++                z: -1
++                x: -1 * (parent.width)
++                width: parent.width * 3.1
++                height: parent.height * 1.5
++                MouseArea {
++                    anchors.fill: parent
++                    hoverEnabled: true
++                    onEntered: {
++                        analyticsill.color = "#C6C6C6"
++                    }
++                    onExited: {
++                        analyticsill.color = "transparent"
++                    }
++                    onClicked: {
++                        analyticsill.color = "#C6C6C6"
++                        textupdate.text = "Analytics Demo Selected (Coming Soon)"
++                    }
++                    onReleased: {
++                        analyticsill.color = "transparent"
++                    }
++                }
+             }
+         }
+-    }
+-
+-    Rectangle {
+-        id: statusbox
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.05
+-        anchors.left: parent.left
+-        anchors.leftMargin: window.width * 0.145
+         Image {
+             id: statusheader
+             source: "images/Status_Message.png"
++            fillMode: Image.PreserveAspectFit
++            anchors.top: parent.top
++            anchors.topMargin: window.height * 0.06
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.90
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.70
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.15
++            Text {
++                id: textupdate
++                text: qsTr("Press the ON button.")
++                anchors.top: parent.top
++                anchors.topMargin: parent.height * 1.2
++                anchors.left: parent.left
++                anchors.leftMargin: parent.width * 0.03
++                color: "#14AFC0"
++                font.pixelSize: parent.width * 0.12
++            }
+         }
+-        Text {
+-            id: textupdate
+-            text: qsTr("Press the button to turn on.")
+-            anchors.top: statusbox.bottom
+-            anchors.topMargin: window.height * 0.05
+-            color: "#14AFC0"
+-            font.pixelSize: 36
+-        }
+-
+-
+-    }
+-
+-    Rectangle {
+-        id: powerbox
+-        anchors.top: parent.top
+-        anchors.topMargin: window.height * 0.75
+-        anchors.left: parent.left
+-        anchors.leftMargin: window.width * 0.04
+-        width: powerimage.width
+-        height: powerimage.height
+-        color: "transparent"
+-        property int count: 0
+-
+         Image {
+             id: powerimage
+             source: "images/On_Button.png"
+-        }
+-        MouseArea {
+-            anchors.fill: parent
+-            onClicked: {
+-                if(powerbox.count == 1) {
+-                    powerimage.source = "images/On_Button.png"
+-                    powerbox.count = 0
+-                    textupdate.text = "Off Button Pressed"
+-                    motorspeed1.value = 0
+-                    motor1text.text = motorspeed1.value
+-                    motor1bar.width = 0
+-                    motorspeed2.value = 0
+-                    motor2text.text = motorspeed2.value
+-                    motor2bar.width = 0
++            fillMode: Image.PreserveAspectFit
++            anchors.top: parent.top
++            anchors.topMargin: window.height * 0.70
++            anchors.bottom: parent.bottom
++            anchors.bottomMargin: window.height * 0.16
++            anchors.right: parent.right
++            anchors.rightMargin: window.width * 0.90
++            anchors.left: parent.left
++            anchors.leftMargin: window.width * 0.04
++
++            MouseArea {
++                anchors.fill: parent
++                onClicked: {
++                    if(backgroundrect.count == 1) {
++                        powerimage.source = "images/On_Button.png"
++                        backgroundrect.count = 0
++                        textupdate.text = "Off Button Pressed"
++                        motorspeed1.count1 = 0
++                        motor1text.text = motorspeed1.count1
++                        motor1bar.width = 0
++                        motorspeed2.count2 = 0
++                        motor2text.text = motorspeed2.count2
++                        motor2bar.width = 0
++                    }
++                    else {
++                        powerimage.source = "images/Off_Button.png"
++                        backgroundrect.count = 1
++                        textupdate.text = "On Button Pressed"
++                    }
++                }
++                onPressAndHold: {
++                    textupdate.text = "App closing in 3 seconds"
++                    delaytext.running = true
+ 
+ 
+                 }
+-                else {
+-                    powerimage.source = "images/Off_Button.png"
+-                    powerbox.count = 1
+-                    textupdate.text = "On Button Pressed"
++                Timer {
++                    id: delaytext
++                    interval: 3000
++                    running: false
++                    onTriggered: Qt.quit()
+                 }
+-
+             }
+         }
+-
+     }
+ }
+-- 
+2.17.1
+
