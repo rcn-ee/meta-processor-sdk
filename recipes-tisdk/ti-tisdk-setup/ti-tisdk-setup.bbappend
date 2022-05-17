@@ -1,4 +1,10 @@
-PR_append = ".tisdk19"
+PR_append = ".tisdk20"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
+SRC_URI_append = "\
+    file://0001-create-sdcard-Copy-wificfg-file-to-boot-partition-fo.patch \
+"
 
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
 
