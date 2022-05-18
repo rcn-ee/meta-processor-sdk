@@ -9,7 +9,6 @@ SRC_URI_append = "\
     file://Makefile_tiovx-app-host \
     file://Makefile_tidl-examples \
     file://Makefile_pru-adc \
-    file://Makefile_sysfw-image \
     file://Makefile_linux-fitimage \
 "
 
