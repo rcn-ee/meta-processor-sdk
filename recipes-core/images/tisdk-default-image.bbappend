@@ -7,6 +7,10 @@ IMAGE_INSTALL_append_am64xx += "\
     tensorflow-lite \
 "
 
+IMAGE_INSTALL_append_am62xx += "\
+    packagegroup-dl \
+"
+
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
 # Extra boot files for WIC images
 do_image_wic_append_am64xx-evm[depends] += " wifi-oob:do_deploy"
