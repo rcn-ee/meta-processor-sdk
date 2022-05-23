@@ -7,6 +7,7 @@ GRAPHICS_DEMO_omap-a15 = "\
 
 GRAPHICS_DEMO_am62xx-evm = "\
     hmi-demo \
+    powervr-graphics \
 "
 
 GRAPHICS_RDEPENDS_remove = "\
