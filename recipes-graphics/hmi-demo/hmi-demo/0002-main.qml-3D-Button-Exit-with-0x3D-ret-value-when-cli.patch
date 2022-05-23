@@ -1,0 +1,31 @@
+From f1d8f0836d108bb0cb897b9695a507ef7c183333 Mon Sep 17 00:00:00 2001
+From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+Date: Mon, 23 May 2022 09:31:15 +0000
+Subject: [PATCH 2/2] main.qml: 3D Button: Exit with 0x3D ret value when
+ clicked
+
+Exit the hmi_demo with 0x3D ret value so that the launch script will
+know to launch 3D demo instead of Matrix GUI when exited.
+
+Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+---
+ main.qml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/main.qml b/main.qml
+index b0a706a..c44017f 100644
+--- a/main.qml
++++ b/main.qml
+@@ -613,7 +613,8 @@ Window {
+                     }
+                     onClicked: {
+                         renderfill.color = "#C6C6C6"
+-                        textupdate.text = "3D Demo Selected (Coming Soon)"
++                        textupdate.text = "Launching 3D Demo .."
++                        Qt.exit(0x3D)
+                     }
+                     onReleased: {
+                         renderfill.color = "transparent"
+-- 
+2.24.3
+

@@ -6,6 +6,7 @@
 
 APP=/usr/bin/hmi_demo
 MATRIX_LAUNCH_SCRIPT=/etc/init.d/matrix-gui-2.0
+DEMO_3D_LAUNCH_SCRIPT="/etc/init.d/start_3d_demo.sh"
 PIDFILE=/var/run/hmi_demo.pid
 LOGFILE=/var/log/hmi_demo.log
 
@@ -31,19 +32,29 @@ start() {
     while [ ! -e  $XDG_RUNTIME_DIR/wayland-0 ] ; do sleep 0.1; done
     export DISPLAY=:0.0
 
-    # Launch HMI Demo and save the PID
-    local CMD="$APP &> $LOGFILE & echo \$!"
-    eval $CMD > $PIDFILE
+    local HMI_EXIT_CODE=-1
 
-    # wait until hmi exits
-    wait `cat $PIDFILE`
+    while [ $HMI_EXIT_CODE -ne 0 ]; do
+        # Launch HMI Demo and save the PID
+        local CMD="$APP &> $LOGFILE & echo \$!"
+        eval $CMD > $PIDFILE
 
-    # try to stop the hmi_demo to mark the status as stopped
-    systemctl stop hmi_demo
+        # wait until hmi exits
+        wait `cat $PIDFILE`
+        HMI_EXIT_CODE=$?
 
-    # Launch Matrix GUI
-    local MATRIX_CMD="$MATRIX_LAUNCH_SCRIPT stop; $MATRIX_LAUNCH_SCRIPT start"
-    eval $MATRIX_CMD
+        # try to stop the hmi_demo to mark the status as stopped
+        systemctl stop hmi_demo
+
+        echo "HMI Demo exited with $HMI_EXIT_CODE"
+        if [ `printf '%X' $HMI_EXIT_CODE` == "3D" ]; then
+            eval $DEMO_3D_LAUNCH_SCRIPT
+        else
+            # Launch Matrix GUI
+            local MATRIX_CMD="$MATRIX_LAUNCH_SCRIPT stop; $MATRIX_LAUNCH_SCRIPT start"
+            eval $MATRIX_CMD
+        fi
+    done
 }
 
 stop() {
