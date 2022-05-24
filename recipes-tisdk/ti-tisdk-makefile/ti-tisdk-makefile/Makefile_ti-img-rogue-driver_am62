@@ -1,0 +1,26 @@
+# ti-img-rogue-driver
+ti-img-rogue-driver_am62: linux
+	@echo =====================================
+	@echo     Building ti-img-rogue-driver
+	@echo =====================================
+	@cd board-support/extra-drivers; \
+	cd `find . -maxdepth 1 -type d -name "ti-img-rogue-driver*" -type d`; \
+	make ARCH=__KERNEL_ARCH__ KERNELDIR=${LINUXKERNEL_INSTALL_DIR} RGX_BVNC="33.15.11.3" BUILD=release PVR_BUILD_DIR=am62_linux WINDOW_SYSTEM=wayland
+
+ti-img-rogue-driver_am62_clean:
+	@echo ====================================
+	@echo     Cleaning ti-img-rogue-driver
+	@echo ===================================
+	@cd board-support/extra-drivers; \
+	cd `find . -maxdepth 1 -type d -name "ti-img-rogue-driver*" -type d`; \
+	make ARCH=__KERNEL_ARCH__ KERNELDIR=${LINUXKERNEL_INSTALL_DIR} RGX_BVNC="33.15.11.3" BUILD=release PVR_BUILD_DIR=am62_linux WINDOW_SYSTEM=wayland clean
+
+ti-img-rogue-driver_am62_install:
+	@echo ====================================
+	@echo     Installing ti-img-rogue-driver
+	@echo ====================================
+	@cd board-support/extra-drivers; \
+	cd `find . -maxdepth 1 -type d -name "ti-img-rogue-driver*" -type d`; \
+	cd binary_am62_linux_wayland_release/target_aarch64/kbuild; \
+	make -C ${LINUXKERNEL_INSTALL_DIR} INSTALL_MOD_PATH=${DESTDIR} INSTALL_MOD_STRIP=${INSTALL_MOD_STRIP} M=`pwd` modules_install
+
