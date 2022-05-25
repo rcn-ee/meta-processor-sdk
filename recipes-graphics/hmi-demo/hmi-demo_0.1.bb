@@ -4,20 +4,20 @@ SECTION = "graphics"
 
 LICENSE = "TI-TSPA"
 
-LIC_FILES_CHKSUM = "file://LICENSE;md5=bb6bc27cd44417c389a180bd62f552a0"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=b427432730a914095e04e12c25413c41"
 
 DEPENDS = "qtbase qtquick3d"
 RDEPENDS_${PN} = "qtquick3d"
 
 BRANCH = "master"
-SRCREV = "48076d49e65fd86b4ad91384fd8a3b84ed6d6905"
+SRCREV = "9850cc6f5e53f06aeac0e9c85f4e11a0b1f6df08"
 
-SRC_URI = "git://git.ti.com/apps/am62x_hmi_demo.git;protocol=git;branch=${BRANCH} \
+SRC_URI = "git://git.ti.com/apps/hmi-demo.git;protocol=git;branch=${BRANCH} \
            file://hmi_demo.sh \
-           file://start_hmi_matrix.sh \
-           file://start_3d_demo.sh \
-           file://0001-hmi-demo-Add-exit-feature-and-smooth-needle-movement.patch \
-           file://0002-main.qml-3D-Button-Exit-with-0x3D-ret-value-when-cli.patch"
+           file://0001-main.qml-Handle-3D-button-click.patch \
+           file://0002-scripts-Add-launch-scripts.patch \
+           file://0003-HMI-Fix-background-rectangle-size.patch \
+"
 
 S = "${WORKDIR}/git"
 
@@ -29,8 +29,8 @@ do_install_append () {
 
     install -d ${D}${sysconfdir}/init.d
     install -m 755 ${WORKDIR}/hmi_demo.sh ${D}${sysconfdir}/init.d/hmi_demo.sh
-    install -m 755 ${WORKDIR}/start_hmi_matrix.sh ${D}${sysconfdir}/init.d/start_hmi_matrix.sh
-    install -m 755 ${WORKDIR}/start_3d_demo.sh ${D}${sysconfdir}/init.d/start_3d_demo.sh
+    install -m 755 ${S}/scripts/start_hmi_matrix.sh ${D}${sysconfdir}/init.d/start_hmi_matrix.sh
+    install -m 755 ${S}/scripts/start_3d_demo.sh ${D}${sysconfdir}/init.d/start_3d_demo.sh
 }
 
 INITSCRIPT_NAME="hmi_demo.sh"
