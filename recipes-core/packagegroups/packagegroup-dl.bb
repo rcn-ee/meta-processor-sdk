@@ -13,6 +13,7 @@ DL_PACKAGES = " \
     opencv \
     opencv-dev \
     onnxruntime \
+    onnxruntime-dev \
     tensorflow-lite \
 "
 
