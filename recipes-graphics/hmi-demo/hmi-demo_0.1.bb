@@ -10,13 +10,10 @@ DEPENDS = "qtbase qtquick3d"
 RDEPENDS_${PN} = "qtquick3d"
 
 BRANCH = "master"
-SRCREV = "9850cc6f5e53f06aeac0e9c85f4e11a0b1f6df08"
+SRCREV = "14876c867e40a6bdc8afb8c32ab5b7d534511571"
 
 SRC_URI = "git://git.ti.com/apps/hmi-demo.git;protocol=git;branch=${BRANCH} \
            file://hmi_demo.sh \
-           file://0001-main.qml-Handle-3D-button-click.patch \
-           file://0002-scripts-Add-launch-scripts.patch \
-           file://0003-HMI-Fix-background-rectangle-size.patch \
 "
 
 S = "${WORKDIR}/git"
