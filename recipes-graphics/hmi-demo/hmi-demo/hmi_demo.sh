@@ -27,6 +27,7 @@ start() {
 
 stop() {
     local HMI_MATRIX_CMD="$HMI_MATRIX_SCRIPT stop"
+    eval $HMI_MATRIX_CMD
     echo 'Service stopped' >&2
 }
 
