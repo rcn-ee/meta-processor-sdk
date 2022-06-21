@@ -7,3 +7,7 @@ SRC_URI_append = " \
     file://0001-HACK-dt-bindings-misc-Add-ti-dma_buf_phys-bindig-doc.patch \
     file://0002-HACK-misc-Add-dma-buf-to-physical-address-exporter.patch \
 "
+
+SRC_URI_append_am62xx-evm = " \
+    file://0001-HACK-dma-buf-heaps-carveout-Add-support-for-cached-c.patch \
+"
