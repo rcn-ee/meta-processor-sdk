@@ -10,6 +10,11 @@ GRAPHICS_DEMO_am62xx-evm = "\
     powervr-graphics \
 "
 
+GRAPHICS_DEMO_am62xx-lp-evm = "\
+    hmi-demo \
+    powervr-graphics \
+"
+
 GRAPHICS_RDEPENDS_remove = "\
     ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)} \
 "

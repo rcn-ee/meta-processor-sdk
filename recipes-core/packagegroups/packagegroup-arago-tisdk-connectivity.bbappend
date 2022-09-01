@@ -15,3 +15,6 @@ WLAN_TI_append_am64xx-evm = " \
 WLAN_TI_append_am62xx-evm = " \
     wifi-oob \
 "
+WLAN_TI_append_am62xx-lp-evm = " \
+    wifi-oob \
+"

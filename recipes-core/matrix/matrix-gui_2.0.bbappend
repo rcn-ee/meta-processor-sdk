@@ -12,3 +12,4 @@ do_install_append(){
 }
 
 SYSTEMD_AUTO_ENABLE_${PN}_am62xx-evm = "disable"
+SYSTEMD_AUTO_ENABLE_${PN}_am62xx-lp-evm = "disable"
