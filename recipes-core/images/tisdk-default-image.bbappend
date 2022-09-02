@@ -13,6 +13,7 @@ IMAGE_INSTALL_append_am62xx += "\
 
 IMAGE_INSTALL_append_am62xx-lp-evm += "\
     packagegroup-dl \
+"
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
 # Extra boot files for WIC images
