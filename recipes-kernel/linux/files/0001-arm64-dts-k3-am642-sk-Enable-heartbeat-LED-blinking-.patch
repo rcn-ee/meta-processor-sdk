@@ -1,19 +1,19 @@
-From fb559e70d6e19588f51dc3a5547b428aae5ba162 Mon Sep 17 00:00:00 2001
-From: Aparna M <a-m1@ti.com>
-Date: Mon, 4 Oct 2021 19:55:00 +0530
-Subject: [PATCH] arm64: dts: k3-am642-sk: Enable LEDs connected to tpic2810 on
+From 43da6dd446760c3f2b1f6ee72f82dc5c5410b770 Mon Sep 17 00:00:00 2001
+From: Paresh Bhagat <p-bhagat@ti.com>
+Date: Thu, 8 Sep 2022 13:36:47 +0530
+Subject: [PATCH] arm64: dts: k3-am642-sk: Enable heartbeat LED blinking for
  AM64xx SK
 
 There are 8 LEDs connected to tpic2810 on AM64xx SK.
 Enable these for out of board LED blink demo.
 
-Signed-off-by: Aparna M <a-m1@ti.com>
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am642-sk.dts | 62 ++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts | 64 ++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-index 727f06475670..679dc5f04397 100644
+index 6daac38e9553..0e2409c7bb0f 100644
 --- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
 +++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
 @@ -8,6 +8,7 @@
@@ -24,7 +24,7 @@ index 727f06475670..679dc5f04397 100644
  #include <dt-bindings/net/ti-dp83867.h>
  #include "k3-am642.dtsi"
  
-@@ -125,6 +126,59 @@
+@@ -137,6 +138,61 @@
  		vin-supply = <&vcc_3v3_sys>;
  		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
  	};
@@ -39,10 +39,12 @@ index 727f06475670..679dc5f04397 100644
 +			default-state = "off";
 +		};
 +		led-1 {
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_ACTIVITY;
-+			gpios = <&exp2 1 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
++           label = "am64-sk:red:heartbeat";
++		    color = <LED_COLOR_ID_RED>;
++           linux,default-trigger = "heartbeat";
++	        function = LED_FUNCTION_HEARTBEAT;
++		    gpios = <&exp2 1 GPIO_ACTIVE_HIGH>;
++		    default-state = "off";
 +		};
 +		led-2 {
 +			color = <LED_COLOR_ID_GREEN>;
@@ -84,7 +86,7 @@ index 727f06475670..679dc5f04397 100644
  };
  
  &main_pmx0 {
-@@ -274,6 +328,14 @@
+@@ -300,6 +356,14 @@
  				  "VPP_LDO_EN", "RPI_PS_3V3_En",
  				  "RPI_PS_5V0_En", "RPI_HAT_DETECT";
  	};
