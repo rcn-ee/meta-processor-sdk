@@ -9,10 +9,12 @@ IMAGE_INSTALL_append_am64xx += "\
 
 IMAGE_INSTALL_append_am62xx += "\
     packagegroup-dl \
+    libcamera \ 
 "
 
 IMAGE_INSTALL_append_am62xx-lp-evm += "\
     packagegroup-dl \
+    libcamera \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
