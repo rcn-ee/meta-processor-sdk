@@ -10,6 +10,7 @@ IMAGE_INSTALL_append_am64xx += "\
 IMAGE_INSTALL_append_am62xx += "\
     packagegroup-dl \
     libcamera \ 
+    resize-rootfs \
 "
 
 IMAGE_INSTALL_append_am62xx-lp-evm += "\
