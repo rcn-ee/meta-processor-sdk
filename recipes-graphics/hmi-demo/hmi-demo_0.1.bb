@@ -10,7 +10,7 @@ DEPENDS = "qtbase qtquick3d"
 RDEPENDS_${PN} = "qtquick3d"
 
 BRANCH = "master"
-SRCREV = "14876c867e40a6bdc8afb8c32ab5b7d534511571"
+SRCREV = "306415c7783490a99ec6f4bf3baa2d5f672d4003"
 
 SRC_URI = "git://git.ti.com/apps/hmi-demo.git;protocol=git;branch=${BRANCH} \
            file://hmi_demo.sh \
@@ -32,5 +32,5 @@ do_install_append () {
 
 INITSCRIPT_NAME="hmi_demo.sh"
 
-FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh ${sysconfdir}/init.d/start_hmi_matrix.sh"
+FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh ${sysconfdir}/init.d/start_hmi_matrix.sh ${D}${sysconfdir}/init.d/start_3d_demo.sh"
 

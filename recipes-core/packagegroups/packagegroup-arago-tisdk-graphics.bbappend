@@ -8,11 +8,13 @@ GRAPHICS_DEMO_omap-a15 = "\
 GRAPHICS_DEMO_am62xx-evm = "\
     hmi-demo \
     powervr-graphics \
+    camera-demo \
 "
 
 GRAPHICS_DEMO_am62xx-lp-evm = "\
     hmi-demo \
     powervr-graphics \
+    camera-demo \
 "
 
 GRAPHICS_RDEPENDS_remove = "\
