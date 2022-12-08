@@ -32,5 +32,5 @@ do_install_append () {
 
 INITSCRIPT_NAME="hmi_demo.sh"
 
-FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh ${sysconfdir}/init.d/start_hmi_matrix.sh ${D}${sysconfdir}/init.d/start_3d_demo.sh"
+FILES_${PN} += "${bindir}/hmi_demo ${sysconfdir}/init.d/hmi_demo.sh ${sysconfdir}/init.d/start_hmi_matrix.sh ${sysconfdir}/init.d/start_3d_demo.sh"
 
