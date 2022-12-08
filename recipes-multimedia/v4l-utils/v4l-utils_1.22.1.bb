@@ -25,6 +25,7 @@ SRC_URI = "http://linuxtv.org/downloads/v4l-utils/v4l-utils-${PV}.tar.bz2 \
            file://0002-v4l2-ctl-Add-routing-and-streams-support.patch \
            file://0003-media-ctl-add-support-for-routes-and-streams.patch \
            file://0004-v4l2-ctl-compliance-add-routing-and-streams-multiple.patch \
+           file://0001-media-ctl-add-support-for-RGBIr-bayer-formats.patch \
            "
 
 SRC_URI[md5sum] = "8aa73287320a49e9170a8255d7b2c7e6"
