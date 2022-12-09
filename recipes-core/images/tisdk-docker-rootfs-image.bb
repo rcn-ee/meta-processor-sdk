@@ -8,6 +8,10 @@ IMAGE_INSTALL += "packagegroup-arago-base \
 # Add docker and dropbear for SSH server
 IMAGE_INSTALL += "docker dropbear"
 
+IMAGE_INSTALL_append += " \
+    resize-rootfs \
+"
+
 export IMAGE_BASENAME = "tisdk-docker-rootfs-image"
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"

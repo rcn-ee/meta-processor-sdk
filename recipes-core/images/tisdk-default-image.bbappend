@@ -1,10 +1,11 @@
-PR_append = ".tisdk0"
+PR_append = ".tisdk1"
 
 IMAGE_INSTALL_append_am64xx += "\
     dropbear \
     linuxptp \
     iproute2 \
     tensorflow-lite \
+    resize-rootfs \
 "
 
 IMAGE_INSTALL_append_am62xx += "\
@@ -16,6 +17,7 @@ IMAGE_INSTALL_append_am62xx += "\
 IMAGE_INSTALL_append_am62xx-lp-evm += "\
     packagegroup-dl \
     libcamera \
+    resize-rootfs \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
