@@ -10,14 +10,27 @@ IMAGE_INSTALL_append_am64xx += "\
 
 IMAGE_INSTALL_append_am62xx += "\
     packagegroup-dl \
-    libcamera \ 
+    libcamera \
     resize-rootfs \
 "
 
-IMAGE_INSTALL_append_am62xx-lp-evm += "\
+IMAGE_INSTALL_append_am62axx += "\
     packagegroup-dl \
     libcamera \
     resize-rootfs \
+    libdrm-dev \
+    libion \
+    libion-dev \
+    websocketd \
+    ti-rpmsg-char-dev \
+    libloki \
+    boost \
+    json-c \
+    ocl-gl-headers \
+    neo-ai-dlr-dev \
+    python3-opencv \
+    dialog \
+    udev \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
