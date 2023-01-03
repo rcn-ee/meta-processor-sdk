@@ -1,0 +1,13 @@
+[Unit]
+Description=Edge AI Init
+After=network.target
+
+[Service]
+ExecStart=/opt/edge_ai_apps/init_script.sh
+Type=idle
+TimeoutStopSec=20
+KillMode=process
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
