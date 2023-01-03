@@ -1,4 +1,4 @@
-PR_append = ".tisdk1"
+PR_append = ".tisdk2"
 
 IMAGE_INSTALL_append_am64xx += "\
     dropbear \
@@ -14,7 +14,7 @@ IMAGE_INSTALL_append_am62xx += "\
     resize-rootfs \
 "
 
-IMAGE_INSTALL_append_am62axx += "\
+IMAGE_INSTALL_append_am62axx = " \
     packagegroup-dl \
     libcamera \
     resize-rootfs \
@@ -27,10 +27,26 @@ IMAGE_INSTALL_append_am62axx += "\
     boost \
     json-c \
     ocl-gl-headers \
-    neo-ai-dlr-dev \
     python3-opencv \
     dialog \
     udev \
+    ti-tisdk-firmware-dev \
+    ti-tidl-dev \
+    ti-tidl-osrt-dev \
+    ti-tidl-osrt-staticdev \
+    edgeai-apps \
+    edgeai-init \
+    ti-gpio-cpp \
+    ti-gpio-py \
+    edgeai-tiovx-modules-dev \
+    edgeai-gst-plugins-dev \
+    edgeai-dl-inferer-staticdev \
+    edgeai-apps-source \
+    edgeai-gst-plugins-source \
+    edgeai-tiovx-modules-source \
+    edgeai-dl-inferer-source \
+    ti-gpio-cpp-source \
+    ti-gpio-py-source \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"

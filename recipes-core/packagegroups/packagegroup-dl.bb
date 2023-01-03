@@ -1,5 +1,5 @@
 DESCRIPTION = "Processor-SDK Deep Learning packagegroup"
-PR = "r1"
+PR = "r2"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -8,16 +8,30 @@ PROVIDES = "${PACKAGES}"
 
 PACKAGES = "packagegroup-dl"
 
-DL_PACKAGES = " \
-    neo-ai-dlr \
+DL_PACKAGES_am62axx-evm = " \
     opencv \
     opencv-dev \
+    tensorflow-lite \
+"
+
+DL_PACKAGES_am62xx-evm = " \
+    opencv \
+    opencv-dev \
+    tensorflow-lite \
+    neo-ai-dlr \
     onnxruntime \
     onnxruntime-dev \
     tensorflow-lite \
 "
 
-PYTHON_PACKAGES = " \
+PYTHON_PACKAGES_am62axx-evm = " \
+    python3-pip \
+    python3-pillow \
+    python3-pyyaml \
+    python3-numpy \
+"
+
+PYTHON_PACKAGES_am62xx-evm = " \
     python3-pip \
     python3-pillow \
     python3-pyyaml \
