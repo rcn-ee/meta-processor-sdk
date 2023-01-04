@@ -8,34 +8,26 @@ PROVIDES = "${PACKAGES}"
 
 PACKAGES = "packagegroup-dl"
 
-DL_PACKAGES_am62axx-evm = " \
+DL_PACKAGES = " \
     opencv \
     opencv-dev \
     tensorflow-lite \
 "
 
 DL_PACKAGES_am62xx-evm = " \
-    opencv \
-    opencv-dev \
-    tensorflow-lite \
     neo-ai-dlr \
     onnxruntime \
     onnxruntime-dev \
-    tensorflow-lite \
 "
 
-PYTHON_PACKAGES_am62axx-evm = " \
-    python3-pip \
-    python3-pillow \
-    python3-pyyaml \
-    python3-numpy \
+PYTHON_PACKAGES = " \
+   python3-pip \
+   python3-pillow \
+   python3-pyyaml \
+   python3-numpy \
 "
 
 PYTHON_PACKAGES_am62xx-evm = " \
-    python3-pip \
-    python3-pillow \
-    python3-pyyaml \
-    python3-numpy \
     python3-tensorflow-lite \
 "
 
