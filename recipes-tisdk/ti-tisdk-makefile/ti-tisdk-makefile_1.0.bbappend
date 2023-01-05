@@ -15,7 +15,7 @@ SRC_URI_append = "\
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 SRC_URI_append_am62xx = " file://Makefile_ti-img-rogue-driver_am62"
 SRC_URI_append_am64xx = " file://Makefile_sysfw-image-hs-fs_am64"
-
+SRC_URI_append_am62xx-lp-evm = " file://Makefile_sysfw-image-hs-se_am62"
 
 # FIXME: ti-crypto-examples require openssl 1.0, but devkit packages openssl 1.1
 MAKEFILES_remove = "ti-crypto-examples"
@@ -53,6 +53,9 @@ MAKEFILES_append_dra7xx = " tiovx-app-host"
 MAKEFILES_append_am62xx = " ti-img-rogue-driver_am62"
 MAKEFILES_remove_am64xx = " sysfw-image"
 MAKEFILES_append_am64xx = " sysfw-image-hs-fs_am64"
+
+MAKEFILES_remove_am62xx-lp-evm = " sysfw-image"
+MAKEFILES_append_am62xx-lp-evm = " sysfw-image-hs-se_am62"
 
 KERNEL_BUILD_CMDS_append_am64xx-hs-evm = " Image.gz"
 MAKEFILES_append_am64xx-hs-evm = " linux-fitimage"
