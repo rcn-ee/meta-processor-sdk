@@ -3,7 +3,7 @@ PR_append = ".tisdk19"
 DEPLOY_IMAGES_NAME_append_am64xx-evm = " tiboot3-am64x-gp-evm.bin tiboot3-am64x_sr2-hs-evm.bin tiboot3-am64x_sr2-hs-fs-evm.bin ti-sci-firmware-am64x_sr2-hs-cert.bin ti-sci-firmware-am64x_sr2-hs-enc.bin ti-sci-firmware-am64x_sr2-hs-fs-cert.bin ti-sci-firmware-am64x_sr2-hs-fs-enc.bin wificfg fitImage-its.its"
 DEPLOY_IMAGES_NAME_append_am64xx-hs-evm = " ti-sci-firmware-am64x-hs-cert.bin ti-sci-firmware-am64x-hs-enc.bin fitImage-its.its"
 DEPLOY_IMAGES_NAME_append_am62xx-evm = " ti-fs-firmware-am62x-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f wificfg"
-DEPLOY_IMAGES_NAME_append_am62xx-lp-evm = " ti-fs-firmware-am62x-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f wificfg"
+DEPLOY_IMAGES_NAME_append_am62xx-lp-evm = " ti-fs-firmware-am62x-hs-enc.bin ti-fs-firmware-am62x-hs-cert.bin ti-fs-firmware-am62x-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f wificfg"
 DEPLOY_IMAGES_NAME_append_am62axx-evm = " ti-fs-firmware-am62ax-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f"
 
 # Add small docker rootfs for all SOCs
