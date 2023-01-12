@@ -231,7 +231,6 @@ ALTERNATIVE_TARGET[j784s4-c71_1-fw] = "${base_libdir}/firmware/vision_apps_eaik/
 ALTERNATIVE_TARGET[j784s4-c71_2-fw] = "${base_libdir}/firmware/vision_apps_eaik/vx_app_rtos_linux_c7x_3.out"
 ALTERNATIVE_TARGET[j784s4-c71_3-fw] = "${base_libdir}/firmware/vision_apps_eaik/vx_app_rtos_linux_c7x_4.out"
 
-ALTERNATIVE_TARGET[am62a-mcu-r5f0_0-fw] = "${base_libdir}/firmware/vision_apps_eaik/vx_app_rtos_linux_mcu1_0.out"
 ALTERNATIVE_TARGET[am62a-c71_0-fw] = "${base_libdir}/firmware/vision_apps_eaik/vx_app_rtos_linux_c7x_1.out"
 
 
