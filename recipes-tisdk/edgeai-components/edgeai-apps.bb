@@ -6,7 +6,7 @@ LICENSE = "TI-TFL"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=1f7721ee7d288457c5a70d0c8ff44b87"
 
 SRC_URI = "git://git.ti.com/edgeai/edge_ai_apps.git;protocol=git;branch=develop"
-SRCREV = "47c8ad4bcd7783d7fb97a9bd35e2104fc9ea0167"
+SRCREV = "2ccf910a997a7dcc85a1e31398007241409d5609"
 
 PLAT_SOC = ""
 PLAT_SOC_j7-evm = "j721e"
@@ -51,4 +51,4 @@ do_install() {
 
 INSANE_SKIP_${PN}-source += "dev-deps"
 
-PR = "r0"
+PR = "r1"
