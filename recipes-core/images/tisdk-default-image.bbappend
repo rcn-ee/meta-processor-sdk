@@ -6,6 +6,10 @@ IMAGE_INSTALL_append_am64xx += "\
     iproute2 \
     tensorflow-lite \
     resize-rootfs \
+    sysrepo \
+    netopeer2-server \
+    sysrepo-ti-app \
+    tsn-yang-models \
 "
 
 IMAGE_INSTALL_append_am62xx += "\
