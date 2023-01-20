@@ -1,0 +1,11 @@
+psdk_setup_file=.psdk_setup
+check_psdk_setup=load mmc 1:1 ${loadaddr} ${psdk_setup_file}
+
+# Reset to the default environment
+do_psdk_setup=env default -f -a; saveenv
+
+# If not previously configured, then configure the environment and indicate this by writing a file
+uenvcmd=if run check_psdk_setup; then echo "Already setup."; else run do_psdk_setup; mw.b ${loadaddr} 0 1; fatwrite mmc 1:1 ${loadaddr} .psdk_setup 1; reset; fi
+
+dorprocboot=0
+name_overlays=k3-am62a-edgeai-apps.dtbo
