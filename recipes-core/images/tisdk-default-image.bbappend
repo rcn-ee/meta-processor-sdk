@@ -18,7 +18,28 @@ IMAGE_INSTALL_append_am62xx += "\
     resize-rootfs \
 "
 
+DISTRO_FEATURES_am62axx-evm += "wayland"
+
+AM62A_GRAPHICS_SUPPORT = "\
+    qtbase-examples \
+    qtdeclarative-tools \
+    qtlocation-examples \
+    qtmultimedia-examples \
+    qtscript-examples \
+    qtsvg-examples \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'qtwayland-examples', '', d)} \
+    qtserialport-examples \
+    qtcharts-examples \
+    qt-tstat \
+    packagegroup-arago-qte \
+    weston-init \
+    weston-examples \
+    libegl \
+    glmark2 \
+"
+
 IMAGE_INSTALL_append_am62axx = " \
+    ${AM62A_GRAPHICS_SUPPORT} \
     packagegroup-dl \
     libcamera \
     resize-rootfs \
