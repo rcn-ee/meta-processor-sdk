@@ -63,6 +63,7 @@ IMAGE_INSTALL_append_am62axx = " \
     edgeai-init \
     ti-gpio-cpp \
     ti-gpio-py \
+    edgeai-tiovx-kernels-dev \
     edgeai-tiovx-modules-dev \
     edgeai-gst-plugins-dev \
     edgeai-dl-inferer-staticdev \
