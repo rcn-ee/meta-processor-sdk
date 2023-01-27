@@ -16,6 +16,10 @@ IMAGE_INSTALL_append_am62xx += "\
     packagegroup-dl \
     libcamera \
     resize-rootfs \
+    sysrepo \
+    netopeer2-server \
+    sysrepo-ti-app \
+    tsn-yang-models \
 "
 
 DISTRO_FEATURES_am62axx-evm += "wayland"
@@ -75,6 +79,10 @@ IMAGE_INSTALL_append_am62axx = " \
     ti-gpio-cpp-source \
     ti-gpio-py-source \
     packagegroup-python3-jupyter \
+    sysrepo \
+    netopeer2-server \
+    sysrepo-ti-app \
+    tsn-yang-models \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
