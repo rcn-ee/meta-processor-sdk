@@ -6,7 +6,7 @@ LICENSE = "TI-TFL"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=1f7721ee7d288457c5a70d0c8ff44b87"
 
 SRC_URI = "git://git.ti.com/edgeai/edge_ai_apps.git;protocol=git;branch=develop"
-SRCREV = "2ccf910a997a7dcc85a1e31398007241409d5609"
+SRCREV = "a303916c9770abad6da41dbb56d17177e1fd7248"
 
 PLAT_SOC = ""
 PLAT_SOC_j7-evm = "j721e"
@@ -43,12 +43,17 @@ do_install() {
     rm -rf ${D}/opt/edge_ai_apps/apps_cpp/lib
 
     mkdir -p ${D}/opt/model_zoo
+    mkdir -p ${D}/opt/edgeai-apps-test-data
+    export EDGEAI_DATA_PATH=${WORKDIR}/edgeai-apps-test-data
+
     cd ${WORKDIR}/git/
     ./download_models.sh --recommended
+    ./download_data.sh
     cd -
     cp ${CP_ARGS} -L ${WORKDIR}/model_zoo/* ${D}/opt/model_zoo
+    cp ${CP_ARGS} -L ${WORKDIR}/edgeai-apps-test-data/* ${D}/opt/edgeai-apps-test-data
 }
 
 INSANE_SKIP_${PN}-source += "dev-deps"
 
-PR = "r1"
+PR = "r2"
