@@ -1,12 +1,12 @@
-SUMMARY = "EdgeAI Apps"
-DESCRIPTION = "EdgeAI Apps implements simple deep learning demos that runs on TI platforms"
-HOMEPAGE = "https://git.ti.com/cgit/edgeai/edge_ai_apps/"
+SUMMARY = "EdgeAI Gst Apps"
+DESCRIPTION = "EdgeAI Gst Apps implements gstreamer based simple deep learning demos that runs on TI platforms"
+HOMEPAGE = "https://github.com/TexasInstruments/edgeai-gst-apps"
 
 LICENSE = "TI-TFL"
-LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=1f7721ee7d288457c5a70d0c8ff44b87"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=dc68ab0305d85e56491b9a9aed2309f2"
 
-SRC_URI = "git://git.ti.com/edgeai/edge_ai_apps.git;protocol=git;branch=develop"
-SRCREV = "a303916c9770abad6da41dbb56d17177e1fd7248"
+SRC_URI = "git://github.com/TexasInstruments/edgeai-gst-apps.git;protocol=https;branch=develop"
+SRCREV = "51b44e799c325e3dff242af7d568436b4e73bac2"
 
 PLAT_SOC = ""
 PLAT_SOC_j7-evm = "j721e"
@@ -38,22 +38,22 @@ inherit cmake
 do_install() {
     CP_ARGS="-Prf --preserve=mode,timestamps --no-preserve=ownership"
 
-    mkdir -p ${D}/opt/edge_ai_apps
-    cp ${CP_ARGS} ${WORKDIR}/git/* ${D}/opt/edge_ai_apps
-    rm -rf ${D}/opt/edge_ai_apps/apps_cpp/lib
+    mkdir -p ${D}/opt/edgeai-gst-apps
+    cp ${CP_ARGS} ${WORKDIR}/git/* ${D}/opt/edgeai-gst-apps
+    rm -rf ${D}/opt/edgeai-gst-apps/apps_cpp/lib
 
     mkdir -p ${D}/opt/model_zoo
-    mkdir -p ${D}/opt/edgeai-apps-test-data
-    export EDGEAI_DATA_PATH=${WORKDIR}/edgeai-apps-test-data
+    mkdir -p ${D}/opt/edgeai-test-data
+    export EDGEAI_DATA_PATH=${WORKDIR}/edgeai-test-data
 
     cd ${WORKDIR}/git/
     ./download_models.sh --recommended
-    ./download_data.sh
+    ./download_test_data.sh
     cd -
     cp ${CP_ARGS} -L ${WORKDIR}/model_zoo/* ${D}/opt/model_zoo
-    cp ${CP_ARGS} -L ${WORKDIR}/edgeai-apps-test-data/* ${D}/opt/edgeai-apps-test-data
+    cp ${CP_ARGS} -L ${WORKDIR}/edgeai-test-data/* ${D}/opt/edgeai-test-data
 }
 
 INSANE_SKIP_${PN}-source += "dev-deps"
 
-PR = "r2"
+PR = "r3"

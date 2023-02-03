@@ -12,7 +12,7 @@ SRC_URI= " \
     file://dot.profile \
 "
 
-RDEPENDS_${PN} += "bash edgeai-apps-source"
+RDEPENDS_${PN} += "bash edgeai-gst-apps-source"
 
 SYSTEMD_SERVICE_${PN} = "edgeai-init.service"
 FILES_${PN} += "/home/root/.profile"
@@ -27,4 +27,4 @@ do_install() {
     install -m 0755 ${WORKDIR}/dot.profile ${D}/home/root/.profile
 }
 
-PR = "r0"
+PR = "r1"

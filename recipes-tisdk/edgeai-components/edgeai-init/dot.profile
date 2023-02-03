@@ -10,5 +10,5 @@ fi
 # Might fail after "su - myuser" when /dev/tty* is not writable by "myuser".
 mesg n 2>/dev/null
 
-cd /opt/edge_ai_apps
+cd /opt/edgeai-gst-apps
 source ./init_script.sh
