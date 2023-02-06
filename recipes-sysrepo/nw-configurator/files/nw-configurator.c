@@ -56,6 +56,7 @@
 #define MAX_SUPPORTED_SOCS      1
 #define MAX_PRIO                16
 #define MAX_TRAFFIC_CLASS       16
+#define NUM_TRAFFIC_CLASS       3
 
 struct control_list {
 	uint32_t timer_interval;
@@ -76,52 +77,22 @@ struct config_est {
 	struct basetime base_time;
 };
 
-enum soc_types {
-	AM64XX_EVM,
-	INVALID,
-};
-
 static uint8_t exit_app;
 
-static uint32_t prio_tc_map[MAX_SUPPORTED_SOCS][MAX_PRIO] = {
-        {0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, /* AM64XX-EVM */
-};
-
-static uint8_t num_tc[MAX_SUPPORTED_SOCS] = {
-	3, /* AM64XX-EVM */
+static uint32_t prio_tc_map[MAX_PRIO] = {
+        0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 /* Number of queues associated per class
- * 0 means, not applicable as num_tc for the 
- * SOC type is less than MAX_TRAFFIC_CLASS
+ * 0 means, not applicable
  */
-static uint8_t num_class_queues[MAX_SUPPORTED_SOCS][MAX_TRAFFIC_CLASS] = {
-	{1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /* AM64XX-EVM*/
+static uint8_t num_class_queues[MAX_TRAFFIC_CLASS] = {
+	1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 static void sig_handler(int signum)
 {
 	exit_app = 1;
-}
-
-static enum soc_types get_soc_type()
-{
-        char hostname[100];
-	int ret;
-
-        ret = gethostname(hostname, sizeof(hostname));
-
-        if (ret) {
-                printf("Could not retrieve host name\n");
-		return INVALID;
-        }
-
-        if (hostname == "am64xx-evm") {
-		printf("host name = am64xx-evm\n");
-                ret = AM64XX_EVM;
-        }
-
-	return ret;
 }
 
 static void free_resources(struct config_est *config)
@@ -217,15 +188,8 @@ static int prepare_tsn_tc_cmd(char *ifname, struct config_est *config)
 	char tc_cmd_opts[MAX_CMD_LEN];
 	char tc_cmd[MAX_CMD_LEN];
 	uint64_t base_time = 0;
-	enum soc_types soc;
 	uint32_t offset;
 	int i;
-
-	soc = get_soc_type();
-
-	if (soc == INVALID) {
-		return -1;
-	}
 
 	snprintf(tc_cmd, MAX_CMD_LEN, "tc qdisc replace ");
 
@@ -235,11 +199,11 @@ static int prepare_tsn_tc_cmd(char *ifname, struct config_est *config)
 	snprintf(tc_cmd_opts, MAX_CMD_LEN, "parent root handle 100 taprio ");
 	strncat(tc_cmd, tc_cmd_opts, MAX_CMD_LEN - 1 - strlen(tc_cmd));
 
-        snprintf(tc_cmd_opts, MAX_CMD_LEN, "num_tc %d map ", num_tc[soc]);
+        snprintf(tc_cmd_opts, MAX_CMD_LEN, "num_tc %d map ", NUM_TRAFFIC_CLASS);
         strncat(tc_cmd, tc_cmd_opts, MAX_CMD_LEN - 1 - strlen(tc_cmd));
 
 	for (i = 0; i < MAX_PRIO; i++) {
-		snprintf(tc_cmd_opts, MAX_CMD_LEN, "%d ", prio_tc_map[soc][i]);
+		snprintf(tc_cmd_opts, MAX_CMD_LEN, "%d ", prio_tc_map[i]);
 		strncat(tc_cmd, tc_cmd_opts, MAX_CMD_LEN - 1 - strlen(tc_cmd));
 	}
 
@@ -248,14 +212,14 @@ static int prepare_tsn_tc_cmd(char *ifname, struct config_est *config)
 
 	/* First queue-class */
 	i = 0;
-	snprintf(tc_cmd_opts, MAX_CMD_LEN, "%d@%d ",num_class_queues[soc][i] , 0);
+	snprintf(tc_cmd_opts, MAX_CMD_LEN, "%d@%d ",num_class_queues[i] , 0);
 	strncat(tc_cmd, tc_cmd_opts, MAX_CMD_LEN - 1 - strlen(tc_cmd));
 
-	offset = num_class_queues[soc][i];
-	for (i = 1; i < num_tc[soc]; i++) {
-		snprintf(tc_cmd_opts, MAX_CMD_LEN, "%d@%d ", num_class_queues[soc][i], offset);
+	offset = num_class_queues[i];
+	for (i = 1; i < NUM_TRAFFIC_CLASS; i++) {
+		snprintf(tc_cmd_opts, MAX_CMD_LEN, "%d@%d ", num_class_queues[i], offset);
 		strncat(tc_cmd, tc_cmd_opts, MAX_CMD_LEN - 1 - strlen(tc_cmd));
-		offset += num_class_queues[soc][i];
+		offset += num_class_queues[i];
 	}
 
 	if (config->base_time.present) {

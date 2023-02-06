@@ -8,7 +8,7 @@ IMAGE_INSTALL_append_am64xx += "\
     resize-rootfs \
     sysrepo \
     netopeer2-server \
-    sysrepo-ti-app \
+    nw-configurator \
     tsn-yang-models \
 "
 
@@ -18,7 +18,7 @@ IMAGE_INSTALL_append_am62xx += "\
     resize-rootfs \
     sysrepo \
     netopeer2-server \
-    sysrepo-ti-app \
+    nw-configurator \
     tsn-yang-models \
 "
 
@@ -81,7 +81,7 @@ IMAGE_INSTALL_append_am62axx = " \
     packagegroup-python3-jupyter \
     sysrepo \
     netopeer2-server \
-    sysrepo-ti-app \
+    nw-configurator \
     tsn-yang-models \
 "
 
