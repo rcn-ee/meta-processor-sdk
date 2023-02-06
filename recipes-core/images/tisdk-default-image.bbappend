@@ -72,6 +72,7 @@ IMAGE_INSTALL_append_am62axx = " \
     edgeai-dl-inferer-source \
     ti-gpio-cpp-source \
     ti-gpio-py-source \
+    packagegroup-python3-jupyter \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"

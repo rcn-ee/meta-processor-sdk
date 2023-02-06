@@ -24,6 +24,13 @@ EXTRA_PACKAGES_append_am64xx = " \
     print-ip \
 "
 
+EXTRA_PACKAGES_append_am62axx = " \
+    ninja \
+    meson \
+    corkscrew \
+    python3-pycparser \
+"
+
 EXTRA_PACKAGES_append_armv5 = " zbar"
 EXTRA_PACKAGES_append_armv7a = " zbar"
 
