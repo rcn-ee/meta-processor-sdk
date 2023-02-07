@@ -18,7 +18,7 @@ PLAT_SOC_am62axx-evm = "am62a"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "ti-tisdk-firmware"
+DEPENDS = "ti-tisdk-firmware edgeai-tiovx-kernels"
 
 COMPATIBLE_MACHINE = "j7-evm|j7-hs-evm|j721s2-evm|j721s2-hs-evm|j784s4-evm|am62axx-evm"
 
