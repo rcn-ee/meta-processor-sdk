@@ -26,6 +26,18 @@ export SOC = "${PLAT_SOC}"
 
 EXTRA_OECMAKE = "-DTARGET_FS=${WORKDIR}/recipe-sysroot -DCMAKE_SKIP_RPATH=TRUE"
 
+PACKAGES += "${PN}-source"
+FILES_${PN}-source += "/opt/"
+
 inherit cmake
 
-PR = "r0"
+do_install_append() {
+    CP_ARGS="-Prf --preserve=mode,timestamps --no-preserve=ownership"
+
+    mkdir -p ${D}/opt/edgeai-tiovx-kernels
+    cp ${CP_ARGS} ${S}/* ${D}/opt/edgeai-tiovx-kernels
+    cd ${D}/opt/edgeai-tiovx-kernels
+    rm -rf build bin lib
+}
+
+PR = "r1"
