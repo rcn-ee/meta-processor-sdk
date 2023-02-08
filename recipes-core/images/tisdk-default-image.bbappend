@@ -63,6 +63,7 @@ IMAGE_INSTALL_append_am62axx = " \
     ti-tidl-dev \
     ti-tidl-osrt-dev \
     ti-tidl-osrt-staticdev \
+    edgeai-studio-agent \
     edgeai-gst-apps \
     edgeai-init \
     ti-gpio-cpp \
