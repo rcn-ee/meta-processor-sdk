@@ -10,8 +10,8 @@ SRCREV = "9e093a555ea649a6c1edb8b620b68dc807e78a83"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "ti-tidl-osrt yaml-cpp dlpack-headers opencv"
-RDEPENDS_${PN} += "ti-tidl-osrt-staticdev dlpack-headers"
+DEPENDS = "ti-tidl-osrt yaml-cpp opencv"
+RDEPENDS_${PN} += "ti-tidl-osrt-staticdev"
 RDEPENDS_${PN}-source = "bash python3-core"
 
 COMPATIBLE_MACHINE = "j7-evm|j7-hs-evm|j721s2-evm|j721s2-hs-evm|j784s4-evm|am62axx-evm"
@@ -35,4 +35,4 @@ do_install_append() {
 
 INSANE_SKIP_${PN} += "dev-deps"
 
-PR = "r0"
+PR = "r1"
