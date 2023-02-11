@@ -19,7 +19,7 @@ PLAT_SOC_am62axx-evm = "am62a"
 
 S = "${WORKDIR}/git"
 
-RDEPENDS_${PN} += "edgeai-gst-apps bash python3-core python3-aiofiles python3-websocket-client nodejs"
+RDEPENDS_${PN} += "edgeai-gst-apps-source bash python3-core python3-aiofiles python3-websocket-client nodejs"
 
 COMPATIBLE_MACHINE = "j7-evm|j7-hs-evm|j721s2-evm|j721s2-hs-evm|j784s4-evm|j784s4-hs-evm|am62axx-evm"
 
@@ -34,4 +34,4 @@ do_install() {
     cp ${CP_ARGS} ${WORKDIR}/git/* ${D}/opt/edgeai-studio-agent
 }
 
-PR = "r0"
+PR = "r1"
