@@ -5,14 +5,14 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 S = "${WORKDIR}/git"
-PR = "r0"
+PR = "r1"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 LICENSE = "MIT"
 
 
-SRC_URI = "git://git.ti.com/processor-sdk-vision/arm-tidl.git;tag=REL.TIDL.J7.08.05.00.14;branch=master;protocol=git;name=arm-tidl;destsuffix=${S}/arm-tidl \
-           git://git.ti.com/processor-sdk/concerto.git;branch=main;rev=dfadb00efc08224e31df5819042c1e5356570b0d;protocol=git;name=concerto;destsuffix=${S}/concerto \
-           git://github.com/TexasInstruments/onnxruntime;branch=tidl-j7;rev=a2c52112dbd22e014bcf795b09e172aaa21afcea;protocol=https;name=onnxruntime;destsuffix=${S}/onnxruntime  \
+SRC_URI = "git://git.ti.com/processor-sdk-vision/arm-tidl.git;tag=REL.TIDL.J7.08.06.00.02;nobranch=1;protocol=git;name=arm-tidl;destsuffix=${S}/arm-tidl \
+           git://git.ti.com/processor-sdk/concerto.git;tag=REL.PSDK.JACINTO.08.06.00.02;nobranch=1;protocol=git;name=concerto;destsuffix=${S}/concerto \
+           git://github.com/TexasInstruments/onnxruntime;branch=tidl-j7;rev=134edd824c834936690c23dde585c4eeaa74bdd4;protocol=https;name=onnxruntime;destsuffix=${S}/onnxruntime  \
            git://github.com/TexasInstruments/tensorflow;branch=tidl-j7-2.8;rev=233657497d2735cae9e840df9e650e268149070d;protocol=https;name=tensorflow;destsuffix=${S}/tensorflow  \
            https://github.com/protocolbuffers/protobuf/releases/download/v3.11.3/protobuf-cpp-3.11.3.tar.gz;name=protobuf;subdir=${S}/protobuf-3.11.3 \
 "
@@ -29,13 +29,13 @@ PLAT_SOC_j7-hs-evm = "j721e"
 PLAT_SOC_j721s2-evm = "j721s2"
 PLAT_SOC_j721s2-hs-evm = "j721s2"
 PLAT_SOC_j784s4-evm = "j784s4"
+PLAT_SOC_j784s4-hs-evm = "j784s4"
 PLAT_SOC_am62axx-evm = "am62a"
 
 DEPENDS += "ti-tisdk-firmware"
 
-COMPATIBLE_MACHINE = "j7-evm|j7-hs-evm|j721s2-evm|j721s2-hs-evm|j784s4-evm|am62axx-evm"
+COMPATIBLE_MACHINE = "j7-evm|j7-hs-evm|j721s2-evm|j721s2-hs-evm|j784s4-evm|j784s4-hs-evm|am62axx-evm"
 
-export SOC = "${PLAT_SOC}"
 export TARGET_FS = "${WORKDIR}/recipe-sysroot"
 
 FILES_${PN} += "/opt/*"
@@ -54,6 +54,7 @@ do_compile() {
     ONNX_REPO_PATH=${S}/onnxruntime \
     TIDL_PROTOBUF_PATH=${S}/protobuf-3.11.3 \
     GCC_LINUX_ARM_ROOT= \
+    TARGET_SOC=${PLAT_SOC} \
     oe_runmake
 }
 
@@ -61,13 +62,22 @@ LIB_DST_DIR="${D}${libdir}"
 INC_DST_DIR="${D}${includedir}"
 OPT_DST_DIR="${D}/opt"
 
+TIDL_SOC_NAME = ""
+TIDL_SOC_NAME_j7-evm = "J7"
+TIDL_SOC_NAME_j7-hs-evm = "J7"
+TIDL_SOC_NAME_j721s2-evm = "J721S2"
+TIDL_SOC_NAME_j721s2-hs-evm = "J721S2"
+TIDL_SOC_NAME_j784s4-evm = "J784S4"
+TIDL_SOC_NAME_j784s4-hs-evm = "J784S4"
+TIDL_SOC_NAME_am62axx-evm = "AM62A"
+
 do_install() {
     install -d ${LIB_DST_DIR}
-    cp ${S}/arm-tidl/rt/out/J7/A72/LINUX/release/libvx_tidl_rt.so.1.0 ${LIB_DST_DIR}/
+    cp ${S}/arm-tidl/rt/out/${TIDL_SOC_NAME}/A72/LINUX/release/libvx_tidl_rt.so.1.0 ${LIB_DST_DIR}/
     ln -s -r ${LIB_DST_DIR}/libvx_tidl_rt.so.1.0 ${LIB_DST_DIR}/libvx_tidl_rt.so
-    cp ${S}/arm-tidl/tfl_delegate/out/J7/A72/LINUX/release/libtidl_tfl_delegate.so.1.0 ${LIB_DST_DIR}/
+    cp ${S}/arm-tidl/tfl_delegate/out/${TIDL_SOC_NAME}/A72/LINUX/release/libtidl_tfl_delegate.so.1.0 ${LIB_DST_DIR}/
     ln -s -r ${LIB_DST_DIR}/libtidl_tfl_delegate.so.1.0 ${LIB_DST_DIR}/libtidl_tfl_delegate.so
-    cp ${S}/arm-tidl/onnxrt_ep/out/J7/A72/LINUX/release/libtidl_onnxrt_EP.so.1.0 ${LIB_DST_DIR}/
+    cp ${S}/arm-tidl/onnxrt_ep/out/${TIDL_SOC_NAME}/A72/LINUX/release/libtidl_onnxrt_EP.so.1.0 ${LIB_DST_DIR}/
     ln -s -r ${LIB_DST_DIR}/libtidl_onnxrt_EP.so.1.0 ${LIB_DST_DIR}/libtidl_onnxrt_EP.so
 
     install -d ${INC_DST_DIR}
@@ -75,7 +85,6 @@ do_install() {
     cp ${S}/arm-tidl/rt/inc/itvm_rt.h ${INC_DST_DIR}/
 
     install -d ${OPT_DST_DIR}/tidl_test
-    cp ${S}/arm-tidl/rt/out/J7/A72/LINUX/release/TI_DEVICE_a72_test_dl_algo_host_rt.out ${OPT_DST_DIR}/tidl_test/
+    cp ${S}/arm-tidl/rt/out/${TIDL_SOC_NAME}/A72/LINUX/release/TI_DEVICE_a72_test_dl_algo_host_rt.out ${OPT_DST_DIR}/tidl_test/
 
 }
-
