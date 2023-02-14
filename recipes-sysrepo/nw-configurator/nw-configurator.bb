@@ -1,6 +1,6 @@
 LICENSE="GPLv2"
 DESCRIPTION = "Sysrepo based repo to configure EST"
-LIC_FILES_CHKSUM = "file://nw-configurator.c;md5=a30edb92a9457108af579938d76f5a4c"
+LIC_FILES_CHKSUM = "file://nw-configurator.c;md5=a818a6cf4fbeeb21acc8b4e9956c08a4"
 
 SRC_URI = "file://nw-configurator.c"
 
