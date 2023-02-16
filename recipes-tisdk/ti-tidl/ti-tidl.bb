@@ -10,7 +10,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 LICENSE = "MIT"
 
 
-SRC_URI = "git://git.ti.com/processor-sdk-vision/arm-tidl.git;tag=REL.TIDL.J7.08.06.00.02;nobranch=1;protocol=git;name=arm-tidl;destsuffix=${S}/arm-tidl \
+SRC_URI = "git://git.ti.com/processor-sdk-vision/arm-tidl.git;tag=REL.TIDL.J7.08.06.00.03;nobranch=1;protocol=git;name=arm-tidl;destsuffix=${S}/arm-tidl \
            git://git.ti.com/processor-sdk/concerto.git;tag=REL.PSDK.JACINTO.08.06.00.02;nobranch=1;protocol=git;name=concerto;destsuffix=${S}/concerto \
            git://github.com/TexasInstruments/onnxruntime;branch=tidl-j7;rev=134edd824c834936690c23dde585c4eeaa74bdd4;protocol=https;name=onnxruntime;destsuffix=${S}/onnxruntime  \
            git://github.com/TexasInstruments/tensorflow;branch=tidl-j7-2.8;rev=233657497d2735cae9e840df9e650e268149070d;protocol=https;name=tensorflow;destsuffix=${S}/tensorflow  \
