@@ -10,7 +10,7 @@ DEPENDS = "qtbase qtquick3d"
 RDEPENDS_${PN} = "qtquick3d"
 
 BRANCH = "master"
-SRCREV = "306415c7783490a99ec6f4bf3baa2d5f672d4003"
+SRCREV = "ff67fb7129e24a506315faca18c3595d3d03aba2"
 
 SRC_URI = "git://git.ti.com/apps/hmi-demo.git;protocol=git;branch=${BRANCH} \
            file://hmi_demo.sh \

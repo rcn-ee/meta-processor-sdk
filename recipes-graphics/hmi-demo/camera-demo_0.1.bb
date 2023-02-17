@@ -5,7 +5,7 @@ LICENSE = "TI-TSPA"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=b427432730a914095e04e12c25413c41"
 
 BRANCH = "master"
-SRCREV = "306415c7783490a99ec6f4bf3baa2d5f672d4003"
+SRCREV = "ff67fb7129e24a506315faca18c3595d3d03aba2"
 
 SRC_URI = "git://git.ti.com/apps/hmi-demo.git;protocol=git;branch=${BRANCH} \
 "
