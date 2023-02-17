@@ -12,14 +12,12 @@ SRC_URI = "git://git.ti.com/apps/hmi-demo.git;protocol=git;branch=${BRANCH} \
 
 S = "${WORKDIR}/git"
 
-inherit deploy update-rc.d
+inherit deploy
 
 do_install_append () {
     install -d ${D}${sysconfdir}/init.d
     install -m 755 ${S}/scripts/start_camera_demo.sh ${D}${sysconfdir}/init.d/start_camera_demo.sh
 }
-
-INITSCRIPT_NAME="start_camera_demo.sh"
 
 FILES_${PN} += "${sysconfdir}/init.d/start_camera_demo.sh"
 
