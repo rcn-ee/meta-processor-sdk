@@ -14,7 +14,6 @@ GRAPHICS_DEMO_am62xx-evm = "\
 GRAPHICS_DEMO_am62xx-lp-evm = "\
     hmi-demo \
     powervr-graphics \
-    camera-demo \
 "
 
 GRAPHICS_RDEPENDS_remove = "\
