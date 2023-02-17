@@ -43,6 +43,7 @@ AM62A_GRAPHICS_SUPPORT = "\
 "
 
 IMAGE_INSTALL_append_am62axx = " \
+    edgeai-gui-app \
     ${AM62A_GRAPHICS_SUPPORT} \
     packagegroup-dl \
     libcamera \
