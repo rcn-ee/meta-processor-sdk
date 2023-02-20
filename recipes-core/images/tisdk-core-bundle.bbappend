@@ -8,6 +8,7 @@ DEPLOY_IMAGES_NAME_append_am62axx-evm = " ipc_echo_testb_mcu1_0_release_strip.xe
 
 # Add small docker rootfs for all SOCs
 TARGET_IMAGES_append = " tisdk-docker-rootfs-image tisdk-tiny-image"
+TARGET_IMAGES_append_am62axx-evm = " tisdk-docker-rootfs-image tisdk-tiny-image tisdk-edgeai-image"
 
 # Generate the full target file system components table.
 sw_manifest_target() {
