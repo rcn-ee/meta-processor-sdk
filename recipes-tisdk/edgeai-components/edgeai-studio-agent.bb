@@ -21,7 +21,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS += "python3-pip-native"
 
-RDEPENDS_${PN} += "edgeai-gst-apps-source bash python3-core python3-aiofiles python3-websocket-client python3-uvicorn python3-fastapi python3-python-multipart cors express nodejs"
+RDEPENDS_${PN} += "edgeai-gst-apps-source bash python3-core python3-aiofiles python3-websocket-client python3-uvicorn python3-fastapi python3-python-multipart python3-websockets cors express nodejs"
 
 COMPATIBLE_MACHINE = "j7-evm|j7-hs-evm|j721s2-evm|j721s2-hs-evm|j784s4-evm|j784s4-hs-evm|am62axx-evm"
 
@@ -36,4 +36,4 @@ do_install() {
     cp ${CP_ARGS} ${WORKDIR}/git/* ${D}/opt/edgeai-studio-agent
 }
 
-PR = "r2"
+PR = "r3"
