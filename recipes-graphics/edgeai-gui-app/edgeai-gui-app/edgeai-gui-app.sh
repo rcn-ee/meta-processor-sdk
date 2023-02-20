@@ -9,7 +9,8 @@ PIDFILE=/var/run/edgeai-gui-app.pid
 
 start() {
     local EDGEAI_GUI_APP_CMD="$EDGEAI_GUI_APP -platform linuxfb &"
-    eval $EDGEAI_GUI_APP_CMD > $PIDFILE
+    eval $EDGEAI_GUI_APP_CMD
+    echo $! > $PIDFILE
 }
 
 stop() {
