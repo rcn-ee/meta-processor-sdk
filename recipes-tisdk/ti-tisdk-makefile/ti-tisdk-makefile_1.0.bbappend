@@ -48,7 +48,12 @@ MAKEFILES_append_am57xx-evm = " \
 MAKEFILES_append_am57xx-hs-evm = " tidl-examples"
 
 MAKEFILES_append_dra7xx = " tiovx-app-host"
-MAKEFILES_append_am62xx = " ti-img-rogue-driver_am62"
+MAKEFILES_append_am62xx = " ti-img-rogue-driver_am62 \
+							linux-fitimage \
+"
+
+MAKEFILES_append_am64xx = " linux-fitimage"
+MAKEFILES_append_am62axx = " linux-fitimage"
 
 KERNEL_BUILD_CMDS_append_am64xx-hs-evm = " Image.gz"
 MAKEFILES_append_am64xx-hs-evm = " linux-fitimage"
