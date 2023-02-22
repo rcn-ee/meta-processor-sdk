@@ -1,13 +1,19 @@
 [Unit]
-Description=Edge AI Init
-After=network.target
+Description=EdgeAI OOB demos
+After=weston.service
+Wants=weston.service
 
 [Service]
-ExecStart=/opt/edgeai-gst-apps/init_script.sh
-Type=idle
-TimeoutStopSec=20
+Type=forking
+Restart=no
+TimeoutSec=30
+IgnoreSIGPIPE=no
 KillMode=process
-StandardOutput=journal+console
+GuessMainPID=no
+ExecStartPre=-/etc/init.d/edgeai-launcher.sh kill_weston
+ExecStart=/etc/init.d/edgeai-launcher.sh start
+ExecStopPost=/etc/init.d/edgeai-launcher.sh exit
+StandardOutput=journal
 
 [Install]
 WantedBy=multi-user.target

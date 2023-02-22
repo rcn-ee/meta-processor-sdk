@@ -51,6 +51,7 @@ EDGEAI_STACK = " \
 IMAGE_INSTALL_append_am62axx += " \
     ${AM62A_GRAPHICS_SUPPORT} \
     ${EDGEAI_STACK} \
+    wallpaper \
     packagegroup-dl \
     libcamera \
     resize-rootfs \

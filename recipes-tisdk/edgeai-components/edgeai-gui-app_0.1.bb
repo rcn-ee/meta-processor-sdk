@@ -10,25 +10,21 @@ DEPENDS = "qtbase qtquick3d qtmultimedia"
 RDEPENDS_${PN} = "qtbase qtquick3d qtmultimedia"
 
 BRANCH = "master"
-SRCREV = "68b03e92341a61a9626ee07f7c0e2701359b0950"
+SRCREV = "f91968141ed912f7fbcafcff107f1a8c1776e67c"
 
-SRC_URI = "git://git.ti.com/apps/edgeai-gui-app.git;protocol=git;branch=${BRANCH} \
-           file://edgeai-gui-app.sh \
-"
+SRC_URI = "git://git.ti.com/apps/edgeai-gui-app.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
 
-inherit qmake5 deploy update-rc.d
+inherit qmake5
 
 do_install_append () {
     install -d ${D}${bindir}
     install -m 0755 edgeai-gui-app ${D}${bindir}/edgeai-gui-app
 
-    install -d ${D}${sysconfdir}/init.d
-    install -m 755 ${WORKDIR}/edgeai-gui-app.sh ${D}${sysconfdir}/init.d/edgeai-gui-app.sh
+    rm -rf ${D}/opt
 }
 
-INITSCRIPT_NAME="edgeai-gui-app.sh"
+FILES_${PN} += "${bindir}/edgeai-gui-app"
 
-FILES_${PN} += "${bindir}/edgeai-gui-app ${sysconfdir}/init.d/edgeai-gui-app.sh"
-
+PR = "r1"
