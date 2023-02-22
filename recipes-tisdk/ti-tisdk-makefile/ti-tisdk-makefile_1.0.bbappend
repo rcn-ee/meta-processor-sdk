@@ -49,7 +49,7 @@ MAKEFILES_append_am57xx-hs-evm = " tidl-examples"
 
 MAKEFILES_append_dra7xx = " tiovx-app-host"
 MAKEFILES_append_am62xx = " ti-img-rogue-driver_am62 \
-							linux-fitimage \
+                            linux-fitimage \
 "
 
 MAKEFILES_append_am64xx = " linux-fitimage"
