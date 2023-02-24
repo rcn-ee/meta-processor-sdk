@@ -5,7 +5,7 @@ HOMEPAGE = "https://git.ti.com/cgit/edgeai/edgeai-dl-inferer/about/"
 LICENSE = "TI-TFL"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=4309553a9d3611cdf7a78bd169ec583c"
 
-SRC_URI = "git://git.ti.com/edgeai/edgeai-dl-inferer.git;tag=EDGEAI_APP_STACK_08_06_00_01;nobranch=1;protocol=git"
+SRC_URI = "git://git.ti.com/edgeai/edgeai-dl-inferer.git;tag=EDGEAI_APP_STACK_08_06_00_02;nobranch=1;protocol=git"
 
 S = "${WORKDIR}/git"
 
