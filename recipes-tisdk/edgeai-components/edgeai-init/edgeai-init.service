@@ -12,7 +12,7 @@ KillMode=process
 GuessMainPID=no
 ExecStartPre=-/etc/init.d/edgeai-launcher.sh kill_weston
 ExecStart=/etc/init.d/edgeai-launcher.sh start
-ExecStopPost=/etc/init.d/edgeai-launcher.sh exit
+ExecStopPost=/etc/init.d/edgeai-launcher.sh stop
 StandardOutput=journal
 
 [Install]

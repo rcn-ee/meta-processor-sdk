@@ -45,8 +45,7 @@ case "$1" in
         if [ $ENABLE_GUI -eq 1 ]; then
             stop_gui
         fi
-    ;;
-    exit )
+
         source $EDGEAI_INIT_SCRIPT
         #Set time, wait for network to come up
         if ! ps -ef  | grep -v grep | grep -q ntpd
