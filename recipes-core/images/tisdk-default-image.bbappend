@@ -1,4 +1,15 @@
-PR_append = ".tisdk3"
+PR_append = ".tisdk4"
+
+IMAGE_INSTALL_remove_am65xx = "\
+    packagegroup-arago-tisdk-matrix \
+    packagegroup-arago-tisdk-matrix-extra \
+"
+
+IMAGE_INSTALL_append_am65xx += " \
+    docker \
+    packagegroup-arago-gst-sdk-target \
+    packagegroup-python3-jupyter \
+"
 
 IMAGE_INSTALL_append_am64xx += "\
     dropbear \

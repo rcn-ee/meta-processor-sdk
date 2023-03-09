@@ -12,6 +12,7 @@ PREFERRED_PROVIDER_virtual/kernel_omapl137 = "linux-dummy"
 #PREFERRED_PROVIDER_virtual/kernel_am57xx-evm = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
 #PREFERRED_PROVIDER_virtual/kernel_keystone = "linux-processor-sdk${ARAGO_KERNEL_SUFFIX}"
 PREFERRED_VERSION_linux-processor-sdk = "4.4%"
+PREFERRED_VERSION_tensorflow-lite_am65xx = "1.15"
 
 
 # Remove wayland from keystone DISTRO_FEATURES.

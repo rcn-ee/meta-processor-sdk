@@ -5,6 +5,17 @@ DEPLOY_IMAGES_NAME_append_am64xx-hs-evm = " ti-sci-firmware-am64x-hs-cert.bin ti
 DEPLOY_IMAGES_NAME_append_am62xx-evm = " ti-fs-firmware-am62x-hs-fs-enc.bin ti-fs-firmware-am62x-hs-fs-cert.bin tiboot3-am62x-hs-evm.bin tiboot3-am62x-gp-evm.bin ti-fs-firmware-am62x-hs-enc.bin ti-fs-firmware-am62x-hs-cert.bin ti-fs-firmware-am62x-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f wificfg"
 DEPLOY_IMAGES_NAME_append_am62xx-lp-evm = " ti-fs-firmware-am62x-hs-fs-enc.bin ti-fs-firmware-am62x-hs-fs-cert.bin tiboot3-am62x-hs-evm.bin ti-fs-firmware-am62x-hs-enc.bin ti-fs-firmware-am62x-hs-cert.bin ti-fs-firmware-am62x-gp.bin ipc_echo_testb_mcu1_0_release_strip.xer5f wificfg"
 DEPLOY_IMAGES_NAME_append_am62axx-evm = " ipc_echo_testb_mcu1_0_release_strip.xer5f tiboot3-am62ax-gp-evm.bin tiboot3-am62ax-hs-evm.bin tiboot3-am62ax-hs-fs-evm.bin ti-fs-firmware-am62ax-gp.bin ti-fs-firmware-am62ax-hs-cert.bin ti-fs-firmware-am62ax-hs-enc.bin ti-fs-firmware-am62ax-hs-fs-cert.bin ti-fs-firmware-am62ax-hs-fs-enc.bin fitImage-its.its"
+DEPLOY_IMAGES_NAME_append_am65xx-evm = " ti-sci-firmware-am65x_sr2-gp.bin tiboot3.bin sysfw-am65x_sr2-gp-evm.itb sysfw-am65x-gp-evm.itb"
+DEPLOY_IMAGES_NAME_append_am65xx-hs-evm = " ti-sci-firmware-am65x_sr2-hs-cert.bin ti-sci-firmware-am65x_sr2-hs-enc.bin tiboot3.bin sysfw-am65x_sr2-hs-evm.itb sysfw-am65x-hs-evm.itb fitImage-its.its"
+
+IMAGE_INSTALL_remove_am65xx += "chromium"
+
+IMAGE_INSTALL_am65xx += "\
+    packagegroup-arago-tisdk-addons-sdk-host \
+    packagegroup-arago-tisdk-crypto-sdk-host \
+    ${@bb.utils.contains('MACHINE_FEATURES','gpu','packagegroup-arago-tisdk-graphics-sdk-host','',d)} \
+    packagegroup-arago-tisdk-amsdk-sdk-host${ARAGO_KERNEL_SUFFIX} \
+"
 
 # Add small docker rootfs for all SOCs
 TARGET_IMAGES_append = " tisdk-docker-rootfs-image tisdk-tiny-image"
