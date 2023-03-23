@@ -1,5 +1,7 @@
 PR_append = ".tisdk21"
 
+SRCREV = "2d6d6dfeac3b6e0e5a72513b61ab888a1a1a2bac"
+
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"
 
 SETUP_SCRIPTS_remove = "setup-tftp.sh"
