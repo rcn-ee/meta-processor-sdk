@@ -1,5 +1,13 @@
 PR_append = ".tisdk21"
 
+FILESEXTRAPATHS_append := ":${THISDIR}/${PN}"
+
+SRC_URI_append = " \
+    file://0001-setup-uboot-env-am65x-Adding-sudo-permissions.patch \
+    file://0001-TFTP-Fixing-tftp-setup-script.patch \
+    file://0001-create-sdcard.sh-Copy-all-sysfw-itb-binaries-to-boot.patch \
+"
+
 SRCREV = "2d6d6dfeac3b6e0e5a72513b61ab888a1a1a2bac"
 
 SDCARD_SCRIPT_omapl138 = " create-sdcard-omapl138.sh"

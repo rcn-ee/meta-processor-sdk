@@ -11,6 +11,50 @@ SRC_URI_append = "\
     file://Makefile_pru-adc \
     file://Makefile_linux-fitimage \
 "
+SRC_URI_append_am65xx = "\
+    file://Makefile_sysfw-image-am65xx \
+"
+
+MAKEFILES_remove_am65xx-evm = " sysfw-image"
+MAKEFILES_remove_am65xx-hs-evm = " sysfw-image"
+MAKEFILES_append_am65xx-evm = " sysfw-image-am65xx"
+MAKEFILES_append_am65xx-hs-evm = " sysfw-image-am65xx"
+
+SRC_URI_append_am65xx-evm = "\
+    file://Makefile_ti-sgx-ddk-km-am65xx \
+"
+
+SRC_URI_remove_am65xx-evm = "\
+    file://Makefile_matrix-gui \
+    file://Makefile_matrix-gui-browser \
+    file://Makefile_refresh-screen \
+    file://Makefile_qt-tstat \
+    file://Makefile_pru \
+    file://Makefile_pru-icss \
+    file://Makefile_barcode-roi \
+    file://Makefile_mmwavegesture-hmi \
+    file://Makefile_pdm-anomaly-detection \
+    file://Makefile_ti-ipc \
+    file://Makefile_ti-sgx-ddk-km \
+"
+MAKEFILES_append_am65xx-evm = " ti-sgx-ddk-km-am65xx \
+"
+
+MAKEFILES_COMMON_remove_am65xx-evm = "\
+    matrix-gui \
+    matrix-gui-browser \
+    refresh-screen \
+    qt-tstat \
+"
+MAKEFILES_remove_am65xx-evm = " \
+    pru \
+    pru-icss \
+    barcode-roi \
+    mmwavegesture-hmi \
+    pdm-anomaly-detection \
+    ti-ipc \
+    ti-sgx-ddk-km \
+"
 
 SRC_URI_append_omap-a15 = " file://Makefile_big-data-ipc-demo"
 SRC_URI_append_am62xx = " file://Makefile_ti-img-rogue-driver_am62"
