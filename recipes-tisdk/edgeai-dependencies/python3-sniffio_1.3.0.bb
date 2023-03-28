@@ -1,9 +1,0 @@
-LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=fa7b86389e58dd4087a8d2b833e5fe96"
-
-SRC_URI[md5sum] = "abb96bcda81817d6c632915c53ac29c8"
-SRC_URI[sha256sum] = "e60305c5e5d314f5389259b7f22aaa33d8f7dee49763119234af3755c55b9101"
-
-PYPI_PACKAGE = "sniffio"
-PV = "1.3.0"
-inherit pypi setuptools3
