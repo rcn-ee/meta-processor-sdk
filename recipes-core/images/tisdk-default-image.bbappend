@@ -1,7 +1,5 @@
 PR_append = ".tisdk4"
 
-require tisdk-default-image-append.inc
-
 IMAGE_INSTALL_remove_am65xx = "\
     packagegroup-arago-tisdk-matrix \
     packagegroup-arago-tisdk-matrix-extra \

@@ -16,12 +16,5 @@ EXTRA_PACKAGES_append_am64xx = " \
     print-ip \
 "
 
-EXTRA_PACKAGES_append_am62axx = " \
-    ninja \
-    meson \
-    corkscrew \
-    python3-pycparser \
-"
-
 UTILS_append = " net-snmp net-snmp-server-snmpd"
 
