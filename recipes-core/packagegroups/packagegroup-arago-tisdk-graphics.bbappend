@@ -1,9 +1,6 @@
 PR_append = ".tisdk10"
 
 GRAPHICS_DEMO = ""
-GRAPHICS_DEMO_omap-a15 = "\
-    kmscube \
-"
 
 GRAPHICS_DEMO_am62xx-evm = "\
     hmi-demo \
