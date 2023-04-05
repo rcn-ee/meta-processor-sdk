@@ -17,20 +17,12 @@ IMAGE_INSTALL_append_am64xx += "\
     iproute2 \
     tensorflow-lite \
     resize-rootfs \
-    sysrepo \
-    netopeer2-server \
-    nw-configurator \
-    tsn-yang-models \
 "
 
 IMAGE_INSTALL_append_am62xx += "\
     packagegroup-dl \
     libcamera \
     resize-rootfs \
-    sysrepo \
-    netopeer2-server \
-    nw-configurator \
-    tsn-yang-models \
 "
 
 WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
