@@ -1,4 +1,4 @@
-PR_append = ".tisdk1"
+PR:append = ".psdk0"
 
-RDEPENDS_${PN}_append = "iperf3"
+RDEPENDS:${PN}:append = "iperf3"
 

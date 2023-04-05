@@ -21,7 +21,7 @@ S = "${WORKDIR}/git"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "ti-cgt-pru-native pru-icss ncurses"
-RDEPENDS_${PN} += "bash"
+RDEPENDS:${PN} = "bash"
 
 EXTRA_OEMAKE += "PRU_CGT="${TI_CGT_PRU_INSTALL_DIR}" PRU_SSP="${STAGING_DIR_TARGET}/usr""
 
@@ -37,14 +37,14 @@ do_install() {
     sed -i 's|./ARM_User_Space_App.out|/usr/bin/pru-adc-arm-app.out|g' ${D}${bindir}/run-pru-adc.sh
 }
 
-FILES_${PN} += "${base_libdir}/firmware"
+FILES:${PN} = "${base_libdir}/firmware"
 
-ALTERNATIVE_TARGET_pru-adc[am335x-pru0-fw] = "/lib/firmware/pru/PRU_ADS8688_Controller.out"
-ALTERNATIVE_TARGET_pru-adc[am335x-pru1-fw] = "/lib/firmware/pru/PRU_ADS8688_Interface.out"
+ALTERNATIVE_TARGET:pru-adc[am335x-pru0-fw] = "/lib/firmware/pru/PRU_ADS8688_Controller.out"
+ALTERNATIVE_TARGET:pru-adc[am335x-pru1-fw] = "/lib/firmware/pru/PRU_ADS8688_Interface.out"
 
-ALTERNATIVE_PRIORITY_pru-adc = "20"
+ALTERNATIVE_PRIORITY:pru-adc = "20"
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "example-applications/${PN}-${PV}"
 
-INSANE_SKIP_${PN} = "arch ldflags"
+INSANE_SKIP:${PN} = "arch ldflags"

@@ -1,28 +1,16 @@
-PR_append = ".tisdk10"
+PR:append = ".psdk0"
 
 GRAPHICS_DEMO = ""
 
-GRAPHICS_DEMO_am62xx-evm = "\
-    hmi-demo \
-    powervr-graphics \
-    camera-demo \
-"
-
-GRAPHICS_DEMO_am62xx-lp-evm = "\
-    hmi-demo \
-    powervr-graphics \
-    camera-demo \
-"
-
-GRAPHICS_RDEPENDS_remove = "\
+GRAPHICS_RDEPENDS:remove = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)} \
 "
-GRAPHICS_RDEPENDS_remove = "\
+GRAPHICS_RDEPENDS:remove = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'glmark2', d)} \
 "
 
-GRAPHICS_WAYLAND_remove = "\
+GRAPHICS_WAYLAND:remove = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'wayland-ivi-extension', d)} \
 "
 
-RDEPENDS_${PN} += "${GRAPHICS_DEMO}"
+RDEPENDS:${PN}:append = " ${GRAPHICS_DEMO}"

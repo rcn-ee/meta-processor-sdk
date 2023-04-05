@@ -1,5 +1,5 @@
-PR_append = ".tisdk1"
+PR:append = ".psdk0"
 
-WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
+WIC_CREATE_EXTRA_ARGS:append = " --no-fstab-update"
 
-IMAGE_INSTALL_append = " resize-rootfs"
+IMAGE_INSTALL:append = " resize-rootfs"

@@ -1,14 +1,14 @@
-PR_append = "-tisdk34"
+PR:append = ".psdk0"
 
-UTILS_append_ti33x = " \
+UTILS:append:ti33x = " \
     opencv-dev \
 "
 
-UTILS_append_ti43x = " \
+UTILS:append:ti43x = " \
     opencv-dev \
 "
 
-EXTRA_LIBS_append_am335x-evm = " \
+EXTRA_LIBS:append:am335x-evm = " \
     osal-dev \
     osal-staticdev \
     pruss-lld-dev \
@@ -19,7 +19,7 @@ EXTRA_LIBS_append_am335x-evm = " \
     pru-icss-staticdev \
 "
 
-EXTRA_LIBS_append_am437x-evm = " \
+EXTRA_LIBS:append:am437x-evm = " \
     osal-dev \
     osal-staticdev \
     pruss-lld-dev \

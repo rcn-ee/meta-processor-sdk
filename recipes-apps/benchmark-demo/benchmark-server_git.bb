@@ -73,9 +73,9 @@ SRCREV_FORMAT = "default"
 PV = "1.0.0+git${SRCPV}"
 
 NPM_SHIRNKWRAP := "${THISDIR}/${BPN}/npm-shrinkwrap.json"
-SRCREV_guicomposer = "18115d266ba9f1956d06258ce2c8997fd1ef2efe"
+SRCREV:guicomposer = "18115d266ba9f1956d06258ce2c8997fd1ef2efe"
 
-RDEPENDS_${PN} += "sitara-ipc-app"
+RDEPENDS:${PN} = "sitara-ipc-app"
 
 inherit npm systemd
 
@@ -86,9 +86,9 @@ WEBSERVER_ROOT = "${WORKDIR}/git/benchmark_demo/webserver_app"
 # Set this for npm.bbclass
 S = "${WEBSERVER_ROOT}/webserver"
 
-LICENSE_${PN} = "BSD-3-Clause"
+LICENSE:${PN} = "BSD-3-Clause"
 
-do_install_append() {
+do_install:append() {
     CP_ARGS="-Prf --preserve=mode,timestamps --no-preserve=ownership"
 
     # Install service file
@@ -112,4 +112,6 @@ do_install_append() {
     sed -i -e 's|^APP_DIR=.*$|APP_DIR='"${datadir}/${BPN}/app"'|' ${D}${sysconfdir}/benchmark_server.conf
 }
 
-SYSTEMD_SERVICE_${PN} = "benchmark_server.service"
+SYSTEMD_SERVICE:${PN} = "benchmark_server.service"
+
+PR = "r0"

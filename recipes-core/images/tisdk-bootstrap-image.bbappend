@@ -1,3 +1,3 @@
-PR_append = ".tisdk0"
+PR:append = ".psdk0"
 
-WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
+WIC_CREATE_EXTRA_ARGS:append = " --no-fstab-update"

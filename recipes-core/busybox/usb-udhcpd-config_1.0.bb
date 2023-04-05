@@ -9,13 +9,15 @@ PR = "r0"
 S = "${WORKDIR}"
 
 # Default configuration file is from the base udhcp package
-SRC_URI = "file://udhcpd_usb0.conf \
-           file://LICENSE"
+SRC_URI = " \
+    file://udhcpd_usb0.conf \
+    file://LICENSE \
+"
 
 do_install() {
     install -d ${D}${sysconfdir}
     install -m 0755 ${S}/udhcpd_usb0.conf ${D}${sysconfdir}
 }
 
-FILES_${PN} += "${sysconfdir}/udhcpd_usb0.conf"
-CONFFILES_${PN} += "${sysconfdir}/udhcpd_usb0.conf"
+FILES:${PN} += " ${sysconfdir}/udhcpd_usb0.conf"
+CONFFILES:${PN} += " ${sysconfdir}/udhcpd_usb0.conf"

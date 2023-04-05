@@ -1,17 +1,17 @@
-PR_append = ".tisdk5"
+PR:append = ".psdk0"
 
-CONNECTIVITY_RDEPENDS_append_ti33x = " \
+CONNECTIVITY_RDEPENDS:append:ti33x = " \
     wpantund-dev \
 "
-CONNECTIVITY_RDEPENDS_append_ti43x = " \
+CONNECTIVITY_RDEPENDS:append:ti43x = " \
     wpantund-dev \
 "
-WLAN_TI_append_am64xx-evm = " \
+WLAN_TI:append:am64xx-evm = " \
     wifi-oob \
 "
-WLAN_TI_append_am62xx-evm = " \
+WLAN_TI:append:am62xx-evm = " \
     wifi-oob \
 "
-WLAN_TI_append_am62xx-lp-evm = " \
+WLAN_TI:append:am62xx-lp-evm = " \
     wifi-oob \
 "

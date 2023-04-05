@@ -1,5 +1,5 @@
-PR_append = ".tisdk1"
+PR:append = ".psdk0"
 
-ARAGO_FSTOOLS += "\
+ARAGO_FSTOOLS:append = " \
     e2fsprogs-resize2fs \
 "

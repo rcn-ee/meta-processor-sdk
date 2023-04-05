@@ -1,5 +1,5 @@
-PR_append = ".tisdk0"
+PR:append = ".psdk0"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-RDEPENDS_${PN}-udhcpd += "busybox-udhcpd-conf"
+RDEPENDS:${PN}-udhcpd += " busybox-udhcpd-conf"

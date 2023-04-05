@@ -26,4 +26,6 @@ do_install() {
                     ${D}${systemd_system_unitdir}/rpmsg_json.service
 }
 
-SYSTEMD_SERVICE_${PN} = "rpmsg_json.service"
+SYSTEMD_SERVICE:${PN} = "rpmsg_json.service"
+
+PR = "r0"

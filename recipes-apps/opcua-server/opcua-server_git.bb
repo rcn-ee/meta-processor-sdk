@@ -14,3 +14,5 @@ inherit cmake python3native
 
 CREATE_SRCIPK = "1"
 SRCIPK_INSTALL_DIR = "examples/opc-ua-server"
+
+PR = "r0"

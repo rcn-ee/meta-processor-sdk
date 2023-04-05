@@ -4,7 +4,7 @@ LICENSE = "MIT"
 
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_append := ":${THISDIR}/print_ip:"
+FILESEXTRAPATHS:append := ":${THISDIR}/print_ip:"
 
 SRC_URI = " \
     file://print-ip.service \
@@ -12,7 +12,7 @@ SRC_URI = " \
     file://print-ip.sh \
 "
 
-SYSTEMD_SERVICE_${PN} = "print-ip.timer print-ip.service"
+SYSTEMD_SERVICE:${PN} = "print-ip.timer print-ip.service"
 
 inherit systemd
 
@@ -27,3 +27,4 @@ do_install() {
     install -m 0755 ${WORKDIR}/print-ip.sh ${D}/usr/bin/print-ip.sh
 }
 
+PR = "r0"

@@ -2,7 +2,7 @@ SUMMARY = "Benchmark demo firmware binaries"
 LICENSE = "TI-TFL"
 LIC_FILES_CHKSUM = "file://${COREBASE}/../meta-ti/licenses/TI-TFL;md5=a1b59cb7ba626b9dbbcbf00f3fbc438a"
 
-COMPATIBLE_MACHINE = "k3"
+COMPATIBLE_MACHINE = "am64xx"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 PV = "08_01_00_25"
 
@@ -23,12 +23,12 @@ inherit update-alternatives
 INHIBIT_DEFAULT_DEPS = "1"
 INHIBIT_PACKAGE_STRIP = "1"
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
-INSANE_SKIP_${PN} += "arch"
+INSANE_SKIP:append:${PN} = " arch"
 
 do_compile[noexec] = "1"
 do_configure[noexec] = "1"
 
-ALTERNATIVE_${PN}_am64xx = " \
+ALTERNATIVE:${PN}:am64xx = " \
     am64-main-r5f0_0-fw \
     am64-main-r5f0_1-fw \
     am64-main-r5f1_0-fw \
@@ -47,4 +47,6 @@ ALTERNATIVE_TARGET[am64-main-r5f1_1-fw] = "${base_libdir}/firmware/mcusdk-benchm
 
 ALTERNATIVE_PRIORITY = "20"
 
-FILES_${PN} = "${base_libdir}"
+FILES:${PN} += "${base_libdir}"
+
+PR:append = "r0"

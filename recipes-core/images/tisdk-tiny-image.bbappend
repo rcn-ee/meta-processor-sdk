@@ -1,7 +1,7 @@
-PR_append = ".tisdk1"
+PR:append = ".psdk0"
 
-IMAGE_INSTALL_am65xx += " \
+IMAGE_INSTALL:append:am65xx = " \
     kmod \
 "
 
-WIC_CREATE_EXTRA_ARGS += " --no-fstab-update"
+WIC_CREATE_EXTRA_ARGS:append = " --no-fstab-update"

@@ -1,5 +1,6 @@
-PR_append = ".tisdk16"
+PR:append = ".psdk0"
 
-RDEPENDS_${PN}_remove = "kexec \
-                         kdump \
+RDEPENDS:${PN}:remove = " \
+    kexec \
+    kdump \
 "

@@ -4,15 +4,15 @@ LICENSE = "MIT"
 
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-PR = "r1"
+PR = "r0"
 
-SYSTEMD_SERVICE_${PN} = "startwlanap.service startwlansta.service"
+SYSTEMD_SERVICE:${PN} = "startwlanap.service startwlansta.service"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/wifi-oob:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/wifi-oob:"
 
-SRC_URI= " \
+SRC_URI = " \
     file://startwlanap.sh \
     file://startwlanap.service \
     file://01-wlan1-static.network \
@@ -21,7 +21,7 @@ SRC_URI= " \
     file://wificfg \
 "
 
-FILES_${PN} += "${datadir}/wl18xx/"
+FILES:${PN} = "${datadir}/wl18xx/"
 
 inherit systemd deploy
 
@@ -51,3 +51,18 @@ do_deploy() {
 }
 
 addtask deploy after do_compile
+
+FILES:${PN} = " \
+    /etc \
+    /etc/init.d \
+    /etc/systemd \
+    /etc/init.d/startwlanap.sh \
+    /etc/init.d/startwlansta.sh \
+    /etc/systemd/network \
+    /etc/systemd/network/01-wlan1-static.network \
+    /usr \
+    /usr/share \
+    /usr/share/wl18xx \
+    /usr/share/wl18xx/wificfg \
+"
+

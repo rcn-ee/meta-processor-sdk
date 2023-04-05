@@ -1,8 +1,8 @@
-PR_append = ".tisdk0"
+PR:append = ".psdk0"
 
-CONNECTIVITY_RDEPENDS_append_ti33x = " \
+CONNECTIVITY_RDEPENDS:append:ti33x = " \
     wpantund-dev \
 "
-CONNECTIVITY_RDEPENDS_append_ti43x = " \
+CONNECTIVITY_RDEPENDS:append:ti43x = " \
     wpantund-dev \
 "
