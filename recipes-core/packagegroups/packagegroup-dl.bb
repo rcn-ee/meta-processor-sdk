@@ -1,5 +1,5 @@
 DESCRIPTION = "Processor-SDK Deep Learning packagegroup"
-PR = "r2"
+PR = "r0"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -14,12 +14,6 @@ DL_PACKAGES = " \
     tensorflow-lite \
 "
 
-DL_PACKAGES_am62xx-evm = " \
-    neo-ai-dlr \
-    onnxruntime \
-    onnxruntime-dev \
-"
-
 PYTHON_PACKAGES = " \
    python3-pip \
    python3-pillow \
@@ -27,11 +21,7 @@ PYTHON_PACKAGES = " \
    python3-numpy \
 "
 
-PYTHON_PACKAGES_am62xx-evm = " \
-    python3-tensorflow-lite \
-"
-
-RDEPENDS_${PN} = " \
+RDEPENDS:${PN} = " \
     glib-2.0-dev \
     libpcre-dev \
     cmake \
