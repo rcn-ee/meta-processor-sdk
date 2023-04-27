@@ -1,0 +1,32 @@
+From 21466551627caf97f6306d25076a3fa1aadf1d18 Mon Sep 17 00:00:00 2001
+From: Paresh Bhagat <p-bhagat@ti.com>
+Date: Thu, 27 Apr 2023 10:57:12 +0530
+Subject: [PATCH 1/7] mm: vmalloc: Export __get_vm_area_caller
+
+Needed by Jailhouse so far, as replacement of __get_vm_area. Should be
+solved there eventually (via removal of JAILHOUSE_BORROW_ROOT_PT), then
+this can be dropped again.
+
+Upstream-Status: Pending
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+---
+ mm/vmalloc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index ccaa461998f3..e1c7634bd89d 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2528,6 +2528,7 @@ struct vm_struct *__get_vm_area_caller(unsigned long size, unsigned long flags,
+ 	return __get_vm_area_node(size, 1, PAGE_SHIFT, flags, start, end,
+ 				  NUMA_NO_NODE, GFP_KERNEL, caller);
+ }
++EXPORT_SYMBOL_GPL(__get_vm_area_caller);
+ 
+ /**
+  * get_vm_area - reserve a contiguous kernel virtual area
+-- 
+2.17.1
+

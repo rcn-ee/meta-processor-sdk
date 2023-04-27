@@ -1,0 +1,31 @@
+From c462e3fdbb19a41e48dd895fd7945e4c24c8c1aa Mon Sep 17 00:00:00 2001
+From: Paresh Bhagat <p-bhagat@ti.com>
+Date: Thu, 27 Apr 2023 11:22:00 +0530
+Subject: [PATCH 6/7] mm: Allow executable ioremap mappings
+
+Jailhouse needs executable ioremapped RAM to start the hypervisor.
+
+Upstream-Status: Pending
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+---
+ mm/vmalloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 8f96954fe7ea..4fb73df717da 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -317,7 +317,7 @@ int ioremap_page_range(unsigned long addr, unsigned long end,
+ {
+ 	int err;
+ 
+-	err = vmap_range_noflush(addr, end, phys_addr, pgprot_nx(prot),
++	err = vmap_range_noflush(addr, end, phys_addr, prot,
+ 				 ioremap_max_page_shift);
+ 	flush_cache_vmap(addr, end);
+ 	if (!err)
+-- 
+2.17.1
+
