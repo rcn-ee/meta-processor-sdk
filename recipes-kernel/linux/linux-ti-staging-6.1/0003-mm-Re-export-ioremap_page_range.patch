@@ -1,0 +1,31 @@
+From 58074a81ab9a1f40b689c7c80a082fb8d2bb8ee0 Mon Sep 17 00:00:00 2001
+From: Paresh Bhagat <p-bhagat@ti.com>
+Date: Thu, 27 Apr 2023 11:07:18 +0530
+Subject: [PATCH 3/7] mm: Re-export ioremap_page_range
+
+We need this in Jailhouse to map at specific virtual addresses, at
+least for the moment.
+
+Upstream-Status: Pending
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+---
+ mm/vmalloc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index e1c7634bd89d..8f96954fe7ea 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -325,6 +325,7 @@ int ioremap_page_range(unsigned long addr, unsigned long end,
+ 					 ioremap_max_page_shift);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(ioremap_page_range);
+ 
+ static void vunmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 			     pgtbl_mod_mask *mask)
+-- 
+2.17.1
+
