@@ -1,6 +1,16 @@
-PR:append = ".psdk0"
+PR:append = ".psdk1"
 
 GRAPHICS_DEMO = ""
+
+GRAPHICS_DEMO:am62xx-evm = " \
+    hmi-demo \
+    camera-demo \
+"
+
+GRAPHICS_DEMO:am62xx-lp-evm = " \
+    hmi-demo \
+    camera-demo \
+"
 
 GRAPHICS_RDEPENDS:remove = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'gpu', '', 'ti-sgx-ddk-km', d)} \
