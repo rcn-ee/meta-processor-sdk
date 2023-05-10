@@ -15,6 +15,8 @@ LIC_FILES_CHKSUM = " \
 
 S = "${WORKDIR}/git/benchmark_demo/webserver_app/linux_app"
 
+TARGET_CC_ARCH += "${LDFLAGS}"
+
 do_install() {
     # install linux user space IPC app
     install -d ${D}${bindir}/
@@ -28,4 +30,4 @@ do_install() {
 
 SYSTEMD_SERVICE:${PN} = "rpmsg_json.service"
 
-PR = "r0"
+PR = "r1"
