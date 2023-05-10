@@ -68,12 +68,12 @@ SRC_URI = " \
     npmsw://${NPM_SHIRNKWRAP} \
     git://git.ti.com/gui-composer-components/ti-gc-components.git;protocol=git;branch=master;destsuffix=git/benchmark_demo/webserver_app/app/components;name=guicomposer \
 "
-SRCREV = "2f75495113219580eb1f5351920aa04abf43ccd0"
+SRCREV = "89cd7d9d048231bc6f9f504f9b705e7655b0e085"
 SRCREV_FORMAT = "default"
 PV = "1.0.0+git${SRCPV}"
 
 NPM_SHIRNKWRAP := "${THISDIR}/${BPN}/npm-shrinkwrap.json"
-SRCREV:guicomposer = "18115d266ba9f1956d06258ce2c8997fd1ef2efe"
+SRCREV_guicomposer = "18115d266ba9f1956d06258ce2c8997fd1ef2efe"
 
 RDEPENDS:${PN} = "sitara-ipc-app"
 
@@ -114,4 +114,4 @@ do_install:append() {
 
 SYSTEMD_SERVICE:${PN} = "benchmark_server.service"
 
-PR = "r0"
+PR = "r1"
