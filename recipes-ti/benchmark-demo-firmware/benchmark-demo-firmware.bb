@@ -1,6 +1,6 @@
 SUMMARY = "Benchmark demo firmware binaries"
 LICENSE = "TI-TFL"
-LIC_FILES_CHKSUM = "file://${COREBASE}/../meta-ti/licenses/TI-TFL;md5=a1b59cb7ba626b9dbbcbf00f3fbc438a"
+LIC_FILES_CHKSUM = "file://${COREBASE}/../meta-ti/meta-ti-bsp/licenses/TI-TFL;md5=a1b59cb7ba626b9dbbcbf00f3fbc438a"
 
 COMPATIBLE_MACHINE = "am64xx"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -23,7 +23,7 @@ inherit update-alternatives
 INHIBIT_DEFAULT_DEPS = "1"
 INHIBIT_PACKAGE_STRIP = "1"
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
-INSANE_SKIP:append:${PN} = " arch"
+INSANE_SKIP:${PN} += "arch"
 
 do_compile[noexec] = "1"
 do_configure[noexec] = "1"
@@ -49,4 +49,4 @@ ALTERNATIVE_PRIORITY = "20"
 
 FILES:${PN} += "${base_libdir}"
 
-PR:append = "r0"
+PR:append = "r1"
