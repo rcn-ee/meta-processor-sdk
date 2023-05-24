@@ -1,0 +1,10 @@
+[Unit]
+Description=Systemd Service to Start Weston
+
+[Service]
+Type=forking
+ExecStart=/etc/init.d/weston start
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
