@@ -1,3 +1,5 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
 PR:append = ".psdk0"
 
 SRC_URI:append = " \
