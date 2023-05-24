@@ -1,4 +1,4 @@
-PR:append = ".psdk0"
+PR:append = ".psdk1"
 
 DEPLOY_IMAGES_NAME:append:am64xx-evm = " \
     tiboot3-am64x_sr2-hs-fs-evm.bin \
@@ -8,7 +8,7 @@ DEPLOY_IMAGES_NAME:append:am64xx-evm = " \
     ti-sci-firmware-am64x_sr2-hs-fs-enc.bin \
     ti-sci-firmware-am64x_sr2-hs-cert.bin \
     ti-sci-firmware-am64x_sr2-hs-enc.bin \
-    fitImage-its.its \
+    fitImage \
     wificfg \
 "
 
@@ -22,7 +22,7 @@ DEPLOY_IMAGES_NAME:append:am62xx-evm = " \
     ti-fs-firmware-am62x-hs-cert.bin \
     ti-fs-firmware-am62x-gp.bin \
     ipc_echo_testb_mcu1_0_release_strip.xer5f \
-    fitImage-its.its \
+    fitImage \
     wificfg \
 "
 
@@ -62,10 +62,9 @@ IMAGE_INSTALL:append:am65xx = " \
     packagegroup-arago-tisdk-amsdk-sdk-host${ARAGO_KERNEL_SUFFIX} \
 "
 
-# Add small docker rootfs for all SOCs
-TARGET_IMAGES:append = " \
-    tisdk-docker-rootfs-image \
-    tisdk-tiny-image \
+# Avoid building bootstrap-image while generating tisdk-core-bundle for PROC SDK
+TARGET_IMAGES:remove = " \
+    tisdk-bootstrap-image \
 "
 
 # Generate the full target file system components table.
