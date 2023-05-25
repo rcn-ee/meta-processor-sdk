@@ -16,7 +16,7 @@ do_install:append() {
    install -D -p -m0644 ${WORKDIR}/weston.socket ${D}${sysconfdir}/systemd/system
 }
 
-FILES:${PN}:append = "${sysconfdir}/profile.d/* ${sysconfdir}/weston.ini ${sysconfdir}/systemd/system/weston.service ${sysconfdir}/systemd/system/weston.socket"
+FILES:${PN}:append = "${sysconfdir}/profile.d/* ${sysconfdir}/weston.ini ${sysconfdir}/systemd/system/weston.service ${sysconfdir}/systemd/system/weston.socket /lib/*"
 
 SYSTEMD_SERVICE:${PN} = "weston.service"
 
