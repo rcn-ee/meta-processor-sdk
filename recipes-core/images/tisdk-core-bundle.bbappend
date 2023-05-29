@@ -1,4 +1,4 @@
-PR:append = ".psdk1"
+PR:append = ".psdk2"
 
 DEPLOY_IMAGES_NAME:append:am64xx-evm = " \
     tiboot3-am64x_sr2-hs-fs-evm.bin \
@@ -55,7 +55,8 @@ DEPLOY_IMAGES_NAME:append:am65xx-hs-evm = " \
 
 IMAGE_INSTALL:remove:am65xx = "chromium"
 
-IMAGE_INSTALL:append:am65xx = " \
+# Add respective packagegroups to deploy their sources in SDK installer
+IMAGE_INSTALL:append = " \
     packagegroup-arago-tisdk-addons-sdk-host \
     packagegroup-arago-tisdk-crypto-sdk-host \
     ${@bb.utils.contains('MACHINE_FEATURES','gpu','packagegroup-arago-tisdk-graphics-sdk-host','',d)} \
