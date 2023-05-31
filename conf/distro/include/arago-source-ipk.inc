@@ -40,9 +40,6 @@ INHERIT += "sourceipk"
 SRCIPK_INCLUDE_EXTRAFILES = "0"
 
 # Set source ipk packages and install directories
-CREATE_SRCIPK:pn-ti-tisdk-licenses ?= "1"
-SRCIPK_INSTALL_DIR:pn-ti-tisdk-licenses ?= "docs/licenses"
-
 CREATE_SRCIPK:pn-matrix-gui ?= "1"
 SRCIPK_INSTALL_DIR:pn-matrix-gui ?= "example-applications/${PN}-${PV}"
 
