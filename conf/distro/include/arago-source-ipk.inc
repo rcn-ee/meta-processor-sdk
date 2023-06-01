@@ -58,9 +58,6 @@ SRCIPK_INSTALL_DIR:pn-qt-catalog ?= "example-applications/${PN}-${PV}"
 CREATE_SRCIPK:pn-qt-patientcare ?= "1"
 SRCIPK_INSTALL_DIR:pn-qt-patientcare ?= "example-applications/${PN}-${PV}"
 
-CREATE_SRCIPK:pn-qt-tstat ?= "1"
-SRCIPK_INSTALL_DIR:pn-qt-tstat ?= "example-applications/${PN}-${PV}"
-
 CREATE_SRCIPK:pn-dual-camera-demo ?= "1"
 SRCIPK_INSTALL_DIR:pn-dual-camera-demo ?= "example-applications/${PN}-${PV}"
 
@@ -84,9 +81,6 @@ SRCIPK_INSTALL_DIR:pn-image-gallery ?= "example-applications/${PN}"
 
 CREATE_SRCIPK:pn-matrix-gui-browser ?= "1"
 SRCIPK_INSTALL_DIR:pn-matrix-gui-browser ?= "example-applications/${PN}-${PV}"
-
-CREATE_SRCIPK:pn-refresh-screen ?= "1"
-SRCIPK_INSTALL_DIR:pn-refresh-screen ?= "example-applications/${PN}-${PV}"
 
 CREATE_SRCIPK:pn-am-sysinfo ?= "1"
 SRCIPK_INSTALL_DIR:pn-am-sysinfo ?= "example-applications/${PN}-${PV}"
@@ -205,9 +199,6 @@ SRCIPK_INSTALL_DIR:pn-ti-syslink ?= "component-sources/syslink_${PV}"
 
 CREATE_SRCIPK:pn-ti-audio-soc-example ?= "1"
 SRCIPK_INSTALL_DIR:pn-ti-audio-soc-example ?= "audio-soc-example_${PV}"
-
-CREATE_SRCIPK:pn-ti-ipc ?= "1"
-SRCIPK_INSTALL_DIR:pn-ti-ipc ?= "component-sources/ipc_${PV}"
 
 CREATE_SRCIPK:pn-ti-dsp-benchmark ?= "1"
 SRCIPK_INSTALL_DIR:pn-ti-dsp-benchmark ?= "example-applications/dsp-benchmark_${PV}"
