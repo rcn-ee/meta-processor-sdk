@@ -60,7 +60,7 @@ IMAGE_INSTALL:append = " \
     packagegroup-arago-tisdk-addons-sdk-host \
     packagegroup-arago-tisdk-crypto-sdk-host \
     ${@bb.utils.contains('MACHINE_FEATURES','gpu','packagegroup-arago-tisdk-graphics-sdk-host','',d)} \
-    packagegroup-arago-tisdk-amsdk-sdk-host${ARAGO_KERNEL_SUFFIX} \
+    packagegroup-arago-tisdk-amsdk-sdk-host \
 "
 
 # Avoid building bootstrap-image while generating tisdk-core-bundle for PROC SDK
