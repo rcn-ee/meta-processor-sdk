@@ -206,7 +206,7 @@ UBOOT_LOADADDRESS ?= "0"
 
 KERNEL_BUILD_CMDS = "${@oe.utils.conditional('KERNEL_IMAGETYPE','uImage','LOADADDR=${UBOOT_LOADADDRESS}','',d)} ${KERNEL_IMAGETYPE}"
 
-DEFCONFIG = "tisdk_${MACHINE}${ARAGO_KERNEL_SUFFIX}_defconfig"
+DEFCONFIG = "defconfig"
 
 AMSDK_DEFCONFIG = "singlecore-omap2plus_defconfig"
 
