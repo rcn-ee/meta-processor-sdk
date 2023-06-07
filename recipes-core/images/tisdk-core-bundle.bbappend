@@ -1,4 +1,4 @@
-PR:append = ".psdk2"
+PR:append = ".psdk3"
 
 DEPLOY_IMAGES_NAME:append:am64xx-evm = " \
     tiboot3-am64x_sr2-hs-fs-evm.bin \
@@ -61,6 +61,7 @@ IMAGE_INSTALL:append = " \
     packagegroup-arago-tisdk-crypto-sdk-host \
     ${@bb.utils.contains('MACHINE_FEATURES','gpu','packagegroup-arago-tisdk-graphics-sdk-host','',d)} \
     packagegroup-arago-tisdk-amsdk-sdk-host \
+    packagegroup-arago-tisdk-matrix-sdk-host \
 "
 
 # Avoid building bootstrap-image while generating tisdk-core-bundle for PROC SDK
