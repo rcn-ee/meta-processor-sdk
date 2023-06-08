@@ -1,4 +1,4 @@
-PR = "r0"
+PR = "r1"
 DESCRIPTION = "Package containing Makefile and Rules.make file for TISDKs"
 
 LICENSE = "MIT"
@@ -26,7 +26,6 @@ SRC_URI = "\
     file://Makefile_linux-dtbs \
     file://Makefile_linux-fitimage \
     file://Makefile_matrix-gui \
-    file://Makefile_matrix-gui-browser \
     file://Makefile_mmwavegesture-hmi \
     file://Makefile_oprofile-example \
     file://Makefile_pdm-anomaly-detection \
@@ -58,7 +57,6 @@ SRC_URI:append:am65xx-evm = "\
 
 SRC_URI:remove:am65xx-evm = "\
     file://Makefile_matrix-gui \
-    file://Makefile_matrix-gui-browser \
     file://Makefile_pru \
     file://Makefile_pru-icss \
     file://Makefile_barcode-roi \
@@ -67,8 +65,7 @@ SRC_URI:remove:am65xx-evm = "\
     file://Makefile_ti-sgx-ddk-km \
 "
 
-MAKEFILES_MATRIX_GUI = "matrix-gui-browser \
-"
+MAKEFILES_MATRIX_GUI = ""
 
 MAKEFILES_MATRIX_GUI:am64xx = ""
 
@@ -82,7 +79,6 @@ MAKEFILES_COMMON = "linux \
 
 MAKEFILES_COMMON:remove:am65xx-evm = "\
     matrix-gui \
-    matrix-gui-browser \
 "
 
 MAKEFILES = ""

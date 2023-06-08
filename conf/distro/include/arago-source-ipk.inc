@@ -79,9 +79,6 @@ SRCIPK_INSTALL_DIR:pn-tiovx-app-host ?= "example-applications/${PN}-${PV}"
 CREATE_SRCIPK:pn-image-gallery ?= "1"
 SRCIPK_INSTALL_DIR:pn-image-gallery ?= "example-applications/${PN}"
 
-CREATE_SRCIPK:pn-matrix-gui-browser ?= "1"
-SRCIPK_INSTALL_DIR:pn-matrix-gui-browser ?= "example-applications/${PN}-${PV}"
-
 CREATE_SRCIPK:pn-am-sysinfo ?= "1"
 SRCIPK_INSTALL_DIR:pn-am-sysinfo ?= "example-applications/${PN}-${PV}"
 
