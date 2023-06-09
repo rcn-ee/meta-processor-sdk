@@ -1,15 +1,17 @@
-PR:append = ".psdk1"
+PR:append = ".psdk2"
 
 GRAPHICS_DEMO = ""
 
 GRAPHICS_DEMO:am62xx-evm = " \
     hmi-demo \
     camera-demo \
+    powervr-graphics \
 "
 
 GRAPHICS_DEMO:am62xx-lp-evm = " \
     hmi-demo \
     camera-demo \
+    powervr-graphics \
 "
 
 GRAPHICS_RDEPENDS:remove = " \

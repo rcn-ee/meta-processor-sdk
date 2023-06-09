@@ -2,21 +2,24 @@ DESCRIPTION = "Imagination PowerVR SDK binaries/examples"
 LICENSE = "MIT"
 
 SRC_URI = " \
-    git://github.com/powervr-graphics/Native_SDK.git;protocol=git;branch=${BRANCH} \
-    file://0001-lib-Rename-Linux_armv8_64-to-Linux_aarch64.patch \
+    git://github.com/powervr-graphics/Native_SDK.git;protocol=https;branch=${BRANCH} \
+    file://0001-PATCH-use-library-so-names-for-linking.patch \
 "
 
 BRANCH = "master"
-SRCREV = "adac88fd5b43fe0eee661110714295cc223be1ce"
+SRCREV = "54f03a98b3ac538aea06e814a6288e1288b440b8"
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=402476d9302b00251cc699d23264b191"
 
 S = "${WORKDIR}/git"
 SRC_DIR = "arm"
 SRC_DIR:k3 = "armv8_64"
 
-inherit cmake
+inherit cmake pkgconfig
 
-EXTRA_OECMAKE += " -DPVR_WINDOW_SYSTEM=Wayland -DCMAKE_LIBRARY_PATH="
+EXTRA_OECMAKE += " -DPVR_WINDOW_SYSTEM=Wayland -DCMAKE_LIBRARY_PATH= -DPVR_BUILD_OPENGLES_EXAMPLES=On -DPVR_BUILD_VULKAN_EXAMPLES=Off" 
+
+export http_proxy
+export https_proxy
 
 do_install () {
     CP_ARGS="-Prf --preserve=mode,timestamps --no-preserve=ownership"
@@ -30,8 +33,8 @@ do_install () {
     cp ${CP_ARGS} ${WORKDIR}/build/bin/OpenGLESBinaryShaders ${D}${bindir}/SGX/demos/Wayland/
 }
 
-DEPENDS = "wayland"
-RDEPENDS:${PN} = "wayland libegl"
+DEPENDS = "wayland wayland-native wayland-protocols"
+RDEPENDS:${PN} = "wayland libegl wayland-protocols"
 
 FILES:${PN} += " \
     /opt/img-powervr-sdk/* \
