@@ -1,6 +1,6 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
 LICENSE = "MIT"
-PR = "r0"
+PR = "r1"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -21,7 +21,6 @@ UTILS:append:ti43x = " \
 "
 
 UTILS:append:k3 = " \
-    ti-sci-fw-source \
     trusted-firmware-a-src \
 "
 
