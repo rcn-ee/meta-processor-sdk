@@ -23,4 +23,6 @@ do_deploy () {
      install -m 644 ${SYSFW_TISCI} ${DEPLOYDIR}/
 }
 
+do_deploy:k3r5[noexec] = "1"
+
 addtask deploy before do_build after do_compile
