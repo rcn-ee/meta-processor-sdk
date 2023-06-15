@@ -1,15 +1,15 @@
-PR = "psdk0"
+PR = "psdk1"
 SUMMARY = "Recipe to add uboot-flash-writer in SDK Installer"
 
 LICENSE = "TI-TSPA"
 LIC_FILES_CHKSUM = "file://${COREBASE}/../meta-ti/meta-ti-bsp/licenses/TI-TSPA;md5=bb6bc27cd44417c389a180bd62f552a0"
 
-COMPATIBLE_MACHINE = "am62xx-evm|am64xx-evm|am62axx-evm"
+COMPATIBLE_MACHINE = "am62xx-evm|am64xx-evm|am62axx-evm|am62xx-lp-evm"
 
 S = "${WORKDIR}"
 BRANCH = "master"
 
-SRCREV = "f96e6d0f61c318ae78965c374e242a280d05922c"
+SRCREV = "347d15009c8c1e245248dfbbb0578fca5644661e"
 
 SRC_URI = " \
     git://git.ti.com/git/processor-sdk/uboot-flash-writer.git;protocol=https;branch=${BRANCH} \
@@ -30,6 +30,9 @@ FLASHWRITER:am64xx-evm = "DFU_flash \
 	Ethernet_flash \
 	uart_uniflash \
 "                                          
+
+FLASHWRITER:am62xx-lp-evm = "uart_uniflash \
+"
 
 do_install() {
     
@@ -72,4 +75,8 @@ FILES:${PN}:am64xx-evm = " \
 FILES:${PN}:am62axx-evm = " \
 	/bin/DFU_flash/* \
 	/bin/uart_uniflash/* \ 
+"
+
+FILES:${PN}:am62xx-lp-evm = " \                                                   
+	/bin/uart_uniflash/* \                                                      
 "
