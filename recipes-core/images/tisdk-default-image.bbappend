@@ -1,4 +1,4 @@
-PR:append = ".psdk0"
+PR:append = ".psdk1"
 
 IMAGE_INSTALL:remove:am65xx = " \
     packagegroup-arago-tisdk-matrix \
@@ -21,6 +21,7 @@ IMAGE_INSTALL:append:am64xx = " \
 IMAGE_INSTALL:append:am62xx = " \
     libcamera \
     resize-rootfs \
+    packagegroup-seva \
 "
 
 WIC_CREATE_EXTRA_ARGS:append = " --no-fstab-update"
