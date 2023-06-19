@@ -1,4 +1,4 @@
-PR:append = ".psdk0"
+PR:append = ".psdk1"
 
 SYSFW_SOC ?= "unknown"
 
@@ -18,11 +18,12 @@ SYSFW_TISCI = "${S}/ti-sysfw/ti-${SYSFW_PREFIX}-firmware-${SYSFW_SOC}-*.bin"
 
 inherit deploy
 
-do_deploy () {
-     install -d ${DEPLOYDIR}
-     install -m 644 ${SYSFW_TISCI} ${DEPLOYDIR}/
+do_deploy() {
+    install -d ${DEPLOYDIR}
 }
 
-do_deploy:k3r5[noexec] = "1"
+do_deploy:append:k3r5() {
+     install -m 644 ${SYSFW_TISCI} ${DEPLOYDIR}/
+}
 
 addtask deploy before do_build after do_compile
