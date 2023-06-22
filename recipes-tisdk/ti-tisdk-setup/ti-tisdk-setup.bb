@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://setup.sh;beginline=3;endline=31;md5=fc4b04a33df6d892c
 PR = "r1"
 
 BRANCH ?= "master"
-SRCREV = "582acfb44fdfcb6d8f1504d23edd8afab7d56257"
+SRCREV = "9388c216da803b599b88b867212de8c2deb64f5d"
 SRC_URI = "git://git.ti.com/git/processor-sdk/tisdk-setup-scripts.git;protocol=https;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
