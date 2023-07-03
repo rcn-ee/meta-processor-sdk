@@ -16,5 +16,9 @@ EXTRA_PACKAGES:append:am64xx = " \
     print-ip \
 "
 
+EXTRA_PACKAGES:append:am62xx = " \
+    ti-apps-launcher \
+"
+
 UTILS:append = " net-snmp net-snmp-server-snmpd"
 
