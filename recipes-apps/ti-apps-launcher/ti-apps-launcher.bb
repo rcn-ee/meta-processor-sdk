@@ -1,4 +1,4 @@
-PR = "r0"
+PR = "r1"
 
 DESCRIPTION = "ti-apps-launcher service"
 HOMEPAGE = "https://github.com/sskartheekadivi/ti-apps-launcher"
@@ -12,7 +12,7 @@ DEPENDS = "qtbase qtquick3d qtmultimedia"
 RDEPENDS:${PN} = "qtquick3d qtmultimedia bash"
 
 BRANCH = "master"
-SRCREV = "c92761465fbb5d842832b8b8113a0d7fc792bdc8"
+SRCREV = "502ba9c37446738d675ceca133f42aee5dd5c9b5"
 
 SRC_URI = " \
     git://github.com/sskartheekadivi/ti-apps-launcher.git;protocol=https;branch=${BRANCH} \
@@ -24,6 +24,9 @@ S = "${WORKDIR}/git"
 APPS_DEFINES = ""
 APPS_DEFINES:am62xx = "SOC_AM62"
 
+CONFIG_FILE = ""
+CONFIG_FILE:am62xx = "am62xx-evm"
+
 inherit qmake5 deploy systemd
 
 SYSTEMD_PACKAGES = "${PN}"
@@ -31,7 +34,7 @@ SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "ti-apps-launcher.service"
 
 do_compile:prepend() {
-    echo "SOURCES += configs/${MACHINE}.cpp" >> ${S}/ti-apps-launcher.pro
+    echo "SOURCES += configs/${CONFIG_FILE}.cpp" >> ${S}/ti-apps-launcher.pro
     echo >> ${S}/ti-apps-launcher.pro
     echo "DEFINES += ${APPS_DEFINES}" >> ${S}/ti-apps-launcher.pro
 }
