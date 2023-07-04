@@ -12,7 +12,6 @@ Requires=weston.service
 Type=simple
 Environment=QT_QPA_PLATFORM=wayland
 Environment=WAYLAND_DISPLAY=/run/wayland-0
-Environment=SOC=am62
 ExecStart=/usr/bin/ti-apps-launcher
 
 # The user to run Weston as.
