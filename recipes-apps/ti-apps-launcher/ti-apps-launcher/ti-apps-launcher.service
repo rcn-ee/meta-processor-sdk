@@ -5,18 +5,21 @@
 Description=ti-apps-launcher service
 
 # Make sure we are started after logins are permitted.
-Requires=weston.service
+Requires=weston.service docker.socket
+After=docker.service
 
 [Service]
 # Requires systemd-notify.so Weston plugin.
 Type=simple
+Environment=XDG_RUNTIME_DIR=/run/user/1000
 Environment=QT_QPA_PLATFORM=wayland
 Environment=WAYLAND_DISPLAY=/run/wayland-0
-ExecStart=/usr/bin/ti-apps-launcher
+EnvironmentFile=/etc/environment
+ExecStart=/bin/sh -c '. /opt/edgeai-gst-apps/init_script.sh ; /usr/bin/ti-apps-launcher'
 
 # The user to run Weston as.
-User=weston
-Group=weston
+User=root
+Group=root
 
 # Fail to start if not controlling the tty.
 StandardOutput=journal
