@@ -1,4 +1,4 @@
-PR = "r2"
+PR = "r3"
 
 DESCRIPTION = "ti-apps-launcher service"
 HOMEPAGE = "https://github.com/sskartheekadivi/ti-apps-launcher"
@@ -12,7 +12,7 @@ DEPENDS = "qtbase qtquick3d qtmultimedia"
 RDEPENDS:${PN} = "qtquick3d qtmultimedia bash"
 
 BRANCH = "master"
-SRCREV = "24d320be1448f76e7640068a5e5b90f4f19abd02"
+SRCREV = "987d18e1521ed55910af3486091d832623e6de6d"
 
 SRC_URI = " \
     git://github.com/sskartheekadivi/ti-apps-launcher.git;protocol=https;branch=${BRANCH} \
