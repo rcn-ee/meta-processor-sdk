@@ -1,3 +1,3 @@
-SRCREV:tie-jailhouse = "9ae6973ab68a9c773729c71da397493d294607ba"
+SRCREV:tie-jailhouse = "4bae4f295f879ccfec1787a87eb98c1e531cd1d5"
 
-PR:append = ".psdk1"
+PR:append = ".psdk2"
