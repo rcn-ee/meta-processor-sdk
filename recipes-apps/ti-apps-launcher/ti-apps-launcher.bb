@@ -1,7 +1,7 @@
-PR = "r3"
+PR = "r4"
 
 DESCRIPTION = "ti-apps-launcher service"
-HOMEPAGE = "https://github.com/sskartheekadivi/ti-apps-launcher"
+HOMEPAGE = "https://github.com/TexasInstruments/ti-apps-launcher"
 
 COMPATIBLE_MACHINE = "am62xx"
 
@@ -15,7 +15,7 @@ BRANCH = "master"
 SRCREV = "987d18e1521ed55910af3486091d832623e6de6d"
 
 SRC_URI = " \
-    git://github.com/sskartheekadivi/ti-apps-launcher.git;protocol=https;branch=${BRANCH} \
+    git://github.com/TexasInstruments/ti-apps-launcher.git;protocol=https;branch=${BRANCH} \
     file://ti-apps-launcher.service \
 "
 
