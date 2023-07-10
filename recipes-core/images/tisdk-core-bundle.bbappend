@@ -9,6 +9,7 @@ DEPLOY_IMAGES_NAME:append:am64xx-evm = " \
     ti-sci-firmware-am64x_sr2-hs-cert.bin \
     ti-sci-firmware-am64x_sr2-hs-enc.bin \
     fitImage \
+    fitImage-its-am64xx-evm \
     wificfg \
 "
 
@@ -23,6 +24,7 @@ DEPLOY_IMAGES_NAME:append:am62xx-evm = " \
     ti-fs-firmware-am62x-gp.bin \
     ipc_echo_testb_mcu1_0_release_strip.xer5f \
     fitImage \
+    fitImage-its-am62xx-evm \
     wificfg \
 "
 
@@ -34,6 +36,8 @@ DEPLOY_IMAGES_NAME:append:am62xx-lp-evm = " \
     ti-fs-firmware-am62x-hs-fs-cert.bin \
     ti-fs-firmware-am62x-gp.bin \
     ipc_echo_testb_mcu1_0_release_strip.xer5f \
+    fitImage \
+    fitImage-its-am62xx-lp-evm \
     wificfg \
 "
 
