@@ -1,4 +1,4 @@
-PR = "r5"
+PR = "r6"
 
 DESCRIPTION = "ti-apps-launcher service"
 HOMEPAGE = "https://github.com/TexasInstruments/ti-apps-launcher"
@@ -12,7 +12,7 @@ DEPENDS = "qtbase qtquick3d qtmultimedia"
 RDEPENDS:${PN} = "qtquick3d qtmultimedia bash"
 
 BRANCH = "master"
-SRCREV = "ef633facd8d1e49377ba768d88833eff92727345"
+SRCREV = "cb4c39f0b5ffc722de3a723334bd0423523f379b"
 
 SRC_URI = " \
     git://github.com/TexasInstruments/ti-apps-launcher.git;protocol=https;branch=${BRANCH} \
