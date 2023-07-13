@@ -1,6 +1,6 @@
 DESCRIPTION = "Package containing scripts to setup the development host and target board"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://setup.sh;beginline=3;endline=31;md5=fc4b04a33df6d892c9f4d4a9d92b945e"
+LIC_FILES_CHKSUM = "file://setup.sh;beginline=3;endline=31;md5=ef7327b7f6a0cfe9d26f582809048eed"
 
 PR = "r2"
 
